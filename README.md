@@ -1,5 +1,12 @@
 # LAUNCH dashboard — pages for the RBM platform
 
+**Live test copy:** [start page](https://codebyjackson.github.io/launch-rbm-test/)
+· [English](https://codebyjackson.github.io/launch-rbm-test/en/)
+· [Français](https://codebyjackson.github.io/launch-rbm-test/fr/)
+· [Português](https://codebyjackson.github.io/launch-rbm-test/pt/)
+· [iframe test](https://codebyjackson.github.io/launch-rbm-test/iframe-test.html)
+· data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
+
 The LAUNCH illustrated journey dashboard, one static page per language, for
 embedding on dashboards.endmalaria.org. The pages hold no data of their own:
 each fetches the approved dataset at runtime, so a data update never needs a
