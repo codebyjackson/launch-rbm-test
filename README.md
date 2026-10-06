@@ -14,8 +14,10 @@ redeploy here.
 
 ```
 en/index.html   fr/index.html   pt/index.html     the three pages
-assets/                                             icons, logos, feedback form
-data/world-map.js, data/world-map-geo.js            country shapes (static)
+{en,fr,pt}/data/world-map.js, world-map-geo.js     country shapes, with that language's
+                                                    country names (static)
+{en,fr,pt}/assets/report-issue.js                   the feedback form, in that language
+assets/                                             icons and logos (shared)
 ```
 
 Data: `https://codebyjackson.github.io/launch-data-test/v1/dashboard.json`
@@ -25,7 +27,8 @@ MapLibre GL JS from cdnjs.cloudflare.com.
 ## Hosting
 
 Any static host works (the files are plain HTML, JS and SVG; no build step).
-Serve the folder as it is; the pages load `../assets/` and `../data/`.
+Serve the folder as it is; each page loads the shared `../assets/` and its own
+`data/` and `assets/report-issue.js` beside it.
 
 Allow framing by the RBM platform only — for example as a response header:
 
@@ -68,8 +71,9 @@ iframe scrolling inside it is the simplest option.
   has its own navigation).
 - No "Subscribe for updates" (its email service runs on the LAUNCH project's
   own hosting and is not included).
-- "Send feedback" is unchanged and, as on the LAUNCH site, not yet connected
-  to a backend.
+- "Send feedback" is not connected: Send is blocked, and the dialog says so.
+  On the LAUNCH site it emails the team through the same hosting as
+  Subscribe, which is not included.
 
 ## Rebuilding
 

@@ -1,9 +1,9 @@
 /*! LAUNCH Transparency Dashboard — "Report an issue" / contact form.  DEV-04
  *
- *  FRONT END ONLY, on purpose. The dashboard is a static site with no backend
- *  (see docs/developer-guide.md §1), so this file owns the whole interaction:
- *  it injects its own styles, the floating "Report an issue" pill and the
- *  modal dialog. A page includes it with one line, after its own scripts:
+ *  This file owns the whole interaction: it injects its own styles, the
+ *  floating "Report an issue" pill and the modal dialog. It sends nothing
+ *  unless the page sets `connected` (below), and only the illustrated journey
+ *  page does. A page includes it with one line, after its own scripts:
  *
  *      <script src="assets/report-issue.js" defer></script>
  *
@@ -24,15 +24,19 @@
  *  overrides BEFORE this script tag; only the keys given change, see the COPY
  *  block below. Two further keys are not wording: `view` (a short id such as
  *  "pipeline", sent as page.view so a report says which view it came from) and
- *  `connected` (true once the seam below posts to a real endpoint; until then
- *  the Send button is disabled and the dialog says so in red).
+ *  `connected`. Without `connected: true` the Send button is disabled and the
+ *  dialog says so in red.
  *
- *  ── WIRING A REAL BACKEND ───────────────────────────────────────────────
- *  There is exactly one seam: submitIssueReport() immediately below. Replace
- *  its body with a call to the intake endpoint and nothing else changes —
- *  the dialog already renders the pending, success and failure states around
- *  it, and validation happens before it is called. It must resolve to
- *  { ok: true, ref: "<reference shown to the reporter>" } or throw.
+ *  ── SENDING FOR REAL ────────────────────────────────────────────────────
+ *  With `connected: true`, submitIssueReport() immediately below POSTs the
+ *  payload as JSON to /api/feedback (api/feedback.js, which emails the team
+ *  through Resend), and the note and done screen default to wording that
+ *  says it was sent. The endpoint answers { ok: true, ref: "<reference shown
+ *  to the reporter>" }; anything else shows the dialog's failure message. The
+ *  dialog already renders the pending, success and failure states around the
+ *  seam, and validation happens before it is called. The endpoint exists only
+ *  on the LAUNCH Vercel project, so a page served anywhere else must not set
+ *  `connected` (scripts/build-rbm-pages.js turns it off for RBM's copies).
  *
  *  Payload it receives:
  *    { type, productId, productName, message, name, email, organisation,
@@ -48,26 +52,28 @@
   /* ── the one seam ──────────────────────────────────────────────────── */
 
   async function submitIssueReport(payload) {
-    // TODO(DEV-04b): send the report for real.
-    //
-    //   const res = await fetch(LAUNCH_ISSUE_ENDPOINT, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(payload)
-    //   });
-    //   if (!res.ok) throw new Error("HTTP " + res.status);
-    //   return res.json();                     // → { ok: true, ref: "…" }
-    //
-    // Until an endpoint exists the front end confirms on its own. The report
-    // is kept in memory (LAUNCH_REPORT_ISSUE.submitted) and logged, so a demo
-    // can show exactly what would have been sent — nothing leaves the browser.
+    if (CONNECTED) {
+      var res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      var body = await res.json().catch(function () { return null; });
+      if (!res.ok || !body || !body.ok) throw new Error("HTTP " + res.status);
+      return body;                             // → { ok: true, ref: "…" }
+    }
+
+    // Every other page: Send is blocked (below), so this runs only when called
+    // from the console or other code. The report is kept in memory
+    // (LAUNCH_REPORT_ISSUE.submitted) and logged, so a demo can show exactly
+    // what would have been sent — nothing leaves the browser.
     await new Promise(function (resolve) { setTimeout(resolve, 600); });
     var ref = "LAUNCH-" + Date.now().toString(36).toUpperCase().slice(-4) +
               Math.random().toString(36).slice(2, 4).toUpperCase();
     API.submitted.push(payload);
     if (window.console && console.info) {
       console.info("[LAUNCH] Issue report captured in the browser only — " +
-                   "no endpoint wired yet (DEV-04b). Ref " + ref + ":", payload);
+                   "this page is not connected. Ref " + ref + ":", payload);
     }
     return { ok: true, ref: ref };
   }
@@ -170,6 +176,11 @@
   // Same four values, relabelled per page via COPY.types below — the value is
   // what a backend keys on, so only the label may be overridden.
 
+  var FB = window.LAUNCH_FEEDBACK_COPY || {};
+  var CONNECTED = FB.connected === true;        // only the illustrated journey sets it
+  var ENDPOINT = "/api/feedback";               // absolute, so /fr/ and /pt/ reach it too
+  var VIEW = typeof FB.view === "string" && FB.view ? FB.view : null;
+
   /* ── wording ───────────────────────────────────────────────────────────
    *  Every visible string lives here so a page can retitle the widget with
    *  no fork of this file: set window.LAUNCH_FEEDBACK_COPY = { … } BEFORE
@@ -185,16 +196,22 @@
     messageLabel:"What would you like to tell us?",
     messagePlaceholder:
                  "e.g. A date on this page looks out of date: the source I checked gives a newer one.",
-    note:        "Mock only \u2014 Send feedback isn't connected yet.",
+    note:        "Mock only — Send feedback isn't connected yet.",
     submit:      "Send feedback",
-    sending:     "Sending\u2026",
-    failed:      "Sorry \u2014 your feedback could not be sent just now. Please try again in a moment.",
-    doneTitle:   "Thanks \u2014 though this isn't sent anywhere yet.",
-    doneMessage: "This form has no inbox behind it yet, so nothing was actually sent \u2014 your note stayed in " +
-                 "this browser tab. Once it is connected, the LAUNCH team will read every message, and where " +
-                 "you have pointed us to a public source that checks out, we correct the data at the next update.",
+    sending:     "Sending…",
+    failed:      "Sorry — your feedback could not be sent just now. Please try again in a moment.",
+    doneTitle:   "Thanks — though this isn't sent anywhere yet.",
+    doneMessage: "This form has no inbox behind it yet, so nothing was actually sent — your note stayed in this browser tab. Once it is connected, the LAUNCH team will read every message, and where you have pointed us to a public source that checks out, we correct the data at the next update.",
     again:       "Send more feedback"
   };
+  // A connected page sends, so the three strings that say it does not are
+  // replaced. A page's own overrides (below) still win. One literal each, so
+  // i18n/reviewed-strings.json can name them for the /fr and /pt copies.
+  if (CONNECTED) {
+    COPY.note =        "Your email is optional and used only to reply to you. With your message we send the page you are on, the version of the data it shows, and your browser, so the team can see what you saw.";
+    COPY.doneTitle =   "Thanks — your feedback has been sent.";
+    COPY.doneMessage = "The LAUNCH team reads every message, and where you have pointed us to a public source that checks out, we correct the data at the next update. If you left an email address, any reply from us will quote the reference below.";
+  }
   (function (over) {
     if (!over) return;
     Object.keys(COPY).forEach(function (k) {
@@ -206,9 +223,6 @@
       });
     }
   })(window.LAUNCH_FEEDBACK_COPY);
-  var FB = window.LAUNCH_FEEDBACK_COPY || {};
-  var CONNECTED = FB.connected === true;        // no endpoint yet, so false everywhere today
-  var VIEW = typeof FB.view === "string" && FB.view ? FB.view : null;
 
   /* ── helpers ───────────────────────────────────────────────────────── */
 
@@ -428,9 +442,9 @@
     open(t);
   });
 
-  // Until an endpoint exists the Send button is inert, exactly as it was on the
-  // illustrated journey: the click is blocked (not the submit handler) so the
-  // button keeps its normal look and the red note is the one explanation.
+  // On a page that is not connected the Send button is inert: the click is
+  // blocked (not the submit handler) so the button keeps its normal look and
+  // the red note is the one explanation.
   if (!CONNECTED) {
     btnSend.setAttribute("aria-disabled", "true");
     btnSend.addEventListener("click", function (e) { e.preventDefault(); });
@@ -488,7 +502,7 @@
     open: open,
     close: close,
     submit: submitIssueReport,   // swap this out to wire a backend at runtime
-    submitted: [],               // reports captured while there is no endpoint
+    submitted: [],               // reports captured on a page that is not connected
     dialog: dlg
   };
   window.LAUNCH_REPORT_ISSUE = API;
