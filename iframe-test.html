@@ -86,8 +86,16 @@
   .app.collapsed .item .ic { margin-right: 0; border-radius: 6px; }
 
   /* ---------- main column: transparent header over the photo hero ---------- */
-  .main { flex: 1; min-width: 0; }
+  /* One screen tall, with the frame filling what the hero leaves, as RBM sizes
+     the WHO Malaria Threats Map's frame on its live site (flex-1, min-h-0, at
+     least 480px): the dashboard scrolls inside the frame, not the page around
+     it. A frame taller than the screen (this page used 2400px until 7 Oct)
+     puts the dashboard's Send feedback button, which is fixed to the frame,
+     below the screen, and opens its dialog out of view. dvh, where supported,
+     so a phone's browser bar does not cover the bottom of the frame. */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
   .hero {
+    flex: none;
     position: relative; color: #fff;
     background: linear-gradient(rgba(15,23,42,.25), rgba(15,23,42,.25)), url("rbm-shell/bg-programmatic-min.webp") center top / cover #1E3A8A;
   }
@@ -110,8 +118,8 @@
   .micro { margin: 0 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #DBEAFE; }
   .hero h1 { margin: 0; font: 700 clamp(28px, 4vw, 48px)/1.1 Poppins, Roboto, Arial, sans-serif; }
 
-  .frame { padding: 24px; }
-  .frame iframe { display: block; width: 100%; height: 2400px; border: 0; background: var(--canvas); }
+  .frame { flex: 1 1 auto; min-height: 480px; display: flex; flex-direction: column; padding: 24px; }
+  .frame iframe { display: block; flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: var(--canvas); }
 
   /* ---------- phone: the sidebar becomes a drawer ---------- */
   .scrim { display: none; }
@@ -124,6 +132,12 @@
     .unops { margin-right: 8px; height: 32px; }
     .frame { padding: 12px 0; }
     .hero-in { padding: 28px 16px 32px; }
+  }
+  /* ---------- short screens (a phone held sideways): the hero's title goes,
+     so the frame keeps the screen and the page does not scroll around it ---------- */
+  @media (max-height: 560px) {
+    .hero-in { display: none; }
+    .frame { min-height: 0; padding: 8px 12px; }
   }
   @media (prefers-reduced-motion: reduce) { .side, .icbtn svg, .item .chev { transition: none; } }
 </style>
