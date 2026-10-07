@@ -1208,6 +1208,61 @@
     .detail { padding: 14px; }
   }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap">
+<style id="rbm-skin">
+  /* RBM look — scripts/rbm-skin.js. Generated; do not edit. */
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --ground: #EDF2F9; --surface: #FFFFFF; --surface-2: #F3F4F6;
+    --ink: #111827; --ink-2: #374151; --ink-3: #4B5563; --line: #E2E8F0;
+    --accent: #2563EB; --accent-ink: #FFFFFF; --accent-soft: #EFF6FF;
+    --good: #059669; --good-text: #047857; --good-soft: #ECFDF5;
+    --warn: #D97706; --warn-text: #B45309; --warn-soft: #FFFBEB;
+    --crit: #CB1C1C; --crit-soft: #FEF2F2;
+    --idle: #6B7280; --idle-soft: #F3F4F6;
+    --map1: #728EC6; --map2: #3A67BB; --map3: #033FAF;
+    --map-nodata: #FFFFFF; --map-border: #4884CC;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  }
+  body, button, input, select, textarea { font-family: Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .hd-title, .card .big { font-family: Poppins, Roboto, Arial, sans-serif; font-weight: 600; }
+  .hd-title { letter-spacing: 0; }
+
+  /* cards: rounded-lg + shadow-md on the canvas; panels inside them rounded-md */
+  .pathway, .board, .updates, .disclaimer, .srcs, .viz, .gatewrap, .subwrap { border-radius: 8px; }
+  .l1in, .gatepanel, .gw-band, .detail, .card, .mtable-box, .det-card, .map-legend-bar, .map-dock-rail,
+  #mapwrap-gl, #mapwrap-gl .maplibregl-canvas { border-radius: 6px; }
+
+  /* table head: gray-200 strip, gray-600 bold labels */
+  .srow.hd { background: #E5E7EB; color: #4B5563; }
+  .srow.hd .c-bar { color: #4B5563; }
+
+  /* the source page's hard-coded teal tints, in RBM blue */
+  .jcell.on { box-shadow: inset 1px 0 0 #BFDBFE, inset -1px 0 0 #BFDBFE; }
+  .more { border-top-color: #BFDBFE; }
+  .more:hover { background: #DBEAFE; }
+  .det-pill.registered { color: #111827; }
+  .mft-pchip { background: #F3F4F6; }
+
+  /* buttons: rounded-md, RBM Blue primary (blue-700 on hover), no gradients */
+  .dl-btn, .sub-btn, .sub-go, .swg, .det-q, .det-nav button { border-radius: 6px; }
+  .sub-btn:hover, .sub-go:hover { background: #1D4ED8; border-color: #1D4ED8; }
+  /* segmented control: active blue-600 / white, inactive gray-200 / gray-800 */
+  .swg { border-color: #E5E7EB; }
+  .swg button { background: #E5E7EB; color: #1F2937; }
+  .swg button + button { border-left-color: #D1D5DB; }
+  .swg button:not([aria-pressed="true"]):hover { background: #DBEAFE; color: #1D4ED8; }
+
+  /* feedback dialog: neutral-100 head strip, rounded-lg, shadow-xl. The widget
+     adds its own stylesheet when it loads, after this one, so these rules carry
+     an extra "html" to win on specificity instead of source order. */
+  html .ri-dialog { border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
+  html .ri-head { background: #F5F5F5; }
+  html .ri-dialog::backdrop { background: rgba(0,0,0,.5); }
+  html .ri-btn, html .ri-input, html .ri-select, html .ri-textarea { border-radius: 6px; }
+  html .ri-primary:hover { background: #1D4ED8; }
+</style>
 
 <body>
 <div class="wrap">
@@ -1860,7 +1915,7 @@
     }).join("");
 
     const d = p.detail;
-    const shades = ["#14657E", "#3E8CA3", "#77AFC0", "#B4D2DC"];
+    const shades = ["#033FAF", "#3A67BB", "#728EC6", "#A9B6D2"];
     const volumeCard = d.volume ? `
       <div class="card">
         <h3>Treatments procured through public channels</h3>
@@ -3362,11 +3417,11 @@
   // CSV download — stages and milestones for every tracked product
   function csvCell(v) { v = String(v == null ? "" : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
   // ---- subscribe for more information ---------------------------------------
-  // One seam: subscribeEmail() posts to api/subscribe.js, which emails the
-  // address a link to confirm (double opt-in, 1 Oct 2026); api/confirm.js
-  // adds it to the list once that link is used. It resolves on success and
-  // throws on anything else; the panel below renders the pending, success and
-  // failure states around it.
+  // One seam: subscribeEmail() posts to api/subscribe.js, which puts the
+  // address on the list straight away and emails it a welcome with an
+  // unsubscribe link (single opt-in since 6 Oct 2026). It resolves on success
+  // and throws on anything else; the panel below renders the pending, success
+  // and failure states around it.
   async function subscribeEmail(email) {
     const res = await fetch("/api/subscribe", {
       method: "POST",
@@ -3440,12 +3495,12 @@
     subGo.disabled = true;
     subGo.textContent = "Sending…";
     subSay("");
-    // Says what actually happened: nobody is on the list until they have
-    // clicked the link in the email, so success says to go and do that. On
-    // failure the address stays in the field, so trying again is one click.
+    // Says what actually happened: success shows only once the server has the
+    // address on the list, and is true whether it was new or already there.
+    // On failure the address stays in the field, so trying again is one click.
     try {
       await subscribeEmail(email);
-      subSay("Almost there — we've emailed you a link. Click it to confirm your subscription.", "ok");
+      subSay("Thank you — you are on the list.", "ok");
       subForm.reset();
     } catch (err) {
       subSay("Sorry — we could not add you just now. Please try again in a moment.", "bad");

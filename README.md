@@ -4,7 +4,7 @@
 · [English](https://codebyjackson.github.io/launch-rbm-test/en/)
 · [Français](https://codebyjackson.github.io/launch-rbm-test/fr/)
 · [Português](https://codebyjackson.github.io/launch-rbm-test/pt/)
-· [iframe test](https://codebyjackson.github.io/launch-rbm-test/iframe-test.html)
+· [iframe test in a mock RBM platform](https://codebyjackson.github.io/launch-rbm-test/iframe-test.html)
 · data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
 
 The LAUNCH illustrated journey dashboard, one static page per language, for
@@ -24,6 +24,12 @@ Data: `https://codebyjackson.github.io/launch-data-test/v1/dashboard.json`
 (contract and change rules: the README of that repository). Map rendering uses
 MapLibre GL JS from cdnjs.cloudflare.com.
 
+The pages follow the RBM Dashboard Design Guidelines v1.0
+(dashboards.endmalaria.org/design-guidelines): RBM Blue for actions, white cards
+on the #EDF2F9 canvas, Roboto and Poppins, the default map ramp. Fonts load from
+Google Fonts; to self-host them instead, swap the fonts.googleapis.com link at
+the top of each page.
+
 ## Hosting
 
 Any static host works (the files are plain HTML, JS and SVG; no build step).
@@ -36,10 +42,11 @@ Allow framing by the RBM platform only — for example as a response header:
 Content-Security-Policy: frame-ancestors https://dashboards.endmalaria.org
 ```
 
-The pages make three kinds of outbound request, all from the reader's browser:
-the dataset (GitHub Pages, above), MapLibre (cdnjs), and the map shapes (same
-host as the pages). A content security policy on the platform must allow the
-first two.
+The pages make four kinds of outbound request, all from the reader's browser:
+the dataset (GitHub Pages, above), MapLibre (cdnjs), the fonts
+(fonts.googleapis.com and fonts.gstatic.com) and the map shapes (same host as
+the pages). A content security policy on the platform must allow the first
+three.
 
 ## Embedding
 
