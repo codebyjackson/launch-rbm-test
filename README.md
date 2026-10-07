@@ -53,19 +53,28 @@ policy governs only its page: it must allow framing the pages' host
 
 ## Embedding
 
-One iframe per language route:
+One iframe per language route, **sized to the screen, not to the page**: let
+it fill the space below the platform's header, as the platform already does
+for the WHO Malaria Threats Map (`class="w-full flex-1 min-h-0"` in a column
+one screen tall), with a minimum of about 480px. The dashboard then scrolls
+inside the frame.
 
 ```html
-<!-- /en -->
-<iframe src="https://<host>/en/" title="LAUNCH dashboard" style="width:100%;height:2400px;border:0" loading="lazy"></iframe>
+<!-- /en, in a column one screen tall (e.g. display:flex; flex-direction:column; height:100dvh) -->
+<iframe src="https://<host>/en/" title="LAUNCH dashboard" class="w-full flex-1 min-h-0" style="border:0;min-height:480px" loading="lazy"></iframe>
 <!-- /fr -->
-<iframe src="https://<host>/fr/" title="Tableau de bord LAUNCH" style="width:100%;height:2400px;border:0" loading="lazy"></iframe>
+<iframe src="https://<host>/fr/" title="Tableau de bord LAUNCH" class="w-full flex-1 min-h-0" style="border:0;min-height:480px" loading="lazy"></iframe>
 <!-- /pt -->
-<iframe src="https://<host>/pt/" title="Painel LAUNCH" style="width:100%;height:2400px;border:0" loading="lazy"></iframe>
+<iframe src="https://<host>/pt/" title="Painel LAUNCH" class="w-full flex-1 min-h-0" style="border:0;min-height:480px" loading="lazy"></iframe>
 ```
 
-The page's height changes as readers open rows; a fixed height with the
-iframe scrolling inside it is the simplest option.
+**Do not give the frame a fixed height taller than the screen** (for example
+`height:2400px`, which an earlier version of this README suggested). The
+"Send feedback" button and its dialog are positioned within the frame, so in
+a frame taller than the screen the button sits below the visible area until
+the reader scrolls to the frame's end, and the dialog opens out of view.
+Sized to the screen, the button stays in the bottom corner while the reader
+scrolls. `iframe-test.html` in this folder shows it working.
 
 ## What readers see when something is wrong
 
@@ -87,10 +96,13 @@ iframe scrolling inside it is the simplest option.
   `https://launch-development-test.vercel.app/api/` rather than to this host,
   which has none. That service accepts them only from hosts on its list
   (`PARTNERS` in the LAUNCH repository's `api/_mail.js`). Today the list holds
-  `https://codebyjackson.github.io`, the test copy. **When RBM serves these
-  pages from its own host, tell the LAUNCH team the host's address** (scheme
-  and domain, e.g. `https://dashboards.endmalaria.org`) so it can be added;
-  until then both forms show their "could not send" message there.
+  the two copies of the test repository: `https://codebyjackson.github.io`
+  (GitHub Pages) and `https://launch-rbm-test.vercel.app` (Vercel). **Every
+  host that serves these pages needs its own entry, test and staging
+  included: tell the LAUNCH team each host's address** (scheme and domain,
+  e.g. `https://dashboards.endmalaria.org`) before readers use it. On a host
+  that is not listed, both forms show their "could not send" message to
+  every reader.
   Subscribers' addresses and feedback go to the LAUNCH team, and the emails
   are in English.
 

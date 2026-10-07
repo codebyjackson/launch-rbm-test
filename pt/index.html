@@ -1126,8 +1126,17 @@
     /* Full-width sheet: at phone widths a 380px card would either overflow or
        leave awkward margins on both sides, so it spans the header instead. */
     .subwrap { left: 0; right: 0; width: auto; max-width: none; }
-    .subwrap::before { left: 24px; right: auto; }
+    /* The tail points at Subscribe, the right-hand of the two equal buttons
+       (8px apart), whose centre is at 75% + 2px of the row; the tail is 10px
+       wide. It sat at left: 24px, under Download CSV, until 7 Oct. */
+    .subwrap::before { left: calc(75% - 3px); right: auto; }
   }
+  .subwrap h2:focus { outline: 0; }   /* takes focus on touch screens: openSub() */
+  /* On a phone the floating Send feedback button (assets/report-issue.js)
+     landed on the open panel: over "Notify me" and the end of its privacy
+     line, on a 375px-wide screen (7 Oct). It steps aside while the panel is
+     open (openSub/closeSub set the class). */
+  @media (max-width: 760px) { html.sub-open .ri-pill { visibility: hidden; } }
   .subwrap h2 { margin: 0 0 3px; font-size: 15px; font-weight: 700; }
   .subwrap p { margin: 0 0 10px; font-size: 12.5px; color: var(--ink-2); max-width: 64ch; }
   .subrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
@@ -1282,7 +1291,7 @@
         <button class="dl-btn" id="dl-csv" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v7.5M4.75 6.75 8 10l3.25-3.25M2.5 13h11"/></svg> Baixar CSV</button>
         <button class="sub-btn" id="sub-open" type="button" aria-expanded="false" aria-controls="subwrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="3.25" width="12.5" height="9.5" rx="1.5"/><path d="m2.25 4.6 5.05 3.85a1.15 1.15 0 0 0 1.4 0L13.75 4.6"/></svg> Subscreva para receber atualizações</button>
         <section class="subwrap" id="subwrap" hidden aria-labelledby="sub-title">
-          <h2 id="sub-title">Subscreva para receber atualizações</h2>
+          <h2 id="sub-title" tabindex="-1">Subscreva para receber atualizações</h2>
           <p>Receba um e-mail quando os dados desta página forem atualizados — novos marcos, números corrigidos e registos de países recentemente verificados.</p>
           <form class="subrow" id="sub-form" novalidate>
             <label class="visually-hidden" for="sub-email">O seu endereço de email</label>
@@ -3434,13 +3443,19 @@
   function openSub() {
     subWrap.hidden = false;
     subOpen.setAttribute("aria-expanded", "true");
-    subMail.focus();
+    document.documentElement.classList.add("sub-open");
+    // With a keyboard, straight into the address field. On a touch screen,
+    // the panel's title: focusing the field there opens the phone keyboard at
+    // once, unasked, and iOS scrolls the page under it.
+    const touch = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+    (touch ? document.getElementById("sub-title") : subMail).focus();
   }
   function closeSub(opts) {
     opts = opts || {};
     if (subWrap.hidden) return;
     subWrap.hidden = true;
     subOpen.setAttribute("aria-expanded", "false");
+    document.documentElement.classList.remove("sub-open");
     if (opts.returnFocus) subOpen.focus();
   }
 

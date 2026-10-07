@@ -127,6 +127,11 @@
     'box-shadow:0 0 0 3px var(--accent-soft)}',
     '.ri-row{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}',
     '@media (max-width:520px){.ri-row{grid-template-columns:1fr}}',
+    // iOS zooms the whole page into any field under 16px when it gets the
+    // cursor, and does not zoom back out; at 14px every field did it
+    '@media (max-width:760px){.ri-input,.ri-select,.ri-textarea{font-size:16px}}',
+    // the title takes focus on touch screens (open(), below): no ring on it
+    '#ri-title:focus{outline:0}',
     '.ri-err{display:none;margin:5px 0 0;font-size:12px;font-weight:600;color:var(--crit)}',
     '.ri-field.is-bad .ri-err{display:block}',
     '.ri-field.is-bad .ri-input,.ri-field.is-bad .ri-textarea{border-color:var(--crit)}',
@@ -252,7 +257,7 @@
   dlg.innerHTML =
     '<form class="ri-form" novalidate>' +
       '<div class="ri-head">' +
-        '<h2 id="ri-title">' + esc(COPY.title) + '</h2>' +
+        '<h2 id="ri-title" tabindex="-1">' + esc(COPY.title) + '</h2>' +
         '<p>' + esc(COPY.intro) + '</p>' +
         '<button type="button" class="ri-x" data-ri-close aria-label="Perto">&times;</button>' +
       '</div>' +
@@ -398,7 +403,17 @@
     done.hidden = true;
     if (dlg.showModal) { if (!dlg.open) dlg.showModal(); }
     else dlg.setAttribute("open", "");
-    selType.focus();
+    focusStart();
+  }
+
+  // Where focus goes when the form appears. With a keyboard, the first
+  // field, ready to use. On a touch screen, the title: focusing a field there
+  // opens the phone's picker or keyboard at once, unasked (iOS pops the
+  // "Qual é o seu feedback?" list open), while the title still tells
+  // a screen reader where it is.
+  function focusStart() {
+    var touch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    (touch ? dlg.querySelector("#ri-title") : selType).focus();
   }
 
   function close() {
@@ -431,7 +446,7 @@
     fillProducts(null);
     done.hidden = true;
     form.hidden = false;
-    selType.focus();
+    focusStart();
   });
 
   document.addEventListener("click", function (e) {
