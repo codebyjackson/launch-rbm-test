@@ -178,7 +178,7 @@
 
   var FB = window.LAUNCH_FEEDBACK_COPY || {};
   var CONNECTED = FB.connected === true;        // only the illustrated journey sets it
-  var ENDPOINT = "/api/feedback";               // absolute, so /fr/ and /pt/ reach it too
+  var ENDPOINT = "https://launch-development-test.vercel.app/api/feedback";               // absolute, so /fr/ and /pt/ reach it too
   var VIEW = typeof FB.view === "string" && FB.view ? FB.view : null;
 
   /* ── wording ───────────────────────────────────────────────────────────

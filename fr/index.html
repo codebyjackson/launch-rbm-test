@@ -1415,7 +1415,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.js"
         integrity="sha512-hoXlvOdSmh58mppUyZHZsscHkR/yXl6zLpTMTNwA6IZ61DpeaCNjosRu1WJ2DeIpkfW5MsJJ9H89zjV4IBGqRw=="
         crossorigin="anonymous"></script>
-<style>#sub-open, #subwrap { display: none !important; }</style>
 <script>
 /* Loads the LAUNCH dataset (scripts/build-rbm-pages.js). Generated; do not edit. */
 (function () {
@@ -3414,7 +3413,7 @@
   // and throws on anything else; the panel below renders the pending, success
   // and failure states around it.
   async function subscribeEmail(email) {
-    const res = await fetch("/api/subscribe", {
+    const res = await fetch("https://launch-development-test.vercel.app/api/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, page: location.href })
@@ -3595,7 +3594,7 @@
 })();
 </script>
 
-<script type="text/x-launch-app">
+<script>
   /* The shared widget (assets/report-issue.js) runs as "Send feedback" on every
      page, with Send disabled and a red "Mock only" note. This is the one page
      that is connected (2 Oct 2026): `connected` set to true makes the widget
@@ -3606,7 +3605,7 @@
      there. */
   window.LAUNCH_FEEDBACK_COPY = {
     view: "illustrated",
-    connected: false,
+    connected: true,
     messagePlaceholder:
       "Par exemple, la carte indique que ce médicament n’est pas encore enregistré en Tanzanie, mais il y a été approuvé en juin 2026."
   };

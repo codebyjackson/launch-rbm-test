@@ -42,11 +42,14 @@ Allow framing by the RBM platform only — for example as a response header:
 Content-Security-Policy: frame-ancestors https://dashboards.endmalaria.org
 ```
 
-The pages make four kinds of outbound request, all from the reader's browser:
+The pages make five kinds of outbound request, all from the reader's browser:
 the dataset (GitHub Pages, above), MapLibre (cdnjs), the fonts
-(fonts.googleapis.com and fonts.gstatic.com) and the map shapes (same host as
-the pages). A content security policy on the platform must allow the first
-three.
+(fonts.googleapis.com and fonts.gstatic.com), the map shapes (same host as
+the pages), and, when a reader uses Subscribe or Send feedback, the LAUNCH
+project's email service (below). A content security policy sent with these
+pages, by whatever host serves them, must allow all five. The platform's own
+policy governs only its page: it must allow framing the pages' host
+(`frame-src`), and does not apply to requests made from inside the frame.
 
 ## Embedding
 
@@ -71,19 +74,31 @@ iframe scrolling inside it is the simplest option.
 - **The dataset's `schema_version` is not 1** (a breaking change has been
   published under `v2/`): a notice that the dashboard is being updated, until
   these pages are updated to read the new version.
+- **Subscribe or Send feedback cannot reach the email service** (it is down,
+  or the host serving these pages is not yet on its list): the form says it
+  could not send just now, and keeps what the reader typed.
 
 ## Differences from the LAUNCH site
 
 - No site menu (its other pages are not part of this handover; the platform
   has its own navigation).
-- No "Subscribe for updates" (its email service runs on the LAUNCH project's
-  own hosting and is not included).
-- "Send feedback" is not connected: Send is blocked, and the dialog says so.
-  On the LAUNCH site it emails the team through the same hosting as
-  Subscribe, which is not included.
+- "Subscribe for updates" and "Send feedback" work as on the LAUNCH site, but
+  post to the LAUNCH project's own email service at
+  `https://launch-development-test.vercel.app/api/` rather than to this host,
+  which has none. That service accepts them only from hosts on its list
+  (`PARTNERS` in the LAUNCH repository's `api/_mail.js`). Today the list holds
+  `https://codebyjackson.github.io`, the test copy. **When RBM serves these
+  pages from its own host, tell the LAUNCH team the host's address** (scheme
+  and domain, e.g. `https://dashboards.endmalaria.org`) so it can be added;
+  until then both forms show their "could not send" message there.
+  Subscribers' addresses and feedback go to the LAUNCH team, and the emails
+  are in English.
 
 ## Rebuilding
 
 These files are generated in the LAUNCH pipeline repository by
 `node scripts/build-rbm-pages.js` from the same page as the LAUNCH site, so a
 fix there reaches here on the next build. Do not edit them by hand.
+`--api-url` sets where the two forms post (default: the LAUNCH production
+site); `--api-url none` builds them switched off, as they were until
+7 Oct 2026.
