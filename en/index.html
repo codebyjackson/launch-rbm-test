@@ -997,11 +997,23 @@
   .det-pill.none { background: var(--surface-2); color: var(--ink-3); border: 1px solid var(--line); }
   .det-q { width: 100%; font: inherit; font-size: 13px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); margin-bottom: 6px; }
   .det-list { max-height: 360px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; }
-  .det-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border: 0; border-bottom: 1px solid var(--line);
-             background: none; font: inherit; font-size: 13px; color: var(--ink); text-align: left; cursor: pointer; }
-  .det-row:last-child { border-bottom: 0; } .det-row:hover { background: var(--surface-2); }
-  .det-row .nm { min-width: 0; flex: 1; line-height: 1.3; }
-  .det-row .go { color: var(--accent); font-weight: 700; font-size: 12px; white-space: nowrap; }
+  /* Find a country (8 Oct 2026): a table (Country, Stage, Use) that follows the left
+     Filters. Names are cut with an ellipsis, the full name is in the title. */
+  .det-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+  .det-table th { position: sticky; top: 0; z-index: 1; padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
+  .det-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .det-table tr:last-child td { border-bottom: 0; }
+  .det-row { cursor: pointer; }
+  .det-row:hover { background: var(--surface-2); }
+  .det-table .stg { font-size: 12px; }
+  .det-table .stg .mapsw { margin-right: 6px; vertical-align: -1px; }
+  .det-table .use .mft-lsw { display: inline-block; margin-right: 2px; }
+  .det-table .go { color: var(--accent); font-weight: 700; text-align: right; }
+  .det-name { display: block; width: 100%; font: inherit; color: var(--ink); background: none; border: 0; padding: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .det-name:focus-visible, .det-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  .det-nomatch { padding: 14px 12px; display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .det-nomatch p { margin: 0; }
+  .det-reset { justify-self: start; font: inherit; font-size: 12.5px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
   .det-back { font: inherit; font-size: 13px; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0 0 6px; cursor: pointer; }
   .det-chead { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
   .det-cname { margin: 0; font-size: 18px; line-height: 1.2; font-weight: 750; color: var(--ink); text-transform: none; letter-spacing: 0; }
@@ -3217,7 +3229,6 @@
       if (!mftOn) return;
       const by = { tested: [], vivax: [] };
       mftScope().forEach((iso3) => {
-        if (stageOff.has(mftStage(iso3).lvl)) return;
         MFT_GROUPS.forEach((g) => { if (mftTick.has(g.id) && mftHas(iso3, g.id)) by[g.id].push(iso3); });
       });
       const f = (list) => ["in", ["get", "iso3"], ["literal", list]];
@@ -3331,19 +3342,32 @@
       return h + `</div>`;
     }
 
+    // The Find a country list follows the left Filters: a country is listed when its
+    // access stage is ticked OR it is in a ticked recommended-use group. Location and
+    // the search box narrow it further.
+    const mftMatches = (iso3) => !stageOff.has(mftStage(iso3).lvl) || MFT_GROUPS.some((g) => mftTick.has(g.id) && mftHas(iso3, g.id));
+    const mftListed = () => mftScope().filter(mftMatches);
+    const FIND_TXT = { country: "Country", stage: "Stage", use: "Use", none: "No countries match the filters on the left.", reset: "Reset filters", of: "of", guidelines: "In guidelines" };
+    const countLabel = () => `${mftListed().length} ${FIND_TXT.of} ${mftScope().length}`;
     function finderRows(q) {
       const k = q.trim().toLowerCase();
-      const list = mftScope().filter((i) => !k || mftName(i).toLowerCase().includes(k))
+      const pool = mftListed();
+      if (!pool.length) return `<div class="det-nomatch"><p>${esc(FIND_TXT.none)}</p><button type="button" class="det-reset" data-reset>${esc(FIND_TXT.reset)}</button></div>`;
+      const list = pool.filter((i) => !k || mftName(i).toLowerCase().includes(k))
         .sort((a, b) => mftName(a).localeCompare(mftName(b)));
       if (!list.length) return `<p class="det-empty" style="padding:8px 10px">No country matches.</p>`;
-      return list.map((i) => {
-        const st = mftStage(i), gs = mftCatsOf(i);
-        return `<button type="button" class="det-row" data-iso3="${esc(i)}"><span class="nm">${esc(mftName(i))}</span>` +
-          `${hasCountries() ? stagePill(st.lvl) : ""}${gs.map((g) => mftLineSvg(g.id, 22)).join("")}<span class="go">View ›</span></button>`;
-      }).join("");
+      return `<table class="det-table"><colgroup><col><col><col style="width:56px"><col style="width:16px"></colgroup>` +
+        `<thead><tr><th scope="col">${esc(FIND_TXT.country)}</th><th scope="col">${esc(FIND_TXT.stage)}</th><th scope="col">${esc(FIND_TXT.use)}</th><th aria-hidden="true"></th></tr></thead><tbody>` +
+        list.map((i) => {
+          const st = mftStage(i), nm = esc(mftName(i));
+          const gs = MFT_GROUPS.filter((g) => mftTick.has(g.id) && mftHas(i, g.id));
+          return `<tr class="det-row" data-iso3="${esc(i)}"><td class="nm"><button type="button" class="det-name" data-iso3="${esc(i)}" title="${nm}">${nm}</button></td>` +
+            `<td class="stg">${hasCountries() ? `<span class="mapsw ${st.lvl}"></span>${esc(st.lvl === "guidelines" ? FIND_TXT.guidelines : (LEVEL_LABEL[st.lvl] || LEVEL_LABEL.none))}` : ""}</td>` +
+            `<td class="use">${gs.map((g) => mftLineSvg(g.id, 22)).join("")}</td><td class="go" aria-hidden="true">›</td></tr>`;
+        }).join("") + `</tbody></table>`;
     }
     function detCountries() {
-      return `<div class="det-card"><h4>Find a country <span class="det-n">${mftScope().length}</span></h4>` +
+      return `<div class="det-card"><h4>Find a country <span class="det-n">${countLabel()}</span></h4>` +
         `<input id="det-q" class="det-q" type="search" placeholder="Type a country name…" aria-label="Search countries" autocomplete="off">` +
         `<div class="det-list" id="det-list">${finderRows("")}</div></div>`;
     }
@@ -3395,7 +3419,7 @@
       el.hidden = false;
       const iso3 = mftSel || locCountry || null;
       if (iso3) { el.innerHTML = detCountry(iso3); el.scrollTop = 0; return; }
-      const nC = mftScope().length;
+      const nC = countLabel();
       el.innerHTML = `<div class="det-tabs" role="tablist">` +
         `<button type="button" role="tab" aria-selected="${detTab === "overview"}" data-det-tab="overview">Overview</button>` +
         `<button type="button" role="tab" aria-selected="${detTab === "countries"}" data-det-tab="countries">Countries <span class="det-n">${nC}</span></button></div>` +
@@ -3405,14 +3429,16 @@
     {
       const panel = document.getElementById("mft-panel");
       panel.addEventListener("click", (e) => {
-        const t = e.target.closest("[data-det-tab],[data-iso3],[data-back],[data-step]");
+        const t = e.target.closest("[data-det-tab],[data-iso3],[data-back],[data-step],[data-reset]");
         if (!t) return;
         const hadFocus = panel.contains(document.activeElement);
         if (t.dataset.detTab) { detTab = t.dataset.detTab; mftSel = null; mftRender(); }
+        else if (t.hasAttribute("data-reset")) document.getElementById("flt-reset").click();
         else if (t.dataset.iso3) selectCountry(t.dataset.iso3);
         else if (t.hasAttribute("data-back")) { mftSel = null; mftRender(); }
         else if (t.dataset.step) {
-          const ids = drawnIsos(), cur = mftSel || locCountry;
+          // step through the listed countries when this one is in the list, else through all
+          const cur = mftSel || locCountry, all = drawnIsos(), pool = all.filter(mftMatches), ids = pool.includes(cur) ? pool : all;
           const nxt = ids[(ids.indexOf(cur) + Number(t.dataset.step) + ids.length) % ids.length];
           mftSel = nxt; mftRender();
         }
@@ -3440,8 +3466,9 @@
 
     // ---- Filters: access stage + MFT policy groups --------------------------
     // MFT policy has no switch. It is ON whenever a policy group is ticked and
-    // OFF when none is. Unticking an access stage fades that stage's countries
-    // (and drops their MFT borders); the legend lists only what is ticked.
+    // OFF when none is. Unticking an access stage fades that stage's countries;
+    // a ticked group still draws its borders on them, and the Find a country list
+    // shows them too.
     const STAGE_ROWS = [["registered", "Registered"], ["guidelines", "In national guidelines"],
                         ["mft", "In MFT plans"], ["none", "No data"]];
     // Stage counts, the way the access legend counts them: drawn countries only.
