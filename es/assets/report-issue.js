@@ -19,7 +19,7 @@
  *  that is how a per-row "report an issue with this product" link would hook
  *  in later, with no change to this file.
  *
- *  Every page runs it as "Send feedback". A page gives it wording that fits
+ *  Every page runs it as "Enviar comentarios". A page gives it wording that fits
  *  what it shows by setting window.LAUNCH_FEEDBACK_COPY to an object of
  *  overrides BEFORE this script tag; only the keys given change, see the COPY
  *  block below. Two further keys are not wording: `view` (a short id such as
@@ -173,10 +173,10 @@
   ].join("");
 
   var TYPES = [
-    ["correction", "Something on the page looks wrong"],
-    ["source",     "A source is missing or out of date"],
-    ["suggestion", "An idea for making this clearer or more useful"],
-    ["other",      "Something else"]
+    ["correction", "Algo en la página parece estar mal."],
+    ["source",     "Falta una fuente o está desactualizada."],
+    ["suggestion", "Una idea para que esto sea más claro o más útil."],
+    ["other",      "Otra cosa"]
   ];
   // Same four values, relabelled per page via COPY.types below — the value is
   // what a backend keys on, so only the label may be overridden.
@@ -191,31 +191,31 @@
    *  no fork of this file: set window.LAUNCH_FEEDBACK_COPY = { … } BEFORE
    *  the <script src="assets/report-issue.js"> tag and only the keys given
    *  are overridden. The illustrated journey page uses it to run the same
-   *  widget as "Send feedback".
+   *  widget as "Enviar comentarios".
    */
   var COPY = {
-    pill:        "Send feedback",
-    title:       "Send feedback",
-    intro:       "Something look wrong, out of date, or hard to follow? Tell the LAUNCH team what you're seeing.",
-    typeLabel:   "What is your feedback about?",
-    messageLabel:"What would you like to tell us?",
+    pill:        "Enviar comentarios",
+    title:       "Enviar comentarios",
+    intro:       "¿Algo parece incorrecto, desactualizado o difícil de entender? Dígale al equipo de LAUNCH qué está viendo.",
+    typeLabel:   "¿Sobre qué opinas?",
+    messageLabel:"¿Qué te gustaría contarnos?",
     messagePlaceholder:
-                 "e.g. A date on this page looks out of date: the source I checked gives a newer one.",
-    note:        "Mock only — Send feedback isn't connected yet.",
-    submit:      "Send feedback",
-    sending:     "Sending…",
-    failed:      "Sorry — your feedback could not be sent just now. Please try again in a moment.",
-    doneTitle:   "Thanks — though this isn't sent anywhere yet.",
-    doneMessage: "This form has no inbox behind it yet, so nothing was actually sent — your note stayed in this browser tab. Once it is connected, the LAUNCH team will read every message, and where you have pointed us to a public source that checks out, we correct the data at the next update.",
-    again:       "Send more feedback"
+                 "Por ejemplo, una fecha en esta página parece estar desactualizada: la fuente que consulté proporciona una fecha más reciente.",
+    note:        "Solo simulaciones: la función de enviar comentarios aún no está conectada.",
+    submit:      "Enviar comentarios",
+    sending:     "Envío…",
+    failed:      "Lo sentimos, no pudimos enviar sus comentarios en este momento. Inténtelo de nuevo en un instante.",
+    doneTitle:   "Gracias, aunque esto aún no se ha enviado a ningún sitio.",
+    doneMessage: "Este formulario aún no tiene una bandeja de entrada asociada, por lo que no se envió nada; su mensaje se quedó en esta pestaña del navegador. Una vez conectado, el equipo de LAUNCH leerá todos los mensajes y, si nos ha indicado una fuente pública verificada, corregiremos los datos en la próxima actualización.",
+    again:       "Enviar más comentarios"
   };
   // A connected page sends, so the three strings that say it does not are
   // replaced. A page's own overrides (below) still win. One literal each, so
   // i18n/reviewed-strings.json can name them for the translated copies.
   if (CONNECTED) {
-    COPY.note =        "Your email is optional and used only to reply to you. With your message we send the page you are on, the version of the data it shows, and your browser, so the team can see what you saw.";
-    COPY.doneTitle =   "Thanks — your feedback has been sent.";
-    COPY.doneMessage = "The LAUNCH team reads every message, and where you have pointed us to a public source that checks out, we correct the data at the next update. If you left an email address, any reply from us will quote the reference below.";
+    COPY.note =        "Tu correo electrónico es opcional y solo lo usaremos para responderte. Con tu mensaje, enviamos la página que estás visitando, la versión de los datos que muestra y tu navegador, para que el equipo pueda ver lo que viste.";
+    COPY.doneTitle =   "Gracias, sus comentarios han sido enviados.";
+    COPY.doneMessage = "El equipo de LAUNCH lee todos los mensajes y, si nos has indicado una fuente pública que sea fiable, corregimos los datos en la siguiente actualización. Si nos has proporcionado una dirección de correo electrónico, en cualquier respuesta que te enviemos citaremos la referencia que aparece a continuación.";
   }
   (function (over) {
     if (!over) return;
@@ -259,7 +259,7 @@
       '<div class="ri-head">' +
         '<h2 id="ri-title" tabindex="-1">' + esc(COPY.title) + '</h2>' +
         '<p>' + esc(COPY.intro) + '</p>' +
-        '<button type="button" class="ri-x" data-ri-close aria-label="Close">&times;</button>' +
+        '<button type="button" class="ri-x" data-ri-close aria-label="Cerca">&times;</button>' +
       '</div>' +
       '<div class="ri-body">' +
         '<p class="ri-alert" id="ri-alert" role="alert"></p>' +
@@ -272,7 +272,7 @@
           '</select>' +
         '</div>' +
         '<div class="ri-field">' +
-          '<label for="ri-product">Which medicine does it concern? <span class="ri-opt">— optional</span></label>' +
+          '<label for="ri-product">¿A qué medicamento se refiere? <span class="ri-opt">— opcional</span></label>' +
           '<select class="ri-select" id="ri-product" name="product"></select>' +
         '</div>' +
         '<div class="ri-field" id="ri-f-message">' +
@@ -284,25 +284,25 @@
         '</div>' +
         '<div class="ri-row">' +
           '<div class="ri-field">' +
-            '<label for="ri-name">Your name <span class="ri-opt">— optional</span></label>' +
+            '<label for="ri-name">Su nombre <span class="ri-opt">— opcional</span></label>' +
             '<input class="ri-input" id="ri-name" name="name" type="text" autocomplete="name">' +
           '</div>' +
           '<div class="ri-field" id="ri-f-email">' +
-            '<label for="ri-email">Email <span class="ri-opt">— optional</span></label>' +
+            '<label for="ri-email">Correo electrónico <span class="ri-opt">— opcional</span></label>' +
             '<input class="ri-input" id="ri-email" name="email" type="email" ' +
               'autocomplete="email" aria-describedby="ri-e-email">' +
             '<p class="ri-err" id="ri-e-email"></p>' +
           '</div>' +
         '</div>' +
         '<div class="ri-field">' +
-          '<label for="ri-org">Organisation <span class="ri-opt">— optional</span></label>' +
+          '<label for="ri-org">Organización <span class="ri-opt">— opcional</span></label>' +
           '<input class="ri-input" id="ri-org" name="organisation" type="text" ' +
-            'autocomplete="organization" placeholder="Ministry of health, manufacturer, partner…">' +
+            'autocomplete="organization" placeholder="Ministerio de salud, fabricante, socio…">' +
         '</div>' +
         '<p class="ri-note">' + esc(COPY.note) + '</p>' +
       '</div>' +
       '<div class="ri-foot">' +
-        '<button type="button" class="ri-btn ri-ghost" data-ri-close>Cancel</button>' +
+        '<button type="button" class="ri-btn ri-ghost" data-ri-close>Cancelar</button>' +
         '<button type="submit" class="ri-btn ri-primary" id="ri-send">' + esc(COPY.submit) + '</button>' +
       '</div>' +
     '</form>' +
@@ -313,7 +313,7 @@
       '<p><span class="ri-ref" id="ri-ref"></span></p>' +
       '<div class="ri-foot" style="justify-content:center;background:none;border:0;padding-top:6px">' +
         '<button type="button" class="ri-again" id="ri-again">' + esc(COPY.again) + '</button>' +
-        '<button type="button" class="ri-btn ri-primary" data-ri-close>Close</button>' +
+        '<button type="button" class="ri-btn ri-primary" data-ri-close>Cerca</button>' +
       '</div>' +
     '</div>';
 
@@ -360,11 +360,11 @@
     var first = null;
     var msg = txtMsg.value.trim();
     if (!msg) {
-      setErr("#ri-f-message", "#ri-e-message", txtMsg, "Please describe the issue.");
+      setErr("#ri-f-message", "#ri-e-message", txtMsg, "Por favor, describa el problema.");
       first = first || txtMsg;
     } else if (msg.length < 10) {
       setErr("#ri-f-message", "#ri-e-message", txtMsg,
-             "A little more detail, please — at least 10 characters.");
+             "Un poco más de detalles, por favor; al menos 10 caracteres.");
       first = first || txtMsg;
     } else {
       setErr("#ri-f-message", "#ri-e-message", txtMsg, "");
@@ -372,7 +372,7 @@
 
     var mail = inMail.value.trim();
     if (mail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) {
-      setErr("#ri-f-email", "#ri-e-email", inMail, "That email address does not look right.");
+      setErr("#ri-f-email", "#ri-e-email", inMail, "Esa dirección de correo electrónico no parece correcta.");
       first = first || inMail;
     } else {
       setErr("#ri-f-email", "#ri-e-email", inMail, "");
@@ -385,10 +385,10 @@
   /* ── open / close ──────────────────────────────────────────────────── */
 
   function fillProducts(preselect) {
-    var opts = ['<option value="">General — the dashboard as a whole</option>'];
+    var opts = ['<option value="">General: el panel de control en su conjunto</option>'];
     trackedProducts().forEach(function (p) {
       opts.push('<option value="' + esc(p.id) + '">' + esc(p.name) +
-                (p.placeholder ? " (planned)" : "") + "</option>");
+                (p.placeholder ? " (planificado)" : "") + "</option>");
     });
     selProd.innerHTML = opts.join("");
     if (preselect) selProd.value = preselect;
@@ -409,7 +409,7 @@
   // Where focus goes when the form appears. With a keyboard, the first
   // field, ready to use. On a touch screen, the title: focusing a field there
   // opens the phone's picker or keyboard at once, unasked (iOS pops the
-  // "What is your feedback about?" list open), while the title still tells
+  // "¿Sobre qué opinas?" list open), while the title still tells
   // a screen reader where it is.
   function focusStart() {
     var touch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
@@ -494,7 +494,7 @@
     btnSend.innerHTML = '<span class="ri-spin"></span>' + esc(COPY.sending);
 
     Promise.resolve(API.submit(payload)).then(function (res) {
-      dlg.querySelector("#ri-ref").textContent = "Reference " + ((res && res.ref) || "—");
+      dlg.querySelector("#ri-ref").textContent = "Referencia " + ((res && res.ref) || "—");
       form.hidden = true;
       done.hidden = false;
       done.scrollTop = 0;
