@@ -150,15 +150,6 @@
   /* ---------- pathway legend strip (illustrated journey) ---------- */
   .pathway {
     display: flex; align-items: flex-start; gap: 2px;
-    /* Equal fallback for the instant before JS runs (or if it can't) — see
-       centerPathwayCard(). That function overwrites both values inline once
-       the row (WHO stack included) is laid out, because the right split
-       isn't a constant: .pathgroup's bracket is the tallest thing in the
-       row and sits translated up by --pg-lift (alignPathGroup, above), so
-       how much of the card's own height ends up above the bracket versus
-       below it shifts with that same lift. Setting equal padding here and
-       measuring the true rendered gap afterwards is what keeps the two
-       matching instead of just assuming a formula stays right forever. */
     padding: 48px 18px 8px; margin-bottom: 10px; overflow-x: auto;
     background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
   }
@@ -189,17 +180,19 @@
   .pathnode .pathexp svg { width: 13px; height: 13px; margin: 0; display: inline-block; color: var(--exp-ink); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .pathexp.none { border-color: transparent; background: var(--surface); color: var(--ink-3); padding-inline: 8px; }
   @media (max-width: 640px) { .pathexp { white-space: normal; text-align: center; justify-content: center; } }
-  /* Market Access / Country-Population Access: two tinted panels behind the
-     strip, placed by positionPhases(). z-index -1 inside the strip's own
-     stacking context keeps them behind the icons but above the card. */
-  .pathway { position: relative; isolation: isolate; }
-  .phasebg { position: absolute; top: 6px; bottom: 6px; z-index: -1; box-sizing: border-box; padding: 8px 12px; border-radius: 12px; background: var(--ph-soft); color: var(--ph-ink); pointer-events: none; overflow: hidden; }
-  .phasebg.ph0 { --ph-soft: var(--ph-mkt-soft); --ph-ink: var(--ph-mkt-ink); }
-  .phasebg.ph1 { --ph-soft: var(--ph-cty-soft); --ph-ink: var(--ph-cty-ink); }
+  /* Market Access / Country-Population Access: two white cards on the canvas,
+     each with a gray title strip and half the width (8 Oct 2026). The card, its
+     shadow and radius moved from .pathway to .phase; the arrow between steps 3
+     and 4 sits in the gap. */
+  .pathway { background: transparent; box-shadow: none; border-radius: 0; padding: 2px 4px 12px; gap: 0; align-items: stretch; }
+  .phase { flex: 1 1 0; min-width: min-content; display: flex; flex-direction: column; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+  .phase-t { background: #E5E7EB; padding: 9px 14px; }
+  .phase-t b { display: inline-flex; align-items: center; font-size: 13px; font-weight: 700; line-height: 1.25; color: var(--ph-mkt-ink); white-space: nowrap; }
+  /* the parallel WHO pair is lifted onto the other icons' line (--pg-lift, set by
+     alignPathGroup), so the body leaves that much room above the icons */
+  .phase-body { flex: 1; display: flex; align-items: flex-start; gap: 2px; padding: calc(8px + var(--pg-lift, 0px)) 14px 10px; }
   .phn { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 6px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-style: normal; font-weight: 700; line-height: 1; }
-  .phasebg b { display: block; font-size: 13px; font-weight: 700; line-height: 1.25; white-space: nowrap; }
-  .phasebg span { display: block; font-size: 11.5px; line-height: 1.3; color: var(--ink-3); white-space: nowrap; }
-  .patharrow.phasegap { margin-inline: 8px; }
+  .patharrow.phasegap { align-self: center; width: 44px; margin-top: 0; text-align: center; }
   .pathnode .plabel { display: block; font-size: 12px; line-height: 1.25; color: var(--ink-2); margin-top: 5px; padding: 0 3px; overflow-wrap: break-word; hyphens: auto; }
   /* always-on badge marking every gate icon as clickable, not just on hover */
   .pathnode .pill::after {
@@ -374,7 +367,6 @@
   .ystable td { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .ystable td i { font-size: 12.5px; color: var(--ink-3); }
   .ystable tr.ysgrp th { padding: 8px 12px; background: #F8FAFC; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--ph-ink); }
-  .ystable tr.ysgrp th span { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--ink-3); }
   .ystable tr.ph0 { --ph-ink: var(--ph-mkt-ink); }
   .ystable tr.ph1 { --ph-ink: var(--ph-cty-ink); }
   .ystable tr.whole > * { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; color: var(--ink); }
@@ -1294,7 +1286,7 @@
     .hd-bar .hdr-actions button { flex: 1 1 0; justify-content: center; padding: 10px 6px; gap: 5px; }
     .updates li { flex-wrap: wrap; gap: 4px 12px; }
     .hdr-actions button { padding: 10px 15px; }
-    .pathway { padding: 12px 12px; }
+    .pathway { padding: 2px 4px 12px; }
     .pathnode { min-width: 72px; }
     .pathnode .pill { width: 38px; height: 38px; }
     .pathnode svg, .pathnode .whoemb { width: 25px; height: 25px; }
@@ -1857,8 +1849,8 @@
   // Population Access starts at it (stage 4) and runs to in-country delivery.
   const ACCESS_SPLIT = 4;
   const PHASES = [
-    { name: "Acesso ao mercado", note: "Desenvolvido, aprovado e recomendado" },
-    { name: "Acesso por país e população", note: "As pessoas nos países podem aceder" }
+    { name: "Acesso ao mercado" },
+    { name: "Acesso por país e população" }
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
@@ -1939,7 +1931,7 @@
     if (!y.approved) return `<div class="ysempty"><b>Ainda não foi aprovado.</b> Começamos a comparar assim que o medicamento tem uma aprovação regulamentar com data de expiração.</div>`;
     const actual = s => s.took == null ? "n.d." : yrsText(s.took) + (s.kind === "going" ? ` <i>até agora</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
-    const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}<span>${esc(PHASES[ph].note)}</span></th></tr>`;
+    const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
     const body = y.steps.map(s => {
       const g = phaseOf(s.i);
@@ -2087,13 +2079,12 @@
       col.stages.map(i => pathNodeHtml(i, true)).join(`<span class="pathgroup-note" aria-hidden="true"></span>`) +
       `</span>`;
   }
-  // Two tinted panels sit behind the strip (see positionPhases); the arrow
-  // between the two groups gets extra room so it sits in the gap.
-  pathway.innerHTML = PHASES.map((ph, k) => `<div class="phasebg ph${k}" data-p="${k}" aria-hidden="true"><b><i class="phn">${k + 1}</i>${esc(ph.name)}</b><span>${esc(ph.note)}</span></div>`).join("") +
-    STAGE_COLUMNS.map((col, c) => {
-      const gap = c > 0 && phaseOf(col.stages[0]) !== phaseOf(STAGE_COLUMNS[c - 1].stages[0]);
-      return (c > 0 ? `<span class="patharrow${gap ? " phasegap" : ""}" aria-hidden="true">→</span>` : "") + stepColumnHtml(col);
-    }).join("");
+  // Two white cards, one per group, with the arrow between them in the gap.
+  pathway.innerHTML = PHASES.map((ph, k) => {
+    const cols = STAGE_COLUMNS.filter(col => phaseOf(col.stages[0]) === k);
+    return `<section class="phase ph${k}" aria-label="${esc(ph.name)}"><div class="phase-t"><b><i class="phn">${k + 1}</i>${esc(ph.name)}</b></div><div class="phase-body">` +
+      cols.map(col => stepColumnHtml(col)).join(`<span class="patharrow" aria-hidden="true">→</span>`) + `</div></section>`;
+  }).join(`<span class="patharrow phasegap" aria-hidden="true">→</span>`);
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Medicina</span><span class="c-mini">Jornada</span>` +
@@ -2358,52 +2349,9 @@
     pathway.style.setProperty("--pg-lift", lift.toFixed(2) + "px");
   }
 
-  // ---- legend strip: even out the card's own top/bottom padding -------------
-  // .pathgroup's bracket is the tallest thing in the row (align-self:stretch
-  // sizes it to the row's own height, top edge to bottom edge, same as every
-  // other stretched item would be), and alignPathGroup() shifts that whole
-  // box upward by --pg-lift with a `transform` so its two icons line up with
-  // every other gate — necessary, and left alone here, per the stack staying
-  // exactly as it is. A transform moves paint, not layout: the box's TOP and
-  // BOTTOM both shift up by the same lift, which is why one card-level fix
-  // and not two — it takes lift off the gap above the bracket and adds that
-  // same amount to the gap below it. Concretely, with G the padding this rule
-  // would give with no lift at all:
-  //   gap above bracket = padding-top    - lift
-  //   gap below bracket = padding-bottom + lift
-  // A first attempt measured both gaps directly and tried to average them —
-  // it doesn't converge: gap-below has a floor of exactly `lift` (padding
-  // can't go negative), so once padding-bottom hits 0 the measured gap stops
-  // moving and there is nothing left to average against. Solving the two
-  // equations above for equal gaps instead — padding-top = G + 2·lift,
-  // padding-bottom = G — has no such floor, because it never asks the
-  // bottom to shrink past where it naturally sits.
-  function centerPathwayCard() {
-    const G = 8;    // the base gap either side would get if there were no lift at all
-    const TITLE = 40;   // room above the icons for the two group titles
-    const lift = parseFloat(getComputedStyle(pathway).getPropertyValue("--pg-lift")) || 0;
-    pathway.style.paddingTop = (G + TITLE + lift).toFixed(2) + "px";
-    pathway.style.paddingBottom = G.toFixed(2) + "px";
-  }
-
-  // align first, then draw, then even out the card around whatever that
-  // produced — each pass depends on the one before it
-  // The two tinted panels behind the strip: each spans the columns of its
-  // group (first to last step, arrows between included) and scrolls with them.
-  function positionPhases() {
-    const pr = pathway.getBoundingClientRect();
-    if (!pr.width) return;
-    const PAD = 8;
-    pathway.querySelectorAll(".phasebg").forEach(bg => {
-      const els = pathway.querySelectorAll(`[data-phase="${bg.dataset.p}"]`);
-      if (!els.length) return;
-      const a = els[0].getBoundingClientRect(), b = els[els.length - 1].getBoundingClientRect();
-      bg.style.left = (a.left - pr.left + pathway.scrollLeft - PAD).toFixed(1) + "px";
-      bg.style.width = (b.right - a.left + 2 * PAD).toFixed(1) + "px";
-    });
-  }
+  // align first, then draw — each pass depends on the one before it
   function layoutJourney() {
-    alignStageForks(); drawStageForks(); alignPathGroup(); centerPathwayCard(); positionPhases();
+    alignStageForks(); drawStageForks(); alignPathGroup();
   }
 
   layoutJourney();
