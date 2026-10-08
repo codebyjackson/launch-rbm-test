@@ -3755,6 +3755,9 @@
   // then the one-off documents behind a single medicine. An entry with no url
   // renders as plain text — that is how PMI and manufacturer communications
   // have always appeared here, and the missing link is the point in both cases.
+  // Each list is A–Z by the name shown, in the page's language (8 Oct 2026):
+  // the file is A–Z in English, but the French and Portuguese copies carry
+  // translated names, so its order alone would not hold there.
   (function renderSources() {
     const dataUl = document.getElementById("srclist");
     const docsUl = document.getElementById("srcdocs");
@@ -3782,7 +3785,8 @@
       return `<li>${name}<span>${esc(s.plain)}${also}</span></li>`;
     };
 
-    const shown = reg.sources.filter(s => s.public);
+    const shown = reg.sources.filter(s => s.public)
+      .sort((a, b) => (a.label || a.title).localeCompare(b.label || b.title, PAGE_LANG, { sensitivity: "base", numeric: true }));
     dataUl.innerHTML = shown.filter(s => s.group !== "document").map(li).join("");
     const docs = shown.filter(s => s.group === "document");
     if (docs.length && docsUl) {
