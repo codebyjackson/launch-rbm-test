@@ -183,7 +183,7 @@
 
   var FB = window.LAUNCH_FEEDBACK_COPY || {};
   var CONNECTED = FB.connected === true;        // only the illustrated journey sets it
-  var ENDPOINT = "https://launch-development-test.vercel.app/api/feedback";               // absolute, so /fr/ and /pt/ reach it too
+  var ENDPOINT = "https://launch-development-test.vercel.app/api/feedback";               // absolute, so /fr/, /pt/ and /es/ reach it too
   var VIEW = typeof FB.view === "string" && FB.view ? FB.view : null;
 
   /* ── wording ───────────────────────────────────────────────────────────
@@ -211,7 +211,7 @@
   };
   // A connected page sends, so the three strings that say it does not are
   // replaced. A page's own overrides (below) still win. One literal each, so
-  // i18n/reviewed-strings.json can name them for the /fr and /pt copies.
+  // i18n/reviewed-strings.json can name them for the translated copies.
   if (CONNECTED) {
     COPY.note =        "Votre adresse e-mail est facultative et sert uniquement à vous répondre. Votre message nous permet d’envoyer la page que vous consultez, la version des données affichées et votre navigateur, afin que l’équipe puisse voir ce que vous avez vu.";
     COPY.doneTitle =   "Merci — vos commentaires ont été envoyés.";

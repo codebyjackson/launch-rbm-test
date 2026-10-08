@@ -1311,10 +1311,16 @@
     .hd-title span.proto-badge { white-space: normal; margin-left: 0; margin-top: 6px; display: block; width: fit-content; }
     .attrib img { width: 72px; }
     .attrib .ptxt { display: none; }
-    .hd-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+    /* The button row is full width by rule, not by stretching (8 Oct 2026).
+       On an iPhone it came out as wide as its own words: 289 of 362px in
+       English (two 140px buttons), 354 in Portuguese, while French and
+       Spanish, whose words are wider than the screen, looked right. nowrap
+       makes .hd-bar one line, which is always the container's width; the
+       100% does not depend on the browser stretching the row at all. */
+    .hd-bar { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 8px; }
     .hd-text { flex: none; }
-    .hd-bar .hdr-actions { margin-left: 0; }
-    .hd-bar .hdr-actions button { flex: 1 1 0; justify-content: center; padding: 10px 6px; gap: 5px; }
+    .hd-bar .hdr-actions { margin-left: 0; width: 100%; }
+    .hd-bar .hdr-actions button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 10px 6px; gap: 5px; }
     .updates li { flex-wrap: wrap; gap: 4px 12px; }
     .hdr-actions button { padding: 10px 15px; }
     .pathway { padding: 2px 4px 12px; }
@@ -1541,10 +1547,14 @@
   "use strict";
   var DATA_URL = "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json", LANG = "pt", SCHEMA = 1;
   var MSG = {"fail":"<b>Não foi possível carregar os dados do painel.</b> Tente novamente dentro de alguns minutos.","schema":"<b>Este painel está a ser atualizado.</b> Volte a consultá-lo em breve."};
-  // every reader-facing text in dashboard.json is { en, fr, pt }: keep this page's
+  // every reader-facing text in dashboard.json is { en, fr, pt, ... }, one key
+  // per language the file lists in ds.locales: keep this page's, or the English
+  // where the file does not have this language yet. No fixed number of keys,
+  // so a language added to the file never breaks a page built before it.
+  var LOCS = ["en"];
   var isText = function (v) {
     return v && typeof v === "object" && !Array.isArray(v) && typeof v.en === "string" &&
-      "fr" in v && "pt" in v;
+      Object.keys(v).every(function (k) { return LOCS.indexOf(k) >= 0; });
   };
   var pick = function (v) {
     if (Array.isArray(v)) return v.map(pick);
@@ -1568,6 +1578,7 @@
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (ds) {
         if (ds.schema_version !== SCHEMA) { notice(MSG.schema); return; }
+        LOCS = Array.isArray(ds.locales) && ds.locales.indexOf("en") >= 0 ? ds.locales : ["en", "fr", "pt"];
         var d = pick(ds.data);
         window.LAUNCH_DATA = {
           meta: { lastUpdated: ds.last_updated, dataStatus: ds.data_status, host: d.host },
@@ -1652,8 +1663,9 @@
     ? `<img class="${cls} whoemb" src="../assets/who-emblem.svg" alt="" width="205" height="181">`
     : (JI ? JI.use(i, cls) : "");
 
-  // Dates follow the page's language: the French and Portuguese copies carry
-  // <html lang="fr"> / "pt-PT", so their dates read "2 oct. 2026" / "2/10/2026".
+  // Dates follow the page's language: the French, Portuguese and Spanish copies
+  // carry <html lang="fr"> / "pt-PT" / "es", so their dates read "2 oct. 2026" /
+  // "2/10/2026" / "2 oct 2026".
   // English keeps en-GB ("2 Oct 2026").
   const PAGE_LANG = document.documentElement.lang || "en";
   const DATE_LANG = /^en\b/i.test(PAGE_LANG) ? "en-GB" : PAGE_LANG;
@@ -1856,9 +1868,10 @@
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
-  // "Desde 2018"), so the word is matched in all three page languages.
+  // "Desde 2018" in Portuguese and Spanish), so the word is matched in every
+  // page language. Spanish may also read "Desde el 2018".
   function sinceYearOf(st) {
-    const m = String(st && st.date || "").match(/(?:Since|Depuis|Desde)\s+((?:19|20)\d{2})/i);
+    const m = String(st && st.date || "").match(/(?:Since|Depuis|Desde)\s+(?:el\s+)?((?:19|20)\d{2})/i);
     return m ? +m[1] : null;
   }
   function yardstick(p) {
