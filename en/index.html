@@ -904,11 +904,11 @@
      script keeps both rails' height matched to .map-dock-center specifically
      (see the ResizeObserver below). Left keeps its own scrollbar for when
      its filters (Drug/MFT policy/Location) still don't fit in that height.
-     Right (2 Oct 2026) takes its own content's height instead: held to the
-     map's, it hid the lower Detail cards behind overflow: hidden, with no
-     scrollbar or other cue that they were there. */
+     Right is held too (8 Oct 2026), so all three columns end together. Its
+     tabs stay pinned at the top while the cards scroll, which is the cue that
+     there is more below (the fade was tried and dropped). */
   .map-dock-left { max-height: none; overflow-y: auto; }
-  .map-dock-right { max-height: none; }
+  .map-dock-right { max-height: none; overflow-y: auto; }
   /* `display` on .map-dock-rail is an author rule and so outranks the browser's
      [hidden] { display: none } — same trap .map-empty already carries a fix for. */
   .map-dock-rail[hidden] { display: none; }
@@ -923,6 +923,7 @@
   @media (max-width: 760px) {
     .map-dock { grid-template-columns: 1fr; }
     .map-dock-rail { max-height: none; }
+    .det-tabs { position: static; margin-top: 0; padding-top: 0; }
   }
   .tab {
     background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
@@ -976,7 +977,8 @@
   .mft-pchip.yes { background: var(--good-soft); color: var(--good-text); font-weight: 650; }
   .mft-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 12px 0 0; }
   /* Detail rail: tabs, overview cards, country finder and country page. */
-  .det-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 0 0 10px; }
+  .det-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: -4px 0 10px; padding-top: 4px;
+              position: sticky; top: -12px; z-index: 3; background: var(--surface-2); }
   .det-tabs button { font: inherit; font-size: 13px; font-weight: 650; color: var(--ink-2); background: none; border: 0;
                      border-bottom: 3px solid transparent; padding: 6px 10px; cursor: pointer; }
   .det-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
@@ -1109,8 +1111,8 @@
   .ftab thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
   .ftab thead th:first-child { border-radius: 4px 0 0 4px; }
   .ftab thead th:last-child { border-radius: 0 4px 4px 0; }
-  .ftab .n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
-  .ftab thead th.n { font-weight: 700; color: #4B5563; white-space: normal; line-height: 1.2; width: 74px; }
+  .ftab .n { text-align: center; width: 76px; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .ftab thead th.n { font-weight: 700; color: #4B5563; white-space: normal; line-height: 1.2; width: 76px; }
   .ftab .n .zero, .ftab .n.zero { color: var(--ink-3); font-weight: 400; }
   .ftab tbody td { border-bottom: 1px solid var(--line); }
   .ftab tbody tr:last-child td { border-bottom: 0; }
@@ -2745,15 +2747,18 @@
     // fixed aspect ratio) as well as with the legend's line-wrapping.
     const mapDockCenter = document.querySelector(".map-dock-center");
     const mapDockLeft = document.querySelector(".map-dock-left");
+    const mapDockRight = document.querySelector(".map-dock-right");
     if (mapDockCenter && window.ResizeObserver) {
-      // Only the left rail (2 Oct 2026): the right one takes its own height, so
-      // no Detail card is cut off. Stacked on a phone (the dock's grid down to
-      // one column), neither is held. Read from the grid, not a media-query
+      // Both rails (8 Oct 2026): the Detail rail scrolls inside, with its tabs
+      // pinned. Stacked on a phone (the dock's grid down to one column), neither
+      // is held. Read from the grid, not a media-query
       // string: the translation build rewrites string literals on /fr and /pt.
       const dock = mapDockCenter.parentElement;
       new ResizeObserver(() => {
         const stacked = getComputedStyle(dock).gridTemplateColumns.trim().split(/\s+/).length < 2;
-        if (mapDockLeft) mapDockLeft.style.height = stacked ? "" : mapDockCenter.offsetHeight + "px";
+        const h = stacked ? "" : mapDockCenter.offsetHeight + "px";
+        if (mapDockLeft) mapDockLeft.style.height = h;
+        if (mapDockRight) mapDockRight.style.height = h;
       }).observe(mapDockCenter);
     }
 
