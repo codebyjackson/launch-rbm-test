@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>LAUNCH Transparency Dashboard — Illustrated journey</title>
+<title>LAUNCH Transparency Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.css"
       integrity="sha512-KIMsMWIdnoG9OwZa+oaIafmbDonqck1UCmq+/zcUi2aaZ97N9QE6TqpTM+n36EO40HGh64hU/375zxtjx7WTyQ==" crossorigin="anonymous">
@@ -1346,7 +1346,7 @@
     </div>
     <div class="hd-bar">
       <div class="hd-text">
-        <p class="hd-desc">Tracking new antimalarial medicines from research and development to market access&nbsp;— where each product stands, its access barriers, and opportunities to overcome them.</p>
+        <p class="hd-desc">Tracking new antimalarial medicines along the market access pathway</p>
         <div class="hd-status"><span id="updated"></span></div>
       </div>
       <div class="hdr-actions">
@@ -1395,7 +1395,7 @@
 
   <section class="viz" id="mapsec" hidden>
     <h2>Country access map</h2>
-    <p class="viznote" id="mapnote">Each country is shaded by the furthest stage it has reached — a country counted in MFT plans is registered too. Counts are of the countries drawn on this map.</p>
+    <p class="viznote" id="mapnote">Each country is shaded by the furthest stage it has reached.</p>
     <div class="map-dock">
       <aside class="map-dock-rail map-dock-left">
         <div class="dock-section">
@@ -1636,7 +1636,7 @@
   const status = DATA.meta.dataStatus;
   const BANNERS = {
     illustrative: "<b>Design mockup.</b> All statuses, dates, prices and volumes below are illustrative placeholders for layout review — not real programme data. <a class='bl-link' href='#disclaimer'>Read the disclaimer</a>",
-    draft: '<span class="bl">⚠ Draft figures — not yet verified. Please do not quote them. <a class="bl-link" href="#disclaimer">Read the disclaimer</a></span>'
+    draft: '<span class="bl">⚠ Draft figures — not yet verified. <a class="bl-link" href="#disclaimer">Read the disclaimer</a></span>'
   };
   if (BANNERS[status]) {
     banner.hidden = false;

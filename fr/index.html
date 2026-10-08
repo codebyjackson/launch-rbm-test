@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <meta charset="utf-8">
-<title>LAUNCH Tableau de bord de transparence — Parcours illustré</title>
+<title>Tableau de bord de transparence LAUNCH</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.css"
       integrity="sha512-KIMsMWIdnoG9OwZa+oaIafmbDonqck1UCmq+/zcUi2aaZ97N9QE6TqpTM+n36EO40HGh64hU/375zxtjx7WTyQ==" crossorigin="anonymous">
@@ -1346,7 +1346,7 @@
     </div>
     <div class="hd-bar">
       <div class="hd-text">
-        <p class="hd-desc">Suivi des nouveaux médicaments antipaludiques, de la recherche et du développement à l'accès au marché : où en est chaque produit, quels sont les obstacles à son accès et les possibilités de les surmonter.</p>
+        <p class="hd-desc">Suivi des nouveaux médicaments antipaludiques tout au long de leur parcours d'accès au marché</p>
         <div class="hd-status"><span id="updated"></span></div>
       </div>
       <div class="hdr-actions">
@@ -1394,7 +1394,7 @@
 
   <section class="viz" id="mapsec" hidden>
     <h2>Carte d'accès au pays</h2>
-    <p class="viznote" id="mapnote">Chaque pays est coloré en fonction de son stade d'avancement ; un pays comptabilisé dans les plans MFT est également pris en compte. Les décomptes concernent les pays représentés sur cette carte.</p>
+    <p class="viznote" id="mapnote">Chaque pays est coloré en fonction du stade le plus avancé qu'il a atteint.</p>
     <div class="map-dock">
       <aside class="map-dock-rail map-dock-left">
         <div class="dock-section">
@@ -1630,7 +1630,7 @@
   const status = DATA.meta.dataStatus;
   const BANNERS = {
     illustrative: "<b>Maquette de conception.</b> Tous les statuts, dates, prix et volumes ci-dessous sont des exemples pour la révision de la mise en page — et non des données réelles du programme. <a class='bl-link' href='#disclaimer'>Lisez l’avertissement</a>",
-    draft: '<span class="bl">⚠ Chiffres provisoires — non encore vérifiés. Veuillez ne pas les citer. <a class="bl-link" href="#disclaimer">Lisez l’avertissement</a></span>'
+    draft: '<span class="bl">⚠ Chiffres provisoires — non encore vérifiés. <a class="bl-link" href="#disclaimer">Lisez l’avertissement</a></span>'
   };
   if (BANNERS[status]) {
     banner.hidden = false;
