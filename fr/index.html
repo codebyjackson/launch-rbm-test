@@ -22,6 +22,11 @@
        4.5:1 AA floor; now 5.2:1. --ink-2 moved with it to keep the three steps apart. */
     --ink-2: #3F5564;
     --ink-3: #566A77;
+    /* expected time and the two access groups (8 Oct 2026) */
+    --exp-line: #A5B0F0; --exp-ink: #3730A3;
+    --diff: #5B4BC4; --diff-soft: #EFECFB;
+    --ph-mkt-soft: #EAF2FD; --ph-mkt-ink: #1D4ED8;
+    --ph-cty-soft: #E4F4F2; --ph-cty-ink: #0B6F6B;
     --line: #DCE3E7;
     --accent: #0F5A72;
     --accent-ink: #FFFFFF;
@@ -154,7 +159,7 @@
        below it shifts with that same lift. Setting equal padding here and
        measuring the true rendered gap afterwards is what keeps the two
        matching instead of just assuming a formula stays right forever. */
-    padding: 8px 18px; margin-bottom: 10px; overflow-x: auto;
+    padding: 48px 18px 8px; margin-bottom: 10px; overflow-x: auto;
     background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
   }
   .pathnode { flex: 1; min-width: 84px; text-align: center; }
@@ -178,6 +183,22 @@
     width: 44px; height: 44px; border-radius: 50%;
     background: var(--accent-soft); border: 1px solid var(--line);
   }
+  /* expected time under each icon: a clock tag, so it reads as an estimate */
+  .pathexp { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; padding: 2px 8px 2px 6px; border: 1px solid var(--exp-line); border-radius: 8px; font-size: 11.5px; line-height: 1.3; color: var(--ink-2); white-space: nowrap; }
+  .pathexp b { font-weight: 700; color: var(--exp-ink); font-variant-numeric: tabular-nums; }
+  .pathnode .pathexp svg { width: 13px; height: 13px; margin: 0; display: inline-block; color: var(--exp-ink); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .pathexp.none { border-color: transparent; background: var(--surface-2); color: var(--ink-3); padding-inline: 8px; }
+  @media (max-width: 640px) { .pathexp { white-space: normal; text-align: center; justify-content: center; } }
+  /* Market Access / Country-Population Access: two tinted panels behind the
+     strip, placed by positionPhases(). z-index -1 inside the strip's own
+     stacking context keeps them behind the icons but above the card. */
+  .pathway { position: relative; isolation: isolate; }
+  .phasebg { position: absolute; top: 6px; bottom: 6px; z-index: -1; box-sizing: border-box; padding: 8px 12px; border-radius: 12px; background: var(--ph-soft); color: var(--ph-ink); pointer-events: none; overflow: hidden; }
+  .phasebg.ph0 { --ph-soft: var(--ph-mkt-soft); --ph-ink: var(--ph-mkt-ink); }
+  .phasebg.ph1 { --ph-soft: var(--ph-cty-soft); --ph-ink: var(--ph-cty-ink); }
+  .phasebg b { display: block; font-size: 13px; font-weight: 700; line-height: 1.25; white-space: nowrap; }
+  .phasebg span { display: block; font-size: 11.5px; line-height: 1.3; color: var(--ink-3); white-space: nowrap; }
+  .patharrow.phasegap { margin-inline: 8px; }
   .pathnode .plabel { display: block; font-size: 12px; line-height: 1.25; color: var(--ink-2); margin-top: 5px; padding: 0 3px; overflow-wrap: break-word; hyphens: auto; }
   /* always-on badge marking every gate icon as clickable, not just on hover */
   .pathnode .pill::after {
@@ -322,49 +343,49 @@
   .swg button[aria-pressed="true"]:focus-visible { outline-color: var(--accent-ink); }
   /* Yardstick (7 Oct 2026): expected time against time taken, in plain words.
      A badge under "On pathway", a box at the top of an open row, and a third
-     view, "Time taken". Red is late, green is on time, grey has nothing to
-     compare. See docs/jackson/yardstick.md. */
+     view, "Time taken". A difference is shown as a signed number in indigo, not
+     as red "late": the wording is neutral on purpose (8 Oct 2026). Green means
+     no difference, grey has nothing to compare. See docs/jackson/yardstick.md. */
   .srow .c-path { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
   .ysp { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; line-height: 1.4; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
   .ysp i { font-style: normal; font-weight: 500; }
   .ysp.sm { font-size: 11.5px; padding: 1px 8px; }
-  .ysp.bad { background: var(--crit-soft); color: var(--crit); }
+  .ysp.diff { background: var(--diff-soft); color: var(--diff); }
   .ysp.good { background: var(--good-soft); color: var(--good-text); }
   .ysp.none { background: var(--surface-2); color: var(--ink-3); font-weight: 500; }
   .ysb-none { font-size: 11.5px; font-weight: 500; color: var(--ink-3); line-height: 1.3; }
-  .ysbox { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 400px); gap: 12px 32px; align-items: center; background: var(--crit-soft); border-radius: 10px; padding: 14px 18px; margin: 0 0 16px; }
-  .ysbox.ok { background: var(--good-soft); }
-  .ysbox-big { font-size: 22px; font-weight: 800; line-height: 1.2; color: var(--crit); }
-  .ysbox.ok .ysbox-big { color: var(--good-text); }
-  .ysbox p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+  .ysbox { display: grid; gap: 4px; margin: 0 0 16px; max-width: 780px; }
+  .ysfigs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+  .ysfigs > div { display: grid; gap: 2px; padding: 12px 16px; border-right: 1px solid var(--line); }
+  .ysfigs > div:last-child { border-right: 0; }
+  .ysfigs small { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .ysfigs strong { font-size: 22px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .ysfigs span { font-size: 12.5px; color: var(--ink-3); }
+  .ysfigs .ysdiff { background: var(--diff-soft); }
+  .ysfigs .ysdiff strong { color: var(--diff); }
+  .ysbox p { margin: 0; font-size: 14px; color: var(--ink-2); }
   .ysbox p b { color: var(--ink); }
   .ysbox p i { font-style: normal; color: var(--ink-3); }
-  .ysline { padding: 4px 22px 34px; }
-  .ystrack { position: relative; height: 10px; background: var(--surface); border-radius: 999px; }
-  .ystrack > i { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; }
-  .ystrack > i.ok { background: var(--idle); }
-  .ystrack > i.late { background: var(--crit); border-radius: 0 999px 999px 0; }
-  .ysmk { position: absolute; top: 18px; transform: translateX(-50%); font-size: 12.5px; font-weight: 700; color: var(--ink); text-align: center; line-height: 1.15; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .ysmk::before { content: ""; position: absolute; left: 50%; top: -10px; width: 2px; height: 8px; margin-left: -1px; background: var(--ink-3); }
-  .ysmk em, .ysmk i { display: block; font-style: normal; font-weight: 500; font-size: 11px; color: var(--ink-3); }
-  .ysmk.now { color: var(--crit); }
-  .ysbox.ok .ysmk.now { color: var(--good-text); }
   .ystable { border-collapse: collapse; width: 100%; max-width: 780px; font-size: 14px; }
   .ystable th, .ystable td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
   .ystable thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
   .ystable tbody th { font-weight: 500; color: var(--ink); }
   .ystable td { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .ystable td i { font-size: 12.5px; color: var(--ink-3); }
+  .ystable tr.ysgrp th { padding: 16px 12px 6px; border-bottom: 0; font-size: 13px; font-weight: 700; color: var(--ph-ink); }
+  .ystable tr.ysgrp th span { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--ink-3); }
+  .ystable tr.ph0 { --ph-ink: var(--ph-mkt-ink); }
+  .ystable tr.ph1 { --ph-ink: var(--ph-cty-ink); }
   .ystable tr.whole > * { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; color: var(--ink); }
   .ysnote { margin: 10px 0 0; font-size: 12px; color: var(--ink-3); }
   .ysempty { background: var(--surface-2); border-radius: 8px; padding: 12px 16px; font-size: 13.5px; color: var(--ink-2); }
   .ysempty b { color: var(--ink); }
-  @media (max-width: 760px) {
-    .ysbox { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 560px) {
+    .ysfigs { grid-template-columns: minmax(0, 1fr); }
+    .ysfigs > div { border-right: 0; border-bottom: 1px solid var(--line); }
   }
-  /* On a phone the Result column sat past the scroll edge, so the one thing
-     the table is for was out of sight. Step and Result only; the label
-     already says how late. */
+  /* On a phone the Variance column sat past the scroll edge, so the one thing
+     the table is for was out of sight. Step and Variance only. */
   @media (max-width: 560px) {
     .ystable th:nth-child(2), .ystable td:nth-child(2), .ystable th:nth-child(3), .ystable td:nth-child(3) { display: none; }
     .ystable .ysp { display: inline-block; white-space: normal; border-radius: 10px; }
@@ -1829,7 +1850,16 @@
   // Years only, read with the page's own rules (stageYear): see
   // docs/jackson/yardstick.md for the choices behind each.
   const YARD = DATA.yardstick || null;
-  const lateText = n => yrsText(n) + " en retard";
+  // How far a step ran past its expected time, as a plain signed number.
+  const varianceText = n => "+" + yrsText(n);
+  // Market Access is every stage before country registration; Country /
+  // Population Access starts at it (stage 4) and runs to in-country delivery.
+  const ACCESS_SPLIT = 4;
+  const PHASES = [
+    { name: "Accès au marché", note: "Développé, approuvé et recommandé" },
+    { name: "Accès des pays et des populations", note: "Les personnes dans les pays peuvent y accéder" }
+  ];
+  const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
   // "Desde 2018"), so the word is matched in all three page languages.
   function sinceYearOf(st) {
@@ -1874,10 +1904,10 @@
     if (s.kind === "idle") return { t: LABEL.idle, tone: "none" };
     if (s.kind === "nodate") return { t: "Terminé, aucune date enregistrée", tone: "none" };
     if (s.kind === "nostart") return { t: "En cours, sans date de début", tone: "none" };
-    if (s.late > 0) return { t: lateText(s.late), tone: "bad", going: s.kind === "going" };
-    return s.kind === "going" ? { t: "Tout se déroule comme prévu jusqu’à présent", tone: "good" } : { t: "À l’heure", tone: "good" };
+    if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
+    return s.kind === "going" ? { t: "Tout se déroule comme prévu jusqu’à présent", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· toujours en cours</i>` : ""}</span>`;
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· jusqu’à présent</i>` : ""}</span>`;
   const yardNote = () => `<p class="ysnote">Délais prévus : l’enregistrement du pays suit un calendrier publié. Les autres étapes reposent sur des estimations de LAUNCH, qui restent à confirmer.</p>`;
   // under "Sur le chemin" in the medicines table
   function yardBadge(p) {
@@ -1886,44 +1916,48 @@
     if (!y.approved) return `<small class="ysb-none">Pas encore approuvé</small>`;
     return yardPill(yardResult(y.whole), true);
   }
-  // the box at the top of an open row
+  // the box at the top of an open row: expected, actual so far and the variance
   function yardBox(p) {
     const y = yardstick(p);
     if (!y || !y.approved) return "";
-    const due = y.start + y.whole.exp;
-    const end = Math.max(ASOF_YEAR, due), span = Math.max(end - y.start, 1);
-    const x = yr => ((yr - y.start) / span * 100).toFixed(2);
-    const late = y.whole.late;
-    const big = late > 0 ? lateText(late) : y.whole.kind === "going" ? "Tout se déroule comme prévu jusqu’à présent" : "À l’heure";
-    // Positions are built on one line each: the translation collector skips a
-    // one-line template that holds markup, but would offer a bare "left:…%" from
-    // a multi-line one for translation, and a translated style breaks the page.
-    const at = (yr, cls) => `<span class="ysmk${cls || ""}" style="left:${x(yr)}%">${yr}`;
-    const bar = `<i class="ok" style="width:${x(Math.min(due, ASOF_YEAR))}%"></i>` +
-      (ASOF_YEAR > due ? `<i class="late" style="left:${x(due)}%;width:${(x(ASOF_YEAR) - x(due)).toFixed(2)}%"></i>` : "");
-    const marks = `${at(y.start)}<em>commencer</em></span>${at(due)}<em>attendu</em></span>` +
-      (ASOF_YEAR !== due ? `${at(ASOF_YEAR, " now")}<i>aujourd’hui</i></span>` : "");
-    return `<div class="ysbox${late > 0 ? "" : " ok"}">
-      <div class="ysbox-t">
-        <div class="ysbox-big">${esc(big)}</div>
-        <p>Son utilisation courante est prévue d’ici ${due}, ${y.whole.exp} ans après sa première étape importante en ${y.start}.${y.whole.kind === "going" && ASOF_YEAR >= due ? ` Toujours pas d’usage courant dans ${ASOF_YEAR}.` : ""}</p>
-        ${y.biggest ? `<p>Le plus gros retard : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(lateText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· toujours en cours</i>` : ""}</p>` : ""}
+    const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
+    return `<div class="ysbox">
+      <div class="ysfigs">
+        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>usage courant d’ici ${due}</span></div>
+        <div><small>${going ? "Réel à ce jour" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore en usage courant" : ""}</span></div>
+        <div class="ysdiff"><small>Écart</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "jusqu’à présent" : "par rapport à l’attendu"}</span></div>
       </div>
-      <div class="ysline" aria-hidden="true"><div class="ystrack">${bar}${marks}</div></div>
+      <p>Son utilisation courante est prévue d’ici ${due}, ${y.whole.exp} ans après sa première étape importante en ${y.start}.${y.whole.kind === "going" && ASOF_YEAR >= due ? ` Toujours pas d’usage courant dans ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Plus grand écart : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· jusqu’à présent</i>` : ""}</p>` : ""}
     </div>`;
   }
-  // the "Temps passé" view
+  // the "Time taken" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
     if (!y.approved) return `<div class="ysempty"><b>Pas encore approuvé.</b> Nous commençons la comparaison une fois que le médicament a reçu une autorisation de mise sur le marché datée.</div>`;
-    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>jusqu’à présent</i>` : "");
+    const actual = s => s.took == null ? "n.d." : yrsText(s.took) + (s.kind === "going" ? ` <i>jusqu’à présent</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
+    const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4">${esc(PHASES[ph].name)}<span>${esc(PHASES[ph].note)}</span></th></tr>`;
+    let ph = -1;
+    const body = y.steps.map(s => {
+      const g = phaseOf(s.i);
+      const h = g !== ph ? head(g) : "";
+      ph = g;
+      return h + row(esc(STAGES[s.i]), s);
+    }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Étape</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Résultat</th></tr></thead>
-      <tbody>${y.steps.map(s => row(esc(STAGES[s.i]), s)).join("")}</tbody>
+      <thead><tr><th scope="col">Étape</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Écart</th></tr></thead>
+      <tbody>${body}</tbody>
       <tfoot>${row("Tout le voyage", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
+  }
+  // under each step icon in the pathway strip: its expected time
+  function pathExpHtml(i) {
+    if (!YARD) return "";
+    const e = YARD.expected[i];
+    if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>Attendu : <b>${yrsText(e.years)}</b></span>`;
+    return i === 0 ? `<span class="pathexp none">Avant le chrono</span>` : i === 1 ? `<span class="pathexp none">Le chrono démarre ici</span>` : "";
   }
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
@@ -2041,17 +2075,24 @@
     // for screen readers, and still shown per-medicine in the gate panel this
     // button opens — just not as a second always-visible line in the strip.
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}" aria-label="Étape ${stepNo(i)}, ${esc(s)}. Indique ce qui se passe ici et où se trouve chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
-      `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span></button>`;
+      data-gate="${i}"${stacked ? "" : ` data-phase="${phaseOf(i)}"`} aria-label="Étape ${stepNo(i)}, ${esc(s)}${YARD && YARD.expected[i] ? ", attendu : " + yrsText(YARD.expected[i].years) : ""}. Indique ce qui se passe ici et où se trouve chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
+      `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
-  pathway.innerHTML = STAGE_COLUMNS.map(col => {
+  function stepColumnHtml(col) {
     if (col.stages.length === 1) return pathNodeHtml(col.stages[0], false);
     const names = col.stages.map(i => STAGES[i]).join(" et ");
-    return `<span class="pathgroup" role="group" aria-label="${esc(names)} — approbations indépendantes sans ordre défini entre elles">` +
+    return `<span class="pathgroup" data-phase="${phaseOf(col.stages[0])}" role="group" aria-label="${esc(names)} — approbations indépendantes sans ordre défini entre elles">` +
       col.stages.map(i => pathNodeHtml(i, true)).join(`<span class="pathgroup-note" aria-hidden="true"></span>`) +
       `</span>`;
-  }).join(`<span class="patharrow" aria-hidden="true">→</span>`);
+  }
+  // Two tinted panels sit behind the strip (see positionPhases); the arrow
+  // between the two groups gets extra room so it sits in the gap.
+  pathway.innerHTML = PHASES.map((ph, k) => `<div class="phasebg ph${k}" data-p="${k}" aria-hidden="true"><b>${esc(ph.name)}</b><span>${esc(ph.note)}</span></div>`).join("") +
+    STAGE_COLUMNS.map((col, c) => {
+      const gap = c > 0 && phaseOf(col.stages[0]) !== phaseOf(STAGE_COLUMNS[c - 1].stages[0]);
+      return (c > 0 ? `<span class="patharrow${gap ? " phasegap" : ""}" aria-hidden="true">→</span>` : "") + stepColumnHtml(col);
+    }).join("");
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
@@ -2338,15 +2379,30 @@
   // bottom to shrink past where it naturally sits.
   function centerPathwayCard() {
     const G = 8;    // the base gap either side would get if there were no lift at all
+    const TITLE = 40;   // room above the icons for the two group titles
     const lift = parseFloat(getComputedStyle(pathway).getPropertyValue("--pg-lift")) || 0;
-    pathway.style.paddingTop = (G + lift).toFixed(2) + "px";
+    pathway.style.paddingTop = (G + TITLE + lift).toFixed(2) + "px";
     pathway.style.paddingBottom = G.toFixed(2) + "px";
   }
 
   // align first, then draw, then even out the card around whatever that
   // produced — each pass depends on the one before it
+  // The two tinted panels behind the strip: each spans the columns of its
+  // group (first to last step, arrows between included) and scrolls with them.
+  function positionPhases() {
+    const pr = pathway.getBoundingClientRect();
+    if (!pr.width) return;
+    const PAD = 8;
+    pathway.querySelectorAll(".phasebg").forEach(bg => {
+      const els = pathway.querySelectorAll(`[data-phase="${bg.dataset.p}"]`);
+      if (!els.length) return;
+      const a = els[0].getBoundingClientRect(), b = els[els.length - 1].getBoundingClientRect();
+      bg.style.left = (a.left - pr.left + pathway.scrollLeft - PAD).toFixed(1) + "px";
+      bg.style.width = (b.right - a.left + 2 * PAD).toFixed(1) + "px";
+    });
+  }
   function layoutJourney() {
-    alignStageForks(); drawStageForks(); alignPathGroup(); centerPathwayCard();
+    alignStageForks(); drawStageForks(); alignPathGroup(); centerPathwayCard(); positionPhases();
   }
 
   layoutJourney();
