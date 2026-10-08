@@ -1198,6 +1198,18 @@
   .subrow input:focus { outline: 0; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .subrow input[aria-invalid="true"] { border-color: var(--crit); }
   @media (max-width: 760px) { .subrow input, .det-q, .res-pick select { font-size: 16px; } }
+  /* Four fields since 8 Oct 2026 (the owner's list: first and last name and the
+     address, required; the organisation, optional), each with a visible label:
+     the names side by side, the rest full width. Stacked on the narrowest
+     phones. */
+  .subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 12px; }
+  .subfield { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .subfield-wide { grid-column: 1 / -1; }
+  .subfield label { font-size: 12px; font-weight: 650; color: var(--ink-2); }
+  .sub-opt { font-weight: 400; color: var(--ink-3); }
+  .subform { display: block; }
+  .subform input { width: 100%; max-width: none; flex: none; }
+  @media (max-width: 380px) { .subgrid { grid-template-columns: 1fr; } }
   .sub-go {
     background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px;
     padding: 8px 15px; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
@@ -1344,14 +1356,30 @@
           <h2 id="sub-title" tabindex="-1">Subscribe for updates</h2>
           <p>Get an email when the data on this page is updated — new milestones, corrected figures
             and newly verified country registrations.</p>
-          <form class="subrow" id="sub-form" novalidate>
-            <label class="visually-hidden" for="sub-email">Your email address</label>
-            <input id="sub-email" name="email" type="email" autocomplete="email"
-                   placeholder="you@organisation.org" aria-describedby="sub-msg">
+          <form class="subrow subform" id="sub-form" novalidate>
+            <div class="subgrid">
+              <div class="subfield">
+                <label for="sub-first">First name</label>
+                <input id="sub-first" name="firstName" type="text" autocomplete="given-name" maxlength="100" aria-describedby="sub-msg">
+              </div>
+              <div class="subfield">
+                <label for="sub-last">Last name</label>
+                <input id="sub-last" name="lastName" type="text" autocomplete="family-name" maxlength="100" aria-describedby="sub-msg">
+              </div>
+              <div class="subfield subfield-wide">
+                <label for="sub-email">Email address</label>
+                <input id="sub-email" name="email" type="email" autocomplete="email" maxlength="254"
+                       placeholder="you@organisation.org" aria-describedby="sub-msg">
+              </div>
+              <div class="subfield subfield-wide">
+                <label for="sub-org">Organisation <span class="sub-opt">(optional)</span></label>
+                <input id="sub-org" name="organisation" type="text" autocomplete="organization" maxlength="200">
+              </div>
+            </div>
             <button class="sub-go" type="submit">Notify me</button>
           </form>
           <p class="sub-msg" id="sub-msg" role="status" hidden></p>
-          <p class="sub-note">Your address goes to the LAUNCH team and is used only to email you about updates to this page. Every email has an unsubscribe link.</p>
+          <p class="sub-note">Your details go to the LAUNCH team and are used only to email you about updates to this page. Every email has an unsubscribe link.</p>
         </section>
       </div>
     </div>
@@ -3590,11 +3618,11 @@
   // with the server's answer ({ status: "subscribed" } or "already") and
   // throws on anything else; the panel below renders the pending, success and
   // failure states around it.
-  async function subscribeEmail(email) {
+  async function subscribeEmail(details) {
     const res = await fetch("https://launch-development-test.vercel.app/api/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, page: location.href })
+      body: JSON.stringify({ ...details, page: location.href })
     });
     const body = await res.json().catch(() => null);
     if (!res.ok || !body || !body.ok) throw new Error("HTTP " + res.status);
@@ -3604,7 +3632,10 @@
   const subOpen = document.getElementById("sub-open");
   const subWrap = document.getElementById("subwrap");
   const subForm = document.getElementById("sub-form");
+  const subFirst = document.getElementById("sub-first");
+  const subLast = document.getElementById("sub-last");
   const subMail = document.getElementById("sub-email");
+  const subOrg = document.getElementById("sub-org");
   const subMsg  = document.getElementById("sub-msg");
   const subGo   = subForm.querySelector(".sub-go");
   let subBusy = false;
@@ -3613,11 +3644,11 @@
     subWrap.hidden = false;
     subOpen.setAttribute("aria-expanded", "true");
     document.documentElement.classList.add("sub-open");
-    // With a keyboard, straight into the address field. On a touch screen,
-    // the panel's title: focusing the field there opens the phone keyboard at
-    // once, unasked, and iOS scrolls the page under it.
+    // With a keyboard, straight into the first field. On a touch screen, the
+    // panel's title: focusing a field there opens the phone keyboard at once,
+    // unasked, and iOS scrolls the page under it.
     const touch = window.matchMedia && matchMedia("(pointer: coarse)").matches;
-    (touch ? document.getElementById("sub-title") : subMail).focus();
+    (touch ? document.getElementById("sub-title") : subFirst).focus();
   }
   function closeSub(opts) {
     opts = opts || {};
@@ -3657,14 +3688,24 @@
   subForm.addEventListener("submit", async e => {
     e.preventDefault();
     if (subBusy) return;
-    const email = subMail.value.trim();
+    const first = subFirst.value.trim(), last = subLast.value.trim();
+    const email = subMail.value.trim(), org = subOrg.value.trim();
+    [subFirst, subLast, subMail].forEach(i => i.removeAttribute("aria-invalid"));
+    // The same checks the server runs: both names, and an address that looks
+    // like one. The organisation is optional.
+    const missing = [subFirst, subLast].filter(i => !i.value.trim());
+    if (missing.length) {
+      missing.forEach(i => i.setAttribute("aria-invalid", "true"));
+      subSay("Please enter your first and last name.", "bad");
+      missing[0].focus();
+      return;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       subMail.setAttribute("aria-invalid", "true");
       subSay("Please enter an email address we can reach you at.", "bad");
       subMail.focus();
       return;
     }
-    subMail.removeAttribute("aria-invalid");
     subBusy = true;
     subGo.disabled = true;
     subGo.textContent = "Sending…";
@@ -3674,7 +3715,7 @@
     // (status "already", 8 Oct 2026) rather than thanked again. On failure the
     // address stays in the field, so trying again is one click.
     try {
-      const result = await subscribeEmail(email);
+      const result = await subscribeEmail({ firstName: first, lastName: last, email, organisation: org });
       if (result && result.status === "already") {
         subSay("This email address is already subscribed. You'll continue to receive an email whenever the dashboard's data is updated.", "ok");
       } else {
