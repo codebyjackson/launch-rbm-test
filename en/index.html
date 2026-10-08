@@ -1530,7 +1530,7 @@
   // every reader-facing text in dashboard.json is { en, fr, pt }: keep this page's
   var isText = function (v) {
     return v && typeof v === "object" && !Array.isArray(v) && typeof v.en === "string" &&
-      Object.keys(v).length === 3 && "fr" in v && "pt" in v;
+      "fr" in v && "pt" in v;
   };
   var pick = function (v) {
     if (Array.isArray(v)) return v.map(pick);
