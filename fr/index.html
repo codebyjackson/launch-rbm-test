@@ -254,8 +254,8 @@
   .product.future { opacity: .78; }
   .product.l1-open > .srow { background: var(--surface-2); }
   .srow {
-    display: grid; column-gap: 14px; align-items: center; padding: 10px 18px; min-height: 58px;
-    grid-template-columns: 34px minmax(150px, 1.5fr) 230px minmax(170px, 1.2fr) 100px minmax(150px, 1.4fr);
+    display: grid; column-gap: 30px; align-items: center; padding: 10px 18px; min-height: 58px;
+    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) 100px minmax(150px, 1.2fr);
   }
   .srow.hd {
     min-height: 34px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
@@ -300,15 +300,17 @@
   .mp .md { width: 9px; height: 9px; }
   .mini .ln { width: 6px; height: 2px; background: var(--line); flex: none; }
   .light { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; white-space: nowrap; }
-  .light i { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  /* the status shows the same symbol as the Journey (dot, ring, diamond, dashed ring) */
+  .light i { width: 12px; height: 12px; border-radius: 50%; flex: none; box-sizing: border-box; }
   .light.done { color: var(--good-text); } .light.done i { background: var(--good); }
-  .light.prog { color: var(--warn-text); } .light.prog i { background: var(--warn); }
-  .light.late { color: var(--crit); } .light.late i { background: var(--crit); }
-  .light.idle { color: var(--ink-3); } .light.idle i { background: var(--idle-soft); box-shadow: inset 0 0 0 1.5px var(--idle); }
+  .light.prog { color: var(--warn-text); } .light.prog i { background: var(--warn-soft); border: 2px solid var(--warn); }
+  .light.late { color: var(--crit); } .light.late i { background: var(--crit); border-radius: 2px; transform: rotate(45deg) scale(.8); }
+  .light.idle { color: var(--ink-3); } .light.idle i { background: var(--idle-soft); border: 1.5px dashed var(--idle); }
   .srow .cell { font-size: 13.5px; }
   /* Current stage and Status share one cell (8 Oct 2026): the stage in bold, its status under
      it. "Delayed" carries an i that explains it (hover, focus or tap). */
-  .srow .c-stage { display: grid; gap: 2px; min-width: 0; padding-left: 28px; }
+  .srow .c-stage { display: grid; gap: 2px; min-width: 0; }
+  .c-stage .note { font-size: 12px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
   .c-stage .stg { font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
   .srow.hd .c-stage { display: block; }
   .info { display: inline-grid; place-items: center; flex: none; width: 15px; height: 15px; margin-left: 1px; padding: 0; border: 1.5px solid currentColor; border-radius: 50%;
@@ -416,16 +418,15 @@
   .more .ch { transition: transform .15s ease; }
   .more[aria-expanded="true"] .ch { transform: rotate(180deg); }
   @media (max-width: 1040px) {
-    .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr) minmax(120px, 1fr); }
+    .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr) minmax(120px, 1fr); }
     .srow .c-path { display: none; }
   }
   @media (max-width: 680px) {
-    .srow { grid-template-columns: 34px 1fr auto; row-gap: 6px; }
+    .srow { column-gap: 14px; grid-template-columns: 34px 1fr auto; row-gap: 6px; }
     .srow.hd { display: none; }
     .srow .c-mini { grid-column: 2 / -1; grid-row: 2; margin-block: 0; }
     .srow .c-bar { grid-column: 2 / -1; grid-row: 3; }
-    .c-stage .stg { display: none; }
-    .srow .c-stage { padding-left: 0; }
+    .c-stage .stg, .c-stage .note { display: none; }
     .l1 { padding-inline: 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -2089,7 +2090,7 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
-    `<span class="c-stage">Stade actuel</span><span class="c-path">Sur le chemin</span><span class="c-bar">Barrière principale</span></div>`);
+    `<span class="c-stage">Stade actuel · Statut</span><span class="c-path">Sur le chemin</span><span class="c-bar">Barrière principale</span></div>`);
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
   (function () {
@@ -2183,7 +2184,7 @@
             aria-label="Afficher le parcours pour ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
-          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span></span>
+          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell num c-path">${onPathwayShort(p)}${yardBadge(p)}</span>
           <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucune barrière enregistrée"}</div>
         </div>
