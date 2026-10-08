@@ -945,6 +945,13 @@
   .flt-list { margin-bottom: 14px; }
   .flt-list:last-of-type { margin-bottom: 0; }
   .flt-list h4 { margin: 0 0 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  /* The count column's heading (8 Oct 2026), on the first group's line and
+     right-aligned over the numbers; one heading serves both groups. In the
+     250px desktop rail it wraps to two lines ("No. of / countries"), and the
+     group's own name never does; on a phone it fits on one. */
+  .flt-cols { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 3px; }
+  .flt-cols h4 { margin: 0; flex: none; }
+  .flt-colh { min-width: 0; text-align: right; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
   .flt-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px; margin: 0 -4px; border-radius: 5px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; }
   .flt-row:hover { background: var(--surface); }
   .flt-row:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -1407,7 +1414,7 @@
             <button type="button" class="flt-reset" id="flt-reset">Reiniciar</button>
           </div>
           <div class="flt-list" role="group" aria-label="Etapa de acesso">
-            <h4>Etapa de acesso</h4>
+            <div class="flt-cols"><h4>Etapa de acesso</h4><span class="flt-colh">Número de países</span></div>
             <div id="flt-stage"></div>
           </div>
           <div class="flt-list" id="mft-controls" role="group" aria-label="MFT política" hidden>
@@ -1508,10 +1515,14 @@
   "use strict";
   var DATA_URL = "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json", LANG = "pt", SCHEMA = 1;
   var MSG = {"fail":"<b>Não foi possível carregar os dados do painel.</b> Tente novamente dentro de alguns minutos.","schema":"<b>Este painel está a ser atualizado.</b> Volte a consultá-lo em breve."};
-  // every reader-facing text in dashboard.json is { en, fr, pt }: keep this page's
+  // every reader-facing text in dashboard.json is { en, fr, pt, ... }, one key
+  // per language the file lists in ds.locales: keep this page's, or the English
+  // where the file does not have this language yet. No fixed number of keys,
+  // so a language added to the file never breaks a page built before it.
+  var LOCS = ["en"];
   var isText = function (v) {
     return v && typeof v === "object" && !Array.isArray(v) && typeof v.en === "string" &&
-      Object.keys(v).length === 3 && "fr" in v && "pt" in v;
+      Object.keys(v).every(function (k) { return LOCS.indexOf(k) >= 0; });
   };
   var pick = function (v) {
     if (Array.isArray(v)) return v.map(pick);
@@ -1535,6 +1546,7 @@
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (ds) {
         if (ds.schema_version !== SCHEMA) { notice(MSG.schema); return; }
+        LOCS = Array.isArray(ds.locales) && ds.locales.indexOf("en") >= 0 ? ds.locales : ["en", "fr", "pt"];
         var d = pick(ds.data);
         window.LAUNCH_DATA = {
           meta: { lastUpdated: ds.last_updated, dataStatus: ds.data_status, host: d.host },
@@ -1616,8 +1628,9 @@
     ? `<img class="${cls} whoemb" src="../assets/who-emblem.svg" alt="" width="205" height="181">`
     : (JI ? JI.use(i, cls) : "");
 
-  // Dates follow the page's language: the French and Portuguese copies carry
-  // <html lang="fr"> / "pt-PT", so their dates read "2 oct. 2026" / "2/10/2026".
+  // Dates follow the page's language: the French, Portuguese and Spanish copies
+  // carry <html lang="fr"> / "pt-PT" / "es", so their dates read "2 oct. 2026" /
+  // "2/10/2026" / "2 oct 2026".
   // English keeps en-GB ("2 Oct 2026").
   const PAGE_LANG = document.documentElement.lang || "en";
   const DATE_LANG = /^en\b/i.test(PAGE_LANG) ? "en-GB" : PAGE_LANG;
@@ -1831,9 +1844,10 @@
   const YARD = DATA.yardstick || null;
   const lateText = n => yrsText(n) + " tarde";
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
-  // "Desde 2018"), so the word is matched in all three page languages.
+  // "Desde 2018" in Portuguese and Spanish), so the word is matched in every
+  // page language. Spanish may also read "Desde el 2018".
   function sinceYearOf(st) {
-    const m = String(st && st.date || "").match(/(?:Since|Depuis|Desde)\s+((?:19|20)\d{2})/i);
+    const m = String(st && st.date || "").match(/(?:Since|Depuis|Desde)\s+(?:el\s+)?((?:19|20)\d{2})/i);
     return m ? +m[1] : null;
   }
   function yardstick(p) {

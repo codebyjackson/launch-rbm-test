@@ -4,6 +4,7 @@
 · [English](https://codebyjackson.github.io/launch-rbm-test/en/)
 · [Français](https://codebyjackson.github.io/launch-rbm-test/fr/)
 · [Português](https://codebyjackson.github.io/launch-rbm-test/pt/)
+· [Español](https://codebyjackson.github.io/launch-rbm-test/es/)
 · [iframe test in a mock RBM platform](https://codebyjackson.github.io/launch-rbm-test/iframe-test.html)
 · data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
 
@@ -13,12 +14,15 @@ each fetches the approved dataset at runtime, so a data update never needs a
 redeploy here.
 
 ```
-en/index.html   fr/index.html   pt/index.html     the three pages
-{en,fr,pt}/data/world-map.js, world-map-geo.js     country shapes, with that language's
+en/index.html   fr/index.html   pt/index.html   es/index.html     the four pages
+{en,fr,pt,es}/data/world-map.js, world-map-geo.js  country shapes, with that language's
                                                     country names (static)
-{en,fr,pt}/assets/report-issue.js                   the feedback form, in that language
+{en,fr,pt,es}/assets/report-issue.js                the feedback form, in that language
 assets/                                             icons and logos (shared)
 ```
+
+The platform has /en, /fr and /pt routes today. The Spanish page (es/) is
+ready for a /es route if one is added; until then it can be linked directly.
 
 Data: `https://codebyjackson.github.io/launch-data-test/v1/dashboard.json`
 (contract and change rules: the README of that repository). Map rendering uses
@@ -66,6 +70,8 @@ inside the frame.
 <iframe src="https://<host>/fr/" title="Tableau de bord LAUNCH" class="w-full flex-1 min-h-0" style="border:0;min-height:480px" loading="lazy"></iframe>
 <!-- /pt -->
 <iframe src="https://<host>/pt/" title="Painel LAUNCH" class="w-full flex-1 min-h-0" style="border:0;min-height:480px" loading="lazy"></iframe>
+<!-- /es, if the platform adds it -->
+<iframe src="https://<host>/es/" title="Panel LAUNCH" class="w-full flex-1 min-h-0" style="border:0;min-height:480px" loading="lazy"></iframe>
 ```
 
 **Do not give the frame a fixed height taller than the screen** (for example
