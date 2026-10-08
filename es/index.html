@@ -1273,10 +1273,16 @@
     .hd-title span.proto-badge { white-space: normal; margin-left: 0; margin-top: 6px; display: block; width: fit-content; }
     .attrib img { width: 72px; }
     .attrib .ptxt { display: none; }
-    .hd-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+    /* The button row is full width by rule, not by stretching (8 Oct 2026).
+       On an iPhone it came out as wide as its own words: 289 of 362px in
+       English (two 140px buttons), 354 in Portuguese, while French and
+       Spanish, whose words are wider than the screen, looked right. nowrap
+       makes .hd-bar one line, which is always the container's width; the
+       100% does not depend on the browser stretching the row at all. */
+    .hd-bar { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 8px; }
     .hd-text { flex: none; }
-    .hd-bar .hdr-actions { margin-left: 0; }
-    .hd-bar .hdr-actions button { flex: 1 1 0; justify-content: center; padding: 10px 6px; gap: 5px; }
+    .hd-bar .hdr-actions { margin-left: 0; width: 100%; }
+    .hd-bar .hdr-actions button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 10px 6px; gap: 5px; }
     .updates li { flex-wrap: wrap; gap: 4px 12px; }
     .hdr-actions button { padding: 10px 15px; }
     .pathway { padding: 12px 12px; }
