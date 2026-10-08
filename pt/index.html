@@ -3581,8 +3581,9 @@
   // One seam: subscribeEmail() posts to api/subscribe.js, which puts the
   // address on the list straight away and emails it a welcome with an
   // unsubscribe link (single opt-in since 6 Oct 2026). It resolves on success
-  // and throws on anything else; the panel below renders the pending, success
-  // and failure states around it.
+  // with the server's answer ({ status: "subscribed" } or "already") and
+  // throws on anything else; the panel below renders the pending, success and
+  // failure states around it.
   async function subscribeEmail(email) {
     const res = await fetch("https://launch-development-test.vercel.app/api/subscribe", {
       method: "POST",
@@ -3663,11 +3664,16 @@
     subGo.textContent = "Enviando…";
     subSay("");
     // Says what actually happened: success shows only once the server has the
-    // address on the list, and is true whether it was new or already there.
-    // On failure the address stays in the field, so trying again is one click.
+    // address on the list, and an address that was already there is told so
+    // (status "already", 8 Oct 2026) rather than thanked again. On failure the
+    // address stays in the field, so trying again is one click.
     try {
-      await subscribeEmail(email);
-      subSay("Obrigado — está na lista.", "ok");
+      const result = await subscribeEmail(email);
+      if (result && result.status === "already") {
+        subSay("Este endereço de e-mail já está registado. Continuará a receber um e-mail sempre que os dados do painel forem atualizados.", "ok");
+      } else {
+        subSay("Obrigado por se inscrever. Receberá um e-mail sempre que os dados do painel forem atualizados.", "ok");
+      }
       subForm.reset();
     } catch (err) {
       subSay("Lamentamos, não foi possível adicioná-lo(a) agora. Por favor, tente novamente dentro de momentos.", "bad");
