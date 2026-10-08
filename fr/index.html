@@ -810,15 +810,6 @@
   .updates .ud { flex: none; width: 84px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
   .updates .up { flex: none; width: 84px; font-weight: 650; color: var(--ink); }
 
-  /* Changes list: one readable sentence per entry, with the date and the
-     medicine it concerns as a quiet line above it rather than as two narrow
-     columns the sentence has to squeeze past. */
-  .updates .updates-intro { margin: 10px 0 2px; font-size: 13px; color: var(--ink-2); }
-  .updates.changes li { display: block; padding: 11px 0; }
-  .updates.changes .um { font-size: 11.5px; color: var(--ink-3); letter-spacing: .02em; margin-bottom: 2px; }
-  .updates.changes .um .up-name { color: var(--ink-2); font-weight: 650; letter-spacing: 0; }
-  .updates.changes .ut { font-size: 14px; line-height: 1.55; color: var(--ink); }
-
   footer { margin-top: 18px; font-size: 14px; color: var(--ink-2); line-height: 1.65; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 16px; }
   /* Sources: one named source per line, each opening its own official site.
      Two columns on a wide screen so the list stays a footnote rather than
@@ -834,8 +825,10 @@
   .srclist li > span { display: block; }
   .srclist li > span a { font-weight: 400; }
   /* Footer: the disclaimer leads, in a tinted panel with an accent edge, so it is not overlooked. */
-  .ft-sec h3 { margin: 0 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3);
-               border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+  /* Section cards under the map (8 Oct 2026): About the data, Sources and Definitions
+     share one card and one plain bold title; the disclaimer keeps its blue notice. */
+  .ft-sec { background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); padding: 14px 20px 16px; }
+  .ft-sec h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
   .ft-sec p { margin: 0; }
   .disclaimer { background: var(--accent-soft); border: 1px solid var(--line); border-left: 5px solid var(--accent);
                 border-radius: 10px; padding: 14px 18px; color: var(--ink); scroll-margin-top: 16px; }
@@ -855,21 +848,16 @@
           box-shadow: var(--shadow); padding: 0 20px; }
   .srcs[open] { padding-bottom: 8px; }
   .srcs summary { cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 48px; padding-block: 12px;
-                  list-style: none; font-size: 13px; font-weight: 700; color: var(--ink-2); letter-spacing: .04em; text-transform: uppercase; }
+                  list-style: none; }
+  .srcs-title { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: 0; text-transform: none; }
   .srcs summary::-webkit-details-marker { display: none; }
   .srcs[open] summary { border-bottom: 1px solid var(--line); }
   .srcs summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-  .srcs-chev { flex: none; color: var(--accent); transition: transform .18s ease; }
+  .srcs-chev { flex: none; margin-left: auto; color: var(--accent); transition: transform .18s ease; }
   .srcs[open] .srcs-chev { transform: rotate(180deg); }
   @media (prefers-reduced-motion: reduce) { .srcs-chev { transition: none; } }
-  .srcn { font-size: 11px; font-weight: 700; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
-          padding: 0 7px; margin-left: 6px; letter-spacing: 0; text-transform: none; vertical-align: 1px; }
-  .srcs summary .srcn { margin-left: 0; }
   /* .srcs scopes it so it outranks `.ft-sec p { margin: 0 }`, which had silently zeroed this margin. */
   .srcs .srcs-intro { margin: 14px 0 12px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
-  /* A dropdown on every screen: the script opens it on desktop and leaves it closed on a phone.
-     Both labels are in the markup, so both are translated; the open state picks one. */
-  .srcs[open] .srcs-show, .srcs:not([open]) .srcs-hide { display: none; }
   @media print { .srcs summary { display: none; } }
   .ext { margin-left: 3px; font-size: .85em; opacity: .75; }
   @media (max-width: 720px) { .srclist { columns: 1; } }
@@ -1480,17 +1468,6 @@
     </div>
   </section>
 
-  <details class="updates changes" id="updates" hidden>
-    <summary>Dernières mises à jour du tableau de bord</summary>
-    <p class="updates-intro">Voici, en langage clair, les huit modifications les plus récentes apportées aux informations de cette page.</p>
-    <ul id="updates-list"></ul>
-  </details>
-
-  <details class="updates glossary-panel" id="glossary" hidden>
-    <summary>Définitions</summary>
-    <ul id="glossary-list"></ul>
-  </details>
-
   <footer>
     <div class="disclaimer" id="disclaimer" tabindex="-1">
       <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>Clause de non-responsabilité</h3>
@@ -1502,10 +1479,8 @@
       <h3>À propos des données</h3>
       <p>Le tableau de bord LAUNCH affiche uniquement les informations publiques. Les détails spécifiques à un produit apparaissent uniquement lorsque le fabricant a confirmé par écrit qu'ils pouvaient être partagés. L'état d'avancement de l'évaluation par les autorités sanitaires n'est généralement pas public ; les étapes réglementaires ne changent donc que lorsqu'un organisme de réglementation ou le fabricant annonce une décision. Les données d'approvisionnement concernent uniquement les canaux publics. Survolez une étape pour afficher les détails de son statut ; sélectionnez un médicament pour ouvrir son profil complet.</p>
     </section>
-    <section class="ft-sec">
-      <h3>Sources</h3>
     <details class="srcs" id="sources">
-      <summary><span class="srcs-show">Afficher les sources</span><span class="srcs-hide">Masquer les sources</span><span class="srcn" id="srcn"></span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <summary><span class="srcs-title">Sources</span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
       <p class="srcs-intro">Tout le contenu de cette page est traçable jusqu'à l'une des sources publiques ci-dessous.</p>
     <!-- Both lists are rendered from data/sources.js (see renderSources below).
          Do not hand-edit entries back into this markup: the registry is also
@@ -1517,7 +1492,10 @@
       <ul class="srclist" id="srcdocs"></ul>
     </div>
     </details>
-    </section>
+    <details class="updates srcs glossary-panel" id="glossary" hidden>
+      <summary><span class="srcs-title">Définitions</span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <ul id="glossary-list"></ul>
+    </details>
   </footer>
 </div>
 
@@ -1668,26 +1646,6 @@
   // The status suffix that used to follow the date ("Draft — figures not yet
   // verified" etc.) was removed by request, 30 Sep 2026: the row shows the date
   // only. The draft caveat still lives in the banner and the Prototype pill.
-
-  // changelog
-  const updates = DATA.changelog || [];
-  if (updates.length) {
-    // Panel un-hide disabled by request, 10 Sep 2026 — "Recent dashboard
-    // updates" should not show on the dashboard for now. Everything else
-    // here still runs (the list still gets built, DATA.changelog is
-    // untouched) so restoring it later is this one line, not a rebuild.
-    // document.getElementById("updates").hidden = false;
-    // Prefer the plain-language retelling where the data carries one; the
-    // technical `change` line stays the record of what actually happened and
-    // is what the RSS feed and the other editions still publish.
-    document.getElementById("updates-list").innerHTML = updates.slice(0, 8).map(u =>
-      `<li>
-         <div class="um">${esc(readableDate(u.date))} · <span class="up-name">${
-           u.product === "All" ? "L’ensemble du tableau de bord" : esc(u.product)}</span></div>
-         <div class="ut">${esc(u.plain || u.change)}</div>
-       </li>`
-    ).join("");
-  }
 
   // Every render below filters to real, non-placeholder products — this is
   // that filter, used throughout the rest of the script.
@@ -3793,20 +3751,12 @@
 
   // print: open every panel so the printout is complete
   window.addEventListener("beforeprint", () => {
-    document.getElementById("updates").open = true;
     document.getElementById("glossary").open = true;
     document.getElementById("sources").open = true;
   });
-  // Sources: a dropdown that starts open on desktop and closed on a phone; crossing the 720 px width
-  // resets it to that screen's default. The count is set from the list so it cannot drift; #sources
-  // opens it on any screen.
+  // Sources: a dropdown that starts closed, like Definitions; #sources opens it on any screen.
   (function () {
     const box = document.getElementById("sources");
-    document.getElementById("srcn").textContent = box.querySelectorAll(".srclist > li").length;
-    const wide = matchMedia("(min-width: 721px)");
-    const sync = () => { box.open = wide.matches; };
-    sync();
-    wide.addEventListener("change", sync);
     const openIfAsked = () => { if (location.hash === "#sources") { box.open = true; box.scrollIntoView(); } };
     openIfAsked();
     window.addEventListener("hashchange", openIfAsked);
