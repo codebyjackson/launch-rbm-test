@@ -940,34 +940,17 @@
   /* One colour per MFT policy GROUP, the same for every medicine. Chosen to stay
      separable under protan, deutan and tritan vision and to hold at least 3.8:1
      against the white halo drawn under every border. Not the status colours. */
-  :root { --mfg-tested: #D55E00; --mfg-untested: #A8457E; --mfg-vivax: #7A4B00; --mfg-severe: #10272F; }
+  :root { --mfg-tested: #D55E00; --mfg-vivax: #7A4B00; }
   .mft-hint { font-size: 11.5px; line-height: 1.45; color: var(--ink-3); margin: 6px 0 0; }
   /* Both legends share one key style: swatch (square for a fill, line for a
      border) + label + count. The MFT keys used to be pills; they are not now. */
-  .map-legend, .mft-legend { align-items: center; }
-  .map-legend .key, .mft-legend .key { display: inline-flex; align-items: center; gap: 6px; }
-  .map-legend .key[hidden], .mft-legend .key[hidden] { display: none; }
-  .lg-t { font-weight: 700; color: var(--ink); }
-  .mft-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; font-size: 12.5px; color: var(--ink-2); }
-  .mft-legend .ct { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--ink); }
   /* Filters (left rail): access-stage and MFT policy-group checklists. */
   .flt-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
   .flt-head h3 { margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
   .flt-act { font-size: 11px; font-weight: 700; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; letter-spacing: 0; }
   .flt-reset { font: inherit; font-size: 12px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
   .flt-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .flt-list { margin-bottom: 14px; }
-  .flt-list:last-of-type { margin-bottom: 0; }
-  .flt-list h4 { margin: 0 0 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
-  .flt-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px; margin: 0 -4px; border-radius: 5px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; }
-  .flt-row:hover { background: var(--surface); }
-  .flt-row:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .flt-row input { margin: 0; accent-color: var(--accent); flex: none; }
-  .flt-row .flt-l { min-width: 0; }
-  .flt-row .ct { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
-  .flt-parent { font-weight: 700; color: var(--ink); }
-  .flt-sub { padding-left: 20px; }
-  .flt-row.off { opacity: .45; cursor: default; }
+  .flt-list { margin-bottom: 0; }
   .mft-lsw { flex: none; display: block; }
   .mft-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; flex: none; }
   .mft-panel { margin-bottom: 10px; }
@@ -975,11 +958,11 @@
   .mft-panel .mft-h { margin: 0 0 10px; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .05em;
                       color: var(--ink-2); display: flex; align-items: center; gap: 8px; }
   .mft-panel .mft-h .mft-dot { width: 12px; height: 12px; }
-  .mft-donut { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; align-items: center; margin: 2px 0 14px; }
+  .mft-donut { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 10px; margin: 2px 0 14px; }
   .mft-donut svg { display: block; }
   .mft-donut .ct-n { font-size: 26px; font-weight: 750; fill: var(--ink); font-variant-numeric: tabular-nums; }
   .mft-donut .ct-l { font-size: 10.5px; fill: var(--ink-3); }
-  .mft-donut .rows { display: grid; gap: 7px; font-size: 13px; color: var(--ink-2); }
+  .mft-donut .rows { display: grid; gap: 7px; font-size: 13px; color: var(--ink-2); width: 100%; min-width: 0; }
   .mft-donut .rows div { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
   .mft-donut .rows b { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 750; }
   .mft-donut .rows .off, .mft-donut .rows .off b { color: var(--ink-3); font-weight: 400; }
@@ -1118,6 +1101,32 @@
   /* The reading rule under a legend (the MFT policy rule uses it). */
   .res-rule { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 4px 0 0; }
   .res-rule a { color: var(--accent); }
+  /* Filter and legend tables (8 Oct 2026): each list is a small table with the
+     number of countries as its own column under a heading, and the gray-200
+     head from the RBM guidelines. The legends are fixed: they always show. */
+  .ftab { width: 100%; border-collapse: collapse; font-size: 12.5px; color: var(--ink-2); }
+  .ftab th, .ftab td { padding: 5px 8px; text-align: left; vertical-align: middle; }
+  .ftab thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
+  .ftab thead th:first-child { border-radius: 4px 0 0 4px; }
+  .ftab thead th:last-child { border-radius: 0 4px 4px 0; }
+  .ftab .n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .ftab thead th.n { font-weight: 700; color: #4B5563; white-space: normal; line-height: 1.2; width: 74px; }
+  .ftab .n .zero, .ftab .n.zero { color: var(--ink-3); font-weight: 400; }
+  .ftab tbody td { border-bottom: 1px solid var(--line); }
+  .ftab tbody tr:last-child td { border-bottom: 0; }
+  .ftab tr.gr th { padding: 12px 8px 4px; font-size: 12px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); }
+  .ftab tr.dim { opacity: .45; }
+  .ftab td.cbx { width: 22px; padding-right: 0; }
+  .ftab td.sw { width: 36px; padding-right: 0; }
+  .ftab td small { display: block; font-size: 11.5px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
+  .ftab input { margin: 0; accent-color: var(--accent); }
+  .ftab label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .ftab tr:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ftab .flt-all { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .ftab .mft-sq { vertical-align: middle; }
+  .legend-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px 24px; align-items: start; margin-top: 10px; }
+  .map-legend, .mft-legend { display: block; margin: 0; font-size: 12.5px; color: var(--ink-2); }
+  .mft-legend[hidden] { display: none; }
   .map-hint { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 6px 0 0; }
   /* header actions — Download CSV + Subscribe -------------------------------
      These used to be the last two flex items of a legend strip, alongside three
@@ -1420,14 +1429,7 @@
             <h3>Filtros <span class="flt-act" id="flt-act" hidden></span></h3>
             <button type="button" class="flt-reset" id="flt-reset">Reiniciar</button>
           </div>
-          <div class="flt-list" role="group" aria-label="Etapa de acesso">
-            <h4>Etapa de acesso</h4>
-            <div id="flt-stage"></div>
-          </div>
-          <div class="flt-list" id="mft-controls" role="group" aria-label="MFT política" hidden>
-            <h4>MFT política</h4>
-            <div id="flt-mft"></div>
-          </div>
+          <div class="flt-list" id="flt-table" role="group" aria-label="Mostrar no mapa"></div>
           <p class="mft-hint" id="mft-hint"></p>
         </div>
         <div class="dock-section" id="loc-controls">
@@ -1443,15 +1445,20 @@
         <div class="map-legend-bar">
           <div class="dock-section">
             <h3>Legenda</h3>
+            <div class="legend-tables">
             <div class="map-legend">
-              <span class="lg-t">Etapa de acesso</span>
-              <span class="key" data-lvl="registered"><span class="mapsw registered"></span> Registrado <span class="ct" id="mapct-registered">–</span></span>
-              <span class="key" data-lvl="guidelines"><span class="mapsw guidelines"></span> Em orientações nacionais <span class="ct" id="mapct-guidelines">–</span></span>
-              <span class="key" data-lvl="mft"><span class="mapsw mft"></span> Em planos MFT <span class="ct" id="mapct-mft">–</span></span>
-              <span class="key" data-lvl="none"><span class="mapsw none"></span> Sem dados <span class="ct" id="mapct-none">–</span></span>
+              <table class="ftab">
+                <thead><tr><th colspan="2">Etapa de acesso</th><th class="n">N.º de países</th></tr></thead>
+                <tbody>
+                  <tr data-lvl="registered"><td class="sw"><span class="mapsw registered"></span></td><td>Registrado</td><td class="n"><span class="ct" id="mapct-registered">–</span></td></tr>
+                  <tr data-lvl="guidelines"><td class="sw"><span class="mapsw guidelines"></span></td><td>Em orientações nacionais</td><td class="n"><span class="ct" id="mapct-guidelines">–</span></td></tr>
+                  <tr data-lvl="mft"><td class="sw"><span class="mapsw mft"></span></td><td>Em planos MFT</td><td class="n"><span class="ct" id="mapct-mft">–</span></td></tr>
+                  <tr data-lvl="none"><td class="sw"><span class="mapsw none"></span></td><td>Sem dados</td><td class="n"><span class="ct" id="mapct-none">–</span></td></tr>
+                </tbody>
+              </table>
             </div>
             <div class="mft-legend" id="mft-legend"></div>
-            <p class="res-rule" id="mft-rule" hidden></p>
+            </div>
             <p class="res-rule" id="mapnote-who">Os resultados de resistência aos medicamentos não são apresentados neste mapa. Para os explorar, consulte o <a href="https://apps.who.int/malaria/maps/threats/" target="_blank" rel="noopener noreferrer">Mapa de Ameaças da Malária da OMS<span class="ext" aria-hidden="true">↗</span></a>.</p>
           </div>
         </div>
@@ -2855,11 +2862,11 @@
     readMapColors();
     // Location filter state (Region / Country selects further down).
     let locRegion = "", locCountry = "";
-    // MFT policy has no switch: it is on whenever a policy group is ticked (see
-    // the Filters block further down). Opens with the first-line group ticked.
+    // Country recommended use has no switch: it is on whenever a group is ticked (see
+    // the Filters block further down). Opens with both groups ticked.
     const TP = window.LAUNCH_TREATMENT_POLICY;
     let mftOn = false, mftSel = null, mftProductId = null, mftByIso = {};
-    const mftTick = new Set(["tested"]);
+    const mftTick = new Set(["tested", "vivax"]);
     const stageOff = new Set();   // access stages unticked in Filters
 
     const map = new maplibregl.Map({
@@ -2875,10 +2882,8 @@
           // set per product by mftPaint(). Halo first so the line reads on any fill.
           { id: "mft-halo", type: "line", source: "world", layout: { visibility: "none" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": "#FFFFFF", "line-width": 4.2, "line-opacity": .9 } },
           { id: "mft-g-tested", type: "line", source: "world", layout: { visibility: "none" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-tested") || "#D55E00", "line-width": 2.8 } },
-          { id: "mft-g-untested", type: "line", source: "world", layout: { visibility: "none" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-untested") || "#A8457E", "line-width": 2.4, "line-dasharray": [2, 1.4] } },
           // Round caps + near-zero dashes draw dots; round caps eat half a line-width off each gap, hence the wider gaps.
           { id: "mft-g-vivax", type: "line", source: "world", layout: { visibility: "none", "line-cap": "round" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-vivax") || "#7A4B00", "line-width": 2.6, "line-dasharray": [0.01, 3] } },
-          { id: "mft-g-severe", type: "line", source: "world", layout: { visibility: "none", "line-cap": "round" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-severe") || "#10272F", "line-width": 2.4, "line-dasharray": [2.2, 2.6, 0.01, 2.6] } },
           // The country whose page is open: white halo + ink outline, above everything.
           { id: "sel-halo", type: "line", source: "world", filter: ["==", ["get", "iso3"], ""], paint: { "line-color": "#FFFFFF", "line-width": 6, "line-opacity": .95 } },
           { id: "sel-line", type: "line", source: "world", filter: ["==", ["get", "iso3"], ""], paint: { "line-color": "#10272F", "line-width": 3 } },
@@ -3174,29 +3179,24 @@
     // until the reader turns it on — with the switch off, nothing below
     // touches the map, the legend or the Detail panel.
     //
-    // One group per country, by precedence: first-line for tested
-    // P. falciparum beats untested-only, which beats P. vivax-only, which
-    // beats severe malaria / pregnancy-only. Only the first draws a solid
-    // border; the smaller patient groups draw a dashed one.
+    // Country recommended use: two groups, both drawn as borders. A country can
+    // be in both (it lists the medicine for P. falciparum and for P. vivax); each
+    // group then draws and counts it on its own. Countries that list it only for
+    // untested P. falciparum, severe malaria or pregnancy are not shown.
     const MFT_GROUPS = [
-      { id: "tested",   label: "Primeira linha, testado P. falciparum",  short: "Testado P. falciparum", t: 1 },
-      { id: "untested", label: "Apenas não testado P. falciparum",       short: "Somente não testado", t: .55 },
-      { id: "vivax",    label: "Apenas P. vivax",                     short: "P. vivax apenas", t: .33 },
-      { id: "severe",   label: "Apenas casos graves de malária ou gravidez.",  short: "Apenas casos graves", t: .2 },
+      { id: "tested", short: "Recomendado para P. falciparum", label: "Recomendado para a malária por Plasmodium falciparum", why: "Primeira linha para casos confirmados (testados) na política nacional" },
+      { id: "vivax",  short: "Recomendado para P. vivax", label: "Recomendado para a malária por Plasmodium vivax", why: "Listado para tratamento na política nacional" },
     ];
-    // What the card lists, one chip per group as WHO reports them.
-    const MFT_CHIPS = [["tested", "Testado P. falciparum"], ["untested", "Não testado P. falciparum"],
-                       ["vivax", "P. vivax"], ["severe", "Malária grave"], ["pregnancy", "Gravidez"]];
+    const MFT_TXT = { show: "Mostrar no mapa", count: "N.º de países", use: "Uso recomendado pelos países", group: "Grupo", stage: "Etapa de acesso", tickHint: "Marque um grupo para desenhar os seus contornos no mapa.", tickLeft: "Marque um grupo à esquerda para ver os seus países.",
+                      noPolicy: (n) => `Nenhuma política nacional de tratamento lista ${n} ainda.`, notListed: "não listado" };
     // Colour and line pattern belong to the POLICY GROUP, never to the medicine:
     // every medicine draws first-line as the same solid vermilion line, and so on.
     // The four colours stay separable under protan, deutan and tritan vision, and
     // the patterns (solid, dashed, dotted, dash-dot) do not rely on colour at all.
     const mftGroupColor = (gid) => TOKEN("--mfg-" + gid) || TOKEN("--accent");
     const MFT_PATTERN = {
-      tested:   { w: 3,   da: "" },
-      untested: { w: 2.6, da: "7 4" },
-      vivax:    { w: 2.8, da: "1.5 4.5", cap: "round" },
-      severe:   { w: 2.6, da: "9 3 1.5 3", cap: "round" },
+      tested: { w: 3,   da: "" },
+      vivax:  { w: 2.8, da: "1.5 4.5", cap: "round" },
     };
     // A short sample of a group's border, for the legend and the filter list.
     function mftLineSvg(gid, len) {
@@ -3210,16 +3210,9 @@
       const c = TP && TP.countries[iso3];
       return (c && c.products && c.products[mftProductId]) || [];
     }
-    // "none" = this product is not in the country's policy; otherwise the one
-    // group the country is drawn and counted under.
-    function mftCat(iso3) {
-      const g = mftGroups(iso3);
-      if (!g.length) return "none";
-      if (g.includes("tested")) return "tested";
-      if (g.includes("untested")) return "untested";
-      if (g.includes("vivax")) return "vivax";
-      return "severe";   // severe and/or pregnancy
-    }
+    // Which of the two groups list this product for the country.
+    const mftHas = (iso3, gid) => mftGroups(iso3).includes(gid);
+    const mftCatsOf = (iso3) => MFT_GROUPS.filter((g) => mftHas(iso3, g.id));
     // The countries the counts and borders cover: drawn on this map (the same
     // 94 the access legend counts) and inside the Location filter.
     function mftScope() {
@@ -3235,15 +3228,13 @@
     const mftProductName = () => (tracked.find((p) => p.id === mftProductId) || {}).name || "";
     const mftSource = () => {
       const m = (TP && TP.meta) || {};
-      return `Fonte: OMS ${esc(m.edition || "World Malaria Report")}, Anexo 4B — política nacional a partir de ${esc(String(m.policyYear || ""))}` +
-        `${m.dataAsOf ? ", dados até " + esc(prettyDate(m.dataAsOf)) : ""}. Borders show what policy lists, not what is in use.`;
+      return `Fonte: OMS ${esc(m.edition || "World Malaria Report")}, anexo 4B (política de ${esc(String(m.policyYear || ""))}).`;
     };
 
     function mftTipLine(iso3) {
       if (!TP) return "";
-      const cat = mftCat(iso3);
-      const g = MFT_GROUPS.find((x) => x.id === cat);
-      return `<div class="tprod">Política MFT · ${esc(mftProductName())}: ${g ? esc(g.label) : "não listado"}</div>`;
+      const gs = mftCatsOf(iso3);
+      return `<div class="tprod">${esc(MFT_TXT.use)} · ${esc(mftProductName())}: ${gs.length ? esc(gs.map((g) => g.short).join(", ")) : esc(MFT_TXT.notListed)}</div>`;
     }
 
     function mftPaint() {
@@ -3251,20 +3242,20 @@
       const vis = mftOn ? "visible" : "none";
       MFT_LAYERS.forEach((id) => map.setLayoutProperty(id, "visibility", vis));
       if (!mftOn) return;
-      const by = { tested: [], untested: [], vivax: [], severe: [] };
+      const by = { tested: [], vivax: [] };
       mftScope().forEach((iso3) => {
-        const cat = mftCat(iso3);
-        if (cat === "none" || !mftTick.has(cat) || stageOff.has(mftStage(iso3).lvl)) return;
-        by[cat].push(iso3);
+        if (stageOff.has(mftStage(iso3).lvl)) return;
+        MFT_GROUPS.forEach((g) => { if (mftTick.has(g.id) && mftHas(iso3, g.id)) by[g.id].push(iso3); });
       });
       const f = (list) => ["in", ["get", "iso3"], ["literal", list]];
-      map.setFilter("mft-halo", f([].concat(by.tested, by.untested, by.vivax, by.severe)));
+      map.setFilter("mft-halo", f([].concat(by.tested, by.vivax)));
       MFT_GROUPS.forEach((g) => map.setFilter("mft-g-" + g.id, f(by[g.id])));
     }
 
+    // Countries per group, for the countries in scope (the Location filter).
     function mftCounts() {
-      const byCat = { tested: [], untested: [], vivax: [], severe: [] };
-      mftScope().forEach((iso3) => { const c = mftCat(iso3); if (c !== "none") byCat[c].push(iso3); });
+      const byCat = { tested: [], vivax: [] };
+      mftScope().forEach((iso3) => MFT_GROUPS.forEach((g) => { if (mftHas(iso3, g.id)) byCat[g.id].push(iso3); }));
       Object.values(byCat).forEach((l) => l.sort((a, b) => mftName(a).localeCompare(mftName(b))));
       return byCat;
     }
@@ -3276,26 +3267,24 @@
         .map((iso3) => TP.countries[iso3].name);
     }
 
+    // The legend is fixed: it always shows both groups, whatever is ticked. The
+    // access-stage rows stay too; an unticked row is dimmed, not hidden.
     function mftLegend(byCat) {
-      const el = document.getElementById("mft-legend"), rule = document.getElementById("mft-rule");
-      // access-stage keys: only what is ticked
-      document.querySelectorAll(".map-legend .key[data-lvl]").forEach((k) => { k.hidden = stageOff.has(k.dataset.lvl); });
+      const el = document.getElementById("mft-legend");
+      document.querySelectorAll(".map-legend tr[data-lvl]").forEach((k) => { k.classList.toggle("dim", stageOff.has(k.dataset.lvl)); });
       el.hidden = !TP;
-      rule.hidden = true;
       if (!TP) return;
       const av = mftAvail();
-      const head = `<span class="lg-t">Política MFT · ${esc(mftProductName())}</span>`;
-      if (!Object.keys(av).length) { el.innerHTML = head + `<span>Não consta de nenhuma política nacional presente neste mapa.</span>`; return; }
-      if (!mftOn) { el.innerHTML = head + `<span>Desativado. Marque um grupo de políticas à esquerda para desenhar os seus limites.</span>`; return; }
-      el.innerHTML = head + MFT_GROUPS.filter((g) => av[g.id] && mftTick.has(g.id)).map((g) =>
-        `<span class="key">${mftLineSvg(g.id)}` +
-        `${esc(g.label)} <span class="ct">${byCat[g.id].length}</span></span>`).join("");
-      rule.hidden = false;
-      rule.textContent = "Borda = o medicamento selecionado está na política nacional de tratamento do país (linha contínua: primeira linha para os doentes testados P. falciparum; cada grupo mais pequeno de doentes tem a sua própria cor e padrão de linha). Preenchimento = etapa de acesso, sem alterações.";
+      el.innerHTML = `<table class="ftab"><thead><tr><th colspan="2">${esc(MFT_TXT.use)} · ${esc(mftProductName())}</th><th class="n">${esc(MFT_TXT.count)}</th></tr></thead><tbody>` +
+        MFT_GROUPS.map((g) => `<tr class="${mftTick.has(g.id) && av[g.id] ? "" : "dim"}"><td class="sw">${mftLineSvg(g.id)}</td><td>${esc(g.label)}<small>${esc(g.why)}</small></td><td class="n">${byCat[g.id].length}</td></tr>`).join("") +
+        `</tbody></table>`;
     }
 
     function mftDonut(byCat, col, on) {
       const total = MFT_GROUPS.reduce((s, g) => s + (on.has(g.id) ? byCat[g.id].length : 0), 0);
+      const union = new Set();
+      MFT_GROUPS.forEach((g) => { if (on.has(g.id)) byCat[g.id].forEach((i) => union.add(i)); });
+      const n = union.size;
       const R = 40, W = 16, C = 2 * Math.PI * R;
       const segs = MFT_GROUPS.filter((g) => byCat[g.id].length && on.has(g.id));
       const gap = segs.length > 1 ? 2 : 0;   // thin white seam between groups
@@ -3307,14 +3296,15 @@
         off += len;
         return s;
       }).join("");
-      // All four groups, zeros included, so the key reads the same for every medicine.
-      const rows = MFT_GROUPS.map((g) =>
-        `<div${on.has(g.id) ? "" : ' class="off"'}><span class="mft-sq" style="background:${mftGroupColor(g.id)}"></span><span>${esc(g.short)}</span><b>${byCat[g.id].length}</b></div>`).join("");
+      // Both groups, zeros included, with the number of countries as a column.
+      const rows = `<table class="ftab"><thead><tr><th colspan="2">${esc(MFT_TXT.group)}</th><th class="n">${esc(MFT_TXT.count)}</th></tr></thead><tbody>` +
+        MFT_GROUPS.map((g) => `<tr class="${on.has(g.id) ? "" : "dim"}"><td class="sw"><span class="mft-sq" style="background:${mftGroupColor(g.id)}"></span></td><td>${esc(g.short)}</td><td class="n">${byCat[g.id].length}</td></tr>`).join("") +
+        `</tbody></table>`;
       return `<div class="mft-donut"><svg viewBox="0 0 112 112" width="112" height="112" role="img" ` +
-        `aria-label="${total} ${total === 1 ? "país por grupo de doentes" : "países por grupo de doentes"}">` +
+        `aria-label="${n} ${n === 1 ? "país por grupo de doentes" : "países por grupo de doentes"}">` +
         `<circle cx="56" cy="56" r="${R}" fill="none" stroke="#EDF1F3" stroke-width="${W}"></circle>${arcs}` +
-        `<text class="ct-n" x="56" y="58" text-anchor="middle">${total}</text>` +
-        `<text class="ct-l" x="56" y="74" text-anchor="middle">${total === 1 ? "country" : "countries"}</text></svg>` +
+        `<text class="ct-n" x="56" y="58" text-anchor="middle">${n}</text>` +
+        `<text class="ct-l" x="56" y="74" text-anchor="middle">${n === 1 ? "country" : "countries"}</text></svg>` +
         `<div class="rows">${rows}</div></div>`;
     }
 
@@ -3356,9 +3346,9 @@
       h += `<div class="det-card"><h4>Mistura de palco de acesso · ${esc(p.name)}</h4>` +
         `<div class="det-big">${withStage}<span class="det-small"> dos ${n} países têm uma fase de acesso</span></div>` +
         stageBar(c, n) + `</div>`;
-      h += `<div class="det-card"><h4>MFT grupos de políticas · ${esc(p.name)}</h4>`;
+      h += `<div class="det-card"><h4>${esc(MFT_TXT.use)} · ${esc(p.name)}</h4>`;
       if (!Object.keys(mftAvail()).length) h += `<p class="det-empty">Nenhuma política nacional de tratamento lista ${esc(p.name)} ainda.</p>`;
-      else if (!mftOn) h += `<p class="det-empty">Assinale um grupo de políticas MFT à esquerda para ver os países a ele associados.</p>`;
+      else if (!mftOn) h += `<p class="det-empty">${esc(MFT_TXT.tickLeft)}</p>`;
       else {
         const und = mftUndrawn();
         h += mftDonut(byCat, null, mftTick) +
@@ -3374,9 +3364,9 @@
         .sort((a, b) => mftName(a).localeCompare(mftName(b)));
       if (!list.length) return `<p class="det-empty" style="padding:8px 10px">Sem correspondência de país.</p>`;
       return list.map((i) => {
-        const st = mftStage(i), cat = mftCat(i);
+        const st = mftStage(i), gs = mftCatsOf(i);
         return `<button type="button" class="det-row" data-iso3="${esc(i)}"><span class="nm">${esc(mftName(i))}</span>` +
-          `${hasCountries() ? stagePill(st.lvl) : ""}${cat !== "none" ? mftLineSvg(cat, 22) : ""}<span class="go">Ver ></span></button>`;
+          `${hasCountries() ? stagePill(st.lvl) : ""}${gs.map((g) => mftLineSvg(g.id, 22)).join("")}<span class="go">Ver ></span></button>`;
       }).join("");
     }
     function detCountries() {
@@ -3392,8 +3382,8 @@
         `<div class="det-nav"><button type="button" data-step="-1" aria-label="País anterior">‹</button>` +
         `<button type="button" data-step="1" aria-label="Próximo país">›</button></div></div>`;
       if (!hasCountries()) return h + `<div class="det-card"><h4>${esc(p.name)}</h4><p class="det-empty">${esc(p.name)} é uma versão pré-lançamento, pelo que ainda não tem estatuto ou política de país.</p></div>`;
-      const st = mftStage(iso3), lv = STAGE_KEYS.indexOf(st.lvl) + 1, cat = mftCat(iso3), g = mftGroups(iso3);
-      const gm = MFT_GROUPS.find((x) => x.id === cat), tp = TP && TP.countries[iso3];
+      const st = mftStage(iso3), lv = STAGE_KEYS.indexOf(st.lvl) + 1, g = mftGroups(iso3);
+      const gl = mftCatsOf(iso3), tp = TP && TP.countries[iso3];
       const parts = tp && tp.parts ? Object.keys(tp.parts).map((k) => {
         const pg = (tp.parts[k].products || {})[mftProductId] || [];
         return `${esc(k)}: ${pg.length ? "listas " : "não lista "}${esc(p.name)}.`;
@@ -3401,10 +3391,10 @@
       h += `<div class="det-card"><div class="det-top"><b>${esc(p.name)}</b>${stagePill(st.lvl)}</div>` +
         `<div class="det-trk">${[1, 2, 3].map((n) => `<i${lv >= n ? ` style="background:${stageVar(STAGE_KEYS[lv - 1])}"` : ""}></i>`).join("")}</div>` +
         `<div class="det-trkl"><span>Registrado</span><span>Em orientações</span><span>Em planos MFT</span></div>` +
-        (gm ? `<div class="det-gline">${mftLineSvg(gm.id)}<b>${esc(gm.short)}</b><span class="det-small">na política da OMS ${esc(String((TP && TP.meta && TP.meta.policyYear) || ""))}</span></div>`
+        (gl.length ? gl.map((gm) => `<div class="det-gline">${mftLineSvg(gm.id)}<b>${esc(gm.short)}</b><span class="det-small">na política da OMS ${esc(String((TP && TP.meta && TP.meta.policyYear) || ""))}</span></div>`).join("")
             : `<div class="det-gline det-small">Não consta da política nacional de tratamento.</div>`) +
-        (g.length ? `<div class="mft-grp">Listado para</div><div class="mft-chips">` +
-          MFT_CHIPS.map(([k, lab]) => `<span class="mft-pchip${g.includes(k) ? " yes" : ""}">${g.includes(k) ? "✓ " : ""}${esc(lab)}</span>`).join("") + `</div>` : "") +
+        (gl.length ? `<div class="mft-grp">${esc(MFT_TXT.use)}</div><div class="mft-chips">` +
+          MFT_GROUPS.map((x) => `<span class="mft-pchip${g.includes(x.id) ? " yes" : ""}">${g.includes(x.id) ? "✓ " : ""}${esc(x.short)}</span>`).join("") + `</div>` : "") +
         (parts ? `<p class="mft-note">${parts}</p>` : "") + `<p class="mft-note">${mftSource()}</p></div>`;
       // position within its WHO region
       const reg = WHO_REGION[iso3], ids = Object.keys(M.countries).filter((x) => WHO_REGION[x] === reg);
@@ -3491,7 +3481,7 @@
     // Groups the selected medicine has any drawn country in, ignoring Location.
     function mftAvail() {
       const a = {};
-      Object.keys(M.countries).forEach((iso3) => { const c = mftCat(iso3); if (c !== "none") a[c] = (a[c] || 0) + 1; });
+      Object.keys(M.countries).forEach((iso3) => { MFT_GROUPS.forEach((g) => { if (mftHas(iso3, g.id)) a[g.id] = (a[g.id] || 0) + 1; }); });
       return a;
     }
     function mftSync() {
@@ -3506,58 +3496,55 @@
         ["==", ["feature-state", "level"], "mft"], o("mft"),
         o("none")]);
     }
+    // One table: a select-all box and the "number of countries" heading in the
+    // head, then the access stages and the two recommended-use groups as rows.
     function renderFilters(byCat) {
-      const sc = stageCounts();
-      document.getElementById("flt-stage").innerHTML = STAGE_ROWS.map(([k, l]) =>
-        `<label class="flt-row"><input type="checkbox" data-stage="${k}"${stageOff.has(k) ? "" : " checked"}>` +
-        `<span class="mapsw ${k}"></span><span class="flt-l">${l}</span><span class="ct">${sc[k]}</span></label>`).join("");
-      const av = mftAvail();
-      const box = document.getElementById("mft-controls");
-      box.hidden = !TP;
-      let nPolicy = 0;
+      const sc = stageCounts(), av = mftAvail();
+      const mine = TP ? MFT_GROUPS.filter((g) => av[g.id]) : [];
+      const nOn = STAGE_ROWS.filter(([k]) => !stageOff.has(k)).length + mine.filter((g) => mftTick.has(g.id)).length;
+      const nAll = STAGE_ROWS.length + mine.length;
+      let h = `<table class="ftab"><thead><tr><th colspan="2"><label class="flt-all"><input type="checkbox" id="flt-all"${nOn === nAll ? " checked" : ""}> ${esc(MFT_TXT.show)}</label></th><th class="n">${esc(MFT_TXT.count)}</th></tr></thead><tbody>` +
+        `<tr class="gr"><th colspan="3">${esc(MFT_TXT.stage)}</th></tr>` +
+        STAGE_ROWS.map(([k, l]) =>
+          `<tr><td class="cbx"><input type="checkbox" id="flt-s-${k}" data-stage="${k}"${stageOff.has(k) ? "" : " checked"}></td>` +
+          `<td><label for="flt-s-${k}"><span class="mapsw ${k}"></span>${l}</label></td><td class="n${sc[k] ? "" : " zero"}">${sc[k]}</td></tr>`).join("");
       if (TP) {
-        const nAvail = MFT_GROUPS.filter((g) => av[g.id]).length;
-        nPolicy = MFT_GROUPS.filter((g) => av[g.id] && mftTick.has(g.id)).length;
-        document.getElementById("flt-mft").innerHTML =
-          `<label class="flt-row flt-parent"><input type="checkbox" id="flt-mft-all"${nPolicy && nPolicy === nAvail ? " checked" : ""}${nAvail ? "" : " disabled"}>` +
-          `<span class="flt-l">Mostrar política MFT</span></label>` +
-          MFT_GROUPS.map((g) => {
-            const off = !av[g.id];
-            return `<label class="flt-row flt-sub${off ? " off" : ""}"><input type="checkbox" data-group="${g.id}"` +
-              `${mftTick.has(g.id) && !off ? " checked" : ""}${off ? " disabled" : ""}>` +
-              `${mftLineSvg(g.id)}` +
-              `<span class="flt-l">${esc(g.short)}</span><span class="ct">${byCat[g.id].length}</span></label>`;
-          }).join("");
-        const all = document.getElementById("flt-mft-all");
-        if (all) all.indeterminate = nPolicy > 0 && nPolicy < nAvail;
+        h += `<tr class="gr"><th colspan="3">${esc(MFT_TXT.use)}</th></tr>` + MFT_GROUPS.map((g) => {
+          const off = !av[g.id];
+          return `<tr class="${off ? "dim" : ""}"><td class="cbx"><input type="checkbox" id="flt-g-${g.id}" data-group="${g.id}"` +
+            `${mftTick.has(g.id) && !off ? " checked" : ""}${off ? " disabled" : ""}></td>` +
+            `<td><label for="flt-g-${g.id}">${mftLineSvg(g.id)}${esc(g.short)}</label></td><td class="n${byCat[g.id].length ? "" : " zero"}">${byCat[g.id].length}</td></tr>`;
+        }).join("");
       }
-      const nAct = stageOff.size + nPolicy;
+      document.getElementById("flt-table").innerHTML = h + `</tbody></table>`;
+      const all = document.getElementById("flt-all");
+      if (all) all.indeterminate = nOn > 0 && nOn < nAll;
+      const nAct = stageOff.size + mine.filter((g) => !mftTick.has(g.id)).length;
       const badge = document.getElementById("flt-act");
       badge.hidden = !nAct;
       badge.textContent = nAct;
       const hint = document.getElementById("mft-hint");
       hint.hidden = !TP || (mftOn && Object.keys(av).length > 0);
-      hint.textContent = !Object.keys(av).length
-        ? `Nenhuma política nacional de tratamento lista ${mftProductName()} ainda.`
-        : "Marque um grupo de políticas para desenhar as suas fronteiras no mapa. Nada assinalado significa que a política MFT está desativada.";
+      hint.textContent = !Object.keys(av).length ? MFT_TXT.noPolicy(mftProductName()) : MFT_TXT.tickHint;
     }
     document.getElementById("filters").addEventListener("change", (e) => {
       const t = e.target;
       if (t.dataset.stage) { if (t.checked) stageOff.delete(t.dataset.stage); else stageOff.add(t.dataset.stage); }
       else if (t.dataset.group) { if (t.checked) mftTick.add(t.dataset.group); else mftTick.delete(t.dataset.group); }
-      else if (t.id === "flt-mft-all") {
+      else if (t.id === "flt-all") {
         const av = mftAvail();
-        MFT_GROUPS.forEach((g) => { if (av[g.id]) { if (t.checked) mftTick.add(g.id); else mftTick.delete(g.id); } });
+        if (t.checked) { stageOff.clear(); MFT_GROUPS.forEach((g) => { if (av[g.id]) mftTick.add(g.id); }); }
+        else { STAGE_ROWS.forEach(([k]) => stageOff.add(k)); MFT_GROUPS.forEach((g) => mftTick.delete(g.id)); }
       } else return;
       hideTip();
       mftRender();
       const key = t.dataset.stage ? `[data-stage="${t.dataset.stage}"]`
-        : t.dataset.group ? `[data-group="${t.dataset.group}"]` : "#flt-mft-all";
+        : t.dataset.group ? `[data-group="${t.dataset.group}"]` : "#flt-all";
       const again = document.querySelector("#filters " + key);
       if (again) again.focus();
     });
     document.getElementById("flt-reset").addEventListener("click", () => {
-      stageOff.clear(); mftTick.clear(); mftSel = null;
+      stageOff.clear(); MFT_GROUPS.forEach((g) => mftTick.add(g.id)); mftSel = null;
       hideTip();
       mftRender();
     });
@@ -3565,7 +3552,7 @@
     function mftRender() {
       if (!mftProductId) return;
       mftSync();
-      const byCat = TP ? mftCounts() : { tested: [], untested: [], vivax: [], severe: [] };
+      const byCat = TP ? mftCounts() : { tested: [], vivax: [] };
       paintStageFilter();
       paintSelection();
       if (TP) mftPaint();
