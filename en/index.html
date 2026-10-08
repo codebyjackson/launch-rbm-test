@@ -255,7 +255,7 @@
   .product.l1-open > .srow { background: var(--surface-2); }
   .srow {
     display: grid; column-gap: 14px; align-items: center; padding: 10px 18px; min-height: 58px;
-    grid-template-columns: 34px minmax(150px, 1.5fr) 190px minmax(110px, 1fr) 118px 100px minmax(150px, 1.4fr);
+    grid-template-columns: 34px minmax(150px, 1.5fr) 190px minmax(170px, 1.2fr) 100px minmax(150px, 1.4fr);
   }
   .srow.hd {
     min-height: 34px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
@@ -303,6 +303,15 @@
   .light.late { color: var(--crit); } .light.late i { background: var(--crit); }
   .light.idle { color: var(--ink-3); } .light.idle i { background: var(--idle-soft); box-shadow: inset 0 0 0 1.5px var(--idle); }
   .srow .cell { font-size: 13.5px; }
+  /* Current stage and Status share one cell (8 Oct 2026): the stage in bold, its status under
+     it. "Delayed" carries an i that explains it (hover, focus or tap). */
+  .srow .c-stage { display: grid; gap: 2px; min-width: 0; }
+  .c-stage .stg { font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .srow.hd .c-stage { display: block; }
+  .info { display: inline-grid; place-items: center; flex: none; width: 15px; height: 15px; margin-left: 1px; padding: 0; border: 1.5px solid currentColor; border-radius: 50%;
+          background: none; color: inherit; font: 700 10px/1 inherit; cursor: help; }
+  .info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .stat-tip { position: fixed; z-index: 60; max-width: 240px; background: var(--ink); color: #fff; font-size: 12px; line-height: 1.4; padding: 7px 10px; border-radius: 6px; pointer-events: none; }
   .srow .num { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
   .c-bar { font-size: 13px; line-height: 1.35; color: var(--ink); min-width: 0; text-wrap: balance; }
   .srow.hd .c-bar { font-size: 10.5px; line-height: inherit; color: var(--ink-3); }
@@ -404,14 +413,15 @@
   .more .ch { transition: transform .15s ease; }
   .more[aria-expanded="true"] .ch { transform: rotate(180deg); }
   @media (max-width: 1040px) {
-    .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 170px 118px minmax(120px, 1fr); }
-    .srow .c-stage, .srow .c-path { display: none; }
+    .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 170px minmax(150px, 1fr) minmax(120px, 1fr); }
+    .srow .c-path { display: none; }
   }
   @media (max-width: 680px) {
     .srow { grid-template-columns: 34px 1fr auto; row-gap: 6px; }
     .srow.hd { display: none; }
     .srow .c-mini { grid-column: 2 / -1; grid-row: 2; margin-block: 0; }
     .srow .c-bar { grid-column: 2 / -1; grid-row: 3; }
+    .c-stage .stg { display: none; }
     .l1 { padding-inline: 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -1615,6 +1625,9 @@
   };
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
   const LABEL = { done: "Complete", prog: "In progress", late: "Delayed", idle: "Not started" };
+  // What "Delayed" means, shown from the i beside it in the medicines table.
+  const LATE_DEF = "this step is not moving as fast as expected.";
+  const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
   // so the glyph inherits its marker's status colour and the page theme.
@@ -2077,7 +2090,28 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Medicine</span><span class="c-mini">Journey</span>` +
-    `<span class="c-stage">Current stage</span><span>Status</span><span class="c-path">On pathway</span><span class="c-bar">Main barrier</span></div>`);
+    `<span class="c-stage">Current stage</span><span class="c-path">On pathway</span><span class="c-bar">Main barrier</span></div>`);
+
+  // "Delayed" carries an i with its definition: hover, focus or tap shows it.
+  (function () {
+    const tip = document.createElement("div");
+    tip.className = "stat-tip"; tip.setAttribute("role", "tooltip"); tip.hidden = true;
+    document.body.appendChild(tip);
+    const show = (b) => {
+      tip.textContent = b.dataset.tip; tip.hidden = false;
+      const r = b.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+      tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + "px";
+      tip.style.top = (r.top - h - 8 < 8 ? r.bottom + 8 : r.top - h - 8) + "px";
+    };
+    const hide = () => { tip.hidden = true; };
+    board.addEventListener("mouseover", (e) => { const b = e.target.closest(".info"); if (b) show(b); });
+    board.addEventListener("mouseout", (e) => { if (e.target.closest(".info")) hide(); });
+    board.addEventListener("focusin", (e) => { const b = e.target.closest(".info"); if (b) show(b); });
+    board.addEventListener("focusout", hide);
+    board.addEventListener("click", (e) => { const b = e.target.closest(".info"); if (b) show(b); });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".info")) hide(); });
+    window.addEventListener("scroll", hide, true);
+  })();
 
   tracked.forEach(p => {
     const years = p.stages.map(stageYear);
@@ -2150,8 +2184,7 @@
             aria-label="Show journey for ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
-          <span class="cell c-stage">${esc(STAGES[p.currentStage])}</span>
-          <span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}</span>
+          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span></span>
           <span class="cell num c-path">${onPathwayShort(p)}${yardBadge(p)}</span>
           <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "No barrier recorded"}</div>
         </div>
