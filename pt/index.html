@@ -22,6 +22,11 @@
        4.5:1 AA floor; now 5.2:1. --ink-2 moved with it to keep the three steps apart. */
     --ink-2: #3F5564;
     --ink-3: #566A77;
+    /* expected time and the two access groups (8 Oct 2026) */
+    --exp-line: #94A3B8; --exp-ink: #111827;
+    --diff: #1D4ED8; --diff-soft: #EFF6FF;
+    --ph-mkt-soft: #EFF6FF; --ph-mkt-ink: #1D4ED8;
+    --ph-cty-soft: #EFF6FF; --ph-cty-ink: #1D4ED8;
     --line: #DCE3E7;
     --accent: #0F5A72;
     --accent-ink: #FFFFFF;
@@ -145,16 +150,7 @@
   /* ---------- pathway legend strip (illustrated journey) ---------- */
   .pathway {
     display: flex; align-items: flex-start; gap: 2px;
-    /* Equal fallback for the instant before JS runs (or if it can't) — see
-       centerPathwayCard(). That function overwrites both values inline once
-       the row (WHO stack included) is laid out, because the right split
-       isn't a constant: .pathgroup's bracket is the tallest thing in the
-       row and sits translated up by --pg-lift (alignPathGroup, above), so
-       how much of the card's own height ends up above the bracket versus
-       below it shifts with that same lift. Setting equal padding here and
-       measuring the true rendered gap afterwards is what keeps the two
-       matching instead of just assuming a formula stays right forever. */
-    padding: 8px 18px; margin-bottom: 10px; overflow-x: auto;
+    padding: 48px 18px 8px; margin-bottom: 10px; overflow-x: auto;
     background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
   }
   .pathnode { flex: 1; min-width: 84px; text-align: center; }
@@ -178,6 +174,25 @@
     width: 44px; height: 44px; border-radius: 50%;
     background: var(--accent-soft); border: 1px solid var(--line);
   }
+  /* expected time under each icon: a clock tag, so it reads as an estimate */
+  .pathexp { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; padding: 2px 8px 2px 6px; border: 1px dashed var(--exp-line); background: var(--surface); border-radius: 8px; font-size: 11.5px; line-height: 1.3; color: var(--ink-2); white-space: nowrap; }
+  .pathexp b { font-weight: 700; color: var(--exp-ink); font-variant-numeric: tabular-nums; }
+  .pathnode .pathexp svg { width: 13px; height: 13px; margin: 0; display: inline-block; color: var(--exp-ink); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .pathexp.none { border-color: transparent; background: var(--surface); color: var(--ink-3); padding-inline: 8px; }
+  @media (max-width: 640px) { .pathexp { white-space: normal; text-align: center; justify-content: center; } }
+  /* Market Access / Country-Population Access: two white cards on the canvas,
+     each with a gray title strip and half the width (8 Oct 2026). The card, its
+     shadow and radius moved from .pathway to .phase; the arrow between steps 3
+     and 4 sits in the gap. */
+  .pathway { background: transparent; box-shadow: none; border-radius: 0; padding: 2px 4px 12px; gap: 0; align-items: stretch; }
+  .phase { flex: 1 1 0; min-width: min-content; display: flex; flex-direction: column; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+  .phase-t { background: #E5E7EB; padding: 9px 14px; }
+  .phase-t b { display: inline-flex; align-items: center; font-size: 13px; font-weight: 700; line-height: 1.25; color: var(--ph-mkt-ink); white-space: nowrap; }
+  /* the parallel WHO pair is lifted onto the other icons' line (--pg-lift, set by
+     alignPathGroup), so the body leaves that much room above the icons */
+  .phase-body { flex: 1; display: flex; align-items: flex-start; gap: 2px; padding: calc(8px + var(--pg-lift, 0px)) 14px 10px; }
+  .phn { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 6px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-style: normal; font-weight: 700; line-height: 1; }
+  .patharrow.phasegap { align-self: center; width: 44px; margin-top: 0; text-align: center; }
   .pathnode .plabel { display: block; font-size: 12px; line-height: 1.25; color: var(--ink-2); margin-top: 5px; padding: 0 3px; overflow-wrap: break-word; hyphens: auto; }
   /* always-on badge marking every gate icon as clickable, not just on hover */
   .pathnode .pill::after {
@@ -239,8 +254,8 @@
   .product.future { opacity: .78; }
   .product.l1-open > .srow { background: var(--surface-2); }
   .srow {
-    display: grid; column-gap: 14px; align-items: center; padding: 10px 18px; min-height: 58px;
-    grid-template-columns: 34px minmax(150px, 1.5fr) 190px minmax(110px, 1fr) 118px 100px minmax(150px, 1.4fr);
+    display: grid; column-gap: 30px; align-items: center; padding: 10px 18px; min-height: 58px;
+    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) 100px minmax(150px, 1.2fr);
   }
   .srow.hd {
     min-height: 34px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
@@ -271,6 +286,9 @@
      WHO dots merge into an "8" (removed 30 Sep 2026) */
   .jcell.on { background: var(--accent-soft); box-shadow: inset 1px 0 0 #B7D6DF, inset -1px 0 0 #B7D6DF; }
   .srow.hd .c-mini { margin-block: 0; align-self: center; display: block; }
+  /* the journey sits in the middle of its column, so the space to the medicine on one side
+     and to the current stage on the other is the same (8 Oct 2026) */
+  @media (min-width: 681px) { .srow > .c-mini { justify-content: center; } .srow.hd .c-mini { text-align: center; } }
   .md { width: 14px; height: 14px; border-radius: 50%; flex: none; box-sizing: border-box; }
   .md.done { background: var(--good); }
   .md.prog { background: var(--warn-soft); border: 2px solid var(--warn); }
@@ -282,12 +300,23 @@
   .mp .md { width: 9px; height: 9px; }
   .mini .ln { width: 6px; height: 2px; background: var(--line); flex: none; }
   .light { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; white-space: nowrap; }
-  .light i { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  /* the status shows the same symbol as the Journey (dot, ring, diamond, dashed ring) */
+  .light i { width: 12px; height: 12px; border-radius: 50%; flex: none; box-sizing: border-box; }
   .light.done { color: var(--good-text); } .light.done i { background: var(--good); }
-  .light.prog { color: var(--warn-text); } .light.prog i { background: var(--warn); }
-  .light.late { color: var(--crit); } .light.late i { background: var(--crit); }
-  .light.idle { color: var(--ink-3); } .light.idle i { background: var(--idle-soft); box-shadow: inset 0 0 0 1.5px var(--idle); }
+  .light.prog { color: var(--warn-text); } .light.prog i { background: var(--warn-soft); border: 2px solid var(--warn); }
+  .light.late { color: var(--crit); } .light.late i { background: var(--crit); border-radius: 2px; transform: rotate(45deg) scale(.8); }
+  .light.idle { color: var(--ink-3); } .light.idle i { background: var(--idle-soft); border: 1.5px dashed var(--idle); }
   .srow .cell { font-size: 13.5px; }
+  /* Current stage and Status share one cell (8 Oct 2026): the stage in bold, its status under
+     it. "Delayed" carries an i that explains it (hover, focus or tap). */
+  .srow .c-stage { display: grid; gap: 2px; min-width: 0; }
+  .c-stage .note { font-size: 12px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
+  .c-stage .stg { font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .srow.hd .c-stage { display: block; }
+  .info { display: inline-grid; place-items: center; flex: none; width: 15px; height: 15px; margin-left: 1px; padding: 0; border: 1.5px solid currentColor; border-radius: 50%;
+          background: none; color: inherit; font: 700 10px/1 inherit; cursor: help; }
+  .info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .stat-tip { position: fixed; z-index: 60; max-width: 240px; background: var(--ink); color: #fff; font-size: 12px; line-height: 1.4; padding: 7px 10px; border-radius: 6px; pointer-events: none; }
   .srow .num { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
   .c-bar { font-size: 13px; line-height: 1.35; color: var(--ink); min-width: 0; text-wrap: balance; }
   .srow.hd .c-bar { font-size: 10.5px; line-height: inherit; color: var(--ink-3); }
@@ -322,49 +351,48 @@
   .swg button[aria-pressed="true"]:focus-visible { outline-color: var(--accent-ink); }
   /* Yardstick (7 Oct 2026): expected time against time taken, in plain words.
      A badge under "On pathway", a box at the top of an open row, and a third
-     view, "Time taken". Red is late, green is on time, grey has nothing to
-     compare. See docs/jackson/yardstick.md. */
+     view, "Time taken". A difference is shown as a signed number in RBM blue, not
+     as red "late": the wording is neutral on purpose (8 Oct 2026). Green means
+     no difference, grey has nothing to compare. See docs/jackson/yardstick.md. */
   .srow .c-path { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
   .ysp { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; line-height: 1.4; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
   .ysp i { font-style: normal; font-weight: 500; }
   .ysp.sm { font-size: 11.5px; padding: 1px 8px; }
-  .ysp.bad { background: var(--crit-soft); color: var(--crit); }
+  .ysp.diff { background: var(--diff-soft); color: var(--diff); }
   .ysp.good { background: var(--good-soft); color: var(--good-text); }
   .ysp.none { background: var(--surface-2); color: var(--ink-3); font-weight: 500; }
   .ysb-none { font-size: 11.5px; font-weight: 500; color: var(--ink-3); line-height: 1.3; }
-  .ysbox { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 400px); gap: 12px 32px; align-items: center; background: var(--crit-soft); border-radius: 10px; padding: 14px 18px; margin: 0 0 16px; }
-  .ysbox.ok { background: var(--good-soft); }
-  .ysbox-big { font-size: 22px; font-weight: 800; line-height: 1.2; color: var(--crit); }
-  .ysbox.ok .ysbox-big { color: var(--good-text); }
-  .ysbox p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+  .ysbox { display: grid; gap: 4px; margin: 0 0 16px; }
+  .ysfigs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+  .ysfigs > div { display: grid; gap: 2px; padding: 12px 16px; border-right: 1px solid var(--line); }
+  .ysfigs > div:last-child { border-right: 0; }
+  .ysfigs small { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .ysfigs strong { font-size: 22px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .ysfigs span { font-size: 12.5px; color: var(--ink-3); }
+  .ysfigs .ysdiff { background: var(--diff-soft); }
+  .ysfigs .ysdiff strong { color: var(--diff); }
+  .ysbox p { margin: 0; font-size: 14px; color: var(--ink-2); }
   .ysbox p b { color: var(--ink); }
   .ysbox p i { font-style: normal; color: var(--ink-3); }
-  .ysline { padding: 4px 22px 34px; }
-  .ystrack { position: relative; height: 10px; background: var(--surface); border-radius: 999px; }
-  .ystrack > i { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; }
-  .ystrack > i.ok { background: var(--idle); }
-  .ystrack > i.late { background: var(--crit); border-radius: 0 999px 999px 0; }
-  .ysmk { position: absolute; top: 18px; transform: translateX(-50%); font-size: 12.5px; font-weight: 700; color: var(--ink); text-align: center; line-height: 1.15; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .ysmk::before { content: ""; position: absolute; left: 50%; top: -10px; width: 2px; height: 8px; margin-left: -1px; background: var(--ink-3); }
-  .ysmk em, .ysmk i { display: block; font-style: normal; font-weight: 500; font-size: 11px; color: var(--ink-3); }
-  .ysmk.now { color: var(--crit); }
-  .ysbox.ok .ysmk.now { color: var(--good-text); }
-  .ystable { border-collapse: collapse; width: 100%; max-width: 780px; font-size: 14px; }
+  .ystable { border-collapse: collapse; width: 100%; font-size: 14px; }
   .ystable th, .ystable td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
-  .ystable thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .ystable thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; border-bottom: 0; padding-block: 8px; }
   .ystable tbody th { font-weight: 500; color: var(--ink); }
   .ystable td { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .ystable td i { font-size: 12.5px; color: var(--ink-3); }
+  .ystable tr.ysgrp th { padding: 8px 12px; background: #F8FAFC; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--ph-ink); }
+  .ystable tr.ph0 { --ph-ink: var(--ph-mkt-ink); }
+  .ystable tr.ph1 { --ph-ink: var(--ph-cty-ink); }
   .ystable tr.whole > * { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; color: var(--ink); }
   .ysnote { margin: 10px 0 0; font-size: 12px; color: var(--ink-3); }
   .ysempty { background: var(--surface-2); border-radius: 8px; padding: 12px 16px; font-size: 13.5px; color: var(--ink-2); }
   .ysempty b { color: var(--ink); }
-  @media (max-width: 760px) {
-    .ysbox { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 560px) {
+    .ysfigs { grid-template-columns: minmax(0, 1fr); }
+    .ysfigs > div { border-right: 0; border-bottom: 1px solid var(--line); }
   }
-  /* On a phone the Result column sat past the scroll edge, so the one thing
-     the table is for was out of sight. Step and Result only; the label
-     already says how late. */
+  /* On a phone the Variance column sat past the scroll edge, so the one thing
+     the table is for was out of sight. Step and Variance only. */
   @media (max-width: 560px) {
     .ystable th:nth-child(2), .ystable td:nth-child(2), .ystable th:nth-child(3), .ystable td:nth-child(3) { display: none; }
     .ystable .ysp { display: inline-block; white-space: normal; border-radius: 10px; }
@@ -390,14 +418,15 @@
   .more .ch { transition: transform .15s ease; }
   .more[aria-expanded="true"] .ch { transform: rotate(180deg); }
   @media (max-width: 1040px) {
-    .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 170px 118px minmax(120px, 1fr); }
-    .srow .c-stage, .srow .c-path { display: none; }
+    .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr) minmax(120px, 1fr); }
+    .srow .c-path { display: none; }
   }
   @media (max-width: 680px) {
-    .srow { grid-template-columns: 34px 1fr auto; row-gap: 6px; }
+    .srow { column-gap: 14px; grid-template-columns: 34px 1fr auto; row-gap: 6px; }
     .srow.hd { display: none; }
     .srow .c-mini { grid-column: 2 / -1; grid-row: 2; margin-block: 0; }
     .srow .c-bar { grid-column: 2 / -1; grid-row: 3; }
+    .c-stage .stg, .c-stage .note { display: none; }
     .l1 { padding-inline: 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -796,15 +825,6 @@
   .updates .ud { flex: none; width: 84px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
   .updates .up { flex: none; width: 84px; font-weight: 650; color: var(--ink); }
 
-  /* Changes list: one readable sentence per entry, with the date and the
-     medicine it concerns as a quiet line above it rather than as two narrow
-     columns the sentence has to squeeze past. */
-  .updates .updates-intro { margin: 10px 0 2px; font-size: 13px; color: var(--ink-2); }
-  .updates.changes li { display: block; padding: 11px 0; }
-  .updates.changes .um { font-size: 11.5px; color: var(--ink-3); letter-spacing: .02em; margin-bottom: 2px; }
-  .updates.changes .um .up-name { color: var(--ink-2); font-weight: 650; letter-spacing: 0; }
-  .updates.changes .ut { font-size: 14px; line-height: 1.55; color: var(--ink); }
-
   footer { margin-top: 18px; font-size: 14px; color: var(--ink-2); line-height: 1.65; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 16px; }
   /* Sources: one named source per line, each opening its own official site.
      Two columns on a wide screen so the list stays a footnote rather than
@@ -820,8 +840,10 @@
   .srclist li > span { display: block; }
   .srclist li > span a { font-weight: 400; }
   /* Footer: the disclaimer leads, in a tinted panel with an accent edge, so it is not overlooked. */
-  .ft-sec h3 { margin: 0 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3);
-               border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+  /* Section cards under the map (8 Oct 2026): About the data, Sources and Definitions
+     share one card and one plain bold title; the disclaimer keeps its blue notice. */
+  .ft-sec { background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); padding: 14px 20px 16px; }
+  .ft-sec h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
   .ft-sec p { margin: 0; }
   .disclaimer { background: var(--accent-soft); border: 1px solid var(--line); border-left: 5px solid var(--accent);
                 border-radius: 10px; padding: 14px 18px; color: var(--ink); scroll-margin-top: 16px; }
@@ -841,21 +863,16 @@
           box-shadow: var(--shadow); padding: 0 20px; }
   .srcs[open] { padding-bottom: 8px; }
   .srcs summary { cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 48px; padding-block: 12px;
-                  list-style: none; font-size: 13px; font-weight: 700; color: var(--ink-2); letter-spacing: .04em; text-transform: uppercase; }
+                  list-style: none; }
+  .srcs-title { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: 0; text-transform: none; }
   .srcs summary::-webkit-details-marker { display: none; }
   .srcs[open] summary { border-bottom: 1px solid var(--line); }
   .srcs summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-  .srcs-chev { flex: none; color: var(--accent); transition: transform .18s ease; }
+  .srcs-chev { flex: none; margin-left: auto; color: var(--accent); transition: transform .18s ease; }
   .srcs[open] .srcs-chev { transform: rotate(180deg); }
   @media (prefers-reduced-motion: reduce) { .srcs-chev { transition: none; } }
-  .srcn { font-size: 11px; font-weight: 700; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
-          padding: 0 7px; margin-left: 6px; letter-spacing: 0; text-transform: none; vertical-align: 1px; }
-  .srcs summary .srcn { margin-left: 0; }
   /* .srcs scopes it so it outranks `.ft-sec p { margin: 0 }`, which had silently zeroed this margin. */
   .srcs .srcs-intro { margin: 14px 0 12px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
-  /* A dropdown on every screen: the script opens it on desktop and leaves it closed on a phone.
-     Both labels are in the markup, so both are translated; the open state picks one. */
-  .srcs[open] .srcs-show, .srcs:not([open]) .srcs-hide { display: none; }
   @media print { .srcs summary { display: none; } }
   .ext { margin-left: 3px; font-size: .85em; opacity: .75; }
   @media (max-width: 720px) { .srclist { columns: 1; } }
@@ -890,11 +907,11 @@
      script keeps both rails' height matched to .map-dock-center specifically
      (see the ResizeObserver below). Left keeps its own scrollbar for when
      its filters (Drug/MFT policy/Location) still don't fit in that height.
-     Right (2 Oct 2026) takes its own content's height instead: held to the
-     map's, it hid the lower Detail cards behind overflow: hidden, with no
-     scrollbar or other cue that they were there. */
+     Right is held too (8 Oct 2026), so all three columns end together. Its
+     tabs stay pinned at the top while the cards scroll, which is the cue that
+     there is more below (the fade was tried and dropped). */
   .map-dock-left { max-height: none; overflow-y: auto; }
-  .map-dock-right { max-height: none; }
+  .map-dock-right { max-height: none; overflow-y: auto; }
   /* `display` on .map-dock-rail is an author rule and so outranks the browser's
      [hidden] { display: none } — same trap .map-empty already carries a fix for. */
   .map-dock-rail[hidden] { display: none; }
@@ -909,6 +926,7 @@
   @media (max-width: 760px) {
     .map-dock { grid-template-columns: 1fr; }
     .map-dock-rail { max-height: none; }
+    .det-tabs { position: static; margin-top: 0; padding-top: 0; }
   }
   .tab {
     background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
@@ -926,41 +944,17 @@
   /* One colour per MFT policy GROUP, the same for every medicine. Chosen to stay
      separable under protan, deutan and tritan vision and to hold at least 3.8:1
      against the white halo drawn under every border. Not the status colours. */
-  :root { --mfg-tested: #D55E00; --mfg-untested: #A8457E; --mfg-vivax: #7A4B00; --mfg-severe: #10272F; }
+  :root { --mfg-tested: #D55E00; --mfg-vivax: #7A4B00; }
   .mft-hint { font-size: 11.5px; line-height: 1.45; color: var(--ink-3); margin: 6px 0 0; }
   /* Both legends share one key style: swatch (square for a fill, line for a
      border) + label + count. The MFT keys used to be pills; they are not now. */
-  .map-legend, .mft-legend { align-items: center; }
-  .map-legend .key, .mft-legend .key { display: inline-flex; align-items: center; gap: 6px; }
-  .map-legend .key[hidden], .mft-legend .key[hidden] { display: none; }
-  .lg-t { font-weight: 700; color: var(--ink); }
-  .mft-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; font-size: 12.5px; color: var(--ink-2); }
-  .mft-legend .ct { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--ink); }
   /* Filters (left rail): access-stage and MFT policy-group checklists. */
   .flt-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
   .flt-head h3 { margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
   .flt-act { font-size: 11px; font-weight: 700; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; letter-spacing: 0; }
   .flt-reset { font: inherit; font-size: 12px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
   .flt-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .flt-list { margin-bottom: 14px; }
-  .flt-list:last-of-type { margin-bottom: 0; }
-  .flt-list h4 { margin: 0 0 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
-  /* The count column's heading (8 Oct 2026), on the first group's line and
-     right-aligned over the numbers; one heading serves both groups. In the
-     250px desktop rail it wraps to two lines ("No. of / countries"), and the
-     group's own name never does; on a phone it fits on one. */
-  .flt-cols { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 3px; }
-  .flt-cols h4 { margin: 0; flex: none; }
-  .flt-colh { min-width: 0; text-align: right; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
-  .flt-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px; margin: 0 -4px; border-radius: 5px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; }
-  .flt-row:hover { background: var(--surface); }
-  .flt-row:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .flt-row input { margin: 0; accent-color: var(--accent); flex: none; }
-  .flt-row .flt-l { min-width: 0; }
-  .flt-row .ct { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
-  .flt-parent { font-weight: 700; color: var(--ink); }
-  .flt-sub { padding-left: 20px; }
-  .flt-row.off { opacity: .45; cursor: default; }
+  .flt-list { margin-bottom: 0; }
   .mft-lsw { flex: none; display: block; }
   .mft-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; flex: none; }
   .mft-panel { margin-bottom: 10px; }
@@ -968,11 +962,11 @@
   .mft-panel .mft-h { margin: 0 0 10px; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .05em;
                       color: var(--ink-2); display: flex; align-items: center; gap: 8px; }
   .mft-panel .mft-h .mft-dot { width: 12px; height: 12px; }
-  .mft-donut { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; align-items: center; margin: 2px 0 14px; }
+  .mft-donut { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 10px; margin: 2px 0 14px; }
   .mft-donut svg { display: block; }
   .mft-donut .ct-n { font-size: 26px; font-weight: 750; fill: var(--ink); font-variant-numeric: tabular-nums; }
   .mft-donut .ct-l { font-size: 10.5px; fill: var(--ink-3); }
-  .mft-donut .rows { display: grid; gap: 7px; font-size: 13px; color: var(--ink-2); }
+  .mft-donut .rows { display: grid; gap: 7px; font-size: 13px; color: var(--ink-2); width: 100%; min-width: 0; }
   .mft-donut .rows div { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
   .mft-donut .rows b { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 750; }
   .mft-donut .rows .off, .mft-donut .rows .off b { color: var(--ink-3); font-weight: 400; }
@@ -986,7 +980,8 @@
   .mft-pchip.yes { background: var(--good-soft); color: var(--good-text); font-weight: 650; }
   .mft-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 12px 0 0; }
   /* Detail rail: tabs, overview cards, country finder and country page. */
-  .det-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 0 0 10px; }
+  .det-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: -4px 0 10px; padding-top: 4px;
+              position: sticky; top: -12px; z-index: 3; background: var(--surface-2); }
   .det-tabs button { font: inherit; font-size: 13px; font-weight: 650; color: var(--ink-2); background: none; border: 0;
                      border-bottom: 3px solid transparent; padding: 6px 10px; cursor: pointer; }
   .det-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
@@ -1017,11 +1012,23 @@
   .det-pill.none { background: var(--surface-2); color: var(--ink-3); border: 1px solid var(--line); }
   .det-q { width: 100%; font: inherit; font-size: 13px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); margin-bottom: 6px; }
   .det-list { max-height: 360px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; }
-  .det-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border: 0; border-bottom: 1px solid var(--line);
-             background: none; font: inherit; font-size: 13px; color: var(--ink); text-align: left; cursor: pointer; }
-  .det-row:last-child { border-bottom: 0; } .det-row:hover { background: var(--surface-2); }
-  .det-row .nm { min-width: 0; flex: 1; line-height: 1.3; }
-  .det-row .go { color: var(--accent); font-weight: 700; font-size: 12px; white-space: nowrap; }
+  /* Find a country (8 Oct 2026): a table (Country, Stage, Use) that follows the left
+     Filters. Names are cut with an ellipsis, the full name is in the title. */
+  .det-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+  .det-table th { position: sticky; top: 0; z-index: 1; padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
+  .det-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .det-table tr:last-child td { border-bottom: 0; }
+  .det-row { cursor: pointer; }
+  .det-row:hover { background: var(--surface-2); }
+  .det-table .stg { font-size: 12px; }
+  .det-table .stg .mapsw { margin-right: 6px; vertical-align: -1px; }
+  .det-table .use .mft-lsw { display: inline-block; margin-right: 2px; }
+  .det-table .go { color: var(--accent); font-weight: 700; text-align: right; }
+  .det-name { display: block; width: 100%; font: inherit; color: var(--ink); background: none; border: 0; padding: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .det-name:focus-visible, .det-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  .det-nomatch { padding: 14px 12px; display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .det-nomatch p { margin: 0; }
+  .det-reset { justify-self: start; font: inherit; font-size: 12.5px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
   .det-back { font: inherit; font-size: 13px; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0 0 6px; cursor: pointer; }
   .det-chead { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
   .det-cname { margin: 0; font-size: 18px; line-height: 1.2; font-weight: 750; color: var(--ink); text-transform: none; letter-spacing: 0; }
@@ -1111,6 +1118,37 @@
   /* The reading rule under a legend (the MFT policy rule uses it). */
   .res-rule { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 4px 0 0; }
   .res-rule a { color: var(--accent); }
+  /* Filter and legend tables (8 Oct 2026): each list is a small table with the
+     number of countries as its own column under a heading, and the gray-200
+     head from the RBM guidelines. The legends are fixed: they always show. */
+  .ftab { width: 100%; border-collapse: collapse; font-size: 12.5px; color: var(--ink-2); }
+  .ftab th, .ftab td { padding: 5px 8px; text-align: left; vertical-align: middle; }
+  .ftab thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
+  .ftab thead th:first-child { border-radius: 4px 0 0 4px; }
+  .ftab thead th:last-child { border-radius: 0 4px 4px 0; }
+  .ftab .n { text-align: center; width: 76px; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .ftab thead th.n { font-weight: 700; color: #4B5563; white-space: normal; line-height: 1.2; width: 76px; }
+  .ftab .n .zero, .ftab .n.zero { color: var(--ink-3); font-weight: 400; }
+  .ftab tbody td { border-bottom: 1px solid var(--line); }
+  .ftab tbody tr:last-child td { border-bottom: 0; }
+  .ftab tr.gr th { padding: 12px 8px 4px; font-size: 12px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); }
+  .ftab tr.dim { opacity: .45; }
+  .ftab td.cbx { width: 22px; padding-right: 0; }
+  .ftab td.sw { width: 36px; padding-right: 0; }
+  .ftab td small { display: block; font-size: 11.5px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
+  .ftab input { margin: 0; accent-color: var(--accent); }
+  .ftab label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .ftab tr:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .ftab .flt-all { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .ftab .mft-sq { vertical-align: middle; }
+  .legend-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px 24px; align-items: start; margin-top: 10px; }
+  .map-legend, .mft-legend { display: block; margin: 0; font-size: 12.5px; color: var(--ink-2); }
+  .mft-legend[hidden] { display: none; }
+  .map-legend-bar .dock-section { flex: 1 1 100%; min-width: 0; }
+  .mft-donut { justify-items: center; }
+  .mft-donut .ftab th, .mft-donut .ftab td { padding-inline: 6px; font-size: 12px; }
+  .mft-donut .ftab td.sw { width: 20px; padding-right: 0; }
+  .mft-donut .ftab thead th.n { width: 52px; }
   .map-hint { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 6px 0 0; }
   /* header actions — Download CSV + Subscribe -------------------------------
      These used to be the last two flex items of a legend strip, alongside three
@@ -1285,7 +1323,7 @@
     .hd-bar .hdr-actions button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 10px 6px; gap: 5px; }
     .updates li { flex-wrap: wrap; gap: 4px 12px; }
     .hdr-actions button { padding: 10px 15px; }
-    .pathway { padding: 12px 12px; }
+    .pathway { padding: 2px 4px 12px; }
     .pathnode { min-width: 72px; }
     .pathnode .pill { width: 38px; height: 38px; }
     .pathnode svg, .pathnode .whoemb { width: 25px; height: 25px; }
@@ -1419,14 +1457,7 @@
             <h3>Filtros <span class="flt-act" id="flt-act" hidden></span></h3>
             <button type="button" class="flt-reset" id="flt-reset">Reiniciar</button>
           </div>
-          <div class="flt-list" role="group" aria-label="Etapa de acesso">
-            <div class="flt-cols"><h4>Etapa de acesso</h4><span class="flt-colh">Número de países</span></div>
-            <div id="flt-stage"></div>
-          </div>
-          <div class="flt-list" id="mft-controls" role="group" aria-label="MFT política" hidden>
-            <h4>MFT política</h4>
-            <div id="flt-mft"></div>
-          </div>
+          <div class="flt-list" id="flt-table" role="group" aria-label="Mostrar no mapa"></div>
           <p class="mft-hint" id="mft-hint"></p>
         </div>
         <div class="dock-section" id="loc-controls">
@@ -1442,15 +1473,20 @@
         <div class="map-legend-bar">
           <div class="dock-section">
             <h3>Legenda</h3>
+            <div class="legend-tables">
             <div class="map-legend">
-              <span class="lg-t">Etapa de acesso</span>
-              <span class="key" data-lvl="registered"><span class="mapsw registered"></span> Registrado <span class="ct" id="mapct-registered">–</span></span>
-              <span class="key" data-lvl="guidelines"><span class="mapsw guidelines"></span> Em orientações nacionais <span class="ct" id="mapct-guidelines">–</span></span>
-              <span class="key" data-lvl="mft"><span class="mapsw mft"></span> Em planos MFT <span class="ct" id="mapct-mft">–</span></span>
-              <span class="key" data-lvl="none"><span class="mapsw none"></span> Sem dados <span class="ct" id="mapct-none">–</span></span>
+              <table class="ftab">
+                <thead><tr><th colspan="2">Etapa de acesso</th><th class="n">N.º de países</th></tr></thead>
+                <tbody>
+                  <tr data-lvl="registered"><td class="sw"><span class="mapsw registered"></span></td><td>Registrado</td><td class="n"><span class="ct" id="mapct-registered">–</span></td></tr>
+                  <tr data-lvl="guidelines"><td class="sw"><span class="mapsw guidelines"></span></td><td>Em orientações nacionais</td><td class="n"><span class="ct" id="mapct-guidelines">–</span></td></tr>
+                  <tr data-lvl="mft"><td class="sw"><span class="mapsw mft"></span></td><td>Em planos MFT</td><td class="n"><span class="ct" id="mapct-mft">–</span></td></tr>
+                  <tr data-lvl="none"><td class="sw"><span class="mapsw none"></span></td><td>Sem dados</td><td class="n"><span class="ct" id="mapct-none">–</span></td></tr>
+                </tbody>
+              </table>
             </div>
             <div class="mft-legend" id="mft-legend"></div>
-            <p class="res-rule" id="mft-rule" hidden></p>
+            </div>
             <p class="res-rule" id="mapnote-who">Os resultados de resistência aos medicamentos não são apresentados neste mapa. Para os explorar, consulte o <a href="https://apps.who.int/malaria/maps/threats/" target="_blank" rel="noopener noreferrer">Mapa de Ameaças da Malária da OMS<span class="ext" aria-hidden="true">↗</span></a>.</p>
           </div>
         </div>
@@ -1465,17 +1501,6 @@
     </div>
   </section>
 
-  <details class="updates changes" id="updates" hidden>
-    <summary>Atualizações recentes do painel</summary>
-    <p class="updates-intro">As oito alterações mais recentes que fizemos à informação desta página, em linguagem simples.</p>
-    <ul id="updates-list"></ul>
-  </details>
-
-  <details class="updates glossary-panel" id="glossary" hidden>
-    <summary>Definições</summary>
-    <ul id="glossary-list"></ul>
-  </details>
-
   <footer>
     <div class="disclaimer" id="disclaimer" tabindex="-1">
       <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>Isenção de responsabilidade</h3>
@@ -1487,10 +1512,8 @@
       <h3>Sobre os dados</h3>
       <p>O painel LAUNCH apenas apresenta informações publicamente disponíveis. Os detalhes específicos do produto aparecem apenas quando o fabricante confirma por escrito que podem ser partilhados. O estado da revisão pelas autoridades de saúde não é geralmente público, pelo que as etapas regulamentares só mudam quando um organismo regulador ou o fabricante anuncia um resultado. Os dados de aquisição abrangem apenas os canais públicos. Passe o cursor sobre qualquer passo para obter detalhes do estado; selecione um medicamento para abrir o seu perfil completo.</p>
     </section>
-    <section class="ft-sec">
-      <h3>Fontes</h3>
     <details class="srcs" id="sources">
-      <summary><span class="srcs-show">Mostre as fontes</span><span class="srcs-hide">Ocultar as fontes</span><span class="srcn" id="srcn"></span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <summary><span class="srcs-title">Fontes</span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
       <p class="srcs-intro">Todo o conteúdo desta página pode ser rastreado até uma das fontes públicas abaixo.</p>
     <!-- Both lists are rendered from data/sources.js (see renderSources below).
          Do not hand-edit entries back into this markup: the registry is also
@@ -1502,7 +1525,10 @@
       <ul class="srclist" id="srcdocs"></ul>
     </div>
     </details>
-    </section>
+    <details class="updates srcs glossary-panel" id="glossary" hidden>
+      <summary><span class="srcs-title">Definições</span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <ul id="glossary-list"></ul>
+    </details>
   </footer>
 </div>
 
@@ -1610,6 +1636,9 @@
   };
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
   const LABEL = { done: "Concluir", prog: "Em curso", late: "Atrasado", idle: "Não iniciado" };
+  // What "Delayed" means, shown from the i beside it in the medicines table.
+  const LATE_DEF = "esta etapa não está avançando tão rápido quanto o esperado.";
+  const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
   // so the glyph inherits its marker's status colour and the page theme.
@@ -1659,26 +1688,6 @@
   // The status suffix that used to follow the date ("Draft — figures not yet
   // verified" etc.) was removed by request, 30 Sep 2026: the row shows the date
   // only. The draft caveat still lives in the banner and the Prototype pill.
-
-  // changelog
-  const updates = DATA.changelog || [];
-  if (updates.length) {
-    // Panel un-hide disabled by request, 10 Sep 2026 — "Recent dashboard
-    // updates" should not show on the dashboard for now. Everything else
-    // here still runs (the list still gets built, DATA.changelog is
-    // untouched) so restoring it later is this one line, not a rebuild.
-    // document.getElementById("updates").hidden = false;
-    // Prefer the plain-language retelling where the data carries one; the
-    // technical `change` line stays the record of what actually happened and
-    // is what the RSS feed and the other editions still publish.
-    document.getElementById("updates-list").innerHTML = updates.slice(0, 8).map(u =>
-      `<li>
-         <div class="um">${esc(readableDate(u.date))} · <span class="up-name">${
-           u.product === "All" ? "Todo o painel de controlo" : esc(u.product)}</span></div>
-         <div class="ut">${esc(u.plain || u.change)}</div>
-       </li>`
-    ).join("");
-  }
 
   // Every render below filters to real, non-placeholder products — this is
   // that filter, used throughout the rest of the script.
@@ -1848,7 +1857,16 @@
   // Years only, read with the page's own rules (stageYear): see
   // docs/jackson/yardstick.md for the choices behind each.
   const YARD = DATA.yardstick || null;
-  const lateText = n => yrsText(n) + " tarde";
+  // How far a step ran past its expected time, as a plain signed number.
+  const varianceText = n => "+" + yrsText(n);
+  // Market Access is every stage before country registration; Country /
+  // Population Access starts at it (stage 4) and runs to in-country delivery.
+  const ACCESS_SPLIT = 4;
+  const PHASES = [
+    { name: "Acesso ao mercado" },
+    { name: "Acesso por país e população" }
+  ];
+  const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
   // "Desde 2018" in Portuguese and Spanish), so the word is matched in every
   // page language. Spanish may also read "Desde el 2018".
@@ -1894,10 +1912,10 @@
     if (s.kind === "idle") return { t: LABEL.idle, tone: "none" };
     if (s.kind === "nodate") return { t: "Feito, sem data registada", tone: "none" };
     if (s.kind === "nostart") return { t: "Em curso, sem data de início definida.", tone: "none" };
-    if (s.late > 0) return { t: lateText(s.late), tone: "bad", going: s.kind === "going" };
-    return s.kind === "going" ? { t: "Até agora, tudo dentro do esperado.", tone: "good" } : { t: "No horário", tone: "good" };
+    if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
+    return s.kind === "going" ? { t: "Até agora, tudo dentro do esperado.", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>• ainda em curso</i>` : ""}</span>`;
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até agora</i>` : ""}</span>`;
   const yardNote = () => `<p class="ysnote">Prazos previstos: o registo por país segue um cronograma publicado. As restantes etapas utilizam estimativas provisórias da LAUNCH, ainda por definir.</p>`;
   // under "Na trilha" in the medicines table
   function yardBadge(p) {
@@ -1906,44 +1924,48 @@
     if (!y.approved) return `<small class="ysb-none">Ainda não aprovado</small>`;
     return yardPill(yardResult(y.whole), true);
   }
-  // the box at the top of an open row
+  // the box at the top of an open row: expected, actual so far and the variance
   function yardBox(p) {
     const y = yardstick(p);
     if (!y || !y.approved) return "";
-    const due = y.start + y.whole.exp;
-    const end = Math.max(ASOF_YEAR, due), span = Math.max(end - y.start, 1);
-    const x = yr => ((yr - y.start) / span * 100).toFixed(2);
-    const late = y.whole.late;
-    const big = late > 0 ? lateText(late) : y.whole.kind === "going" ? "Até agora, tudo dentro do esperado." : "No horário";
-    // Positions are built on one line each: the translation collector skips a
-    // one-line template that holds markup, but would offer a bare "left:…%" from
-    // a multi-line one for translation, and a translated style breaks the page.
-    const at = (yr, cls) => `<span class="ysmk${cls || ""}" style="left:${x(yr)}%">${yr}`;
-    const bar = `<i class="ok" style="width:${x(Math.min(due, ASOF_YEAR))}%"></i>` +
-      (ASOF_YEAR > due ? `<i class="late" style="left:${x(due)}%;width:${(x(ASOF_YEAR) - x(due)).toFixed(2)}%"></i>` : "");
-    const marks = `${at(y.start)}<em>iniciar</em></span>${at(due)}<em>esperado</em></span>` +
-      (ASOF_YEAR !== due ? `${at(ASOF_YEAR, " now")}<i>hoje</i></span>` : "");
-    return `<div class="ysbox${late > 0 ? "" : " ok"}">
-      <div class="ysbox-t">
-        <div class="ysbox-big">${esc(big)}</div>
-        <p>Prevê-se que entre em uso de rotina em ${due}, ${y.whole.exp} anos após o seu primeiro marco em ${y.start}.${y.whole.kind === "going" && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
-        ${y.biggest ? `<p>Maior atraso: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(lateText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>• ainda em curso</i>` : ""}</p>` : ""}
+    const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
+    return `<div class="ysbox">
+      <div class="ysfigs">
+        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso de rotina até ${due}</span></div>
+        <div><small>${going ? "Real até agora" : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não é de uso rotineiro" : ""}</span></div>
+        <div class="ysdiff"><small>Variação</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até agora" : "face ao esperado"}</span></div>
       </div>
-      <div class="ysline" aria-hidden="true"><div class="ystrack">${bar}${marks}</div></div>
+      <p>Prevê-se que entre em uso de rotina em ${due}, ${y.whole.exp} anos após o seu primeiro marco em ${y.start}.${y.whole.kind === "going" && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até agora</i>` : ""}</p>` : ""}
     </div>`;
   }
-  // the "Tempo gasto" view
+  // the "Time taken" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
     if (!y.approved) return `<div class="ysempty"><b>Ainda não foi aprovado.</b> Começamos a comparar assim que o medicamento tem uma aprovação regulamentar com data de expiração.</div>`;
-    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>até agora</i>` : "");
+    const actual = s => s.took == null ? "n.d." : yrsText(s.took) + (s.kind === "going" ? ` <i>até agora</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
+    const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
+    let ph = -1;
+    const body = y.steps.map(s => {
+      const g = phaseOf(s.i);
+      const h = g !== ph ? head(g) : "";
+      ph = g;
+      return h + row(esc(STAGES[s.i]), s);
+    }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Degrau</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Resultado</th></tr></thead>
-      <tbody>${y.steps.map(s => row(esc(STAGES[s.i]), s)).join("")}</tbody>
+      <thead><tr><th scope="col">Degrau</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variação</th></tr></thead>
+      <tbody>${body}</tbody>
       <tfoot>${row("Toda a viagem", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
+  }
+  // under each step icon in the pathway strip: its expected time
+  function pathExpHtml(i) {
+    if (!YARD) return "";
+    const e = YARD.expected[i];
+    if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>Esperado: <b>${yrsText(e.years)}</b></span>`;
+    return i === 0 ? `<span class="pathexp none">Antes da contagem</span>` : i === 1 ? `<span class="pathexp none">A contagem começa aqui</span>` : "";
   }
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
@@ -2061,21 +2083,48 @@
     // for screen readers, and still shown per-medicine in the gate panel this
     // button opens — just not as a second always-visible line in the strip.
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}" aria-label="Passo ${stepNo(i)}, ${esc(s)}. Mostra o que acontece aqui e onde cada medicamento é ${n ? ", " + n + " delayed" : ""}.">` +
-      `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span></button>`;
+      data-gate="${i}"${stacked ? "" : ` data-phase="${phaseOf(i)}"`} aria-label="Passo ${stepNo(i)}, ${esc(s)}${YARD && YARD.expected[i] ? ", esperado: " + yrsText(YARD.expected[i].years) : ""}. Mostra o que acontece aqui e onde cada medicamento é ${n ? ", " + n + " delayed" : ""}.">` +
+      `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
-  pathway.innerHTML = STAGE_COLUMNS.map(col => {
+  function stepColumnHtml(col) {
     if (col.stages.length === 1) return pathNodeHtml(col.stages[0], false);
     const names = col.stages.map(i => STAGES[i]).join(" e ");
-    return `<span class="pathgroup" role="group" aria-label="${esc(names)} — aprovações independentes sem ordem definida entre elas">` +
+    return `<span class="pathgroup" data-phase="${phaseOf(col.stages[0])}" role="group" aria-label="${esc(names)} — aprovações independentes sem ordem definida entre elas">` +
       col.stages.map(i => pathNodeHtml(i, true)).join(`<span class="pathgroup-note" aria-hidden="true"></span>`) +
       `</span>`;
-  }).join(`<span class="patharrow" aria-hidden="true">→</span>`);
+  }
+  // Two white cards, one per group, with the arrow between them in the gap.
+  pathway.innerHTML = PHASES.map((ph, k) => {
+    const cols = STAGE_COLUMNS.filter(col => phaseOf(col.stages[0]) === k);
+    return `<section class="phase ph${k}" aria-label="${esc(ph.name)}"><div class="phase-t"><b><i class="phn">${k + 1}</i>${esc(ph.name)}</b></div><div class="phase-body">` +
+      cols.map(col => stepColumnHtml(col)).join(`<span class="patharrow" aria-hidden="true">→</span>`) + `</div></section>`;
+  }).join(`<span class="patharrow phasegap" aria-hidden="true">→</span>`);
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Medicina</span><span class="c-mini">Jornada</span>` +
-    `<span class="c-stage">Estágio atual</span><span>Estatuto</span><span class="c-path">Na trilha</span><span class="c-bar">Barreira principal</span></div>`);
+    `<span class="c-stage">Estágio atual · Estatuto</span><span class="c-path">Na trilha</span><span class="c-bar">Barreira principal</span></div>`);
+
+  // "Delayed" carries an i with its definition: hover, focus or tap shows it.
+  (function () {
+    const tip = document.createElement("div");
+    tip.className = "stat-tip"; tip.setAttribute("role", "tooltip"); tip.hidden = true;
+    document.body.appendChild(tip);
+    const show = (b) => {
+      tip.textContent = b.dataset.tip; tip.hidden = false;
+      const r = b.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+      tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + "px";
+      tip.style.top = (r.top - h - 8 < 8 ? r.bottom + 8 : r.top - h - 8) + "px";
+    };
+    const hide = () => { tip.hidden = true; };
+    board.addEventListener("mouseover", (e) => { const b = e.target.closest(".info"); if (b) show(b); });
+    board.addEventListener("mouseout", (e) => { if (e.target.closest(".info")) hide(); });
+    board.addEventListener("focusin", (e) => { const b = e.target.closest(".info"); if (b) show(b); });
+    board.addEventListener("focusout", hide);
+    board.addEventListener("click", (e) => { const b = e.target.closest(".info"); if (b) show(b); });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".info")) hide(); });
+    window.addEventListener("scroll", hide, true);
+  })();
 
   tracked.forEach(p => {
     const years = p.stages.map(stageYear);
@@ -2148,8 +2197,7 @@
             aria-label="Mostrar viagem para ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
-          <span class="cell c-stage">${esc(STAGES[p.currentStage])}</span>
-          <span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}</span>
+          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell num c-path">${onPathwayShort(p)}${yardBadge(p)}</span>
           <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Nenhuma barreira registada"}</div>
         </div>
@@ -2336,37 +2384,9 @@
     pathway.style.setProperty("--pg-lift", lift.toFixed(2) + "px");
   }
 
-  // ---- legend strip: even out the card's own top/bottom padding -------------
-  // .pathgroup's bracket is the tallest thing in the row (align-self:stretch
-  // sizes it to the row's own height, top edge to bottom edge, same as every
-  // other stretched item would be), and alignPathGroup() shifts that whole
-  // box upward by --pg-lift with a `transform` so its two icons line up with
-  // every other gate — necessary, and left alone here, per the stack staying
-  // exactly as it is. A transform moves paint, not layout: the box's TOP and
-  // BOTTOM both shift up by the same lift, which is why one card-level fix
-  // and not two — it takes lift off the gap above the bracket and adds that
-  // same amount to the gap below it. Concretely, with G the padding this rule
-  // would give with no lift at all:
-  //   gap above bracket = padding-top    - lift
-  //   gap below bracket = padding-bottom + lift
-  // A first attempt measured both gaps directly and tried to average them —
-  // it doesn't converge: gap-below has a floor of exactly `lift` (padding
-  // can't go negative), so once padding-bottom hits 0 the measured gap stops
-  // moving and there is nothing left to average against. Solving the two
-  // equations above for equal gaps instead — padding-top = G + 2·lift,
-  // padding-bottom = G — has no such floor, because it never asks the
-  // bottom to shrink past where it naturally sits.
-  function centerPathwayCard() {
-    const G = 8;    // the base gap either side would get if there were no lift at all
-    const lift = parseFloat(getComputedStyle(pathway).getPropertyValue("--pg-lift")) || 0;
-    pathway.style.paddingTop = (G + lift).toFixed(2) + "px";
-    pathway.style.paddingBottom = G.toFixed(2) + "px";
-  }
-
-  // align first, then draw, then even out the card around whatever that
-  // produced — each pass depends on the one before it
+  // align first, then draw — each pass depends on the one before it
   function layoutJourney() {
-    alignStageForks(); drawStageForks(); alignPathGroup(); centerPathwayCard();
+    alignStageForks(); drawStageForks(); alignPathGroup();
   }
 
   layoutJourney();
@@ -2743,15 +2763,18 @@
     // fixed aspect ratio) as well as with the legend's line-wrapping.
     const mapDockCenter = document.querySelector(".map-dock-center");
     const mapDockLeft = document.querySelector(".map-dock-left");
+    const mapDockRight = document.querySelector(".map-dock-right");
     if (mapDockCenter && window.ResizeObserver) {
-      // Only the left rail (2 Oct 2026): the right one takes its own height, so
-      // no Detail card is cut off. Stacked on a phone (the dock's grid down to
-      // one column), neither is held. Read from the grid, not a media-query
+      // Both rails (8 Oct 2026): the Detail rail scrolls inside, with its tabs
+      // pinned. Stacked on a phone (the dock's grid down to one column), neither
+      // is held. Read from the grid, not a media-query
       // string: the translation build rewrites string literals on /fr and /pt.
       const dock = mapDockCenter.parentElement;
       new ResizeObserver(() => {
         const stacked = getComputedStyle(dock).gridTemplateColumns.trim().split(/\s+/).length < 2;
-        if (mapDockLeft) mapDockLeft.style.height = stacked ? "" : mapDockCenter.offsetHeight + "px";
+        const h = stacked ? "" : mapDockCenter.offsetHeight + "px";
+        if (mapDockLeft) mapDockLeft.style.height = h;
+        if (mapDockRight) mapDockRight.style.height = h;
       }).observe(mapDockCenter);
     }
 
@@ -2870,11 +2893,11 @@
     readMapColors();
     // Location filter state (Region / Country selects further down).
     let locRegion = "", locCountry = "";
-    // MFT policy has no switch: it is on whenever a policy group is ticked (see
-    // the Filters block further down). Opens with the first-line group ticked.
+    // Country recommended use has no switch: it is on whenever a group is ticked (see
+    // the Filters block further down). Opens with both groups ticked.
     const TP = window.LAUNCH_TREATMENT_POLICY;
     let mftOn = false, mftSel = null, mftProductId = null, mftByIso = {};
-    const mftTick = new Set(["tested"]);
+    const mftTick = new Set(["tested", "vivax"]);
     const stageOff = new Set();   // access stages unticked in Filters
 
     const map = new maplibregl.Map({
@@ -2890,10 +2913,8 @@
           // set per product by mftPaint(). Halo first so the line reads on any fill.
           { id: "mft-halo", type: "line", source: "world", layout: { visibility: "none" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": "#FFFFFF", "line-width": 4.2, "line-opacity": .9 } },
           { id: "mft-g-tested", type: "line", source: "world", layout: { visibility: "none" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-tested") || "#D55E00", "line-width": 2.8 } },
-          { id: "mft-g-untested", type: "line", source: "world", layout: { visibility: "none" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-untested") || "#A8457E", "line-width": 2.4, "line-dasharray": [2, 1.4] } },
           // Round caps + near-zero dashes draw dots; round caps eat half a line-width off each gap, hence the wider gaps.
           { id: "mft-g-vivax", type: "line", source: "world", layout: { visibility: "none", "line-cap": "round" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-vivax") || "#7A4B00", "line-width": 2.6, "line-dasharray": [0.01, 3] } },
-          { id: "mft-g-severe", type: "line", source: "world", layout: { visibility: "none", "line-cap": "round" }, filter: ["in", ["get", "iso3"], ["literal", []]], paint: { "line-color": TOKEN("--mfg-severe") || "#10272F", "line-width": 2.4, "line-dasharray": [2.2, 2.6, 0.01, 2.6] } },
           // The country whose page is open: white halo + ink outline, above everything.
           { id: "sel-halo", type: "line", source: "world", filter: ["==", ["get", "iso3"], ""], paint: { "line-color": "#FFFFFF", "line-width": 6, "line-opacity": .95 } },
           { id: "sel-line", type: "line", source: "world", filter: ["==", ["get", "iso3"], ""], paint: { "line-color": "#10272F", "line-width": 3 } },
@@ -3189,29 +3210,24 @@
     // until the reader turns it on — with the switch off, nothing below
     // touches the map, the legend or the Detail panel.
     //
-    // One group per country, by precedence: first-line for tested
-    // P. falciparum beats untested-only, which beats P. vivax-only, which
-    // beats severe malaria / pregnancy-only. Only the first draws a solid
-    // border; the smaller patient groups draw a dashed one.
+    // Country recommended use: two groups, both drawn as borders. A country can
+    // be in both (it lists the medicine for P. falciparum and for P. vivax); each
+    // group then draws and counts it on its own. Countries that list it only for
+    // untested P. falciparum, severe malaria or pregnancy are not shown.
     const MFT_GROUPS = [
-      { id: "tested",   label: "Primeira linha, testado P. falciparum",  short: "Testado P. falciparum", t: 1 },
-      { id: "untested", label: "Apenas não testado P. falciparum",       short: "Somente não testado", t: .55 },
-      { id: "vivax",    label: "Apenas P. vivax",                     short: "P. vivax apenas", t: .33 },
-      { id: "severe",   label: "Apenas casos graves de malária ou gravidez.",  short: "Apenas casos graves", t: .2 },
+      { id: "tested", short: "Recomendado para P. falciparum", label: "Recomendado para a malária por Plasmodium falciparum", why: "Primeira linha para casos confirmados (testados) na política nacional" },
+      { id: "vivax",  short: "Recomendado para P. vivax", label: "Recomendado para a malária por Plasmodium vivax", why: "Listado para tratamento na política nacional" },
     ];
-    // What the card lists, one chip per group as WHO reports them.
-    const MFT_CHIPS = [["tested", "Testado P. falciparum"], ["untested", "Não testado P. falciparum"],
-                       ["vivax", "P. vivax"], ["severe", "Malária grave"], ["pregnancy", "Gravidez"]];
+    const MFT_TXT = { show: "Mostrar no mapa", count: "N.º de países", use: "Uso recomendado pelos países", group: "Grupo", stage: "Etapa de acesso", tickHint: "Marque um grupo para desenhar os seus contornos no mapa.", tickLeft: "Marque um grupo à esquerda para ver os seus países.",
+                      noPolicy: (n) => `Nenhuma política nacional de tratamento lista ${n} ainda.`, notListed: "não listado" };
     // Colour and line pattern belong to the POLICY GROUP, never to the medicine:
     // every medicine draws first-line as the same solid vermilion line, and so on.
     // The four colours stay separable under protan, deutan and tritan vision, and
     // the patterns (solid, dashed, dotted, dash-dot) do not rely on colour at all.
     const mftGroupColor = (gid) => TOKEN("--mfg-" + gid) || TOKEN("--accent");
     const MFT_PATTERN = {
-      tested:   { w: 3,   da: "" },
-      untested: { w: 2.6, da: "7 4" },
-      vivax:    { w: 2.8, da: "1.5 4.5", cap: "round" },
-      severe:   { w: 2.6, da: "9 3 1.5 3", cap: "round" },
+      tested: { w: 3,   da: "" },
+      vivax:  { w: 2.8, da: "1.5 4.5", cap: "round" },
     };
     // A short sample of a group's border, for the legend and the filter list.
     function mftLineSvg(gid, len) {
@@ -3225,16 +3241,9 @@
       const c = TP && TP.countries[iso3];
       return (c && c.products && c.products[mftProductId]) || [];
     }
-    // "none" = this product is not in the country's policy; otherwise the one
-    // group the country is drawn and counted under.
-    function mftCat(iso3) {
-      const g = mftGroups(iso3);
-      if (!g.length) return "none";
-      if (g.includes("tested")) return "tested";
-      if (g.includes("untested")) return "untested";
-      if (g.includes("vivax")) return "vivax";
-      return "severe";   // severe and/or pregnancy
-    }
+    // Which of the two groups list this product for the country.
+    const mftHas = (iso3, gid) => mftGroups(iso3).includes(gid);
+    const mftCatsOf = (iso3) => MFT_GROUPS.filter((g) => mftHas(iso3, g.id));
     // The countries the counts and borders cover: drawn on this map (the same
     // 94 the access legend counts) and inside the Location filter.
     function mftScope() {
@@ -3250,15 +3259,13 @@
     const mftProductName = () => (tracked.find((p) => p.id === mftProductId) || {}).name || "";
     const mftSource = () => {
       const m = (TP && TP.meta) || {};
-      return `Fonte: OMS ${esc(m.edition || "World Malaria Report")}, Anexo 4B — política nacional a partir de ${esc(String(m.policyYear || ""))}` +
-        `${m.dataAsOf ? ", dados até " + esc(prettyDate(m.dataAsOf)) : ""}. Borders show what policy lists, not what is in use.`;
+      return `Fonte: OMS ${esc(m.edition || "World Malaria Report")}, anexo 4B (política de ${esc(String(m.policyYear || ""))}).`;
     };
 
     function mftTipLine(iso3) {
       if (!TP) return "";
-      const cat = mftCat(iso3);
-      const g = MFT_GROUPS.find((x) => x.id === cat);
-      return `<div class="tprod">Política MFT · ${esc(mftProductName())}: ${g ? esc(g.label) : "não listado"}</div>`;
+      const gs = mftCatsOf(iso3);
+      return `<div class="tprod">${esc(MFT_TXT.use)} · ${esc(mftProductName())}: ${gs.length ? esc(gs.map((g) => g.short).join(", ")) : esc(MFT_TXT.notListed)}</div>`;
     }
 
     function mftPaint() {
@@ -3266,20 +3273,19 @@
       const vis = mftOn ? "visible" : "none";
       MFT_LAYERS.forEach((id) => map.setLayoutProperty(id, "visibility", vis));
       if (!mftOn) return;
-      const by = { tested: [], untested: [], vivax: [], severe: [] };
+      const by = { tested: [], vivax: [] };
       mftScope().forEach((iso3) => {
-        const cat = mftCat(iso3);
-        if (cat === "none" || !mftTick.has(cat) || stageOff.has(mftStage(iso3).lvl)) return;
-        by[cat].push(iso3);
+        MFT_GROUPS.forEach((g) => { if (mftTick.has(g.id) && mftHas(iso3, g.id)) by[g.id].push(iso3); });
       });
       const f = (list) => ["in", ["get", "iso3"], ["literal", list]];
-      map.setFilter("mft-halo", f([].concat(by.tested, by.untested, by.vivax, by.severe)));
+      map.setFilter("mft-halo", f([].concat(by.tested, by.vivax)));
       MFT_GROUPS.forEach((g) => map.setFilter("mft-g-" + g.id, f(by[g.id])));
     }
 
+    // Countries per group, for the countries in scope (the Location filter).
     function mftCounts() {
-      const byCat = { tested: [], untested: [], vivax: [], severe: [] };
-      mftScope().forEach((iso3) => { const c = mftCat(iso3); if (c !== "none") byCat[c].push(iso3); });
+      const byCat = { tested: [], vivax: [] };
+      mftScope().forEach((iso3) => MFT_GROUPS.forEach((g) => { if (mftHas(iso3, g.id)) byCat[g.id].push(iso3); }));
       Object.values(byCat).forEach((l) => l.sort((a, b) => mftName(a).localeCompare(mftName(b))));
       return byCat;
     }
@@ -3291,26 +3297,24 @@
         .map((iso3) => TP.countries[iso3].name);
     }
 
+    // The legend is fixed: it always shows both groups, whatever is ticked. The
+    // access-stage rows stay too; an unticked row is dimmed, not hidden.
     function mftLegend(byCat) {
-      const el = document.getElementById("mft-legend"), rule = document.getElementById("mft-rule");
-      // access-stage keys: only what is ticked
-      document.querySelectorAll(".map-legend .key[data-lvl]").forEach((k) => { k.hidden = stageOff.has(k.dataset.lvl); });
+      const el = document.getElementById("mft-legend");
+      document.querySelectorAll(".map-legend tr[data-lvl]").forEach((k) => { k.classList.toggle("dim", stageOff.has(k.dataset.lvl)); });
       el.hidden = !TP;
-      rule.hidden = true;
       if (!TP) return;
       const av = mftAvail();
-      const head = `<span class="lg-t">Política MFT · ${esc(mftProductName())}</span>`;
-      if (!Object.keys(av).length) { el.innerHTML = head + `<span>Não consta de nenhuma política nacional presente neste mapa.</span>`; return; }
-      if (!mftOn) { el.innerHTML = head + `<span>Desativado. Marque um grupo de políticas à esquerda para desenhar os seus limites.</span>`; return; }
-      el.innerHTML = head + MFT_GROUPS.filter((g) => av[g.id] && mftTick.has(g.id)).map((g) =>
-        `<span class="key">${mftLineSvg(g.id)}` +
-        `${esc(g.label)} <span class="ct">${byCat[g.id].length}</span></span>`).join("");
-      rule.hidden = false;
-      rule.textContent = "Borda = o medicamento selecionado está na política nacional de tratamento do país (linha contínua: primeira linha para os doentes testados P. falciparum; cada grupo mais pequeno de doentes tem a sua própria cor e padrão de linha). Preenchimento = etapa de acesso, sem alterações.";
+      el.innerHTML = `<table class="ftab"><thead><tr><th colspan="2">${esc(MFT_TXT.use)} · ${esc(mftProductName())}</th><th class="n">${esc(MFT_TXT.count)}</th></tr></thead><tbody>` +
+        MFT_GROUPS.map((g) => `<tr class="${mftTick.has(g.id) && av[g.id] ? "" : "dim"}"><td class="sw">${mftLineSvg(g.id)}</td><td>${esc(g.label)}<small>${esc(g.why)}</small></td><td class="n">${byCat[g.id].length}</td></tr>`).join("") +
+        `</tbody></table>`;
     }
 
     function mftDonut(byCat, col, on) {
       const total = MFT_GROUPS.reduce((s, g) => s + (on.has(g.id) ? byCat[g.id].length : 0), 0);
+      const union = new Set();
+      MFT_GROUPS.forEach((g) => { if (on.has(g.id)) byCat[g.id].forEach((i) => union.add(i)); });
+      const n = union.size;
       const R = 40, W = 16, C = 2 * Math.PI * R;
       const segs = MFT_GROUPS.filter((g) => byCat[g.id].length && on.has(g.id));
       const gap = segs.length > 1 ? 2 : 0;   // thin white seam between groups
@@ -3322,14 +3326,15 @@
         off += len;
         return s;
       }).join("");
-      // All four groups, zeros included, so the key reads the same for every medicine.
-      const rows = MFT_GROUPS.map((g) =>
-        `<div${on.has(g.id) ? "" : ' class="off"'}><span class="mft-sq" style="background:${mftGroupColor(g.id)}"></span><span>${esc(g.short)}</span><b>${byCat[g.id].length}</b></div>`).join("");
+      // Both groups, zeros included, with the number of countries as a column.
+      const rows = `<table class="ftab"><thead><tr><th colspan="2">${esc(MFT_TXT.group)}</th><th class="n">${esc(MFT_TXT.count)}</th></tr></thead><tbody>` +
+        MFT_GROUPS.map((g) => `<tr class="${on.has(g.id) ? "" : "dim"}"><td class="sw"><span class="mft-sq" style="background:${mftGroupColor(g.id)}"></span></td><td>${esc(g.short)}</td><td class="n">${byCat[g.id].length}</td></tr>`).join("") +
+        `</tbody></table>`;
       return `<div class="mft-donut"><svg viewBox="0 0 112 112" width="112" height="112" role="img" ` +
-        `aria-label="${total} ${total === 1 ? "país por grupo de doentes" : "países por grupo de doentes"}">` +
+        `aria-label="${n} ${n === 1 ? "país por grupo de doentes" : "países por grupo de doentes"}">` +
         `<circle cx="56" cy="56" r="${R}" fill="none" stroke="#EDF1F3" stroke-width="${W}"></circle>${arcs}` +
-        `<text class="ct-n" x="56" y="58" text-anchor="middle">${total}</text>` +
-        `<text class="ct-l" x="56" y="74" text-anchor="middle">${total === 1 ? "country" : "countries"}</text></svg>` +
+        `<text class="ct-n" x="56" y="58" text-anchor="middle">${n}</text>` +
+        `<text class="ct-l" x="56" y="74" text-anchor="middle">${n === 1 ? "country" : "countries"}</text></svg>` +
         `<div class="rows">${rows}</div></div>`;
     }
 
@@ -3371,9 +3376,9 @@
       h += `<div class="det-card"><h4>Mistura de palco de acesso · ${esc(p.name)}</h4>` +
         `<div class="det-big">${withStage}<span class="det-small"> dos ${n} países têm uma fase de acesso</span></div>` +
         stageBar(c, n) + `</div>`;
-      h += `<div class="det-card"><h4>MFT grupos de políticas · ${esc(p.name)}</h4>`;
+      h += `<div class="det-card"><h4>${esc(MFT_TXT.use)} · ${esc(p.name)}</h4>`;
       if (!Object.keys(mftAvail()).length) h += `<p class="det-empty">Nenhuma política nacional de tratamento lista ${esc(p.name)} ainda.</p>`;
-      else if (!mftOn) h += `<p class="det-empty">Assinale um grupo de políticas MFT à esquerda para ver os países a ele associados.</p>`;
+      else if (!mftOn) h += `<p class="det-empty">${esc(MFT_TXT.tickLeft)}</p>`;
       else {
         const und = mftUndrawn();
         h += mftDonut(byCat, null, mftTick) +
@@ -3383,19 +3388,32 @@
       return h + `</div>`;
     }
 
+    // The Find a country list follows the left Filters: a country is listed when its
+    // access stage is ticked OR it is in a ticked recommended-use group. Location and
+    // the search box narrow it further.
+    const mftMatches = (iso3) => !stageOff.has(mftStage(iso3).lvl) || MFT_GROUPS.some((g) => mftTick.has(g.id) && mftHas(iso3, g.id));
+    const mftListed = () => mftScope().filter(mftMatches);
+    const FIND_TXT = { country: "País", stage: "Etapa", use: "Uso", none: "Nenhum país corresponde aos filtros à esquerda.", reset: "Reiniciar os filtros", of: "de", guidelines: "Em orientações" };
+    const countLabel = () => `${mftListed().length} ${FIND_TXT.of} ${mftScope().length}`;
     function finderRows(q) {
       const k = q.trim().toLowerCase();
-      const list = mftScope().filter((i) => !k || mftName(i).toLowerCase().includes(k))
+      const pool = mftListed();
+      if (!pool.length) return `<div class="det-nomatch"><p>${esc(FIND_TXT.none)}</p><button type="button" class="det-reset" data-reset>${esc(FIND_TXT.reset)}</button></div>`;
+      const list = pool.filter((i) => !k || mftName(i).toLowerCase().includes(k))
         .sort((a, b) => mftName(a).localeCompare(mftName(b)));
       if (!list.length) return `<p class="det-empty" style="padding:8px 10px">Sem correspondência de país.</p>`;
-      return list.map((i) => {
-        const st = mftStage(i), cat = mftCat(i);
-        return `<button type="button" class="det-row" data-iso3="${esc(i)}"><span class="nm">${esc(mftName(i))}</span>` +
-          `${hasCountries() ? stagePill(st.lvl) : ""}${cat !== "none" ? mftLineSvg(cat, 22) : ""}<span class="go">Ver ></span></button>`;
-      }).join("");
+      return `<table class="det-table"><colgroup><col><col><col style="width:56px"><col style="width:16px"></colgroup>` +
+        `<thead><tr><th scope="col">${esc(FIND_TXT.country)}</th><th scope="col">${esc(FIND_TXT.stage)}</th><th scope="col">${esc(FIND_TXT.use)}</th><th aria-hidden="true"></th></tr></thead><tbody>` +
+        list.map((i) => {
+          const st = mftStage(i), nm = esc(mftName(i));
+          const gs = MFT_GROUPS.filter((g) => mftTick.has(g.id) && mftHas(i, g.id));
+          return `<tr class="det-row" data-iso3="${esc(i)}"><td class="nm"><button type="button" class="det-name" data-iso3="${esc(i)}" title="${nm}">${nm}</button></td>` +
+            `<td class="stg">${hasCountries() ? `<span class="mapsw ${st.lvl}"></span>${esc(st.lvl === "guidelines" ? FIND_TXT.guidelines : (LEVEL_LABEL[st.lvl] || LEVEL_LABEL.none))}` : ""}</td>` +
+            `<td class="use">${gs.map((g) => mftLineSvg(g.id, 22)).join("")}</td><td class="go" aria-hidden="true">›</td></tr>`;
+        }).join("") + `</tbody></table>`;
     }
     function detCountries() {
-      return `<div class="det-card"><h4>Encontre um país <span class="det-n">${mftScope().length}</span></h4>` +
+      return `<div class="det-card"><h4>Encontre um país <span class="det-n">${countLabel()}</span></h4>` +
         `<input id="det-q" class="det-q" type="search" placeholder="Introduza o nome de um país…" aria-label="Pesquisar países" autocomplete="off">` +
         `<div class="det-list" id="det-list">${finderRows("")}</div></div>`;
     }
@@ -3407,8 +3425,8 @@
         `<div class="det-nav"><button type="button" data-step="-1" aria-label="País anterior">‹</button>` +
         `<button type="button" data-step="1" aria-label="Próximo país">›</button></div></div>`;
       if (!hasCountries()) return h + `<div class="det-card"><h4>${esc(p.name)}</h4><p class="det-empty">${esc(p.name)} é uma versão pré-lançamento, pelo que ainda não tem estatuto ou política de país.</p></div>`;
-      const st = mftStage(iso3), lv = STAGE_KEYS.indexOf(st.lvl) + 1, cat = mftCat(iso3), g = mftGroups(iso3);
-      const gm = MFT_GROUPS.find((x) => x.id === cat), tp = TP && TP.countries[iso3];
+      const st = mftStage(iso3), lv = STAGE_KEYS.indexOf(st.lvl) + 1, g = mftGroups(iso3);
+      const gl = mftCatsOf(iso3), tp = TP && TP.countries[iso3];
       const parts = tp && tp.parts ? Object.keys(tp.parts).map((k) => {
         const pg = (tp.parts[k].products || {})[mftProductId] || [];
         return `${esc(k)}: ${pg.length ? "listas " : "não lista "}${esc(p.name)}.`;
@@ -3416,10 +3434,10 @@
       h += `<div class="det-card"><div class="det-top"><b>${esc(p.name)}</b>${stagePill(st.lvl)}</div>` +
         `<div class="det-trk">${[1, 2, 3].map((n) => `<i${lv >= n ? ` style="background:${stageVar(STAGE_KEYS[lv - 1])}"` : ""}></i>`).join("")}</div>` +
         `<div class="det-trkl"><span>Registrado</span><span>Em orientações</span><span>Em planos MFT</span></div>` +
-        (gm ? `<div class="det-gline">${mftLineSvg(gm.id)}<b>${esc(gm.short)}</b><span class="det-small">na política da OMS ${esc(String((TP && TP.meta && TP.meta.policyYear) || ""))}</span></div>`
+        (gl.length ? gl.map((gm) => `<div class="det-gline">${mftLineSvg(gm.id)}<b>${esc(gm.short)}</b><span class="det-small">na política da OMS ${esc(String((TP && TP.meta && TP.meta.policyYear) || ""))}</span></div>`).join("")
             : `<div class="det-gline det-small">Não consta da política nacional de tratamento.</div>`) +
-        (g.length ? `<div class="mft-grp">Listado para</div><div class="mft-chips">` +
-          MFT_CHIPS.map(([k, lab]) => `<span class="mft-pchip${g.includes(k) ? " yes" : ""}">${g.includes(k) ? "✓ " : ""}${esc(lab)}</span>`).join("") + `</div>` : "") +
+        (gl.length ? `<div class="mft-grp">${esc(MFT_TXT.use)}</div><div class="mft-chips">` +
+          MFT_GROUPS.map((x) => `<span class="mft-pchip${g.includes(x.id) ? " yes" : ""}">${g.includes(x.id) ? "✓ " : ""}${esc(x.short)}</span>`).join("") + `</div>` : "") +
         (parts ? `<p class="mft-note">${parts}</p>` : "") + `<p class="mft-note">${mftSource()}</p></div>`;
       // position within its WHO region
       const reg = WHO_REGION[iso3], ids = Object.keys(M.countries).filter((x) => WHO_REGION[x] === reg);
@@ -3447,7 +3465,7 @@
       el.hidden = false;
       const iso3 = mftSel || locCountry || null;
       if (iso3) { el.innerHTML = detCountry(iso3); el.scrollTop = 0; return; }
-      const nC = mftScope().length;
+      const nC = countLabel();
       el.innerHTML = `<div class="det-tabs" role="tablist">` +
         `<button type="button" role="tab" aria-selected="${detTab === "overview"}" data-det-tab="overview">Visão geral</button>` +
         `<button type="button" role="tab" aria-selected="${detTab === "countries"}" data-det-tab="countries">Países <span class="det-n">${nC}</span></button></div>` +
@@ -3457,14 +3475,16 @@
     {
       const panel = document.getElementById("mft-panel");
       panel.addEventListener("click", (e) => {
-        const t = e.target.closest("[data-det-tab],[data-iso3],[data-back],[data-step]");
+        const t = e.target.closest("[data-det-tab],[data-iso3],[data-back],[data-step],[data-reset]");
         if (!t) return;
         const hadFocus = panel.contains(document.activeElement);
         if (t.dataset.detTab) { detTab = t.dataset.detTab; mftSel = null; mftRender(); }
+        else if (t.hasAttribute("data-reset")) document.getElementById("flt-reset").click();
         else if (t.dataset.iso3) selectCountry(t.dataset.iso3);
         else if (t.hasAttribute("data-back")) { mftSel = null; mftRender(); }
         else if (t.dataset.step) {
-          const ids = drawnIsos(), cur = mftSel || locCountry;
+          // step through the listed countries when this one is in the list, else through all
+          const cur = mftSel || locCountry, all = drawnIsos(), pool = all.filter(mftMatches), ids = pool.includes(cur) ? pool : all;
           const nxt = ids[(ids.indexOf(cur) + Number(t.dataset.step) + ids.length) % ids.length];
           mftSel = nxt; mftRender();
         }
@@ -3492,8 +3512,9 @@
 
     // ---- Filters: access stage + MFT policy groups --------------------------
     // MFT policy has no switch. It is ON whenever a policy group is ticked and
-    // OFF when none is. Unticking an access stage fades that stage's countries
-    // (and drops their MFT borders); the legend lists only what is ticked.
+    // OFF when none is. Unticking an access stage fades that stage's countries;
+    // a ticked group still draws its borders on them, and the Find a country list
+    // shows them too.
     const STAGE_ROWS = [["registered", "Registrado"], ["guidelines", "Em orientações nacionais"],
                         ["mft", "Em planos MFT"], ["none", "Sem dados"]];
     // Stage counts, the way the access legend counts them: drawn countries only.
@@ -3506,7 +3527,7 @@
     // Groups the selected medicine has any drawn country in, ignoring Location.
     function mftAvail() {
       const a = {};
-      Object.keys(M.countries).forEach((iso3) => { const c = mftCat(iso3); if (c !== "none") a[c] = (a[c] || 0) + 1; });
+      Object.keys(M.countries).forEach((iso3) => { MFT_GROUPS.forEach((g) => { if (mftHas(iso3, g.id)) a[g.id] = (a[g.id] || 0) + 1; }); });
       return a;
     }
     function mftSync() {
@@ -3521,58 +3542,55 @@
         ["==", ["feature-state", "level"], "mft"], o("mft"),
         o("none")]);
     }
+    // One table: a select-all box and the "number of countries" heading in the
+    // head, then the access stages and the two recommended-use groups as rows.
     function renderFilters(byCat) {
-      const sc = stageCounts();
-      document.getElementById("flt-stage").innerHTML = STAGE_ROWS.map(([k, l]) =>
-        `<label class="flt-row"><input type="checkbox" data-stage="${k}"${stageOff.has(k) ? "" : " checked"}>` +
-        `<span class="mapsw ${k}"></span><span class="flt-l">${l}</span><span class="ct">${sc[k]}</span></label>`).join("");
-      const av = mftAvail();
-      const box = document.getElementById("mft-controls");
-      box.hidden = !TP;
-      let nPolicy = 0;
+      const sc = stageCounts(), av = mftAvail();
+      const mine = TP ? MFT_GROUPS.filter((g) => av[g.id]) : [];
+      const nOn = STAGE_ROWS.filter(([k]) => !stageOff.has(k)).length + mine.filter((g) => mftTick.has(g.id)).length;
+      const nAll = STAGE_ROWS.length + mine.length;
+      let h = `<table class="ftab"><thead><tr><th colspan="2"><label class="flt-all"><input type="checkbox" id="flt-all"${nOn === nAll ? " checked" : ""}> ${esc(MFT_TXT.show)}</label></th><th class="n">${esc(MFT_TXT.count)}</th></tr></thead><tbody>` +
+        `<tr class="gr"><th colspan="3">${esc(MFT_TXT.stage)}</th></tr>` +
+        STAGE_ROWS.map(([k, l]) =>
+          `<tr><td class="cbx"><input type="checkbox" id="flt-s-${k}" data-stage="${k}"${stageOff.has(k) ? "" : " checked"}></td>` +
+          `<td><label for="flt-s-${k}"><span class="mapsw ${k}"></span>${l}</label></td><td class="n${sc[k] ? "" : " zero"}">${sc[k]}</td></tr>`).join("");
       if (TP) {
-        const nAvail = MFT_GROUPS.filter((g) => av[g.id]).length;
-        nPolicy = MFT_GROUPS.filter((g) => av[g.id] && mftTick.has(g.id)).length;
-        document.getElementById("flt-mft").innerHTML =
-          `<label class="flt-row flt-parent"><input type="checkbox" id="flt-mft-all"${nPolicy && nPolicy === nAvail ? " checked" : ""}${nAvail ? "" : " disabled"}>` +
-          `<span class="flt-l">Mostrar política MFT</span></label>` +
-          MFT_GROUPS.map((g) => {
-            const off = !av[g.id];
-            return `<label class="flt-row flt-sub${off ? " off" : ""}"><input type="checkbox" data-group="${g.id}"` +
-              `${mftTick.has(g.id) && !off ? " checked" : ""}${off ? " disabled" : ""}>` +
-              `${mftLineSvg(g.id)}` +
-              `<span class="flt-l">${esc(g.short)}</span><span class="ct">${byCat[g.id].length}</span></label>`;
-          }).join("");
-        const all = document.getElementById("flt-mft-all");
-        if (all) all.indeterminate = nPolicy > 0 && nPolicy < nAvail;
+        h += `<tr class="gr"><th colspan="3">${esc(MFT_TXT.use)}</th></tr>` + MFT_GROUPS.map((g) => {
+          const off = !av[g.id];
+          return `<tr class="${off ? "dim" : ""}"><td class="cbx"><input type="checkbox" id="flt-g-${g.id}" data-group="${g.id}"` +
+            `${mftTick.has(g.id) && !off ? " checked" : ""}${off ? " disabled" : ""}></td>` +
+            `<td><label for="flt-g-${g.id}">${mftLineSvg(g.id)}${esc(g.short)}</label></td><td class="n${byCat[g.id].length ? "" : " zero"}">${byCat[g.id].length}</td></tr>`;
+        }).join("");
       }
-      const nAct = stageOff.size + nPolicy;
+      document.getElementById("flt-table").innerHTML = h + `</tbody></table>`;
+      const all = document.getElementById("flt-all");
+      if (all) all.indeterminate = nOn > 0 && nOn < nAll;
+      const nAct = stageOff.size + mine.filter((g) => !mftTick.has(g.id)).length;
       const badge = document.getElementById("flt-act");
       badge.hidden = !nAct;
       badge.textContent = nAct;
       const hint = document.getElementById("mft-hint");
       hint.hidden = !TP || (mftOn && Object.keys(av).length > 0);
-      hint.textContent = !Object.keys(av).length
-        ? `Nenhuma política nacional de tratamento lista ${mftProductName()} ainda.`
-        : "Marque um grupo de políticas para desenhar as suas fronteiras no mapa. Nada assinalado significa que a política MFT está desativada.";
+      hint.textContent = !Object.keys(av).length ? MFT_TXT.noPolicy(mftProductName()) : MFT_TXT.tickHint;
     }
     document.getElementById("filters").addEventListener("change", (e) => {
       const t = e.target;
       if (t.dataset.stage) { if (t.checked) stageOff.delete(t.dataset.stage); else stageOff.add(t.dataset.stage); }
       else if (t.dataset.group) { if (t.checked) mftTick.add(t.dataset.group); else mftTick.delete(t.dataset.group); }
-      else if (t.id === "flt-mft-all") {
+      else if (t.id === "flt-all") {
         const av = mftAvail();
-        MFT_GROUPS.forEach((g) => { if (av[g.id]) { if (t.checked) mftTick.add(g.id); else mftTick.delete(g.id); } });
+        if (t.checked) { stageOff.clear(); MFT_GROUPS.forEach((g) => { if (av[g.id]) mftTick.add(g.id); }); }
+        else { STAGE_ROWS.forEach(([k]) => stageOff.add(k)); MFT_GROUPS.forEach((g) => mftTick.delete(g.id)); }
       } else return;
       hideTip();
       mftRender();
       const key = t.dataset.stage ? `[data-stage="${t.dataset.stage}"]`
-        : t.dataset.group ? `[data-group="${t.dataset.group}"]` : "#flt-mft-all";
+        : t.dataset.group ? `[data-group="${t.dataset.group}"]` : "#flt-all";
       const again = document.querySelector("#filters " + key);
       if (again) again.focus();
     });
     document.getElementById("flt-reset").addEventListener("click", () => {
-      stageOff.clear(); mftTick.clear(); mftSel = null;
+      stageOff.clear(); MFT_GROUPS.forEach((g) => mftTick.add(g.id)); mftSel = null;
       hideTip();
       mftRender();
     });
@@ -3580,7 +3598,7 @@
     function mftRender() {
       if (!mftProductId) return;
       mftSync();
-      const byCat = TP ? mftCounts() : { tested: [], untested: [], vivax: [], severe: [] };
+      const byCat = TP ? mftCounts() : { tested: [], vivax: [] };
       paintStageFilter();
       paintSelection();
       if (TP) mftPaint();
@@ -3811,20 +3829,12 @@
 
   // print: open every panel so the printout is complete
   window.addEventListener("beforeprint", () => {
-    document.getElementById("updates").open = true;
     document.getElementById("glossary").open = true;
     document.getElementById("sources").open = true;
   });
-  // Sources: a dropdown that starts open on desktop and closed on a phone; crossing the 720 px width
-  // resets it to that screen's default. The count is set from the list so it cannot drift; #sources
-  // opens it on any screen.
+  // Sources: a dropdown that starts closed, like Definitions; #sources opens it on any screen.
   (function () {
     const box = document.getElementById("sources");
-    document.getElementById("srcn").textContent = box.querySelectorAll(".srclist > li").length;
-    const wide = matchMedia("(min-width: 721px)");
-    const sync = () => { box.open = wide.matches; };
-    sync();
-    wide.addEventListener("change", sync);
     const openIfAsked = () => { if (location.hash === "#sources") { box.open = true; box.scrollIntoView(); } };
     openIfAsked();
     window.addEventListener("hashchange", openIfAsked);
