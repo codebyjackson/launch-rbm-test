@@ -179,7 +179,16 @@
   .pathexp b { font-weight: 700; color: var(--exp-ink); font-variant-numeric: tabular-nums; }
   .pathnode .pathexp svg { width: 13px; height: 13px; margin: 0; display: inline-block; color: var(--exp-ink); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .pathexp.none { border-color: transparent; background: var(--surface); color: var(--ink-3); padding-inline: 8px; }
-  @media (max-width: 640px) { .pathexp { white-space: normal; text-align: center; justify-content: center; } }
+  /* Phones: the tag wraps between its parts, never inside them (9 Oct 2026).
+     The WHO pair's column is 66px inside its bracket, but the tag could not
+     shrink below 112px (clock, "2 years" and "expected" side by side), so it
+     ran 18px past the column and 4px past the card. Now "expected" drops to a
+     second line under the clock and the number. */
+  @media (max-width: 640px) {
+    .pathexp { white-space: normal; text-align: center; justify-content: center;
+               flex-wrap: wrap; column-gap: 3px; max-width: 100%; box-sizing: border-box; padding: 2px 5px; }
+    .pathexp b { white-space: nowrap; }
+  }
   /* Market Access / Country-Population Access: two white cards on the canvas,
      each with a gray title strip and half the width (8 Oct 2026). The card, its
      shadow and radius moved from .pathway to .phase; the arrow between steps 3
@@ -1328,6 +1337,19 @@
     .pathnode .pill { width: 38px; height: 38px; }
     .pathnode svg, .pathnode .whoemb { width: 25px; height: 25px; }
     .detail { padding: 14px; }
+  }
+  /* Phones: step names break only between words (9 Oct 2026). With
+     overflow-wrap: break-word and hyphens: auto a long word split inside
+     itself ("recommenda-tion", "Recommandati|on", "Adquisicion|es"): 7 words
+     across en/fr/pt/es at 360px and 390px. Each column is now at least as
+     wide as its longest word, in every language. The strip already scrolls
+     sideways, and measured it is no wider than before. After the 760px block
+     on purpose: that block sets .pathnode { min-width: 72px } at the same
+     specificity. */
+  @media (max-width: 640px) {
+    .pathnode .plabel { overflow-wrap: normal; hyphens: manual; }
+    .pathnode { flex: 1 0 72px; min-width: min-content; }
+    .pathgroup { flex: 1 0 84px; min-width: min-content; }
   }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
