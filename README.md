@@ -8,6 +8,15 @@
 · [iframe test in a mock RBM platform](https://codebyjackson.github.io/launch-rbm-test/iframe-test.html)
 · data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
 
+> **Do not edit the pages here.** `en/`, `fr/`, `pt/`, `es/` and `assets/` are
+> built from `illustrated-journey-dashboard.html` in
+> [KylerXiv/launch-development-test](https://github.com/KylerXiv/launch-development-test).
+> A change made here never reaches the LAUNCH site or the translations, and
+> the next build replaces it. Make the change there; its
+> `scripts/copy-rbm-pages.js` copies the build here, and stops if a page here
+> was changed by hand. This README, `index.html`, `iframe-test.html` and
+> `rbm-shell/` belong to this repository and can be edited here.
+
 The LAUNCH illustrated journey dashboard, one static page per language, for
 embedding on dashboards.endmalaria.org. The pages hold no data of their own:
 each fetches the approved dataset at runtime, so a data update never needs a
@@ -116,7 +125,12 @@ scrolls. `iframe-test.html` in this folder shows it working.
 
 These files are generated in the LAUNCH pipeline repository by
 `node scripts/build-rbm-pages.js` from the same page as the LAUNCH site, so a
-fix there reaches here on the next build. Do not edit them by hand.
+fix there reaches here on the next build. Do not edit them by hand: a change
+made here is replaced by the next build. `build-manifest.json` records what
+the build wrote (the sha256 of each file in en/, fr/, pt/, es/ and assets/,
+and the commit it was built from), so an edit made here can be found; the
+LAUNCH repository's `scripts/copy-rbm-pages.js` stops a copy that would
+replace one.
 `--api-url` sets where the two forms post (default: the LAUNCH production
 site); `--api-url none` builds them switched off, as they were until
 7 Oct 2026.
