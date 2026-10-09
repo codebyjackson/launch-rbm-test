@@ -1476,7 +1476,7 @@
             <div class="legend-tables">
             <div class="map-legend">
               <table class="ftab">
-                <thead><tr><th colspan="2">Etapa de acesso</th><th class="n">N.º de países</th></tr></thead>
+                <thead><tr><th colspan="2">Etapa de acesso</th><th class="n">Número de países</th></tr></thead>
                 <tbody>
                   <tr data-lvl="registered"><td class="sw"><span class="mapsw registered"></span></td><td>Registrado</td><td class="n"><span class="ct" id="mapct-registered">–</span></td></tr>
                   <tr data-lvl="guidelines"><td class="sw"><span class="mapsw guidelines"></span></td><td>Em orientações nacionais</td><td class="n"><span class="ct" id="mapct-guidelines">–</span></td></tr>
@@ -1637,7 +1637,7 @@
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
   const LABEL = { done: "Concluir", prog: "Em curso", late: "Atrasado", idle: "Não iniciado" };
   // What "Delayed" means, shown from the i beside it in the medicines table.
-  const LATE_DEF = "esta etapa não está avançando tão rápido quanto o esperado.";
+  const LATE_DEF = "Esta etapa não está a avançar tão rapidamente quanto o esperado.";
   const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
@@ -1864,7 +1864,7 @@
   const ACCESS_SPLIT = 4;
   const PHASES = [
     { name: "Acesso ao mercado" },
-    { name: "Acesso por país e população" }
+    { name: "Acesso por país/população" }
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
@@ -1931,20 +1931,22 @@
     const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
     return `<div class="ysbox">
       <div class="ysfigs">
-        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso de rotina até ${due}</span></div>
-        <div><small>${going ? "Real até agora" : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não é de uso rotineiro" : ""}</span></div>
-        <div class="ysdiff"><small>Variação</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até agora" : "face ao esperado"}</span></div>
+        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso de rotina por ${due}</span></div>
+        <div><small>${going ? "Até ao momento, está tudo bem." : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não é de uso rotineiro" : ""}</span></div>
+        <div class="ysdiff"><small>Variância</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até agora" : "do esperado"}</span></div>
       </div>
-      <p>Prevê-se que entre em uso de rotina em ${due}, ${y.whole.exp} anos após o seu primeiro marco em ${y.start}.${y.whole.kind === "going" && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
+      <p>Prevê-se que entre em uso de rotina em ${due}, ${y.whole.exp} anos após o seu primeiro marco em ${y.start}.${going && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
       ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até agora</i>` : ""}</p>` : ""}
     </div>`;
   }
-  // the "Time taken" view: expected against actual, under the two access groups
+  // the "Tempo gasto" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
     if (!y.approved) return `<div class="ysempty"><b>Ainda não foi aprovado.</b> Começamos a comparar assim que o medicamento tem uma aprovação regulamentar com data de expiração.</div>`;
-    const actual = s => s.took == null ? "n.d." : yrsText(s.took) + (s.kind === "going" ? ` <i>até agora</i>` : "");
+    // "—", not "n/a": text with no two letters in a row is never collected for
+    // translation, so "n/a" stayed English on /fr, /pt and /es.
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>até agora</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -1955,7 +1957,7 @@
       return h + row(esc(STAGES[s.i]), s);
     }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Degrau</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variação</th></tr></thead>
+      <thead><tr><th scope="col">Degrau</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variância</th></tr></thead>
       <tbody>${body}</tbody>
       <tfoot>${row("Toda a viagem", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
@@ -1964,8 +1966,8 @@
   function pathExpHtml(i) {
     if (!YARD) return "";
     const e = YARD.expected[i];
-    if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>Esperado: <b>${yrsText(e.years)}</b></span>`;
-    return i === 0 ? `<span class="pathexp none">Antes da contagem</span>` : i === 1 ? `<span class="pathexp none">A contagem começa aqui</span>` : "";
+    if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><b>${yrsText(e.years)}</b> esperado</span>`;
+    return i === 0 ? `<span class="pathexp none">Antes do relógio</span>` : i === 1 ? `<span class="pathexp none">O relógio começa aqui.</span>` : "";
   }
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
@@ -2082,8 +2084,13 @@
     // the label (.cnt, removed 10 Sep 2026). Still carried in the aria-label
     // for screen readers, and still shown per-medicine in the gate panel this
     // button opens — just not as a second always-visible line in the strip.
+    // The phase attribute and the expected time are built first, so the
+    // aria-label stays one phrase the translation collector can find whole
+    // (written inline, the nested quotes cut it apart and it stayed English).
+    const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
+    const exp = YARD && YARD.expected[i] ? ", esperado " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}"${stacked ? "" : ` data-phase="${phaseOf(i)}"`} aria-label="Passo ${stepNo(i)}, ${esc(s)}${YARD && YARD.expected[i] ? ", esperado: " + yrsText(YARD.expected[i].years) : ""}. Mostra o que acontece aqui e onde cada medicamento é ${n ? ", " + n + " delayed" : ""}.">` +
+      data-gate="${i}"${phase} aria-label="Passo ${stepNo(i)}, ${esc(s)}${exp}. Mostra o que acontece aqui e onde cada medicamento é ${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
@@ -2103,7 +2110,7 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Medicina</span><span class="c-mini">Jornada</span>` +
-    `<span class="c-stage">Estágio atual · Estatuto</span><span class="c-path">Na trilha</span><span class="c-bar">Barreira principal</span></div>`);
+    `<span class="c-stage">Etapa atual · Estado</span><span class="c-path">Na trilha</span><span class="c-bar">Barreira principal</span></div>`);
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
   (function () {
@@ -3215,10 +3222,10 @@
     // group then draws and counts it on its own. Countries that list it only for
     // untested P. falciparum, severe malaria or pregnancy are not shown.
     const MFT_GROUPS = [
-      { id: "tested", short: "Recomendado para P. falciparum", label: "Recomendado para a malária por Plasmodium falciparum", why: "Primeira linha para casos confirmados (testados) na política nacional" },
-      { id: "vivax",  short: "Recomendado para P. vivax", label: "Recomendado para a malária por Plasmodium vivax", why: "Listado para tratamento na política nacional" },
+      { id: "tested", short: "Recomendado para P. falciparum", label: "Recomendado para a malária por Plasmodium falciparum.", why: "Primeira linha de defesa para casos confirmados (testados) na política nacional." },
+      { id: "vivax",  short: "Recomendado para P. vivax", label: "Recomendado para a malária por Plasmodium vivax.", why: "Incluído na lista de tratamentos da política nacional." },
     ];
-    const MFT_TXT = { show: "Mostrar no mapa", count: "N.º de países", use: "Uso recomendado pelos países", group: "Grupo", stage: "Etapa de acesso", tickHint: "Marque um grupo para desenhar os seus contornos no mapa.", tickLeft: "Marque um grupo à esquerda para ver os seus países.",
+    const MFT_TXT = { show: "Mostrar no mapa", count: "Número de países", use: "Uso recomendado pelo país", group: "Grupo", stage: "Etapa de acesso", tickHint: "Marque um grupo para desenhar as suas fronteiras no mapa.", tickLeft: "Selecione um grupo à esquerda para ver os países a ele associados.",
                       noPolicy: (n) => `Nenhuma política nacional de tratamento lista ${n} ainda.`, notListed: "não listado" };
     // Colour and line pattern belong to the POLICY GROUP, never to the medicine:
     // every medicine draws first-line as the same solid vermilion line, and so on.
@@ -3259,7 +3266,7 @@
     const mftProductName = () => (tracked.find((p) => p.id === mftProductId) || {}).name || "";
     const mftSource = () => {
       const m = (TP && TP.meta) || {};
-      return `Fonte: OMS ${esc(m.edition || "World Malaria Report")}, anexo 4B (política de ${esc(String(m.policyYear || ""))}).`;
+      return `Fonte: OMS ${esc(m.edition || "World Malaria Report")}, Anexo 4B (${esc(String(m.policyYear || ""))} política).`;
     };
 
     function mftTipLine(iso3) {
@@ -3342,7 +3349,7 @@
     // The Detail rail is a small dashboard for the SELECTED medicine. Nothing in it
     // needs a switch: the overview shows medicine facts, the access-stage mix and
     // the MFT policy groups; the Countries tab lists every country with a visible
-    // "Ver >" cue; a country page (map click, list, arrows, keyboard, or the
+    // "View ›" cue; a country page (map click, list, arrows, keyboard, or the
     // Location filter) shows that country for the selected medicine only.
     let detTab = "overview", cameFrom = "overview";
     const STAGE_KEYS = ["registered", "guidelines", "mft"];
@@ -3393,7 +3400,7 @@
     // the search box narrow it further.
     const mftMatches = (iso3) => !stageOff.has(mftStage(iso3).lvl) || MFT_GROUPS.some((g) => mftTick.has(g.id) && mftHas(iso3, g.id));
     const mftListed = () => mftScope().filter(mftMatches);
-    const FIND_TXT = { country: "País", stage: "Etapa", use: "Uso", none: "Nenhum país corresponde aos filtros à esquerda.", reset: "Reiniciar os filtros", of: "de", guidelines: "Em orientações" };
+    const FIND_TXT = { country: "País", stage: "Fase", use: "Uso", none: "Nenhum país corresponde aos filtros à esquerda.", reset: "Redefinir filtros", of: "de", guidelines: "Em orientações" };
     const countLabel = () => `${mftListed().length} ${FIND_TXT.of} ${mftScope().length}`;
     function finderRows(q) {
       const k = q.trim().toLowerCase();

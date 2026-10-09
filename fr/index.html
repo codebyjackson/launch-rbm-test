@@ -1476,7 +1476,7 @@
             <div class="legend-tables">
             <div class="map-legend">
               <table class="ftab">
-                <thead><tr><th colspan="2">Étape d'accès</th><th class="n">Nb de pays</th></tr></thead>
+                <thead><tr><th colspan="2">Étape d'accès</th><th class="n">Nombre de pays</th></tr></thead>
                 <tbody>
                   <tr data-lvl="registered"><td class="sw"><span class="mapsw registered"></span></td><td>Inscrit</td><td class="n"><span class="ct" id="mapct-registered">–</span></td></tr>
                   <tr data-lvl="guidelines"><td class="sw"><span class="mapsw guidelines"></span></td><td>Conformément aux directives nationales</td><td class="n"><span class="ct" id="mapct-guidelines">–</span></td></tr>
@@ -1637,8 +1637,8 @@
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
   const LABEL = { done: "Complet", prog: "En cours", late: "Retardé", idle: "Pas encore commencé" };
   // What "Delayed" means, shown from the i beside it in the medicines table.
-  const LATE_DEF = "cette étape n’avance pas aussi vite que prévu.";
-  const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + " : " + LATE_DEF)}" aria-label="${esc(LABEL.late + " : " + LATE_DEF)}">i</button>`;
+  const LATE_DEF = "Cette étape n’avance pas aussi vite que prévu.";
+  const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
   // so the glyph inherits its marker's status colour and the page theme.
@@ -1809,7 +1809,7 @@
   // here is stored separately. "As-of" year is the dataset's own date, not the
   // visitor's clock, so "today" never reads later than the data was checked.
   const ASOF_YEAR = parseInt(DATA.meta.lastUpdated.slice(0, 4), 10);
-  const yrsText = n => n + (n === 1 ? " année" : " ans");
+  const yrsText = n => n + (n === 1 ? " année" : " années");
 
   function firstYear(p) {
     const ys = p.stages.map(stageYear).filter(y => y != null);
@@ -1864,7 +1864,7 @@
   const ACCESS_SPLIT = 4;
   const PHASES = [
     { name: "Accès au marché" },
-    { name: "Accès des pays et des populations" }
+    { name: "Accès au pays/à la population" }
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
@@ -1931,20 +1931,22 @@
     const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
     return `<div class="ysbox">
       <div class="ysfigs">
-        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>usage courant d’ici ${due}</span></div>
-        <div><small>${going ? "Réel à ce jour" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore en usage courant" : ""}</span></div>
-        <div class="ysdiff"><small>Écart</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "jusqu’à présent" : "par rapport à l’attendu"}</span></div>
+        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>utilisation courante par ${due}</span></div>
+        <div><small>${going ? "Situation actuelle jusqu’à présent" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore en usage courant" : ""}</span></div>
+        <div class="ysdiff"><small>Variance</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "jusqu’à présent" : "par rapport aux attentes"}</span></div>
       </div>
-      <p>Son utilisation courante est prévue d’ici ${due}, ${y.whole.exp} ans après sa première étape importante en ${y.start}.${y.whole.kind === "going" && ASOF_YEAR >= due ? ` Toujours pas d’usage courant dans ${ASOF_YEAR}.` : ""}</p>
-      ${y.biggest ? `<p>Plus grand écart : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· jusqu’à présent</i>` : ""}</p>` : ""}
+      <p>Son utilisation courante est prévue d’ici ${due}, ${y.whole.exp} ans après sa première étape importante en ${y.start}.${going && ASOF_YEAR >= due ? ` Toujours pas d’usage courant dans ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Variance la plus importante : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· jusqu’à présent</i>` : ""}</p>` : ""}
     </div>`;
   }
-  // the "Time taken" view: expected against actual, under the two access groups
+  // the "Temps passé" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
     if (!y.approved) return `<div class="ysempty"><b>Pas encore approuvé.</b> Nous commençons la comparaison une fois que le médicament a reçu une autorisation de mise sur le marché datée.</div>`;
-    const actual = s => s.took == null ? "n.d." : yrsText(s.took) + (s.kind === "going" ? ` <i>jusqu’à présent</i>` : "");
+    // "—", not "n/a": text with no two letters in a row is never collected for
+    // translation, so "n/a" stayed English on /fr, /pt and /es.
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>jusqu’à présent</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -1955,7 +1957,7 @@
       return h + row(esc(STAGES[s.i]), s);
     }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Étape</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Écart</th></tr></thead>
+      <thead><tr><th scope="col">Étape</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Variance</th></tr></thead>
       <tbody>${body}</tbody>
       <tfoot>${row("Tout le voyage", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
@@ -1964,8 +1966,8 @@
   function pathExpHtml(i) {
     if (!YARD) return "";
     const e = YARD.expected[i];
-    if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>Attendu : <b>${yrsText(e.years)}</b></span>`;
-    return i === 0 ? `<span class="pathexp none">Avant le chrono</span>` : i === 1 ? `<span class="pathexp none">Le chrono démarre ici</span>` : "";
+    if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><b>${yrsText(e.years)}</b> attendu</span>`;
+    return i === 0 ? `<span class="pathexp none">Avant l’horloge</span>` : i === 1 ? `<span class="pathexp none">Le chronomètre démarre ici</span>` : "";
   }
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
@@ -2082,8 +2084,13 @@
     // the label (.cnt, removed 10 Sep 2026). Still carried in the aria-label
     // for screen readers, and still shown per-medicine in the gate panel this
     // button opens — just not as a second always-visible line in the strip.
+    // The phase attribute and the expected time are built first, so the
+    // aria-label stays one phrase the translation collector can find whole
+    // (written inline, the nested quotes cut it apart and it stayed English).
+    const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
+    const exp = YARD && YARD.expected[i] ? ", attendu " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}"${stacked ? "" : ` data-phase="${phaseOf(i)}"`} aria-label="Étape ${stepNo(i)}, ${esc(s)}${YARD && YARD.expected[i] ? ", attendu : " + yrsText(YARD.expected[i].years) : ""}. Indique ce qui se passe ici et où se trouve chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
+      data-gate="${i}"${phase} aria-label="Étape ${stepNo(i)}, ${esc(s)}${exp}. Indique ce qui se passe ici et où se trouve chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
@@ -2103,7 +2110,7 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
-    `<span class="c-stage">Stade actuel · Statut</span><span class="c-path">Sur le chemin</span><span class="c-bar">Barrière principale</span></div>`);
+    `<span class="c-stage">Étape actuelle · Statut</span><span class="c-path">Sur le chemin</span><span class="c-bar">Barrière principale</span></div>`);
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
   (function () {
@@ -3215,10 +3222,10 @@
     // group then draws and counts it on its own. Countries that list it only for
     // untested P. falciparum, severe malaria or pregnancy are not shown.
     const MFT_GROUPS = [
-      { id: "tested", short: "Recommandé pour P. falciparum", label: "Recommandé pour le paludisme à Plasmodium falciparum", why: "Première intention pour les cas confirmés (testés) dans la politique nationale" },
-      { id: "vivax",  short: "Recommandé pour P. vivax", label: "Recommandé pour le paludisme à Plasmodium vivax", why: "Inscrit pour le traitement dans la politique nationale" },
+      { id: "tested", short: "Recommandé pour P. falciparum", label: "Recommandé pour le paludisme à Plasmodium falciparum", why: "Première ligne pour les cas confirmés (testés) dans la politique nationale" },
+      { id: "vivax",  short: "Recommandé pour P. vivax", label: "Recommandé pour le paludisme à Plasmodium vivax", why: "Inscrit sur la liste des traitements prévus par la politique nationale" },
     ];
-    const MFT_TXT = { show: "Afficher sur la carte", count: "Nb de pays", use: "Utilisation recommandée par les pays", group: "Groupe", stage: "Étape d'accès", tickHint: "Cochez un groupe pour tracer ses contours sur la carte.", tickLeft: "Cochez un groupe à gauche pour voir ses pays.",
+    const MFT_TXT = { show: "Afficher sur la carte", count: "Nombre de pays", use: "Utilisation recommandée par pays", group: "Groupe", stage: "Étape d’accès", tickHint: "Cochez un groupe pour tracer ses frontières sur la carte.", tickLeft: "Cochez un groupe à gauche pour voir ses pays.",
                       noPolicy: (n) => `Aucune liste de politique nationale de traitement ${n} pour le moment.`, notListed: "non répertorié" };
     // Colour and line pattern belong to the POLICY GROUP, never to the medicine:
     // every medicine draws first-line as the same solid vermilion line, and so on.
@@ -3259,7 +3266,7 @@
     const mftProductName = () => (tracked.find((p) => p.id === mftProductId) || {}).name || "";
     const mftSource = () => {
       const m = (TP && TP.meta) || {};
-      return `Source : OMS ${esc(m.edition || "World Malaria Report")}, annexe 4B (politique de ${esc(String(m.policyYear || ""))}).`;
+      return `Source : OMS ${esc(m.edition || "World Malaria Report")}, Annexe 4B (${esc(String(m.policyYear || ""))} politique).`;
     };
 
     function mftTipLine(iso3) {
@@ -3342,7 +3349,7 @@
     // The Detail rail is a small dashboard for the SELECTED medicine. Nothing in it
     // needs a switch: the overview shows medicine facts, the access-stage mix and
     // the MFT policy groups; the Countries tab lists every country with a visible
-    // "Voir >" cue; a country page (map click, list, arrows, keyboard, or the
+    // "View ›" cue; a country page (map click, list, arrows, keyboard, or the
     // Location filter) shows that country for the selected medicine only.
     let detTab = "overview", cameFrom = "overview";
     const STAGE_KEYS = ["registered", "guidelines", "mft"];
@@ -3393,7 +3400,7 @@
     // the search box narrow it further.
     const mftMatches = (iso3) => !stageOff.has(mftStage(iso3).lvl) || MFT_GROUPS.some((g) => mftTick.has(g.id) && mftHas(iso3, g.id));
     const mftListed = () => mftScope().filter(mftMatches);
-    const FIND_TXT = { country: "Pays", stage: "Étape", use: "Utilisation", none: "Aucun pays ne correspond aux filtres de gauche.", reset: "Réinitialiser les filtres", of: "sur", guidelines: "Dans les directives" };
+    const FIND_TXT = { country: "Pays", stage: "Scène", use: "Utiliser", none: "Aucun pays ne correspond aux filtres de gauche.", reset: "Réinitialiser les filtres", of: "de", guidelines: "Dans les directives" };
     const countLabel = () => `${mftListed().length} ${FIND_TXT.of} ${mftScope().length}`;
     function finderRows(q) {
       const k = q.trim().toLowerCase();
