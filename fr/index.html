@@ -189,7 +189,7 @@
                flex-wrap: wrap; column-gap: 3px; max-width: 100%; box-sizing: border-box; padding: 2px 5px; }
     .pathexp b { white-space: nowrap; }
   }
-  /* Market Access / Country-Population Access: two white cards on the canvas,
+  /* Market Access / Country Access: two white cards on the canvas,
      each with a gray title strip and half the width (8 Oct 2026). The card, its
      shadow and radius moved from .pathway to .phase; the arrow between steps 3
      and 4 sits in the gap. */
@@ -1881,12 +1881,13 @@
   const YARD = DATA.yardstick || null;
   // How far a step ran past its expected time, as a plain signed number.
   const varianceText = n => "+" + yrsText(n);
-  // Market Access is every stage before country registration; Country /
-  // Population Access starts at it (stage 4) and runs to in-country delivery.
+  // Market Access is every stage before country registration; Country
+  // Access starts at it (stage 4) and runs to in-country delivery. It was
+  // Country / Population Access until 9 Oct 2026 (renamed by the owner).
   const ACCESS_SPLIT = 4;
   const PHASES = [
     { name: "Accès au marché" },
-    { name: "Accès au pays/à la population" }
+    { name: "Accès au pays" }
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
