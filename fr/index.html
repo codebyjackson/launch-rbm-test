@@ -1338,6 +1338,19 @@
     .pathnode svg, .pathnode .whoemb { width: 25px; height: 25px; }
     .detail { padding: 14px; }
   }
+  /* Phones: step names break only between words (9 Oct 2026). With
+     overflow-wrap: break-word and hyphens: auto a long word split inside
+     itself ("recommenda-tion", "Recommandati|on", "Adquisicion|es"): 7 words
+     across en/fr/pt/es at 360px and 390px. Each column is now at least as
+     wide as its longest word, in every language. The strip already scrolls
+     sideways, and measured it is no wider than before. After the 760px block
+     on purpose: that block sets .pathnode { min-width: 72px } at the same
+     specificity. */
+  @media (max-width: 640px) {
+    .pathnode .plabel { overflow-wrap: normal; hyphens: manual; }
+    .pathnode { flex: 1 0 72px; min-width: min-content; }
+    .pathgroup { flex: 1 0 84px; min-width: min-content; }
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
