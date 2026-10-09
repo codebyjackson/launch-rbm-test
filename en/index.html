@@ -1949,7 +1949,9 @@
     const y = yardstick(p);
     if (!y) return "";
     if (!y.approved) return `<div class="ysempty"><b>Not approved yet.</b> We start comparing once the medicine has a dated regulatory approval.</div>`;
-    const actual = s => s.took == null ? "n/a" : yrsText(s.took) + (s.kind === "going" ? ` <i>so far</i>` : "");
+    // "—", not "n/a": text with no two letters in a row is never collected for
+    // translation, so "n/a" stayed English on /fr, /pt and /es.
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>so far</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -2087,8 +2089,13 @@
     // the label (.cnt, removed 10 Sep 2026). Still carried in the aria-label
     // for screen readers, and still shown per-medicine in the gate panel this
     // button opens — just not as a second always-visible line in the strip.
+    // The phase attribute and the expected time are built first, so the
+    // aria-label stays one phrase the translation collector can find whole
+    // (written inline, the nested quotes cut it apart and it stayed English).
+    const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
+    const exp = YARD && YARD.expected[i] ? ", expected " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}"${stacked ? "" : ` data-phase="${phaseOf(i)}"`} aria-label="Step ${stepNo(i)}, ${esc(s)}${YARD && YARD.expected[i] ? ", expected " + yrsText(YARD.expected[i].years) : ""}. Shows what happens here and where each medicine is${n ? ", " + n + " delayed" : ""}.">` +
+      data-gate="${i}"${phase} aria-label="Step ${stepNo(i)}, ${esc(s)}${exp}. Shows what happens here and where each medicine is${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
