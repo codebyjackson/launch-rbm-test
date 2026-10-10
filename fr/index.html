@@ -438,6 +438,15 @@
     .c-stage .stg, .c-stage .note { display: none; }
     .l1 { padding-inline: 10px; }
   }
+  /* Narrow tablets (9 Oct 2026): the fixed minimums above add up to about
+     714px with the gaps, more than the board has until about 800px, so the
+     main barrier was cut off (60px at 700px). Here the text columns may
+     shrink and the gaps are tighter; the mini journey keeps its 200px. The
+     stage column gets a little more than the barrier (1.1fr) so the longest
+     stage names (es "Adopción de políticas nacionales") fit at 681px. */
+  @media (min-width: 681px) and (max-width: 860px) {
+    .srow { column-gap: 12px; grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) minmax(0, 1fr); }
+  }
   @media (prefers-reduced-motion: reduce) {
     .view, .exp, .more .ch, .pathnode .pill, .pathnode .pill::after, .stage .smark, .stage .smark::after { transition: none; }
   }
@@ -744,6 +753,18 @@
      It used to repeat where each medicine is, which the summary table already
      says; the table now lights up the selected step instead. */
   .gw-sum { display: flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; }
+  /* Phones (9 Oct 2026): the head was one row that never wrapped, so the
+     chips and Close ran past the card and the page grew wider than the
+     screen (446px on a 390px phone, /fr step 3). Now icon, title and Close
+     share the first row and the chips get a row of their own under the
+     title (52px = the 40px icon and the 12px gap). */
+  @media (max-width: 640px) {
+    .gw-head { flex-wrap: wrap; align-items: flex-start; row-gap: 8px; }
+    .gw-head > div { flex: 1 1 0; min-width: 0; }
+    .gw-head h3 { overflow-wrap: break-word; }
+    .gw-head .gp-close { order: 2; flex: none; }
+    .gw-sum { order: 3; flex-basis: 100%; margin-left: 52px; }
+  }
   .gw-band { background: var(--surface-2); border-radius: 10px; padding: 14px 16px 16px; }
   .gw-band h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
   .gw-band > p { margin: 0; font-size: 15.5px; color: var(--ink); max-width: 110ch; }
@@ -1350,6 +1371,14 @@
     .pathnode .plabel { overflow-wrap: normal; hyphens: manual; }
     .pathnode { flex: 1 0 72px; min-width: min-content; }
     .pathgroup { flex: 1 0 84px; min-width: min-content; }
+    /* Safari (10 Oct 2026): WebKit sizes each card (.phase, min-width:
+       min-content) from its steps' min-content alone and leaves out their
+       72px flex-basis, so a step with short words ("R&D & clinical") was
+       laid out at 72px but counted narrower. The card came out up to 29px
+       too narrow and its hidden overflow cut off the last step and the WHO
+       bracket. With the label at least 72px, a step's min-content is never
+       below its basis, so both engines agree. Chrome was never affected. */
+    .pathnode .plabel { min-width: 72px; box-sizing: border-box; }
   }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
