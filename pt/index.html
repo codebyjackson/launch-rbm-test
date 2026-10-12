@@ -1597,7 +1597,7 @@
 (function () {
   "use strict";
   var DATA_URL = "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json", LANG = "pt", SCHEMA = 1;
-  var MSG = {"fail":"<b>Não foi possível carregar os dados do painel.</b> Tente novamente dentro de alguns minutos.","schema":"<b>Este painel está a ser atualizado.</b> Volte a consultá-lo em breve."};
+  var MSG = {"fail":"<b>Não foi possível carregar os dados do painel de controlo.</b> Por favor, tente novamente dentro de alguns minutos.","schema":"<b>Este painel está a ser atualizado.</b> Por favor, volte em breve."};
   // every reader-facing text in dashboard.json is { en, fr, pt, ... }, one key
   // per language the file lists in ds.locales: keep this page's, or the English
   // where the file does not have this language yet. No fixed number of keys,
@@ -3823,13 +3823,21 @@
     }
   });
 
+  // Column names and record types, one key each, so every word has its own
+  // snippet in i18n/reviewed-strings.json: single words are never collected by
+  // pattern, and until 12 Oct 2026 the French, Portuguese and Spanish CSVs had
+  // seven English headings beside three translated ones.
+  const CSV_COL = { product: "Produto", record: "Registo", item: "Artigo", status: "Estatuto", detail: "Detalhe",
+    date: "Data", next: "Próximo passo", anticipated: "Antecipado", source: "Fonte", asOf: "Até" };
+  const CSV_REC = { stageRow: "Fase", milestoneRow: "Marco" };
   document.getElementById("dl-csv").addEventListener("click", () => {
-    const rows = [["Product", "Record", "Item", "Status", "Detalhe", "Date", "Próximo passo", "Anticipated", "Source", "Até"]];
+    const rows = [[CSV_COL.product, CSV_COL.record, CSV_COL.item, CSV_COL.status, CSV_COL.detail,
+      CSV_COL.date, CSV_COL.next, CSV_COL.anticipated, CSV_COL.source, CSV_COL.asOf]];
     tracked.forEach(p => {
       p.stages.forEach((s, i) =>
-        rows.push([p.name, "Stage", STAGES[i], LABEL[s.status], s.note, s.date, s.next, s.nextDate, s.source || "", s.asOf || ""]));
+        rows.push([p.name, CSV_REC.stageRow, STAGES[i], LABEL[s.status], s.note, s.date, s.next, s.nextDate, s.source || "", s.asOf || ""]));
       p.detail.milestones.forEach(m =>
-        rows.push([p.name, "Milestone", m.milestone, LABEL[m.status], m.label, m.date, m.next, m.anticipated, m.source || "", ""]));
+        rows.push([p.name, CSV_REC.milestoneRow, m.milestone, LABEL[m.status], m.label, m.date, m.next, m.anticipated, m.source || "", ""]));
     });
     const csv = rows.map(r => r.map(csvCell).join(",")).join("\r\n");
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });

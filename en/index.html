@@ -3828,13 +3828,21 @@
     }
   });
 
+  // Column names and record types, one key each, so every word has its own
+  // snippet in i18n/reviewed-strings.json: single words are never collected by
+  // pattern, and until 12 Oct 2026 the French, Portuguese and Spanish CSVs had
+  // seven English headings beside three translated ones.
+  const CSV_COL = { product: "Product", record: "Record", item: "Item", status: "Status", detail: "Detail",
+    date: "Date", next: "Next step", anticipated: "Anticipated", source: "Source", asOf: "As of" };
+  const CSV_REC = { stageRow: "Stage", milestoneRow: "Milestone" };
   document.getElementById("dl-csv").addEventListener("click", () => {
-    const rows = [["Product", "Record", "Item", "Status", "Detail", "Date", "Next step", "Anticipated", "Source", "As of"]];
+    const rows = [[CSV_COL.product, CSV_COL.record, CSV_COL.item, CSV_COL.status, CSV_COL.detail,
+      CSV_COL.date, CSV_COL.next, CSV_COL.anticipated, CSV_COL.source, CSV_COL.asOf]];
     tracked.forEach(p => {
       p.stages.forEach((s, i) =>
-        rows.push([p.name, "Stage", STAGES[i], LABEL[s.status], s.note, s.date, s.next, s.nextDate, s.source || "", s.asOf || ""]));
+        rows.push([p.name, CSV_REC.stageRow, STAGES[i], LABEL[s.status], s.note, s.date, s.next, s.nextDate, s.source || "", s.asOf || ""]));
       p.detail.milestones.forEach(m =>
-        rows.push([p.name, "Milestone", m.milestone, LABEL[m.status], m.label, m.date, m.next, m.anticipated, m.source || "", ""]));
+        rows.push([p.name, CSV_REC.milestoneRow, m.milestone, LABEL[m.status], m.label, m.date, m.next, m.anticipated, m.source || "", ""]));
     });
     const csv = rows.map(r => r.map(csvCell).join(",")).join("\r\n");
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
