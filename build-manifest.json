@@ -1,6 +1,6 @@
 {
   "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. scripts/copy-rbm-pages.js compares every file below with what is here before it copies a new build, and stops if one was changed.",
-  "built_from": "655c5db688b2f3eb821521492e1fb520b08bd298",
+  "built_from": "68944056ded37afb077713ee4b9456f8067174e7",
   "clean": true,
   "translations_current": true,
   "data_url": "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json",
@@ -32,18 +32,18 @@
     "en/assets/report-issue.js": "9f1bcbd0d4627a65de78137888326b420efb97478db7b774a3efb66d76e668cc",
     "en/data/world-map-geo.js": "65a36ace62a02003b125cb4749e39ed6aa54de6aa57c4cf36bb2d7307b6997d4",
     "en/data/world-map.js": "0857fef8a8709953bb887bf39e3f47007566978fc736731dfc434eb8ae088a02",
-    "en/index.html": "340ce2342462a10bc25848562a22414af1c138c4db30712fd8d3e5e9b407feae",
+    "en/index.html": "482302ef26741c5cc47623dfc13d4b784c41e725c5df77d60375c5272045dec6",
     "es/assets/report-issue.js": "333ec2ae835cda1f016a94ef72ef1f8566000f96ca5b01c16de801f7083e76e7",
     "es/data/world-map-geo.js": "0dfd08890408cc768203f6dd859954a05231e37f5387c21b855be273b6d71fc5",
     "es/data/world-map.js": "89f4e545945ef9371b4c45cb2ca367e8951f3586aa51b36e16ec30f0403e1d1c",
-    "es/index.html": "d7a7e81a6f50aab31d1d49ec263700d56f3f485b7d571f2367d24878d3a70a5c",
+    "es/index.html": "c25294b142046b94ef512396360db28307d9ef8977c080b53a10472eb17465c6",
     "fr/assets/report-issue.js": "41b94b9ed6f18ce96d86976693ee3ab588c9866fc5446aaa8d7168792eceb681",
     "fr/data/world-map-geo.js": "1b423c379af752f61ac8fd0d61de934fbf5a5e8ac1b4737174bfd2115df1c2bf",
     "fr/data/world-map.js": "2825a19db46405dfb51c018ad42022f942be14668105721cd2612a04fc25cb07",
-    "fr/index.html": "355cfc01745486aacfbf77fb558df97d4513ab89a345a16b11bd8a2ddfadcdbd",
+    "fr/index.html": "a9687742e39b8bf5aa6715b1dba432af96302496b3d19df7262ea3be9446e1c2",
     "pt/assets/report-issue.js": "d7e105272a9630d851779c1ad219d0a8b2511f8b47f2295bbdaf695fcbde0b06",
     "pt/data/world-map-geo.js": "32f0a5c1f0c5611343c3e9d141c1f036c363f93b96fd08ddb4875e190c46014c",
     "pt/data/world-map.js": "2f8d7722a0390c51a5efcc91808ef9115372c69cc315ec1ab6e16c993c4bba80",
-    "pt/index.html": "280e53414b19af45ee893942ddf5450145a42fdb8ba2d901d9ba52ece109865b"
+    "pt/index.html": "d457608c20c998951dc0732a4151d3cda2a25b8982c2e8ad5ede7c8cb25e18d6"
   }
 }

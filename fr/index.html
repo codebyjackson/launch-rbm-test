@@ -869,6 +869,11 @@
   .srclist .srcname { font-weight: 650; color: var(--ink-2); }
   .srclist li > span { display: block; }
   .srclist li > span a { font-weight: 400; }
+  /* A fetcher's address: plain, selectable text, never a link (12 Oct 2026).
+     Long API addresses break anywhere, so a phone never scrolls sideways. */
+  .srclist .srcraw { display: block; font-size: 12.5px; color: var(--ink-2); }
+  .srclist .srcraw code { font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 12px;
+    overflow-wrap: anywhere; word-break: break-all; user-select: all; background: var(--surface-2); border-radius: 4px; padding: 0 4px; }
   /* Footer: the disclaimer leads, in a tinted panel with an accent edge, so it is not overlooked. */
   /* Section cards under the map (8 Oct 2026): About the data, Sources and Definitions
      share one card and one plain bold title; the disclaimer keeps its blue notice. */
@@ -1556,7 +1561,7 @@
     <div class="disclaimer" id="disclaimer" tabindex="-1">
       <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>Clause de non-responsabilité</h3>
       <p>Les utilisateurs ne doivent pas considérer le tableau de bord LAUNCH comme une source d'information complète et faisant autorité en matière d'accès. Il fournit un aperçu à un instant T, basé sur des informations publiques et sur des chiffres confirmés par écrit par le fabricant.</p>
-      <p>Unitaid décline toute responsabilité quant à l'exactitude des données. En particulier, Unitaid ne garantit ni leur exhaustivité, ni leur mise à jour, ni leur adéquation à un usage particulier. Les informations relatives aux pays dans cette version sont données à titre indicatif et n'ont pas été vérifiées, à l'exception des enregistrements du Nigéria et de la Tanzanie. Il est conseillé aux utilisateurs d'effectuer leurs propres vérifications au niveau national avant de prendre toute décision basée sur ces données.</p>
+      <p>Unitaid décline toute responsabilité quant à l'exactitude des données. En particulier, Unitaid ne garantit pas qu'elles soient complètes, à jour ou adaptées à un usage particulier. <span id="disc-countries"></span>Les utilisateurs doivent effectuer leurs propres vérifications au niveau national avant de prendre toute décision basée sur ces données.</p>
       <p>Pour bien comprendre la situation d'accès à un médicament dans un pays donné, il faut disposer d'informations qui ne figurent pas sur ce tableau de bord, comme les détails d'un enregistrement national, d'une directive ou d'une décision d'achat.</p>
     </div>
     <section class="ft-sec">
@@ -1968,7 +1973,17 @@
     return s.kind === "going" ? { t: "Tout se déroule comme prévu jusqu’à présent", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
   const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· jusqu’à présent</i>` : ""}</span>`;
-  const yardNote = () => `<p class="ysnote">Délais prévus : l’enregistrement du pays suit un calendrier publié. Les autres étapes reposent sur des estimations de LAUNCH, qui restent à confirmer.</p>`;
+  // Which steps use a published timeline and which LAUNCH's own estimate is
+  // read from each step's "basis" (12 Oct 2026), not typed here, so the note
+  // cannot disagree with the data. Each label is a whole literal and the list
+  // is stage names from the data, so both are translated.
+  const yardNote = () => {
+    const by = b => YARD.expected.map((e, i) => (e && e.basis === b ? STAGES[i] : null)).filter(Boolean).join(", ");
+    const line = (label, list) => (list ? `<span>${label} ${esc(list)}.</span> ` : "");
+    const pub = line("Délais prévus d’après le calendrier publié :", by("published"));
+    const est = line("Délais prévus d’après les estimations de travail de LAUNCH, encore à convenir :", by("estimate"));
+    return `<p class="ysnote">${pub}${est}</p>`;
+  };
   // under "Sur le chemin" in the medicines table
   function yardBadge(p) {
     const y = yardstick(p);
@@ -3881,7 +3896,12 @@
       const name = s.url ? link(s.url, s.label || s.title)
                          : `<span class="srcname">${esc(s.label || s.title)}</span>`;
       const also = (s.alsoSee || []).map(a => " " + link(a.url, a.label) + ".").join("");
-      return `<li>${name}<span>${esc(s.plain)}${also}</span></li>`;
+      // The address a fetcher reads, for developers: plain, copyable text and
+      // never a link, since it often shows an error or raw data in a browser
+      // (12 Oct 2026). The name above stays the link to the public page.
+      const raw = s.dataUrl
+        ? ` <span class="srcraw">Données brutes (pour les développeurs) : <code>${esc(s.dataUrl)}</code></span>` : "";
+      return `<li>${name}<span>${esc(s.plain)}${also}${raw}</span></li>`;
     };
 
     const shown = reg.sources.filter(s => s.public)
@@ -3892,6 +3912,22 @@
       docsUl.innerHTML = docs.map(li).join("");
       docsWrap.hidden = false;
     }
+  })();
+
+  // The disclaimer's sentence on country data, from each medicine's
+  // detail.countries.status (12 Oct 2026). It was typed into the footer on
+  // 2 Oct ("illustrative ... except for the Nigeria and Tanzania
+  // registrations") and went stale when the 6 Oct lists were verified.
+  // A medicine with no country list is not named: its country stages have
+  // not started. Each label is a whole literal so it is translated.
+  (function renderDisclaimer() {
+    const slot = document.getElementById("disc-countries");
+    if (!slot) return;
+    const named = ok => PRODUCTS.filter(p => p.detail && p.detail.countries &&
+      (p.detail.countries.status === "verified") === ok).map(p => p.name).join(", ");
+    const line = (label, list) => (list ? `${label} ${esc(list)}. ` : "");
+    slot.innerHTML = line("Les enregistrements des pays ont été vérifiés pour :", named(true)) +
+      line("Les étapes nationales n’ont pas encore été vérifiées pour :", named(false));
   })();
 
   // print: open every panel so the printout is complete

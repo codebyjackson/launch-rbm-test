@@ -869,6 +869,11 @@
   .srclist .srcname { font-weight: 650; color: var(--ink-2); }
   .srclist li > span { display: block; }
   .srclist li > span a { font-weight: 400; }
+  /* A fetcher's address: plain, selectable text, never a link (12 Oct 2026).
+     Long API addresses break anywhere, so a phone never scrolls sideways. */
+  .srclist .srcraw { display: block; font-size: 12.5px; color: var(--ink-2); }
+  .srclist .srcraw code { font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 12px;
+    overflow-wrap: anywhere; word-break: break-all; user-select: all; background: var(--surface-2); border-radius: 4px; padding: 0 4px; }
   /* Footer: the disclaimer leads, in a tinted panel with an accent edge, so it is not overlooked. */
   /* Section cards under the map (8 Oct 2026): About the data, Sources and Definitions
      share one card and one plain bold title; the disclaimer keeps its blue notice. */
@@ -1556,7 +1561,7 @@
     <div class="disclaimer" id="disclaimer" tabindex="-1">
       <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>Isenção de responsabilidade</h3>
       <p>Os utilizadores não devem considerar o painel LAUNCH como uma fonte completa e definitiva de informação de acesso. Fornece um retrato momentâneo, baseado em informações publicamente disponíveis e em dados confirmados por escrito pelo fabricante.</p>
-      <p>Unitaid não assume qualquer responsabilidade legal pela exatidão dos dados. Em particular, o Unitaid não garante que os dados estejam completos, atualizados ou adequados a uma finalidade específica. Os estágios por país nesta versão são meramente ilustrativos e não foram verificados, com exceção dos registos da Nigéria e da Tanzânia. Os utilizadores devem realizar as suas próprias verificações a nível nacional antes de tomarem qualquer decisão com base nestes dados.</p>
+      <p>Unitaid não assume responsabilidade legal pela exatidão dos dados. Em particular, o Unitaid não garante que os dados estejam completos, atualizados ou adequados a uma finalidade específica. <span id="disc-countries"></span>Os utilizadores devem realizar as suas próprias verificações a nível nacional antes de tomarem qualquer decisão com base nestes dados.</p>
       <p>Para compreender plenamente a situação de acesso a um medicamento em qualquer país, são necessárias informações que não constam neste painel, tais como detalhes de um registo nacional, orientações ou decisões de aquisição.</p>
     </div>
     <section class="ft-sec">
@@ -1968,7 +1973,17 @@
     return s.kind === "going" ? { t: "Até agora, tudo dentro do esperado.", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
   const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até agora</i>` : ""}</span>`;
-  const yardNote = () => `<p class="ysnote">Prazos previstos: o registo por país segue um cronograma publicado. As restantes etapas utilizam estimativas provisórias da LAUNCH, ainda por definir.</p>`;
+  // Which steps use a published timeline and which LAUNCH's own estimate is
+  // read from each step's "basis" (12 Oct 2026), not typed here, so the note
+  // cannot disagree with the data. Each label is a whole literal and the list
+  // is stage names from the data, so both are translated.
+  const yardNote = () => {
+    const by = b => YARD.expected.map((e, i) => (e && e.basis === b ? STAGES[i] : null)).filter(Boolean).join(", ");
+    const line = (label, list) => (list ? `<span>${label} ${esc(list)}.</span> ` : "");
+    const pub = line("Horários previstos com base num cronograma publicado:", by("published"));
+    const est = line("Tempos previstos a partir das estimativas de trabalho de LAUNCH, ainda a acordar:", by("estimate"));
+    return `<p class="ysnote">${pub}${est}</p>`;
+  };
   // under "Na trilha" in the medicines table
   function yardBadge(p) {
     const y = yardstick(p);
@@ -3881,7 +3896,12 @@
       const name = s.url ? link(s.url, s.label || s.title)
                          : `<span class="srcname">${esc(s.label || s.title)}</span>`;
       const also = (s.alsoSee || []).map(a => " " + link(a.url, a.label) + ".").join("");
-      return `<li>${name}<span>${esc(s.plain)}${also}</span></li>`;
+      // The address a fetcher reads, for developers: plain, copyable text and
+      // never a link, since it often shows an error or raw data in a browser
+      // (12 Oct 2026). The name above stays the link to the public page.
+      const raw = s.dataUrl
+        ? ` <span class="srcraw">Dados brutos (para programadores): <code>${esc(s.dataUrl)}</code></span>` : "";
+      return `<li>${name}<span>${esc(s.plain)}${also}${raw}</span></li>`;
     };
 
     const shown = reg.sources.filter(s => s.public)
@@ -3892,6 +3912,22 @@
       docsUl.innerHTML = docs.map(li).join("");
       docsWrap.hidden = false;
     }
+  })();
+
+  // The disclaimer's sentence on country data, from each medicine's
+  // detail.countries.status (12 Oct 2026). It was typed into the footer on
+  // 2 Oct ("illustrative ... except for the Nigeria and Tanzania
+  // registrations") and went stale when the 6 Oct lists were verified.
+  // A medicine with no country list is not named: its country stages have
+  // not started. Each label is a whole literal so it is translated.
+  (function renderDisclaimer() {
+    const slot = document.getElementById("disc-countries");
+    if (!slot) return;
+    const named = ok => PRODUCTS.filter(p => p.detail && p.detail.countries &&
+      (p.detail.countries.status === "verified") === ok).map(p => p.name).join(", ");
+    const line = (label, list) => (list ? `${label} ${esc(list)}. ` : "");
+    slot.innerHTML = line("Os registos por país foram verificados para:", named(true)) +
+      line("As etapas de verificação de cada país ainda não foram realizadas para:", named(false));
   })();
 
   // print: open every panel so the printout is complete
