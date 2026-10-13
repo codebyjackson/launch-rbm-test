@@ -1,0 +1,9 @@
+{
+  "note": "Written by .github/workflows/launch-update.yml: the LAUNCH release whose pages are live here.",
+  "tag": "rbm-v1",
+  "source_repo": "KylerXiv/launch-development-test",
+  "source_release": "https://github.com/KylerXiv/launch-development-test/releases/tag/rbm-v1",
+  "built_from": "390fbe0a04ee654366df64b62e50177589764ece",
+  "published_at": "2026-10-13T06:49:51Z",
+  "applied_at": "2026-10-13"
+}

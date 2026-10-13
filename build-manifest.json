@@ -1,6 +1,6 @@
 {
   "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. scripts/copy-rbm-pages.js compares every file below with what is here before it copies a new build, and stops if one was changed.",
-  "built_from": "68944056ded37afb077713ee4b9456f8067174e7",
+  "built_from": "390fbe0a04ee654366df64b62e50177589764ece",
   "clean": true,
   "translations_current": true,
   "data_url": "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json",
