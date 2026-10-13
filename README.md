@@ -9,7 +9,7 @@
 · data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
 
 <!-- launch-live:start -->
-**Live version:** [rbm-v3](https://github.com/KylerXiv/launch-development-test/releases/tag/rbm-v3), applied 2026-10-13, built from [`eefaaf6`](https://github.com/KylerXiv/launch-development-test/commit/eefaaf671a3b6a35a1fda94df691ddf9e62d092c) in KylerXiv/launch-development-test.
+**Live version:** [rbm-v4](https://github.com/KylerXiv/launch-development-test/releases/tag/rbm-v4), applied 2026-10-13, built from [`3b1ec45`](https://github.com/KylerXiv/launch-development-test/commit/3b1ec450725a6fd78711173872db9fe9244c8b5c) in KylerXiv/launch-development-test.
 <!-- launch-live:end -->
 
 > **Do not edit the pages here.** `en/`, `fr/`, `pt/`, `es/` and `assets/` are
