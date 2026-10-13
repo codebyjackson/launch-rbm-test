@@ -1,0 +1,210 @@
+name: LAUNCH update
+
+# Applies new releases of the LAUNCH pages to this repository.
+#
+# The pages here (en/ fr/ pt/ es/ assets/) are built in the LAUNCH repository.
+# When they change there, its workflow "Release RBM pages" publishes them as a
+# release (rbm-v1, rbm-v2, …). Once a day, or when run by hand, this workflow:
+#   1. finds the newest rbm-v* release and stops if it is already live here
+#      (launch-release.json says which one is);
+#   2. downloads it and runs the copy-rbm-pages.js that came with it, which
+#      refuses if a page here was edited by hand, if a file does not match the
+#      release's build-manifest.json, or if the release was a test build or
+#      was built before the translations caught up;
+#   3. commits the new pages to main (or, with LAUNCH_UPDATE_MODE=pr, opens a
+#      pull request), records the version in launch-release.json and the
+#      README's "Live version" line, makes a matching release here and asks
+#      GitHub Pages to build.
+# If anything fails, nothing is changed here, and an issue titled
+# "LAUNCH update not applied" says why. The next successful update closes it.
+#
+# Settings (Settings → Secrets and variables → Actions → Variables), both optional:
+#   LAUNCH_REPO         where the releases come from (default KylerXiv/launch-development-test)
+#   LAUNCH_UPDATE_MODE  auto (default): commit to main | pr: open a pull request
+#                       (pr also needs Settings → Actions → General →
+#                       "Allow GitHub Actions to create and approve pull requests")
+# Run from any branch other than main, or with "dry run" ticked, it checks and
+# shows what would change, and commits nothing.
+
+on:
+  schedule:
+    - cron: "20 7 * * *"   # every day, 07:20 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: check and show what would change, commit nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write        # commit the pages, tag the release
+  issues: write          # say why an update was not applied
+  pages: write           # ask GitHub Pages to build
+  pull-requests: write   # LAUNCH_UPDATE_MODE=pr only
+
+concurrency:
+  group: launch-update
+  cancel-in-progress: false
+
+env:
+  LAUNCH_REPO: ${{ vars.LAUNCH_REPO || 'KylerXiv/launch-development-test' }}
+  MODE: ${{ vars.LAUNCH_UPDATE_MODE || 'auto' }}
+  DRY: ${{ (inputs.dry_run || github.ref != 'refs/heads/main') && 'true' || 'false' }}
+  GH_TOKEN: ${{ github.token }}
+  ISSUE_TITLE: LAUNCH update not applied
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash   # -eo pipefail: a refusal piped through tee still fails the step
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Is there a new release?
+        id: find
+        run: |
+          REL=$(gh api "repos/$LAUNCH_REPO/releases?per_page=100" \
+                --jq '[.[] | select(.draft | not) | select(.tag_name | startswith("rbm-v"))][0] // {}')
+          TAG=$(jq -r '.tag_name // ""' <<< "$REL")
+          LIVE=""
+          if [ -f launch-release.json ]; then LIVE=$(jq -r '.tag // ""' launch-release.json); fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [ -z "$TAG" ]; then
+            echo "No rbm-v* release in $LAUNCH_REPO yet. Nothing to do." >> "$GITHUB_STEP_SUMMARY"
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          elif [ "$TAG" = "$LIVE" ]; then
+            echo "Up to date: $TAG is live. Nothing to do." >> "$GITHUB_STEP_SUMMARY"
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New release: $TAG (live here: ${LIVE:-none recorded})." >> "$GITHUB_STEP_SUMMARY"
+            echo "go=true" >> "$GITHUB_OUTPUT"
+            echo "published=$(jq -r '.published_at // ""' <<< "$REL")" >> "$GITHUB_OUTPUT"
+            jq -r '.body // ""' <<< "$REL" > "$RUNNER_TEMP/notes.md"
+          fi
+
+      - name: Download it
+        if: steps.find.outputs.go == 'true'
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/rel/pages"
+          gh release download "$TAG" --repo "$LAUNCH_REPO" --dir "$RUNNER_TEMP/rel"
+          tar -xzf "$RUNNER_TEMP/rel/rbm-pages.tar.gz" -C "$RUNNER_TEMP/rel/pages"
+
+      - name: Check it, and copy it in
+        if: steps.find.outputs.go == 'true'
+        run: |
+          node "$RUNNER_TEMP/rel/copy-rbm-pages.js" --from "$RUNNER_TEMP/rel/pages" --to "$GITHUB_WORKSPACE" 2>&1 | tee "$RUNNER_TEMP/copy.log"
+
+      - name: Record the live version
+        if: steps.find.outputs.go == 'true'
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+          PUBLISHED: ${{ steps.find.outputs.published }}
+        run: |
+          node - <<'JS'
+          const fs = require("fs");
+          const { TAG, LAUNCH_REPO, PUBLISHED } = process.env;
+          const m = JSON.parse(fs.readFileSync("build-manifest.json", "utf8"));
+          const sha = m.built_from, short = String(sha).slice(0, 7);
+          const today = new Date().toISOString().slice(0, 10);
+          const release = `https://github.com/${LAUNCH_REPO}/releases/tag/${TAG}`;
+          fs.writeFileSync("launch-release.json", JSON.stringify({
+            note: "Written by .github/workflows/launch-update.yml: the LAUNCH release whose pages are live here.",
+            tag: TAG, source_repo: LAUNCH_REPO, source_release: release, built_from: sha,
+            published_at: PUBLISHED || null, applied_at: today,
+          }, null, 2) + "\n");
+          const line = `**Live version:** [${TAG}](${release}), applied ${today}, built from ` +
+            `[\`${short}\`](https://github.com/${LAUNCH_REPO}/commit/${sha}) in ${LAUNCH_REPO}.`;
+          const readme = fs.readFileSync("README.md", "utf8");
+          const block = /<!-- launch-live:start -->[\s\S]*?<!-- launch-live:end -->/;
+          if (!block.test(readme)) throw new Error("README.md has no <!-- launch-live:start --> … <!-- launch-live:end --> block");
+          fs.writeFileSync("README.md", readme.replace(block, `<!-- launch-live:start -->\n${line}\n<!-- launch-live:end -->`));
+          JS
+          git status --short
+          git diff --stat
+
+      - name: Dry run, so stop here
+        if: steps.find.outputs.go == 'true' && env.DRY == 'true'
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+        run: |
+          {
+            echo "Dry run: $TAG passed every check and would change:"
+            echo '```'
+            git status --short
+            echo '```'
+            echo "Nothing was committed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and publish
+        if: steps.find.outputs.go == 'true' && env.DRY != 'true'
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+        run: |
+          SHORT=$(jq -r '.built_from[0:7]' build-manifest.json)
+          SOURCE="https://github.com/$LAUNCH_REPO/releases/tag/$TAG"
+          { echo "Applied from [$LAUNCH_REPO $TAG]($SOURCE)."; echo; cat "$RUNNER_TEMP/notes.md"; } > "$RUNNER_TEMP/release-notes.md"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "LAUNCH pages $TAG, built from $LAUNCH_REPO $SHORT" -m "Applied by .github/workflows/launch-update.yml from $SOURCE"
+          if [ "$MODE" = "pr" ]; then
+            git push -f origin HEAD:refs/heads/launch-update
+            if [ "$(gh pr view launch-update --json state --jq .state 2>/dev/null)" = "OPEN" ]; then
+              gh pr edit launch-update --title "LAUNCH pages $TAG" --body-file "$RUNNER_TEMP/release-notes.md"
+            else
+              gh pr create --head launch-update --base main --title "LAUNCH pages $TAG" --body-file "$RUNNER_TEMP/release-notes.md"
+            fi
+            echo "Opened or updated the pull request for **$TAG** (LAUNCH_UPDATE_MODE=pr)." >> "$GITHUB_STEP_SUMMARY"
+          else
+            git push origin HEAD:main
+            gh release create "$TAG" --target "$(git rev-parse HEAD)" --title "LAUNCH pages $TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
+            gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent \
+              || echo "::notice::Could not ask GitHub Pages to build; it may build by itself after the push."
+            echo "Applied **$TAG** to main; GitHub Pages is building it." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Close the "not applied" issue
+        if: success() && steps.find.outputs.go == 'true' && env.DRY != 'true'
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+        run: |
+          for n in $(gh issue list --state open --search "\"$ISSUE_TITLE\" in:title" --json number,title \
+                     --jq ".[] | select(.title == env.ISSUE_TITLE) | .number"); do
+            gh issue close "$n" --comment "$TAG was applied, so this is resolved."
+          done
+
+      - name: Say why it was not applied
+        if: failure()
+        env:
+          TAG: ${{ steps.find.outputs.tag }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="$ISSUE_TITLE"
+          if [ "$DRY" = "true" ]; then TITLE="$ISSUE_TITLE (dry run on $GITHUB_REF_NAME)"; fi
+          {
+            echo "The LAUNCH release **${TAG:-?}** was not applied, and nothing in this repository was changed."
+            echo
+            echo "What stopped it:"
+            echo '```'
+            if [ -f "$RUNNER_TEMP/copy.log" ]; then tail -n 40 "$RUNNER_TEMP/copy.log"; else echo "(the run failed before the copy: see the log)"; fi
+            echo '```'
+            echo
+            echo "Log: $RUN_URL"
+            echo
+            echo "A page edited here by hand: move the change into $LAUNCH_REPO (illustrated-journey-dashboard.html), let it make a new release, then run this workflow again. Anything else: see the log; the next run tries again."
+          } > "$RUNNER_TEMP/issue.md"
+          N=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+              --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)
+          if [ -n "$N" ]; then
+            gh issue comment "$N" --body-file "$RUNNER_TEMP/issue.md"
+          else
+            gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/issue.md"
+          fi
