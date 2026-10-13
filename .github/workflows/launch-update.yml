@@ -13,8 +13,8 @@ name: LAUNCH update
 #      was built before the translations caught up;
 #   3. commits the new pages to main (or, with LAUNCH_UPDATE_MODE=pr, opens a
 #      pull request), records the version in launch-release.json and the
-#      README's "Live version" line, makes a matching release here and asks
-#      GitHub Pages to build.
+#      README's "Live version" line and makes a matching release here. The
+#      push starts GitHub Pages' own build, as any push to main does.
 # If anything fails, nothing is changed here, and an issue titled
 # "LAUNCH update not applied" says why. The next successful update closes it.
 #
@@ -39,7 +39,6 @@ on:
 permissions:
   contents: write        # commit the pages, tag the release
   issues: write          # say why an update was not applied
-  pages: write           # ask GitHub Pages to build
   pull-requests: write   # LAUNCH_UPDATE_MODE=pr only
 
 concurrency:
@@ -166,8 +165,8 @@ jobs:
           else
             git push origin HEAD:main
             gh release create "$TAG" --target "$(git rev-parse HEAD)" --title "LAUNCH pages $TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
-            gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent \
-              || echo "::notice::Could not ask GitHub Pages to build; it may build by itself after the push."
+            # No request for a Pages build: this push starts one, and a second
+            # request only cancels it (seen on rbm-v1, 13 Oct 2026).
             echo "Applied **$TAG** to main; GitHub Pages is building it." >> "$GITHUB_STEP_SUMMARY"
           fi
 
