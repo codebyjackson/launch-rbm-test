@@ -20,7 +20,7 @@
   const ICONS = [
     {
       id: "01-rnd-clinical",
-      title: "R&D & clinical",
+      title: "R&D and Clinical",
       // Test tube with a fill line and a bubble — the trial, not a microscope.
       body: `
         <path d="M9.5 3h5"/>
@@ -30,7 +30,7 @@
     },
     {
       id: "02-regulatory-approval",
-      title: "Regulatory approval (SRA)",
+      title: "Stringent Regulatory Approval (SRA)",
       // The authority itself: pediment, entablature, columns, plinth.
       body: `
         <path d="M12 2.6 21.3 7.8M12 2.6 2.7 7.8"/>

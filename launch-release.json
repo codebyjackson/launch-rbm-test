@@ -1,9 +1,9 @@
 {
   "note": "Written by .github/workflows/launch-update.yml: the LAUNCH release whose pages are live here.",
-  "tag": "rbm-v5",
+  "tag": "rbm-v6",
   "source_repo": "KylerXiv/launch-development-test",
-  "source_release": "https://github.com/KylerXiv/launch-development-test/releases/tag/rbm-v5",
-  "built_from": "49781b96ed34e311436c09e0c979a3b48451213e",
-  "published_at": "2026-10-13T09:06:20Z",
-  "applied_at": "2026-10-13"
+  "source_release": "https://github.com/KylerXiv/launch-development-test/releases/tag/rbm-v6",
+  "built_from": "638842108ef49747b0489d584365d6d9e75896d9",
+  "published_at": "2026-10-15T15:08:29Z",
+  "applied_at": "2026-10-15"
 }

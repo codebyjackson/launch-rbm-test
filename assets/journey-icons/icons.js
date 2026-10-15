@@ -12,7 +12,7 @@
   const ICONS = [
     {
       id: "01-rnd-clinical",
-      title: "R&D & clinical",
+      title: "R&D and Clinical",
       // Conical flask with a fill line: the trial, not a microscope.
       body: `
         <path d="M9.5 3h5"/>
@@ -22,7 +22,7 @@
     },
     {
       id: "02-regulatory-approval",
-      title: "Regulatory approval (SRA)",
+      title: "Stringent Regulatory Approval (SRA)",
       // Dossier with a folded corner and a cleared review mark.
       body: `
         <path d="M13 2.75H7.5A1.75 1.75 0 0 0 5.75 4.5v15A1.75 1.75 0 0 0 7.5 21.25h9a1.75 1.75 0 0 0 1.75-1.75V8Z"/>
