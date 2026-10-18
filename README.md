@@ -33,6 +33,27 @@ assets/                                             icons and logos (shared)
 The platform has /en, /fr and /pt routes today. The Spanish page (es/) is
 ready for a /es route if one is added; until then it can be linked directly.
 
+## What to host
+
+Host these, side by side, exactly as they are:
+
+- `en/`, `fr/`, `pt/`, `es/`: the four pages, each with its own `data/` (map
+  shapes and country names, not the dashboard's data) and feedback form;
+- `assets/`: the icons and logos every page loads from `../assets/`. Without
+  it, the pages lose their icons.
+
+That is 38 files: HTML, JavaScript, SVG and PNG. The styles are inside each
+page, so there are no separate CSS files, and there is no build step or server
+code.
+
+Not needed: `index.html`, `iframe-test.html`, `rbm-shell/`,
+and `build-manifest.json` in the LAUNCH test
+copy are for development and testing only.
+
+The dashboard's data is **not** in these files. Each page loads it from the
+public data repository (below) every time it opens, so new data appears with
+nothing to do here.
+
 Data: `https://codebyjackson.github.io/launch-data-test/v1/dashboard.json`
 (contract and change rules: the README of that repository). Map rendering uses
 MapLibre GL JS from cdnjs.cloudflare.com.
@@ -89,7 +110,8 @@ inside the frame.
 a frame taller than the screen the button sits below the visible area until
 the reader scrolls to the frame's end, and the dialog opens out of view.
 Sized to the screen, the button stays in the bottom corner while the reader
-scrolls. `iframe-test.html` in this folder shows it working.
+scrolls. The LAUNCH test copy shows it working inside a mock of the platform:
+https://codebyjackson.github.io/launch-rbm-test/iframe-test.html
 
 ## What readers see when something is wrong
 
@@ -123,12 +145,31 @@ scrolls. `iframe-test.html` in this folder shows it working.
 
 ## How updates arrive
 
-These files are generated in the LAUNCH pipeline repository by
-`node scripts/build-rbm-pages.js` from the same page as the LAUNCH site. Do not
-edit them by hand: a change made here is replaced by the next copy, and the
-copy refuses to run until it has been moved into the LAUNCH repository.
+**Data:** nothing to do. The pages read the newest approved `dashboard.json`
+every time they open.
 
-When a change to the page lands there, a LAUNCH developer builds the pages and
+**Pages:** no changes are planned after handover. If Unitaid asks for one, the
+LAUNCH team sends you an updated set of files to replace the old ones.
+
+**Please do not edit the hosted files by hand.** They are built from the same
+page as the LAUNCH site, so a change made only here never reaches the LAUNCH
+site or the translations. Ask the LAUNCH team for the change instead.
+
+**A breaking change to the data's format** is rare and announced in advance.
+The current data address stays live in the meantime.
+
+### For the LAUNCH team (development stage only)
+
+`node scripts/build-rbm-pages.js` builds these pages; `--api-url` sets where
+the two forms post, and `--api-url none` builds them switched off.
+`node scripts/copy-rbm-pages.js --to <checkout of launch-rbm-test>` copies a
+build into the test copy `codebyjackson/launch-rbm-test`; commit and push
+there by hand. The copy replaces exactly the files listed under "What to
+host".
+
+### In this test copy
+
+When a change to the page lands in launch-development-test, a LAUNCH developer builds the pages and
 copies them into a checkout of this repository, then commits and pushes:
 
 ```
