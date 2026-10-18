@@ -1758,17 +1758,18 @@
     .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
 
   // schema.org structured data for search engines and knowledge-graph crawlers.
-  // Derived from the data at render time, never stored; @id ties each product to
-  // its canonical node in ontology/launch-data.jsonld (which carries the ATC and
-  // Wikidata alignments). Skipped for synthetic datasets so fictional products
-  // can never be indexed as real medicines.
+  // Derived from the data at render time, never stored. SITE is the LAUNCH site
+  // (until 18 Oct 2026 an old, retired copy of the site, which RBM's pages
+  // would otherwise have carried); the download is the published dashboard.json.
+  // Skipped for synthetic datasets so fictional products can never be indexed
+  // as real medicines.
   if (!DATA.meta.synthetic) {
-    const SITE = "https://kochrisdev.github.io/launch-transparency-dashboard";
+    const SITE = "https://launch-development-test.vercel.app";
     const ld = {
       "@context": "https://schema.org",
       "@graph": [{
         "@type": "Dataset",
-        "@id": SITE + "/ontology/launch-data.jsonld#dataset",
+        "@id": SITE + "/#dataset",
         "name": "LAUNCH Conjunto de dados do Painel de Transparência",
         "description": "Situação das vias de acesso a novos medicamentos antimaláricos — etapas, marcos, acesso por país e aquisição — com informação de fontes públicas sobre cada dado.",
         "url": SITE + "/",
@@ -1776,12 +1777,12 @@
         "creativeWorkStatus": DATA.meta.dataStatus,
         "distribution": [{
           "@type": "DataDownload",
-          "encodingFormat": "application/ld+json",
-          "contentUrl": SITE + "/ontology/launch-data.jsonld"
+          "encodingFormat": "application/json",
+          "contentUrl": "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json"
         }]
       }].concat(tracked.map(p => ({
         "@type": "Drug",
-        "@id": SITE + "/ontology/launch-data.jsonld#product-" + p.id,
+        "@id": SITE + "/#product-" + p.id,
         "name": p.name,
         "nonProprietaryName": p.inn,
         "manufacturer": { "@type": "Organization", "name": p.manufacturer },
