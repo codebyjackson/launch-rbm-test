@@ -173,15 +173,19 @@
   .pathexp b { font-weight: 700; color: var(--exp-ink); font-variant-numeric: tabular-nums; }
   .pathnode .pathexp svg { width: 13px; height: 13px; margin: 0; display: inline-block; color: var(--exp-ink); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .pathexp.none { border-color: transparent; background: var(--surface); color: var(--ink-3); padding-inline: 8px; }
-  /* Phones: the tag wraps between its parts, never inside them (9 Oct 2026).
-     The WHO pair's column is 66px inside its bracket, but the tag could not
-     shrink below 112px (clock, "2 years" and "expected" side by side), so it
-     ran 18px past the column and 4px past the card. Now "expected" drops to a
-     second line under the clock and the number. */
+  /* The tag wraps between its parts, never inside them (9 Oct 2026, phones;
+     every width since 19 Oct 2026). The WHO pair's column is 66px inside its
+     bracket on a phone, but the tag could not shrink below 112px (clock,
+     "2 years" and "expected" side by side), so it ran past the column and the
+     card. At tablet widths, and in RBM's iframe beside its sidebar, the same
+     tag ran past the bracket and was cut off ("1.5 years expecte"). Now
+     "expected" drops to a second line whenever the column is too narrow, and
+     the tag stays on one line when it fits. */
+  .pathexp { white-space: normal; text-align: center; justify-content: center;
+             flex-wrap: wrap; column-gap: 3px; max-width: 100%; box-sizing: border-box; }
+  .pathexp b { white-space: nowrap; }
   @media (max-width: 640px) {
-    .pathexp { white-space: normal; text-align: center; justify-content: center;
-               flex-wrap: wrap; column-gap: 3px; max-width: 100%; box-sizing: border-box; padding: 2px 5px; }
-    .pathexp b { white-space: nowrap; }
+    .pathexp { padding: 2px 5px; }
   }
   /* Market Access / Country Access: two white cards on the canvas,
      each with a gray title strip and half the width (8 Oct 2026). The card, its
@@ -1367,10 +1371,26 @@
      sideways, and measured it is no wider than before. After the 760px block
      on purpose: that block sets .pathnode { min-width: 72px } at the same
      specificity. */
+  /* Every width since 19 Oct 2026: between 641 and 760px the old rule still
+     split "recommenda-tion" (an iPad mini showing RBM's iframe). */
+  .pathnode .plabel { overflow-wrap: normal; hyphens: manual; }
+  .pathnode { flex: 1 0 72px; min-width: min-content; }
+  .pathgroup { flex: 1 0 84px; min-width: min-content; }
+  /* Market Access above Country Access (19 Oct 2026). Side by side, the two
+     cards need about 1,150px in English and more in French; anything
+     narrower, a tablet or RBM's iframe beside its 270px sidebar, cut Country
+     Access off at the edge and left it to a sideways scroll nobody saw.
+     fitPathway() measures, so the switch follows the language and the fonts
+     rather than a fixed breakpoint, and stacks the cards full width with the
+     arrow turned down. A card still too narrow for its steps (Country Access
+     on a small phone) scrolls inside itself. */
+  .pathway.stack { flex-direction: column; }
+  .pathway.stack .phase { flex: none; min-width: 0; }
+  .pathway.stack .phase-body { overflow-x: auto; }
+  /* stacked, only the card holding the WHO pair needs the room it is lifted into */
+  .pathway.stack .phase-body:not(:has(.pathgroup)) { padding-top: 8px; }
+  .pathway.stack .patharrow.phasegap { width: auto; margin: 2px 0; transform: rotate(90deg); }
   @media (max-width: 640px) {
-    .pathnode .plabel { overflow-wrap: normal; hyphens: manual; }
-    .pathnode { flex: 1 0 72px; min-width: min-content; }
-    .pathgroup { flex: 1 0 84px; min-width: min-content; }
     /* Safari (10 Oct 2026): WebKit sizes each card (.phase, min-width:
        min-content) from its steps' min-content alone and leaves out their
        72px flex-basis, so a step with short words ("R&D & clinical") was
@@ -1379,6 +1399,14 @@
        bracket. With the label at least 72px, a step's min-content is never
        below its basis, so both engines agree. Chrome was never affected. */
     .pathnode .plabel { min-width: 72px; box-sizing: border-box; }
+    /* Stacked on a phone, each card has the whole width, so it gives its
+       steps the room its padding and arrows took: four Country Access steps
+       then fit at 375px in English. Step and label minimums move together,
+       for the Safari reason above. */
+    .pathway.stack .phase-body { padding-left: 4px; padding-right: 4px; gap: 0; }
+    .pathway.stack .phase-body > .patharrow { font-size: 12px; }
+    .pathway.stack .pathnode { flex-basis: 64px; }
+    .pathway.stack .pathnode .plabel { min-width: 64px; }
   }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2503,9 +2531,16 @@
     pathway.style.setProperty("--pg-lift", lift.toFixed(2) + "px");
   }
 
+  // Side by side when both cards fit, stacked when they do not (see .stack).
+  // Measured with the class off, so a wider window can go back side by side.
+  function fitPathway() {
+    pathway.classList.remove("stack");
+    if (pathway.scrollWidth > pathway.clientWidth + 1) pathway.classList.add("stack");
+  }
+
   // align first, then draw — each pass depends on the one before it
   function layoutJourney() {
-    alignStageForks(); drawStageForks(); alignPathGroup();
+    fitPathway(); alignStageForks(); drawStageForks(); alignPathGroup();
   }
 
   layoutJourney();
