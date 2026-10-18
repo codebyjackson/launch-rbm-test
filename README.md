@@ -8,19 +8,14 @@
 · [iframe test in a mock RBM platform](https://codebyjackson.github.io/launch-rbm-test/iframe-test.html)
 · data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
 
-<!-- launch-live:start -->
-**Live version:** [rbm-v6](https://github.com/KylerXiv/launch-development-test/releases/tag/rbm-v6), applied 2026-10-15, built from [`6388421`](https://github.com/KylerXiv/launch-development-test/commit/638842108ef49747b0489d584365d6d9e75896d9) in KylerXiv/launch-development-test.
-<!-- launch-live:end -->
-
 > **Do not edit the pages here.** `en/`, `fr/`, `pt/`, `es/` and `assets/` are
 > built from `illustrated-journey-dashboard.html` in
 > [KylerXiv/launch-development-test](https://github.com/KylerXiv/launch-development-test),
-> which publishes each new version as a release. The workflow
-> `.github/workflows/launch-update.yml` here applies it once a day ("How
-> updates arrive", below). A change made here never reaches the LAUNCH site or
-> the translations, and the next update refuses to run until it has been moved
-> there. This README, `index.html`, `iframe-test.html` and `rbm-shell/` belong
-> to this repository and can be edited here.
+> and copied here by hand ("How updates arrive", below). A change made here
+> never reaches the LAUNCH site or the translations, and the next copy refuses
+> to run until it has been moved there. This README, `index.html`,
+> `iframe-test.html` and `rbm-shell/` belong to this repository and can be
+> edited here.
 
 The LAUNCH illustrated journey dashboard, one static page per language, for
 embedding on dashboards.endmalaria.org. The pages hold no data of their own:
@@ -130,29 +125,24 @@ scrolls. `iframe-test.html` in this folder shows it working.
 
 These files are generated in the LAUNCH pipeline repository by
 `node scripts/build-rbm-pages.js` from the same page as the LAUNCH site. Do not
-edit them by hand: a change made here is replaced by the next update, and the
-update refuses to run until it has been moved into the LAUNCH repository.
+edit them by hand: a change made here is replaced by the next copy, and the
+copy refuses to run until it has been moved into the LAUNCH repository.
 
-When a change to the page lands there, its workflow "Release RBM pages"
-publishes the new pages as a numbered release (`rbm-v1`, `rbm-v2`, …) with a
-note of what changed. A release is made only when the pages actually change:
-data never needs one, because the pages read `dashboard.json` when they load.
+When a change to the page lands there, a LAUNCH developer builds the pages and
+copies them into a checkout of this repository, then commits and pushes:
 
-The test repository picks each release up by itself: its workflow
-`.github/workflows/launch-update.yml` checks once a day (or when run by hand
-from its Actions tab), runs the checks below, commits the new pages to `main`,
-records the version in `launch-release.json` and the README's "Live version"
-line, and makes a matching release there. If a check fails, nothing is
-changed: it opens an issue titled "LAUNCH update not applied" saying why.
-Set the repository variable `LAUNCH_UPDATE_MODE` to `pr` to have each update
-opened as a pull request to review instead (that also needs Settings → Actions
-→ "Allow GitHub Actions to create and approve pull requests"). Set
-`LAUNCH_REPO` when the LAUNCH repository moves.
+```
+node scripts/build-rbm-pages.js
+node scripts/copy-rbm-pages.js --to ../launch-rbm-test
+```
+
+Data never needs a copy, because the pages read `dashboard.json` when they
+load. GitHub Pages rebuilds the site by itself after each push to `main`.
 
 **The checks.** `build-manifest.json` records what the build wrote (the
 sha256 of each file in en/, fr/, pt/, es/ and assets/, and the commit it was
-built from), so an edit made here can be found. `copy-rbm-pages.js`, shipped in
-every release, stops an update that would replace one. It also stops one built
+built from), so an edit made here can be found. `copy-rbm-pages.js` in the LAUNCH
+repository stops a copy that would replace one. It also stops one built
 before the translations caught up, or from uncommitted files.
 `--api-url` sets where the two forms post (default: the LAUNCH production
 site); `--api-url none` builds them switched off, as they were until
