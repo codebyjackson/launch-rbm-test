@@ -1434,55 +1434,62 @@
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400..800;1,400..700&display=swap">
 <style id="rbm-skin">
-  /* RBM look — scripts/rbm-skin.js. Generated; do not edit. */
+  /* Unitaid look — scripts/rbm-skin.js. Generated; do not edit. */
   :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
-    --ground: #EDF2F9; --surface: #FFFFFF; --surface-2: #F3F4F6;
-    --ink: #111827; --ink-2: #374151; --ink-3: #4B5563; --line: #E2E8F0;
-    --accent: #2563EB; --accent-ink: #FFFFFF; --accent-soft: #EFF6FF;
-    --good: #059669; --good-text: #047857; --good-soft: #ECFDF5;
-    --warn: #D97706; --warn-text: #B45309; --warn-soft: #FFFBEB;
-    --crit: #CB1C1C; --crit-soft: #FEF2F2;
-    --idle: #6B7280; --idle-soft: #F3F4F6;
+    --ground: #F0F2F5; --surface: #FFFFFF; --surface-2: #F7F8FA;
+    --ink: #212E92; --ink-2: #3D4678; --ink-3: #525A82; --line: #DEE0EF;
+    --accent: #0066FF; --accent-ink: #FFFFFF; --accent-soft: #EBF3FF;
+    --good: #00804F; --good-text: #00704A; --good-soft: #D9F7EC;
+    --warn: #B87500; --warn-text: #8C5A00; --warn-soft: #FBF0DA;
+    --crit: #CC0033; --crit-soft: #FBEBEF;
+    --idle: #5F6690; --idle-soft: #EEF0F5;
+    --exp-line: #7A82BE; --exp-ink: #212E92;
+    --diff: #212E92; --diff-soft: #EBF3FF;
+    --ph-mkt-soft: #EBF3FF; --ph-mkt-ink: #212E92;
+    --ph-cty-soft: #EBF3FF; --ph-cty-ink: #212E92;
     --shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
   }
-  body, button, input, select, textarea { font-family: Roboto, "Helvetica Neue", Arial, sans-serif; }
-  .hd-title, .card .big { font-family: Poppins, Roboto, Arial, sans-serif; font-weight: 600; }
-  .hd-title { letter-spacing: 0; }
+  body, button, input, select, textarea { font-family: "Source Sans 3", Arial, sans-serif; }
+  /* headings in the brand's Bold, navy */
+  .hd-title, .viz h2, .disclaimer h3, .srcs-title, .ft-sec h3, .mft-name, .det-cname, .card .big {
+    font-weight: 700; color: var(--ink); letter-spacing: 0;
+  }
 
-  /* cards: rounded-lg + shadow-md on the canvas; panels inside them rounded-md */
+  /* cards: rounded-lg on the canvas; panels inside them rounded-md (as in the RBM look) */
   .pathway, .board, .updates, .disclaimer, .srcs, .viz, .gatewrap, .subwrap { border-radius: 8px; }
   .l1in, .gatepanel, .gw-band, .detail, .card, .mtable-box, .det-card, .map-legend-bar, .map-dock-rail,
   #mapwrap-gl, #mapwrap-gl .maplibregl-canvas { border-radius: 6px; }
 
-  /* table head: gray-200 strip, gray-600 bold labels */
-  .srow.hd { background: #E5E7EB; color: #4B5563; }
-  .srow.hd .c-bar { color: #4B5563; }
+  /* table and panel heads: Unitaid Grey strip, navy-grey bold labels */
+  .srow.hd, .phase-t, .ystable thead th, .det-table th, .ftab thead th { background: #E6EAEE; color: var(--ink-2); }
+  .srow.hd .c-bar, .ftab thead th.n { color: var(--ink-2); }
+  .ystable tr.ysgrp th { background: var(--surface-2); }
 
-  /* the source page's hard-coded teal tints, in RBM blue */
-  .jcell.on { box-shadow: inset 1px 0 0 #BFDBFE, inset -1px 0 0 #BFDBFE; }
-  .more { border-top-color: #BFDBFE; }
-  .more:hover { background: #DBEAFE; }
-  .mft-pchip { background: #F3F4F6; }
+  /* the source page's hard-coded teal tints, in Unitaid Blue tints (30% and 15%) */
+  .jcell.on { box-shadow: inset 1px 0 0 #B2D1FF, inset -1px 0 0 #B2D1FF; }
+  .more { border-top-color: #B2D1FF; color: var(--ink); }   /* it sits on --accent-soft */
+  .more:hover { background: #D9E8FF; }
+  .mft-pchip { background: #F0F2F5; }
+  .chip.pipeline { color: var(--ink); }
 
-  /* buttons: rounded-md, RBM Blue primary (blue-700 on hover), no gradients */
+  /* buttons: rounded-md, Unitaid Blue, navy on hover, no gradients */
   .dl-btn, .sub-btn, .sub-go, .swg, .det-q, .det-nav button { border-radius: 6px; }
-  .sub-btn:hover, .sub-go:hover { background: #1D4ED8; border-color: #1D4ED8; }
-  /* segmented control: active blue-600 / white, inactive gray-200 / gray-800 */
-  .swg { border-color: #E5E7EB; }
-  .swg button { background: #E5E7EB; color: #1F2937; }
-  .swg button + button { border-left-color: #D1D5DB; }
-  .swg button:not([aria-pressed="true"]):hover { background: #DBEAFE; color: #1D4ED8; }
+  .dl-btn { background: var(--surface); }
+  .dl-btn:hover { background: var(--accent); color: var(--accent-ink); }
+  .sub-btn:hover, .sub-go:hover { background: #212E92; border-color: #212E92; }
+  .swg button:not([aria-pressed="true"]):hover { background: var(--accent-soft); color: var(--ink); }
+  .tab[aria-selected="false"]:hover { color: var(--ink); border-color: var(--accent); }
 
-  /* feedback dialog: neutral-100 head strip, rounded-lg, shadow-xl. The widget
+  /* feedback dialog: Unitaid Grey head strip, rounded-lg, shadow-xl. The widget
      adds its own stylesheet when it loads, after this one, so these rules carry
      an extra "html" to win on specificity instead of source order. */
   html .ri-dialog { border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
-  html .ri-head { background: #F5F5F5; }
+  html .ri-head { background: #F0F2F5; }
   html .ri-dialog::backdrop { background: rgba(0,0,0,.5); }
   html .ri-btn, html .ri-input, html .ri-select, html .ri-textarea { border-radius: 6px; }
-  html .ri-primary:hover { background: #1D4ED8; }
+  html .ri-primary:hover { background: #212E92; }
 </style>
 
 <body>
@@ -2406,7 +2413,7 @@
     }).join("");
 
     const d = p.detail;
-    const shades = ["#033FAF", "#3A67BB", "#728EC6", "#A9B6D2"];
+    const shades = ["#212E92", "#0066FF", "#66A3FF", "#75D8F7"];
     const volumeCard = d.volume ? `
       <div class="card">
         <h3>Treatments procured through public channels</h3>

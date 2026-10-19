@@ -58,11 +58,12 @@ Data: `https://codebyjackson.github.io/launch-data-test/v1/dashboard.json`
 (contract and change rules: the README of that repository). Map rendering uses
 MapLibre GL JS from cdnjs.cloudflare.com.
 
-The pages follow the RBM Dashboard Design Guidelines v1.0
-(dashboards.endmalaria.org/design-guidelines): RBM Blue for actions, white cards
-on the #EDF2F9 canvas, Roboto and Poppins, the default map ramp. Fonts load from
-Google Fonts; to self-host them instead, swap the fonts.googleapis.com link at
-the top of each page.
+The pages wear Unitaid's brand (brandpad.io/unitaid), at Unitaid's request:
+Unitaid Navy for text and headings, Unitaid Blue for actions, Unitaid Red for
+delays, white cards on a Unitaid Grey canvas, and Source Sans 3. The country
+access map keeps the LAUNCH site's colours. Fonts load from Google Fonts; to
+self-host them instead, swap the fonts.googleapis.com link at the top of each
+page.
 
 ## Hosting
 
