@@ -6,17 +6,23 @@
 <title>Malaria Product Launch Dashboard — iframe test in a mock RBM platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Source+Sans+3:wght@700&display=swap">
 <!--
   Iframe test. A mock of the RBM platform shell (dashboards.endmalaria.org),
   built from its design guidelines and live markup (7 Oct 2026): dark sidebar,
-  blue logo bar, transparent header over the photo hero, language switch top
+  blue logo bar, transparent header over the hero, language switch top
   right. Only the LAUNCH entry works; RBM's own sections are greyed out, and so
   are Pipeline and Story until they are built for RBM. The language switch
   loads en/, fr/, pt/ or es/ into the iframe, as RBM's /en, /fr and /pt routes
   will (RBM has no /es route yet; Spanish is ours, ahead of the platform).
-  Logos and hero photo in rbm-shell/ are RBM's and UNOPS's own files, copied
-  for this test only.
+  The hero is a Unitaid banner since 19 Oct 2026 (owner's request, from the
+  screenshot sent with Unitaid's brand feedback): Unitaid Blue, the white logo
+  and the brand graphic, title in Source Sans 3 Bold. It replaced RBM's photo
+  hero (rbm-shell/bg-programmatic-min.webp, kept, no longer used).
+  Logos in rbm-shell/ are RBM's, UNOPS's and Unitaid's own files, copied
+  for this test only; the Unitaid logos are the white versions from Unitaid's
+  logo pack (brandpad.io/unitaid), unmodified. unitaid-banner-art.svg is the
+  brand graphic redrawn from that screenshot.
 -->
 <style>
   :root {
@@ -95,14 +101,20 @@
      below the screen, and opens its dialog out of view. dvh, where supported,
      so a phone's browser bar does not cover the bottom of the frame. */
   .main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+  /* Unitaid banner: Unitaid Blue, with the brand graphic in the bottom right,
+     under the header line only, so the header's white language switch and
+     UNOPS logo never sit on Sky Blue (white on it is 1.6:1). The graphic keeps
+     its angle at every width: it is scaled by the banner's height, and on
+     screens narrower than 1700px it slides off the right edge rather than
+     shrinking; under 1100px it goes (.hero-in reserves room for it). */
   .hero {
     flex: none;
     position: relative; color: #fff;
-    background: linear-gradient(rgba(15,23,42,.25), rgba(15,23,42,.25)), url("rbm-shell/bg-programmatic-min.webp") center top / cover #1E3A8A;
+    background: url("rbm-shell/unitaid-banner-art.svg") right min(0px, calc((100vw - 1700px) / 2)) bottom 0 / auto calc(100% - 57px) no-repeat, #0066FF;
   }
   .top {
     height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    border-bottom: 1px solid #2563EB; padding: 0 0 0 4px;
+    border-bottom: 1px solid #212E92; padding: 0 0 0 4px;
   }
   .top .l, .top .r { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .icbtn { background: none; border: 0; color: #fff; padding: 6px; cursor: pointer; display: flex; border-radius: 999px; }
@@ -115,9 +127,22 @@
   .lang { background: transparent; color: #fff; font-size: 11px; border: 1px solid #fff; border-radius: 8px; padding: 4px 6px; margin-right: 8px; cursor: pointer; }
   .lang option { color: #111827; }
   .unops { height: 40px; width: auto; margin-right: 16px; display: block; }
-  .hero-in { max-width: 1600px; padding: 40px 24px 44px; }
-  .micro { margin: 0 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #DBEAFE; }
-  .hero h1 { margin: 0; font: 700 clamp(28px, 4vw, 48px)/1.1 Poppins, Roboto, Arial, sans-serif; }
+  /* logo, then the title, their bottoms level (as in the screenshot); the
+     test label floats above the title so it does not move it. The logo's
+     clear space (the height of its bird) is kept on every side. */
+  .hero-in {
+    display: flex; align-items: flex-end; gap: clamp(32px, 5vw, 100px);
+    padding: 36px calc(440px + min(0px, (100vw - 1700px) / 2)) 38px clamp(24px, 4.5vw, 96px);
+  }
+  .hero-logo { flex: none; display: block; }
+  .hero-logo img { display: block; width: clamp(190px, 13vw, 254px); height: auto; }
+  .hero-txt { position: relative; min-width: 0; }
+  .micro { position: absolute; bottom: 100%; left: 0; margin: 0 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #fff; white-space: nowrap; }
+  .hero h1 { margin: 0; font: 700 clamp(26px, 2.35vw, 46px)/1.15 "Source Sans 3", Roboto, Arial, sans-serif; }
+  @media (max-width: 1099px) {
+    .hero { background: #0066FF; }
+    .hero-in { padding-right: 24px; }
+  }
 
   .frame { flex: 1 1 auto; min-height: 480px; display: flex; flex-direction: column; padding: 24px; }
   .frame iframe { display: block; flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: var(--canvas); }
@@ -132,7 +157,9 @@
     .howto, .gap { display: none; }
     .unops { margin-right: 8px; height: 32px; }
     .frame { padding: 12px 0; }
-    .hero-in { padding: 28px 16px 32px; }
+    .hero-in { flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px 16px 28px; }
+    .hero-logo img { width: 150px; }   /* the version without the tagline: the brand's rule at 180px or less */
+    .micro { position: static; white-space: normal; }
   }
   /* ---------- short screens (a phone held sideways): the hero's title goes,
      so the frame keeps the screen and the page does not scroll around it ---------- */
@@ -184,8 +211,14 @@
         </div>
       </header>
       <div class="hero-in">
-        <p class="micro" id="micro"></p>
-        <h1 id="h1"></h1>
+        <picture class="hero-logo">
+          <source media="(max-width: 767px)" srcset="rbm-shell/unitaid-logo-white-notagline.svg">
+          <img src="rbm-shell/unitaid-logo-white.svg" alt="Unitaid" width="254" height="88">
+        </picture>
+        <div class="hero-txt">
+          <p class="micro" id="micro"></p>
+          <h1 id="h1"></h1>
+        </div>
       </div>
     </section>
     <div class="frame">
