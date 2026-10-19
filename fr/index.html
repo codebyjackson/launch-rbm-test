@@ -262,7 +262,7 @@
   .product.l1-open > .srow { background: var(--surface-2); }
   .srow {
     display: grid; column-gap: 30px; align-items: center; padding: 10px 18px; min-height: 58px;
-    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) 100px minmax(150px, 1.2fr);
+    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) 112px minmax(150px, 1.2fr);
   }
   .srow.hd {
     min-height: 34px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
@@ -362,6 +362,16 @@
      as red "late": the wording is neutral on purpose (8 Oct 2026). Green means
      no difference, grey has nothing to compare. See docs/jackson/yardstick.md. */
   .srow .c-path { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  /* Access milestones (partner feedback, 19 Oct 2026): the column that was
+     "On pathway" names the two phases, each with what it has reached. */
+  .acc { display: grid; gap: 1px; font-size: 12.5px; line-height: 1.3; }
+  .acc small { font-size: 11px; color: var(--ink-3); }
+  .acc small + small, .acc b + small { margin-top: 4px; }
+  .acc b { font-weight: 700; color: var(--ink); }
+  .acc b.ok { color: var(--good-text); }
+  .acc .none { color: var(--ink-3); }
+  .srow.hd .c-path { display: flex; flex-direction: row; align-items: center; gap: 5px; }
+  .srow.hd .info { text-transform: none; }
   .ysp { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; line-height: 1.4; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
   .ysp i { font-style: normal; font-weight: 500; }
   .ysp.sm { font-size: 11.5px; padding: 1px 8px; }
@@ -427,6 +437,12 @@
   @media (max-width: 1040px) {
     .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr) minmax(120px, 1fr); }
     .srow .c-path { display: none; }
+  }
+  /* Just above that (19 Oct 2026): the fixed minimums and 30px gaps add up to
+     more than the board, which ran 28px past its edge at 1041px, and 52px once
+     the access column grew. Tighter gaps and minimums fit it. */
+  @media (min-width: 1041px) and (max-width: 1180px) {
+    .srow { column-gap: 18px; grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(160px, 1.2fr) 112px minmax(140px, 1.2fr); }
   }
   @media (max-width: 680px) {
     .srow { column-gap: 14px; grid-template-columns: 34px 1fr auto; row-gap: 6px; }
@@ -886,6 +902,7 @@
   .ft-sec { background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); padding: 14px 20px 16px; }
   .ft-sec h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
   .ft-sec p { margin: 0; }
+  .ft-sec p + p { margin-top: 8px; }
   .disclaimer { background: var(--accent-soft); border: 1px solid var(--line); border-left: 5px solid var(--accent);
                 border-radius: 10px; padding: 14px 18px; color: var(--ink); scroll-margin-top: 16px; }
   .disclaimer:focus { outline: none; }
@@ -1593,6 +1610,24 @@
       <p>Unitaid does not accept legal responsibility for the accuracy of the data. Unitaid does not guarantee that it is complete, up to date or fit for a specific purpose. <span id="disc-countries"></span>Les utilisateurs doivent effectuer leurs propres vérifications au niveau national avant de prendre toute décision basée sur ces données.</p>
       <p>A full understanding of a medicine's access situation in any country may require information that is not in this dashboard.</p>
     </div>
+    <!-- LAUNCH's mandate (partner feedback, row 57, 19 Oct 2026): why these
+         four medicines, no endorsement, and the scope. Facts as in
+         docs/domain-primer.md §1 and §4; see docs/access-milestones-notes.md. -->
+    <section class="ft-sec" id="about-launch">
+      <h3>About LAUNCH</h3>
+      <p>LAUNCH, funded by Unitaid, is a proof of concept for making the access pathway of new antimalarial medicines transparent.
+        It brings public information on each medicine together in one place, from development and regulatory approval through
+        WHO recommendation and prequalification to registration, policy, procurement and delivery in countries, so that partners
+        can see where access is held up and act on it.</p>
+      <p>It starts with four medicines relevant to multiple first-line therapy (MFT) strategies, which use more than one first-line
+        treatment in a population to reduce the risk of drug resistance. Two are already recommended by WHO but underused:
+        artesunate–pyronaridine (ASPY) and dihydroartemisinin–piperaquine (DHA–PPQ). Two are in late-stage development:
+        ganaplacide–lumefantrine (GanLum) and artemether–lumefantrine–amodiaquine (ALAQ). Together they cover both halves of
+        the pathway: approval for the medicines in development, and adoption and procurement for those already recommended.</p>
+      <p>Tracking a medicine here does not mean that LAUNCH or Unitaid endorses it or recommends it for any use. The dashboard
+        reports where each medicine stands on the access pathway, not whether it should be used. For this proof of concept the
+        scope is these four medicines; it may later expand to other medicines and malaria tools.</p>
+    </section>
     <section class="ft-sec">
       <h3>À propos des données</h3>
       <p>The LAUNCH dashboard displays publicly available information only. Product-specific details
@@ -1727,7 +1762,10 @@
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
   const LABEL = { done: "Complet", prog: "En cours", late: "Retardé", idle: "Pas encore commencé" };
   // What "Delayed" means, shown from the i beside it in the medicines table.
-  const LATE_DEF = "this stage is not moving as fast as expected.";
+  // It said "not moving as fast as expected", which named no expectation; a
+  // partner asked what Delayed refers to (19 Oct 2026). It is the hand-set
+  // `late` status (docs/data-analyst-guide.md), not a measured comparison.
+  const LATE_DEF = "the medicine's current stage has stalled or is moving unusually slowly, in LAUNCH's judgement from public evidence. The main barrier gives the reason. It is not measured against a set deadline.";
   const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
@@ -1927,18 +1965,44 @@
     const ys = p.stages.map(stageYear).filter(y => y != null);
     return ys.length ? Math.min(...ys) : null;
   }
-  function onPathwayShort(p) {
-    const y = firstYear(p);
-    if (y == null) return "—";
-    const n = ASOF_YEAR - y;
-    return n > 0 ? yrsText(n) : "< 1 an";
+  // ---- access milestones: market access, then country access ----------------
+  // The table used to give one figure, "On pathway": years since the first
+  // dated milestone, with no end. A partner asked where that pathway ends and
+  // suggested two steps in sequence instead (feedback, 19 Oct 2026): market
+  // access, reached once a medicine is WHO-prequalified and WHO-recommended,
+  // then access in countries (in-country processes and procurement of
+  // significant volumes). Those are the page's two phases (PHASES below), so
+  // each phase reports on its own. A phase is reached when every stage in it
+  // is complete, in the year of its latest dated stage. Country Access counts
+  // from the year Market Access was reached, not from earlier country steps
+  // (ASPY was registered in Viet Nam in 2013, before WHO recommended it).
+  function phaseReached(p, k) {
+    const idx = p.stages.map((_, i) => i).filter(i => phaseOf(i) === k);
+    if (!idx.every(i => p.stages[i].status === "done")) return null;
+    const ys = idx.map(i => stageYear(p.stages[i])).filter(y => y != null);
+    return { year: ys.length ? Math.max(...ys) : null };
   }
-  function onPathwayLong(p) {
-    const y = firstYear(p);
-    if (y == null) return "Pas encore daté";
-    const n = ASOF_YEAR - y;
-    return n > 0 ? yrsText(n) + ", en cours" : "Moins d’un an";
+  const reachedText = y => (y != null ? `Reached in ${y}` : "Reached, year not recorded");
+  const soFarText = n => (n > 0 ? `${yrsText(n)} so far` : "Under 1 year so far");
+  // [phase name, figure, tone] for each phase shown. Country Access appears
+  // only once Market Access is reached, because it counts from there.
+  function accessParts(p) {
+    const m = phaseReached(p, 0);
+    if (!m) return [[PHASES[0].name, "Not yet reached", "none"]];
+    const c = phaseReached(p, 1);
+    const country = c ? [reachedText(c.year), "ok"]
+      : m.year != null ? [soFarText(ASOF_YEAR - m.year), ""]
+      : [LABEL.prog, ""];
+    return [[PHASES[0].name, reachedText(m.year), "ok"], [PHASES[1].name, ...country]];
   }
+  // What the two figures mean, from the i beside them.
+  const ACCESS_DEF = "Market Access is reached when a medicine is both recommended by WHO and WHO-prequalified. Country Access runs from then until national registration, policy adoption, procurement in significant volumes and in-country delivery are all complete.";
+  const accessInfo = () => `<button type="button" class="info" data-tip="${esc(ACCESS_DEF)}" aria-label="${esc(ACCESS_DEF)}">i</button>`;
+  // the medicines table: each phase name above its figure
+  const accessCell = p => `<span class="acc">` + accessParts(p).map(([name, t, tone]) => `<small>${esc(name)}</small>` +
+    (tone === "none" ? `<span class="none">${esc(t)}</span>` : `<b${tone ? ` class="${tone}"` : ""}>${esc(t)}</b>`)).join("") + `</span>`;
+  // the open row, in one line: "Market Access: Reached in 2022 · Country Access: 4 years so far"
+  const accessLine = p => accessParts(p).map(([name, t]) => `${esc(name)}: ${esc(t)}`).join(" · ");
   // The year the current gate has been waiting since. Uses the same journey
   // milestones the gate panel's "En attente depuis" line reads, so the two agree;
   // when a product has no journey (GanLum, ALAQ) it falls back to the latest
@@ -1966,8 +2030,8 @@
 
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
-  // read it: the badge under "Sur le chemin", the box at the top of an open row,
-  // and the "Temps passé" view. The clock starts where "Sur le chemin" starts
+  // read it: the badge under "On pathway", the box at the top of an open row,
+  // and the "Temps passé" view. The clock starts where "On pathway" starts
   // (firstYear), so the two numbers always agree, and only once the medicine
   // has a dated regulatory approval. A stage's own clock: stages 2 to 4 start
   // with the pathway, policy adoption at the WHO recommendation, procurement
@@ -2053,7 +2117,7 @@
     const est = line("Délais prévus d’après les estimations de travail de LAUNCH, encore à convenir :", by("estimate"));
     return `<p class="ysnote">${pub}${est}</p>`;
   };
-  // under "Sur le chemin" in the medicines table
+  // under the access milestones in the medicines table (was "On pathway")
   function yardBadge(p) {
     const y = yardstick(p);
     if (!y) return "";
@@ -2275,7 +2339,7 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
-    `<span class="c-stage">Étape actuelle · Statut</span><span class="c-path">Sur le chemin</span><span class="c-bar">Barrière principale</span></div>`);
+    `<span class="c-stage">Étape actuelle · Statut</span><span class="c-path">Access ${accessInfo()}</span><span class="c-bar">Barrière principale</span></div>`);
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
   (function () {
@@ -2370,14 +2434,14 @@
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
           <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
-          <span class="cell num c-path">${onPathwayShort(p)}${yardBadge(p)}</span>
+          <span class="cell c-path">${accessCell(p)}${yardBadge(p)}</span>
           <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucune barrière enregistrée"}</div>
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
           <div class="l1in">
             <div class="l1h">
               <div class="l1id"><span>${esc(p.manufacturer)}</span><span class="chip ${p.class === "pipeline" ? "pipeline" : ""}">${esc(p.classLabel)}</span></div>
-              <div class="l1ctl"><span class="l1t">Sur le chemin : ${onPathwayLong(p)}</span>
+              <div class="l1ctl"><span class="l1t">${accessLine(p)} ${accessInfo()}</span>
                 <div class="swg" role="group" aria-label="Vue du voyage">
                   <button type="button" data-v="time" aria-pressed="true">Chronologie réelle</button>
                   <button type="button" data-v="path" aria-pressed="false">Ordre du parcours</button>
