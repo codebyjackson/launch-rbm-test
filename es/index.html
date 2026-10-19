@@ -863,6 +863,27 @@
   .split div + div { margin-left: 2px; }
   .split-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13.5px; color: var(--ink-2); }
   .split-legend .key { display: inline-flex; align-items: center; gap: 5px; }
+  /* Procurement by presentation (15 Oct 2026): the yardstick table's look,
+     smaller, with the presentation free to wrap. */
+  .cards .card-wide { grid-column: 1 / -1; }
+  .card .proc-scope { margin: 8px 0 4px; font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
+  .proc-table { margin-top: 10px; font-size: 13px; }
+  .proc-table th, .proc-table td { padding: 7px 10px; }
+  .proc-table tbody th { white-space: normal; min-width: 170px; }
+  .card .proc-rule { margin: 6px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.45; }
+  .proc-table .pk { display: none; }
+  /* On a phone four columns do not fit, and the courses column, the point of
+     the table, ended up past the scroll edge. Each presentation becomes a
+     block instead: its name, then three labelled figures. It also escapes
+     .ystable's phone rule, which hides columns 2 and 3 (the yardstick's
+     Expected and Actual; here Transactions and Packs). */
+  @media (max-width: 560px) {
+    .proc-table thead { display: none; }
+    .proc-table tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+    .proc-table tbody th { grid-column: 1 / -1; padding: 0; border: 0; min-width: 0; }
+    .proc-table td, .proc-table td:nth-child(2), .proc-table td:nth-child(3) { display: block; padding: 0; border: 0; white-space: normal; }
+    .proc-table .pk { display: block; font-size: 11px; font-weight: 600; color: var(--ink-3); }
+  }
   .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
 
   /* recent updates */
@@ -2414,21 +2435,38 @@
 
     const d = p.detail;
     const shades = ["#212E92", "#0066FF", "#66A3FF", "#75D8F7"];
+    // Procurement (partner feedback, 15 Oct 2026, rows 52-53). The headline is
+    // transactions and value: one "packs" total added a 3-tablet blister and a
+    // box of 225 tablets as one pack each. Packs are listed by presentation,
+    // with treatment courses only where scripts/build-procurement-summary.js
+    // could work them out (coursesRule says how). A single 100% Global Fund
+    // channel is a sentence, not a full bar, so it cannot be read as the
+    // product's whole procurement.
+    const gfOnly = d.volume && d.volume.split.length === 1 && d.volume.split[0].pct === 100 && /PQR/.test(d.volume.source || "");
+    const NUMF = new Intl.NumberFormat(DATE_LANG);
+    const byPres = d.volume && Array.isArray(d.volume.byPresentation) && d.volume.byPresentation.length ? `
+        <div class="cscroll"><table class="ystable proc-table">
+          <thead><tr><th scope="col">Presentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Treatment courses (est.)</th></tr></thead>
+          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Treatment courses (est.)</span>${b.courses == null ? "<i>not estimated</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
+        </table></div>
+        ${d.volume.coursesRule ? `<p class="proc-rule">${esc(d.volume.coursesRule)}</p>` : ""}` : "";
     const volumeCard = d.volume ? `
-      <div class="card">
-        <h3>Tratamientos obtenidos a través de canales públicos</h3>
+      <div class="card${byPres ? " card-wide" : ""}">
+        <h3>Procurement through public channels</h3>
         <div class="big">${esc(fmtFig(d.volume.total))}</div>
         <div class="sub">${esc(fmtFig(d.volume.period))}</div>
+        ${gfOnly ? `<p class="proc-scope">100% of transactions in the dataset shown are from Global Fund PQR; this is not the product's total global procurement.</p>` : `
         <div class="split" aria-hidden="true">
           ${d.volume.split.map((s, i) => `<div style="width:${s.pct}%;background:${shades[i % shades.length]}" title="${esc(s.channel)} ${s.pct}%"></div>`).join("")}
         </div>
         <div class="split-legend">
           ${d.volume.split.map((s, i) => `<span class="key"><span class="sw" style="background:${shades[i % shades.length]}"></span>${esc(s.channel)} ${s.pct}%</span>`).join("")}
-        </div>
+        </div>`}
+        ${byPres}
         ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Fuente: ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
       </div>` : `
       <div class="card">
-        <h3>Tratamientos obtenidos</h3>
+        <h3>Procurement through public channels</h3>
         <div class="big">—</div>
         <div class="sub">${esc(d.volumeNote || "Datos aún no disponibles")}</div>
       </div>`;
@@ -2442,7 +2480,7 @@
           <div class="c-mini">${miniJourney(p)}</div>
           <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell c-path">${accessCell(p)}${yardBadge(p)}</span>
-          <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "No se registró ninguna barrera"}</div>
+          <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "No publicly documented barrier identified"}</div>
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
           <div class="l1in">
