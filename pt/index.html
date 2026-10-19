@@ -813,6 +813,12 @@
   .card .big { font-size: 24px; font-weight: 750; font-variant-numeric: tabular-nums; }
   .card .sub { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
   .card .prov { font-size: 12.5px; color: var(--ink-3); margin-top: 6px; overflow-wrap: anywhere; }
+  /* Citations on each claim (15 Oct feedback, 19 Oct 2026): the reference's
+     name from the Sources list, linked to the reference itself. They wrap
+     inside their panel or cell, never past it. */
+  a.cite { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+  a.cite .ext { font-size: .85em; margin-left: 2px; text-decoration: none; display: inline-block; }
+  .mcite { display: block; margin-top: 3px; font-size: 12px; font-weight: 400; line-height: 1.4; color: var(--ink-3); overflow-wrap: anywhere; }
   .card ul { margin: 0; padding-left: 18px; font-size: 15px; color: var(--ink); }
   .card ul li { margin: 3px 0; }
   .card p { margin: 0; font-size: 15px; color: var(--ink); }
@@ -1825,6 +1831,23 @@
 
   function el(html) { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+  // Citations (15 Oct feedback, 19 Oct 2026). A claim's "sources" are ids in
+  // data/sources.js: each is shown where the claim is, by its name in the
+  // Sources list (so it is translated with that list) and linked to the
+  // reference itself. A claim with no ids falls back to its free-text
+  // "source". Looked up on first use, as the RBM pages set LAUNCH_SOURCES
+  // from the dataset before this runs but after this file is parsed.
+  let SRC_BY_ID = null;
+  function citeLinks(ids) {
+    if (!SRC_BY_ID) {
+      SRC_BY_ID = {};
+      ((window.LAUNCH_SOURCES || {}).sources || []).forEach(s => { SRC_BY_ID[s.id] = s; });
+    }
+    return (ids || []).map(id => SRC_BY_ID[id]).filter(Boolean).map(s => s.url
+      ? `<a class="cite" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label || s.title)}<span class="ext" aria-hidden="true">↗</span></a>`
+      : esc(s.label || s.title)).join(" · ");
+  }
+  function citeHtml(ids, text) { return citeLinks(ids) || esc(text || ""); }
   // "2026-08-25" → "25 August 2026" — spelled out, so the changes list reads
   // as prose rather than as a database column.
   function readableDate(iso) {
@@ -2331,7 +2354,7 @@
         <div class="split-legend">
           ${d.volume.split.map((s, i) => `<span class="key"><span class="sw" style="background:${shades[i % shades.length]}"></span>${esc(s.channel)} ${s.pct}%</span>`).join("")}
         </div>
-        ${d.volume.source ? `<div class="prov">Fonte: ${esc(d.volume.source)}</div>` : ""}
+        ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Fonte: ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
       </div>` : `
       <div class="card">
         <h3>Tratamentos adquiridos</h3>
@@ -2405,7 +2428,7 @@
               <tbody>
                 ${d.milestones.map(m => `
                   <tr>
-                    <td>${esc(m.milestone)}</td>
+                    <td>${esc(m.milestone)}${(m.sources || []).length ? `<span class="mcite">Fonte: ${citeLinks(m.sources)}</span>` : ""}</td>
                     <td><span class="pill ${m.status}">${ICON[m.status] ? ICON[m.status] + " " : ""}${esc(m.label)}</span></td>
                     <td>${esc(m.date)}</td>
                     <td>${esc(m.next)}</td>
@@ -2682,7 +2705,7 @@
     }
 
     const prov = [
-      st.source ? "Fonte: " + esc(st.source) : "",
+      (st.source || (st.sources || []).length) ? "Fonte: " + citeHtml(st.sources, st.source) : "",
       st.asOf ? "verificado " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
