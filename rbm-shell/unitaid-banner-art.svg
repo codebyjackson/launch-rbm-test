@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 162" width="640" height="162">
+  <!-- Unitaid brand graphic for the banner of iframe-test.html, redrawn from the
+       feedback screenshot (19 Oct 2026): a Sky Blue shape (#75D8F7), its official
+       60% tint (#ACE8FA), and the line motif in a deeper tone of Unitaid Blue,
+       contained in one shape and thickening toward the corner. Both edges rise
+       1 in 2.2, as in the screenshot. -->
+  <defs><clipPath id="motif"><polygon points="266,63 483,162 223,162"/></clipPath></defs>
+  <polygon points="127,0 640,0 640,162 483,162" fill="#75D8F7"/>
+  <polygon points="503,0 640,0 640,62" fill="#ACE8FA"/>
+  <g clip-path="url(#motif)" stroke="#0145CC" fill="none">
+    <line x1="150" y1="170" x2="333" y2="0" stroke-width="2.00"/>
+    <line x1="179" y1="170" x2="362" y2="0" stroke-width="2.21"/>
+    <line x1="208" y1="170" x2="391" y2="0" stroke-width="2.42"/>
+    <line x1="237" y1="170" x2="420" y2="0" stroke-width="2.62"/>
+    <line x1="266" y1="170" x2="449" y2="0" stroke-width="2.83"/>
+    <line x1="295" y1="170" x2="478" y2="0" stroke-width="3.04"/>
+    <line x1="324" y1="170" x2="507" y2="0" stroke-width="3.25"/>
+    <line x1="353" y1="170" x2="536" y2="0" stroke-width="3.46"/>
+    <line x1="382" y1="170" x2="565" y2="0" stroke-width="3.67"/>
+    <line x1="411" y1="170" x2="594" y2="0" stroke-width="3.88"/>
+    <line x1="440" y1="170" x2="623" y2="0" stroke-width="4.08"/>
+    <line x1="469" y1="170" x2="652" y2="0" stroke-width="4.29"/>
+    <line x1="498" y1="170" x2="681" y2="0" stroke-width="4.50"/>
+  </g>
+</svg>
