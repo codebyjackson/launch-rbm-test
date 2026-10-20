@@ -1829,6 +1829,14 @@
   // request (20 Oct 2026); the stage name and status word stay, and the full
   // date still shows on the journey and in the stage panel. true brings it back.
   const SHOW_STAGE_NOTE = false;
+  // With "Delayed" hidden, its red still said it: the red diamond in the
+  // Journey column, the red ring and "!" on the timeline, and the red bars,
+  // chips and edges. So a delayed stage or milestone takes the in-progress
+  // look everywhere (amber ring, ›), owner's request (20 Oct 2026). Only the
+  // page's copy changes: data/products.js and dashboard.json keep "late", and
+  // true brings the red back.
+  const SHOW_LATE = false;
+  if (!SHOW_LATE) PRODUCTS.forEach(p => [...p.stages, ...((p.detail && p.detail.milestones) || [])].forEach(s => { if (s.status === "late") s.status = "prog"; }));
   // Is this status's word shown for this medicine? Complete and Not started always are.
   const statusShown = (p, status) => SHOW_PROGRESS || (status !== "prog" && status !== "late") || !!PROGRESS_KEPT[p.id];
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
