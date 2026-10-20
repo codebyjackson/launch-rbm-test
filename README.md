@@ -9,7 +9,8 @@
 · data: [dashboard.json](https://codebyjackson.github.io/launch-data-test/v1/dashboard.json)
 
 > **Do not edit the pages here.** `en/`, `fr/`, `pt/`, `es/` and `assets/` are
-> built from `illustrated-journey-dashboard.html` in
+> built from `index.html` (the illustrated journey, called
+> `illustrated-journey-dashboard.html` until 20 Oct 2026) in
 > [KylerXiv/launch-development-test](https://github.com/KylerXiv/launch-development-test),
 > and copied here by hand ("How updates arrive", below). A change made here
 > never reaches the LAUNCH site or the translations, and the next copy refuses
