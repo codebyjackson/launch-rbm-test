@@ -436,7 +436,9 @@
   .more[aria-expanded="true"] .ch { transform: rotate(180deg); }
   @media (max-width: 1040px) {
     .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr) minmax(120px, 1fr); }
-    .srow .c-path { display: none; }
+    /* the header's own .c-path rule is more specific, so it is named here too:
+       without it "Access" headed the barrier column (20 Oct 2026) */
+    .srow .c-path, .srow.hd .c-path { display: none; }
   }
   /* Just above that (19 Oct 2026): the fixed minimums and 30px gaps add up to
      more than the board, which ran 28px past its edge at 1041px, and 52px once
@@ -460,6 +462,21 @@
      stage names (es "Adopción de políticas nacionales") fit at 681px. */
   @media (min-width: 681px) and (max-width: 860px) {
     .srow { column-gap: 12px; grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) minmax(0, 1fr); }
+  }
+  /* Without the Main barrier column (the 10 Nov 2026 release; SHOW_BARRIERS in
+     the script): the same tracks at every width, less the last one. */
+  .board.nobar .srow { grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) minmax(112px, 1fr); }
+  @media (max-width: 1040px) {
+    .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr); }
+  }
+  @media (min-width: 1041px) and (max-width: 1180px) {
+    .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(160px, 1.2fr) minmax(112px, 1fr); }
+  }
+  @media (max-width: 680px) {
+    .board.nobar .srow { grid-template-columns: 34px 1fr auto; }
+  }
+  @media (min-width: 681px) and (max-width: 860px) {
+    .board.nobar .srow { grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr); }
   }
   @media (prefers-reduced-motion: reduce) {
     .view, .exp, .more .ch, .pathnode .pill, .pathnode .pill::after, .stage .smark, .stage .smark::after { transition: none; }
@@ -767,6 +784,8 @@
      It used to repeat where each medicine is, which the summary table already
      says; the table now lights up the selected step instead. */
   .gw-sum { display: flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; }
+  /* empty while the status words are hidden (SHOW_PROGRESS in the script) */
+  .gw-sum:empty { display: none; }
   /* Phones (9 Oct 2026): the head was one row that never wrapped, so the
      chips and Close ran past the card and the page grew wider than the
      screen (446px on a 390px phone, /fr step 3). Now icon, title and Close
@@ -1781,6 +1800,25 @@
   // `late` status (docs/data-analyst-guide.md), not a measured comparison.
   const LATE_DEF = "Le développement du médicament est actuellement au point mort ou progresse anormalement lentement, selon l’évaluation de LAUNCH basée sur des informations publiques. Le principal obstacle en est la raison. Il n’est pas assorti d’un délai précis.";
   const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
+  // The 10 Nov 2026 release (partner feedback sheet, 20 Oct 2026) shows where
+  // each medicine is without calling any step delayed or in progress, and
+  // without product-specific barrier text, until RBM and Unitaid agree
+  // barrier definitions and a status taxonomy (post-launch). Hidden, not
+  // deleted: the data keeps every status and barrier, and true brings each
+  // back. The symbols on the journey (› and !) and their colours stay,
+  // without a legend — a trade-off the partners accepted for v1.
+  // ALAQ keeps "En cours": its pathway has one stage so far, and its
+  // content was approved as it is (owner, 20 Oct 2026). GanLum is left as it
+  // is until the partners' review the week after (its only "in progress" is
+  // a milestone, so this shows only in the CSV).
+  const SHOW_PROGRESS = false;
+  const PROGRESS_KEPT = { alaq: true, ganlum: true };
+  // Off, it also drops the medicines table's Main barrier column for all four
+  // medicines (owner's choice, 20 Oct 2026), rather than leave ALAQ's and
+  // GanLum's "No publicly documented barrier identified" beside two empty cells.
+  const SHOW_BARRIERS = false;
+  // Is this status's word shown for this medicine? Complete and Not started always are.
+  const statusShown = (p, status) => SHOW_PROGRESS || (status !== "prog" && status !== "late") || !!PROGRESS_KEPT[p.id];
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
   // so the glyph inherits its marker's status colour and the page theme.
@@ -1944,14 +1982,18 @@
   function firstClause(text) {
     return String(text || "").split(";")[0].trim();
   }
-  function peekLine(status, date, nextDate) {
+  // shown false (statusShown above): the line keeps its date and drops the word.
+  function peekLine(status, date, nextDate, shown = true) {
     const when = firstClause(date);
     const due = firstClause(nextDate);
     const expected = due && !/^tbc$/i.test(due) ? " · attendu " + due : "";
     if (status === "done") return LABEL.done + (when ? " · " + when : "");
     if (status === "idle") return LABEL.idle + expected;
+    if (!shown) return when || expected.replace(/^ · /, "");
     return LABEL[status] + (when ? " · " + when : expected);
   }
+  // One medicine's peekLine: the word goes where its status is hidden.
+  const peekLineFor = p => (status, date, nextDate) => peekLine(status, date, nextDate, statusShown(p, status));
 
   // ---- years between gates on the track -------------------------------------
   // Stage `date` is free text written for a reader ("2012 (label update 2025)",
@@ -2006,7 +2048,7 @@
     const c = phaseReached(p, 1);
     const country = c ? [reachedText(c.year), "ok"]
       : m.year != null ? [soFarText(ASOF_YEAR - m.year), ""]
-      : [LABEL.prog, ""];
+      : [statusShown(p, "prog") ? LABEL.prog : "—", ""];
     return [[PHASES[0].name, reachedText(m.year), "ok"], [PHASES[1].name, ...country]];
   }
   // What the two figures mean, from the i beside them.
@@ -2214,7 +2256,7 @@
   }
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
-    const dot = i => `<i class="md ${p.stages[i].status}" title="${esc(STAGES[i])}: ${LABEL[p.stages[i].status]}"></i>`;
+    const dot = i => `<i class="md ${p.stages[i].status}" title="${esc(STAGES[i])}${statusShown(p, p.stages[i].status) ? ": " + LABEL[p.stages[i].status] : ""}"></i>`;
     return `<div class="mini" role="img" aria-label="${done} sur ${p.stages.length} étapes franchies">` +
       STAGE_COLUMNS.map((col, c) => `<span class="jcell" data-c="${c}">` +
         (col.stages.length === 1 ? dot(col.stages[0]) : `<span class="mp">${col.stages.map(dot).join("")}</span>`) +
@@ -2227,6 +2269,9 @@
   }
   function stageMarkHtml(p, i) {
     const st = p.stages[i];
+    // Shadows peekLine for this medicine. The aria-label below is translated as
+    // one string, code and all, so its text has to stay exactly as it is.
+    const peekLine = peekLineFor(p);
     return `<button class="smark" type="button"
       aria-expanded="false" aria-controls="${esc(p.id)}-gate"
       aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Ouvre les détails complets."
@@ -2275,7 +2320,7 @@
     items.forEach(it => {
       const st = p.stages[it.i], top = TOP + it.tier * TH;
       const sub = it.cur
-        ? `<div class="snow ${st.status}">${LABEL[st.status]}</div>` +
+        ? (statusShown(p, st.status) ? `<div class="snow ${st.status}">${LABEL[st.status]}</div>` : "") +
           (since != null && since < hi ? `<div class="ssince">depuis ${esc(from.label)} (${since}) · ${yrsText(hi - since)}</div>` : "")
         : `<div class="syear">${stageYear(st)}</div>`;
       h += `<i class="stem" style="left:${it.x}%;height:${top - 32}px"></i>` +
@@ -2310,12 +2355,17 @@
       (notStarted.length
         ? `<div class="uicons">${notStarted.map(j => `<span class="ui" role="img" title="${esc(STAGES[j])}" aria-label="${esc(STAGES[j])}">${stageIconImg(j, "")}</span>`).join("")}</div>`
         : `<span class="unone">Aucun</span>`) + `</div>`;
+    // With the status words hidden, the started-but-undated steps sit under a
+    // neutral heading rather than "Ongoing" (one whose translations the memory
+    // already holds).
+    const ongoingShown = ongoing.every(j => statusShown(p, p.stages[j].status));
     return `<div class="tsp"><div class="cscroll"><div class="tsa" style="height:${height}px">${h}</div></div>` +
       `<div class="tsz">${noYear.length ? group("Atteint · année non enregistrée", noYear) : ""}` +
-      `${group("En cours · sans date", ongoing, true)}${notStartedHtml}</div></div>`;
+      `${ongoingShown ? group("En cours · sans date", ongoing, true) : group("Pas encore daté", ongoing)}${notStartedHtml}</div></div>`;
   }
 
-  const lateAt = i => tracked.filter(p => p.stages[i].status === "late").length;
+  // (only where "Delayed" is shown — see SHOW_PROGRESS)
+  const lateAt = i => tracked.filter(p => p.stages[i].status === "late" && statusShown(p, "late")).length;
   // Step number = position of the stage's column, so the two parallel WHO gates
   // both read "3".
   const stepNo = i => STAGE_COLUMNS.findIndex(col => col.stages.includes(i)) + 1;
@@ -2353,7 +2403,8 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
-    `<span class="c-stage">Étape actuelle · Statut</span><span class="c-path">Accéder ${accessInfo()}</span><span class="c-bar">Barrière principale</span></div>`);
+    `<span class="c-stage">Étape actuelle · Statut</span><span class="c-path">Accéder ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barrière principale</span>` : ""}</div>`);
+  if (!SHOW_BARRIERS) board.classList.add("nobar");
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
   (function () {
@@ -2378,6 +2429,7 @@
 
   tracked.forEach(p => {
     const years = p.stages.map(stageYear);
+    const peekLine = peekLineFor(p);   // as in stageMarkHtml: keeps the aria-label's text
 
     const stageUnitHtml = (i, extraClass) => {
       const st = p.stages[i];
@@ -2464,9 +2516,9 @@
             aria-label="Afficher le parcours pour ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
-          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
+          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${statusShown(p, p.stages[p.currentStage].status) ? `<span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>` : ""}${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell c-path">${accessCell(p)}${yardBadge(p)}</span>
-          <div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucun obstacle documenté publiquement n’a été identifié."}</div>
+          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucun obstacle documenté publiquement n’a été identifié."}</div>` : ""}
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
           <div class="l1in">
@@ -2486,7 +2538,7 @@
               ${YARD && YARD_COMPARE ? `<div class="view" data-v="taken" hidden>${yardTable(p)}</div>` : ""}
             </div>
             <div class="gatepanel" id="${esc(p.id)}-gate" hidden></div>
-            ${p.flag ? `<div class="flagnote"><span>${esc(p.flag)}</span></div>` : ""}
+            ${SHOW_BARRIERS && p.flag ? `<div class="flagnote"><span>${esc(p.flag)}</span></div>` : ""}
             <button class="more" type="button" aria-expanded="false" aria-controls="${esc(p.id)}-detail"><span class="more-t">Plus de détails</span><span class="ch" aria-hidden="true">▾</span></button>
         <div class="detail" id="${esc(p.id)}-detail">
           <div class="cards">
@@ -2776,12 +2828,13 @@
     const st = p.stages[i];
     const el2 = stalledSince(p, i);
     const isCur = i === p.currentStage;
+    const shown = statusShown(p, st.status);
 
     const kv = [];
     if (st.date) kv.push(["Enregistré", esc(st.date)]);
     if (st.next) kv.push(["Étape suivante", esc(st.next)]);
     if (st.nextDate) kv.push(["Attendu", esc(st.nextDate)]);
-    if (el2) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} année${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
+    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} année${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
 
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
@@ -2810,11 +2863,11 @@
     return `
       <div class="gp-head">
         <span class="gp-stage">${esc(STAGES[i])}</span>
-        <span class="gp-pill ${st.status}">${LABEL[st.status]}</span>
+        ${shown ? `<span class="gp-pill ${st.status}">${LABEL[st.status]}</span>` : ""}
         <button class="gp-close" type="button" data-close="cell">Fermer</button>
       </div>
       ${st.note ? `<p class="gp-note">${esc(st.note)}</p>` : ""}
-      ${isCur && p.flag ? `<div class="gp-why">${esc(p.flag)}</div>` : ""}
+      ${isCur && SHOW_BARRIERS && p.flag ? `<div class="gp-why">${esc(p.flag)}</div>` : ""}
       ${kv.length || reqs ? `<div class="gp-grid">${kv.map(([k, v]) => `<div class="gp-kv"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}${reqs}</div>` : ""}
       ${countries}
       ${prov ? `<div class="gp-prov">${prov}</div>` : ""}`;
@@ -2839,10 +2892,10 @@
     closeCell();
     const panel = document.getElementById(p.id + "-gate");
     panel.innerHTML = gatePanelHTML(p, i);
-    panel.classList.toggle("late", p.stages[i].status === "late");
+    panel.classList.toggle("late", p.stages[i].status === "late" && statusShown(p, "late"));
     panel.hidden = false;
     // the panel restates p.flag for the current gate, so suppress the row's copy
-    mark.closest(".product").classList.toggle("gate-flag", i === p.currentStage && !!p.flag);
+    mark.closest(".product").classList.toggle("gate-flag", i === p.currentStage && SHOW_BARRIERS && !!p.flag);
     mark.setAttribute("aria-expanded", "true");
     openCell = mark;
     hideTip();                       // the tooltip must not fight its own panel
@@ -2875,7 +2928,9 @@
     const info = (DATA.stageInfo || [])[i];
     const counts = { late: 0, prog: 0, done: 0, idle: 0 };
     tracked.forEach(p => counts[p.stages[i].status]++);
-    const chips = ["late", "prog", "done", "idle"].filter(k => counts[k])
+    // With "delayed" and "in progress" hidden the tally would leave medicines
+    // out, so it goes whole; the table's lit column still shows where each is.
+    const chips = !SHOW_PROGRESS ? "" : ["late", "prog", "done", "idle"].filter(k => counts[k])
       .map(k => `<span class="gp-pill ${k}">${counts[k]} ${STATUS_NOUN[k]}</span>`).join("");
     const band = info ? `
       <div class="gw-band">
@@ -2954,9 +3009,11 @@
   function hideTip() { tip.style.display = "none"; }
   function showStageTip(dot) {
     const d = dot.dataset;
+    const p = tracked.find(x => x.id === d.pid);
+    const line = peekLine(d.status, d.date, d.nextdate, !p || statusShown(p, d.status));
     showTipAt(dot,
       `<b>${esc(d.stage)}</b>` +
-      `<div>${esc(peekLine(d.status, d.date, d.nextdate))}</div>` +
+      (line ? `<div>${esc(line)}</div>` : "") +
       `<div class="thint">Cliquez pour plus de détails</div>`);
   }
   document.querySelectorAll(".stage .smark").forEach(dot => {
@@ -3660,7 +3717,7 @@
         `<div class="det-small">${esc(p.inn || "")}</div>` +
         `<div class="det-k">Stade actuel</div><div class="det-v">${esc(STAGES[p.currentStage] || "")}</div>` +
         (vol ? `<div class="det-k">Achats publics (Fonds mondial)</div><div class="det-v">${esc(fmtFig(vol))}</div>` : "") +
-        (p.flag ? `<p class="det-small det-flag">${esc(p.flag)}</p>` : "") + `</div>`;
+        (SHOW_BARRIERS && p.flag ? `<p class="det-small det-flag">${esc(p.flag)}</p>` : "") + `</div>`;
     }
     function detOverview(byCat) {
       const p = curProduct(), n = Object.keys(M.countries).length;
@@ -4072,9 +4129,9 @@
       CSV_COL.date, CSV_COL.next, CSV_COL.anticipated, CSV_COL.source, CSV_COL.asOf]];
     tracked.forEach(p => {
       p.stages.forEach((s, i) =>
-        rows.push([p.name, CSV_REC.stageRow, STAGES[i], LABEL[s.status], s.note, s.date, s.next, s.nextDate, s.source || "", s.asOf || ""]));
+        rows.push([p.name, CSV_REC.stageRow, STAGES[i], statusShown(p, s.status) ? LABEL[s.status] : "", s.note, s.date, s.next, s.nextDate, s.source || "", s.asOf || ""]));
       p.detail.milestones.forEach(m =>
-        rows.push([p.name, CSV_REC.milestoneRow, m.milestone, LABEL[m.status], m.label, m.date, m.next, m.anticipated, m.source || "", ""]));
+        rows.push([p.name, CSV_REC.milestoneRow, m.milestone, statusShown(p, m.status) ? LABEL[m.status] : "", m.label, m.date, m.next, m.anticipated, m.source || "", ""]));
     });
     const csv = rows.map(r => r.map(csvCell).join(",")).join("\r\n");
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
