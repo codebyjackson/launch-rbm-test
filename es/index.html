@@ -262,7 +262,7 @@
   .product.l1-open > .srow { background: var(--surface-2); }
   .srow {
     display: grid; column-gap: 30px; align-items: center; padding: 10px 18px; min-height: 58px;
-    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) 112px minmax(150px, 1.2fr);
+    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(150px, 1.2fr) 112px 112px minmax(150px, 1.2fr);
   }
   .srow.hd {
     min-height: 34px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
@@ -314,12 +314,18 @@
   .light.late { color: var(--crit); } .light.late i { background: var(--crit); border-radius: 2px; transform: rotate(45deg) scale(.8); }
   .light.idle { color: var(--ink-3); } .light.idle i { background: var(--idle-soft); border: 1.5px dashed var(--idle); }
   .srow .cell { font-size: 13.5px; }
-  /* Current stage and Status share one cell (8 Oct 2026): the stage in bold, its status under
-     it. "Delayed" carries an i that explains it (hover, focus or tap). */
+  /* Current stage and Status are two columns again (20 Oct 2026; one cell
+     since 8 Oct). "Delayed" carries an i that explains it (hover, focus or
+     tap). Where the status word is hidden (SHOW_PROGRESS in the script) the
+     Status cell shows a dash. */
   .srow .c-stage { display: grid; gap: 2px; min-width: 0; }
   .c-stage .note { font-size: 12px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
   .c-stage .stg { font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
   .srow.hd .c-stage { display: block; }
+  .srow .c-stat { min-width: 0; }
+  /* wraps inside its fixed column: fr "Pas encore commencé" is wider than it */
+  .c-stat .light { white-space: normal; line-height: 1.3; }
+  .c-stat.none { font-size: 13px; color: var(--ink-3); }
   .info { display: inline-grid; place-items: center; flex: none; width: 15px; height: 15px; margin-left: 1px; padding: 0; border: 1.5px solid currentColor; border-radius: 50%;
           background: none; color: inherit; font: 700 10px/1 inherit; cursor: help; }
   .info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -435,7 +441,7 @@
   .more .ch { transition: transform .15s ease; }
   .more[aria-expanded="true"] .ch { transform: rotate(180deg); }
   @media (max-width: 1040px) {
-    .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr) minmax(120px, 1fr); }
+    .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(140px, 1fr) 112px minmax(120px, 1fr); }
     /* the header's own .c-path rule is more specific, so it is named here too:
        without it "Access" headed the barrier column (20 Oct 2026) */
     .srow .c-path, .srow.hd .c-path { display: none; }
@@ -444,14 +450,14 @@
      more than the board, which ran 28px past its edge at 1041px, and 52px once
      the access column grew. Tighter gaps and minimums fit it. */
   @media (min-width: 1041px) and (max-width: 1180px) {
-    .srow { column-gap: 18px; grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(160px, 1.2fr) 112px minmax(140px, 1.2fr); }
+    .srow { column-gap: 18px; grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(140px, 1.2fr) 112px 112px minmax(140px, 1.2fr); }
   }
   @media (max-width: 680px) {
     .srow { column-gap: 14px; grid-template-columns: 34px 1fr auto; row-gap: 6px; }
     .srow.hd { display: none; }
     .srow .c-mini { grid-column: 2 / -1; grid-row: 2; margin-block: 0; }
     .srow .c-bar { grid-column: 2 / -1; grid-row: 3; }
-    .c-stage .stg, .c-stage .note { display: none; }
+    .srow .c-stage { display: none; }
     .l1 { padding-inline: 10px; }
   }
   /* Narrow tablets (9 Oct 2026): the fixed minimums above add up to about
@@ -461,22 +467,22 @@
      stage column gets a little more than the barrier (1.1fr) so the longest
      stage names (es "Adopción de políticas nacionales") fit at 681px. */
   @media (min-width: 681px) and (max-width: 860px) {
-    .srow { column-gap: 12px; grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) minmax(0, 1fr); }
+    .srow { column-gap: 12px; grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) 104px minmax(0, 1fr); }
   }
   /* Without the Main barrier column (the 10 Nov 2026 release; SHOW_BARRIERS in
      the script): the same tracks at every width, less the last one. */
-  .board.nobar .srow { grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(170px, 1.2fr) minmax(112px, 1fr); }
+  .board.nobar .srow { grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(150px, 1.2fr) 112px minmax(112px, 1fr); }
   @media (max-width: 1040px) {
-    .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(150px, 1fr); }
+    .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(140px, 1fr) 112px; }
   }
   @media (min-width: 1041px) and (max-width: 1180px) {
-    .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(160px, 1.2fr) minmax(112px, 1fr); }
+    .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(140px, 1.2fr) 112px minmax(112px, 1fr); }
   }
   @media (max-width: 680px) {
     .board.nobar .srow { grid-template-columns: 34px 1fr auto; }
   }
   @media (min-width: 681px) and (max-width: 860px) {
-    .board.nobar .srow { grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr); }
+    .board.nobar .srow { grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) 104px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .view, .exp, .more .ch, .pathnode .pill, .pathnode .pill::after, .stage .smark, .stage .smark::after { transition: none; }
@@ -1817,6 +1823,12 @@
   // medicines (owner's choice, 20 Oct 2026), rather than leave ALAQ's and
   // GanLum's "No publicly documented barrier identified" beside two empty cells.
   const SHOW_BARRIERS = false;
+  // The grey line under the stage name in the medicines table's
+  // "Etapa actual" cell: the first clause of the stage's date or note
+  // ("Ghana 2022", "Since 2008"). Hidden for every medicine at the owner's
+  // request (20 Oct 2026); the stage name and status word stay, and the full
+  // date still shows on the journey and in the stage panel. true brings it back.
+  const SHOW_STAGE_NOTE = false;
   // Is this status's word shown for this medicine? Complete and Not started always are.
   const statusShown = (p, status) => SHOW_PROGRESS || (status !== "prog" && status !== "late") || !!PROGRESS_KEPT[p.id];
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
@@ -2099,9 +2111,13 @@
   // The comparison with each medicine's own dates (the years-late badge, the
   // box at the top of an open row, and the Time taken view with its Variance
   // column) is hidden at the partners' request (feedback email, 15 Oct 2026)
-  // until the benchmark method is agreed. The expected time under each stage
-  // on the pathway strip stays (owner's choice). true brings all three back.
+  // until the benchmark method is agreed. true brings all three back.
   const YARD_COMPARE = false;
+  // The expected time under each stage on the pathway strip ("2 years
+  // expected"), and its words in the stage's screen-reader label. Kept on
+  // 15 Oct 2026, hidden for every stage at the owner's request on 20 Oct 2026;
+  // the yardstick data is unchanged. true brings it back.
+  const SHOW_STAGE_EXPECTED = false;
   // How far a step ran past its expected time, as a plain signed number.
   const varianceText = n => "+" + yrsText(n);
   // Market Access is every stage before country registration; Country
@@ -2223,7 +2239,7 @@
   // "Clock starts here") were removed by request on 15 Oct 2026, pending final
   // timeline wording from the partners. .pathexp.none is kept for that.
   function pathExpHtml(i) {
-    if (!YARD) return "";
+    if (!YARD || !SHOW_STAGE_EXPECTED) return "";
     const e = YARD.expected[i];
     if (e) return `<span class="pathexp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><b>${yrsText(e.years)}</b> esperado</span>`;
     return "";
@@ -2381,7 +2397,7 @@
     // aria-label stays one phrase the translation collector can find whole
     // (written inline, the nested quotes cut it apart and it stayed English).
     const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
-    const exp = YARD && YARD.expected[i] ? ", esperado " + yrsText(YARD.expected[i].years) : "";
+    const exp = SHOW_STAGE_EXPECTED && YARD && YARD.expected[i] ? ", esperado " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
       data-gate="${i}"${phase} aria-label="Etapa ${stepNo(i)}, ${esc(s)}${exp}. Muestra lo que sucede aquí y dónde se encuentra cada medicamento${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
@@ -2403,7 +2419,7 @@
 
   board.insertAdjacentHTML("afterbegin",
     `<div class="srow hd" role="presentation"><span></span><span>Medicamento</span><span class="c-mini">Viaje</span>` +
-    `<span class="c-stage">Etapa actual · Estado</span><span class="c-path">Acceso ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barrera principal</span>` : ""}</div>`);
+    `<span class="c-stage">Etapa actual</span><span class="c-stat">Estado</span><span class="c-path">Acceso ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barrera principal</span>` : ""}</div>`);
   if (!SHOW_BARRIERS) board.classList.add("nobar");
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
@@ -2516,7 +2532,8 @@
             aria-label="Mostrar recorrido para ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
-          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${statusShown(p, p.stages[p.currentStage].status) ? `<span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span>` : ""}${firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
+          <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${SHOW_STAGE_NOTE && firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
+          ${statusShown(p, p.stages[p.currentStage].status) ? `<span class="c-stat"><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span></span>` : `<span class="c-stat none" aria-hidden="true">—</span>`}
           <span class="cell c-path">${accessCell(p)}${yardBadge(p)}</span>
           ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "No se ha identificado ninguna barrera documentada públicamente."}</div>` : ""}
         </div>
