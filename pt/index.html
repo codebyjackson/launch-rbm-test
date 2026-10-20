@@ -2347,9 +2347,9 @@
         ? (statusShown(p, st.status) ? `<div class="snow ${st.status}">${LABEL[st.status]}</div>` : "") +
           (since != null && since < hi ? `<div class="ssince">desde ${esc(from.label)} (${since}) · ${yrsText(hi - since)}</div>` : "")
         : `<div class="syear">${stageYear(st)}</div>`;
-      h += `<i class="stem" style="left:${it.x}%;height:${top - 32}px"></i>` +
+      h += `<i class="stem" data-tier="${it.tier}" style="left:${it.x}%;height:${top - 32}px"></i>` +
         `<i class="pt${it.cur ? " " + st.status : ""}" style="left:${it.x}%"></i>` +
-        `<div class="it stage s-${st.status}${it.cur ? " cur" : ""}" style="left:${it.x}%;top:${top}px">` +
+        `<div class="it stage s-${st.status}${it.cur ? " cur" : ""}" data-tier="${it.tier}" style="left:${it.x}%;top:${top}px">` +
         `${stageMarkHtml(p, it.i)}<div class="lbl">${esc(STAGES[it.i])}</div>${sub}</div>`;
     });
     // The last tier holds a full-height label block (icon, up to three label
@@ -2387,6 +2387,36 @@
       `<div class="tsz">${noYear.length ? group("Atingido · ano não registado", noYear) : ""}` +
       `${ongoingShown ? group("Em curso · sem data", ongoing, true) : group("Ainda não tem data.", ongoing)}${notStartedHtml}</div></div>`;
   }
+
+  // The fixed tier spacing above (TH) and last-block allowance (126px) are
+  // estimates for English, but a block's height depends on how its label and
+  // "since" line wrap, which differs by language (20 Oct 2026). ASPY's SRA
+  // block (110px) ran into the WHO PQ icon stacked under it, in all four
+  // languages; GanLum's "since" line (a 165px block, 201px in French) ran under
+  // More detail. Once a timeline is visible, each tier goes under the tallest
+  // block of the tier above, and the box grows to hold the last one. It only
+  // grows: the estimate stays as the minimum height.
+  function fitTimeline(tsa) {
+    const tiers = [];
+    tsa.querySelectorAll(".it").forEach(it => { const t = +it.dataset.tier; (tiers[t] = tiers[t] || []).push(it); });
+    if (!tsa.dataset.base) tsa.dataset.base = parseFloat(tsa.style.height);
+    const base = +tsa.dataset.base;
+    let top = 46;
+    tiers.forEach((list, t) => {
+      list.forEach(it => { it.style.top = top + "px"; });
+      tsa.querySelectorAll(`.stem[data-tier="${t}"]`).forEach(s => { s.style.height = (top - 32) + "px"; });
+      top += Math.max(...list.map(it => it.offsetHeight)) + 10;
+    });
+    tsa.style.height = Math.max(base, top + 6) + "px";
+  }
+  // Rows open closed, so a timeline has no size until it is shown; laying out
+  // on the first non-zero width (and again if the width changes) covers opening
+  // a row, switching back to Actual timeline and resizing. Its own height
+  // change does not change its width, so this cannot loop.
+  const timelineFit = "ResizeObserver" in window ? new ResizeObserver(entries => entries.forEach(e => {
+    const w = Math.round(e.contentRect.width);
+    if (w && w !== +e.target.dataset.w) { e.target.dataset.w = w; fitTimeline(e.target); }
+  })) : null;
 
   // (only where "Delayed" is shown — see SHOW_PROGRESS)
   const lateAt = i => tracked.filter(p => p.stages[i].status === "late" && statusShown(p, "late")).length;
@@ -2615,7 +2645,10 @@
       </section>
     `);
     board.appendChild(node);
+    if (timelineFit) node.querySelectorAll(".tsa").forEach(t => timelineFit.observe(t));
   });
+  // a web font arriving late (RBM's skin) rewraps the labels
+  if (document.fonts) document.fonts.ready.then(() => document.querySelectorAll(".tsa").forEach(t => { if (t.offsetWidth) fitTimeline(t); }));
 
   // ---- fork alignment ------------------------------------------------------
   // A parallel pair (.stagegroup) is symmetric about its caption band, so its
