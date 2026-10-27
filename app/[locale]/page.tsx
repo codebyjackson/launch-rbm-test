@@ -1,4 +1,7 @@
 import { notFound } from "next/navigation";
+import { DashboardFrame } from "@/components/frame/DashboardFrame";
+import { FRAME_TEXT } from "@/components/frame/text";
+import { frameView } from "@/components/frame/view";
 import { getDashboard } from "@/lib/data";
 import { DatasetError, type Localized } from "@/lib/dataset";
 import { isLocale } from "@/lib/locales";
@@ -20,25 +23,46 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     // so, as the static pages do. "unavailable" is thrown on, so Next.js keeps
     // the last good page, or shows error.tsx when there is none.
     if (e instanceof DatasetError && e.kind === "schema") {
-      return <p role="status">This dashboard is being updated. Please check back shortly.</p>;
+      // in its own root: the layout no longer provides one (the frame does)
+      return (
+        <div className="launch-dashboard">
+          <p role="status">This dashboard is being updated. Please check back shortly.</p>
+        </div>
+      );
     }
     throw e;
   }
 
   const { data } = ds;
+
+  // ==== FRAME (feat/react-port-frame) ======================================
+  // DashboardFrame renders the .launch-dashboard root, the header, the banner,
+  // the footer and the feedback form; the other areas go inside it as
+  // children (pathway, gate panel, board, map section), and what sat directly
+  // under <body> on the page (#tip, .stat-tip) goes in `outside`. Every value
+  // from the data is worked out here, on the server (frameView).
+  const frameText = FRAME_TEXT[locale];
   return (
-    <main>
-      <h1>Malaria Product Launch Dashboard</h1>
-      <p>
-        Data last updated {data.meta.lastUpdated} ({data.meta.dataStatus})
-      </p>
-      <ul>
-        {data.products.map((p) => (
-          <li key={p.id}>
-            {p.name}: {data.stages[p.currentStage]}
-          </li>
-        ))}
-      </ul>
-    </main>
+    <DashboardFrame
+      text={frameText}
+      view={frameView(ds, locale, frameText)}
+      formsUrl={process.env.NEXT_PUBLIC_LAUNCH_FORMS_URL}
+      logoSrc="/assets/unitaid-logo.svg"
+    >
+      {/* ==== END FRAME: the areas follow, inside the frame ==== */}
+      <main>
+        <h1>Malaria Product Launch Dashboard</h1>
+        <p>
+          Data last updated {data.meta.lastUpdated} ({data.meta.dataStatus})
+        </p>
+        <ul>
+          {data.products.map((p) => (
+            <li key={p.id}>
+              {p.name}: {data.stages[p.currentStage]}
+            </li>
+          ))}
+        </ul>
+      </main>
+    </DashboardFrame>
   );
 }

@@ -5,7 +5,9 @@ import "@/styles/launch-dashboard.css";
 
 // The example app's root layout. RBM's own layout replaces it. The dashboard's
 // CSS applies only inside the .launch-dashboard element, as it will inside
-// RBM's page.
+// RBM's page. That element is rendered by the components themselves
+// (components/frame/DashboardFrame.tsx), not here: it carries state (the
+// sub-open class), and RBM takes the components, not this layout.
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
@@ -21,9 +23,7 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
   return (
     <html lang={locale}>
-      <body>
-        <div className="launch-dashboard">{children}</div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
