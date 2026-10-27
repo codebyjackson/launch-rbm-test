@@ -93,6 +93,33 @@ This file is updated in the same commit as each change it describes.
     per language: 82,911 comparisons, all equal. Eleven planted bugs: 9
     caught; the 2 missed cannot change any result (`sinceFrom`'s
     `j.length > 1` against `> 0`; `stageYear`'s unreachable `<= 2100`).
+15. **Today's CSS, scoped under one root class, not CSS Modules**
+    (`styles/launch-dashboard.css`, branch `feat/react-port-styles`). Without the
+    iframe, our CSS and RBM's share one page, so ours must be fenced in. Keeping
+    the class names lets the components reuse the CSS unchanged, which protects
+    visual parity before 10 Nov. Rejected: CSS Modules per component, which
+    rewrites all 1,471 lines and every class reference in the markup and script.
+    The file is the page's `<style>` block plus the Unitaid skin
+    (`scripts/rbm-skin.js`), from launch-development `main` at `89b2011`, in the
+    built RBM page's order (checked byte-identical against `en/index.html`). 728
+    rules, 821 selectors scoped; values, comments and order unchanged.
+    - `:root`, `html` and `body` rules apply to the `.launch-dashboard` element
+      itself, so the tokens live there. `*` became `.launch-dashboard,
+      .launch-dashboard *`, so the root keeps `box-sizing` as `body` had it. The
+      skin's `:root:not([data-theme="light"])` and `:root[data-theme="dark"]`
+      keep their specificity on the root; nothing sets `data-theme`.
+    - `html.sub-open .ri-pill` became `.launch-dashboard.sub-open .ri-pill`; the
+      skin's `html .ri-*` rules became `.launch-dashboard .ri-*` (still more
+      specific than the widget's own `.ri-*`, the reason they had `html`).
+    - `@keyframes disc-flash` became `ld-disc-flash`.
+    - Nothing dropped. The site menu's styles live in `assets/site-nav.js`, the
+      structured data has none, and the pre-v1.0 page
+      (`illustrated-journey-dashboard.html`) is a separate file. Rules that only
+      apply with `SHOW_BARRIERS` or `SHOW_PROGRESS` on (`.c-bar`, `.flagnote`,
+      `.gp-why`, `.det-flag`, the seven-column grids) are part of the v1.0 page
+      and stay.
+    - `tests/styles.test.ts` checks the fence, the keyframes, and that its own
+      checks can fail.
 
 ## Deferred, and found on the way
 
@@ -128,6 +155,31 @@ This file is updated in the same commit as each change it describes.
 - The texts inside the markup builders (`LATE_DEF`, `ACCESS_DEF`, the
   yardstick box and table labels) are not in `lib/strings.ts`; they go
   straight to the message files with their components.
+- **The components must move four things off `<html>`/`<body>`** (the page's
+  script, `index.html` at `89b2011`):
+  `openSub()`/`closeSub()` toggle `sub-open` on `<html>`, which goes on the root
+  instead; the map reads its colours with
+  `getComputedStyle(document.documentElement)`, which finds no tokens now, so
+  read from the root; `#tip` (markup, outside `.wrap`), `.stat-tip`
+  (appended to `<body>`) and the feedback widget's pill and dialog
+  (`report-issue.js`, appended to `<body>`) must render inside the root or
+  they lose their styles. The `prefers-color-scheme` listener and the
+  `data-theme` observer on `<html>` are no-ops (light only) and can go.
+- **The fence is one way.** RBM's global CSS (element rules, resets) still
+  reaches inside. Check against RBM's real stylesheet on staging.
+- **Breakpoints now measure RBM's window, not the iframe.** In the iframe a
+  `max-width: 760px` query saw the frame; now it sees the whole window, which
+  includes RBM's sidebar (270px, by the page's own comments). Container queries
+  would fix it but change every breakpoint; not done.
+- **Remote loads outside this file.** Source Sans 3 comes from Google Fonts
+  (`fonts.googleapis.com`, `fonts.gstatic.com`) and MapLibre's CSS from cdnjs.
+  RBM's content security policy may block both. Options: `next/font/google`
+  (fetched at build, served from RBM's own host) and `maplibre-gl.css` from
+  npm. The file itself has no `@import`, `url()` or `@font-face`.
+- The feedback widget's own stylesheet (`report-issue.js`) is global and
+  unscoped; scope it too if the widget is ported.
+- `styles/launch-dashboard.css` is a copy of `89b2011`. CSS changes to
+  `index.html` after that are ported by hand.
 
 ## Status
 
@@ -139,5 +191,12 @@ This file is updated in the same commit as each change it describes.
   `lib/strings.ts` (temporary), types filled in `lib/dataset.ts` (no change to
   what `localize()` returns), and the golden test (`tests/golden.test.ts`,
   `tests/golden/`). 38 tests pass (16 + 22), `tsc --noEmit` clean, `next build`
-  passes. Not committed.
-- **Next:** step 2, the message files, replacing `lib/strings.ts`.
+  passes. Committed `aebe664`.
+- **27 Oct 2026, styles** (branch `feat/react-port-styles`):
+  `styles/launch-dashboard.css`, `tests/styles.test.ts`, and the example
+  layout imports the file and wraps its children in `.launch-dashboard`. 23
+  tests pass; `tsc --noEmit` and `next build` pass, and the built CSS has no
+  selector outside the root. Committed `5f5447b`, merged here.
+- **Next:** step 2, the message files (branch `feat/rbm-messages` in
+  launch-development-test, in progress), replacing `lib/strings.ts`; the map
+  (branch `feat/react-port-map`, in progress); then the components (step 3).
