@@ -62,8 +62,114 @@ This file is updated in the same commit as each change it describes.
   (pipeline commit `2d30ff3`). Refresh it when the data or schema changes in a
   way the tests should see.
 
+## Map section (step 3, branch `feat/react-port-map`)
+
+`lib/map.ts` (the logic), `components/map/` (the components), the example page
+shows it below the list. Built in a separate worktree, beside the agents doing
+`lib/format.ts`/`lib/stages.ts`, the CSS and the text keys.
+
+### Decisions
+
+- **M1. `lib/map.ts` returns keys, not words.** Stages, groups and regions
+  come back as keys; the components look the words up in a typed `MapText`.
+  One copy of the logic serves every language. `mapTextEn`
+  (`components/map/text.ts`) is today's English page, temporary until the
+  message files; `/fr` and `/pt` show English interface text until then.
+- **M2. The golden test runs the old code itself.** The extractor
+  (`tests/golden-map/extract.mjs`, acorn) copies the map block and the
+  declarations it reads verbatim from each built page, plus one marked hook
+  to read and set its private state; the test runs it in `node:vm` against a
+  fake DOM and a fake MapLibre that record what it does. Rejected: pulling
+  functions out one by one (they share closure state: `locRegion`, `mftSel`,
+  `stageOff`...) and re-writing the old HTML in the test. 896,415 comparisons
+  over en/fr/pt: every medicine x 241 Location choices x 64 filter
+  combinations, then 16 seeded click sequences of 30 clicks per language
+  (480 clicks, every kind reached) comparing state, every part the old code wrote (as
+  markup trees), the map's layers and camera, and all 470 tooltips. Six
+  planted bugs were all caught. French and Portuguese markup is compared
+  using text made from the old pages' own literals (paired with the English
+  by position, 0 conflicts), so it is the old pages' French, mistakes
+  included.
+- **M3. One shapes file for every language.** The three `world-map-geo.js`
+  have the same 235 shapes in the same order; only names differ (166 in
+  French, 194 in Portuguese). `public/launch-map/world-shapes.json` is
+  1,578,537 B (527 KB gzipped), names-free, instead of 3 x 1.58 MB. Names
+  (11 KB, 4.6 KB gzipped) are in `lib/map-countries.json`; only the page's
+  language goes to the browser. `scripts/build-map-assets.mjs` makes both and
+  refuses if geometry or order ever differ between languages.
+- **M4. MapLibre's CSP build, its worker served as a file.** Rejected: the
+  package's main file. In `next build` (minified) it drew only a 28 x 175 px
+  corner of the map; `next dev` (not minified) and the untouched npm file
+  drew the whole world. The main file makes its worker from its own source
+  text, which re-minifying breaks. The CSP build loads
+  `public/launch-map/maplibre-gl-csp-worker.js` (458 KB, copied unchanged;
+  `tests/map-assets.test.ts` fails if it is not the installed version's), so
+  a security policy needs `worker-src 'self'`, not `blob:`. RBM serves both
+  files and passes their addresses (`shapesUrl`, `workerUrl`).
+- **M5. maplibre-gl 5.24.0, although `npm audit --omit=dev` reports 1
+  critical** (GHSA-jrc7-96c5-q579, versions up to 6.4.0, `DOM.sanitize()`). Its
+  only caller is the attribution control, which the map turns off; today's
+  live page loads the same 5.24.0 from cdnjs. There is no fixed 5.x; the
+  first fixed release is 6.4.1 (18 Aug 2026), a major upgrade. **Owner's
+  decision, open.**
+- **M6. Drawn on the server, not after the map loads.** The old page filled
+  the tabs, filters, legend and Detail panel only on MapLibre's load event;
+  these render at once, so they work even where WebGL does not.
+- **M7. Colours read from the map's own element, not `<html>`**, so a
+  stylesheet scoped under `.launch-dashboard` is seen. Before that, and on
+  the server, `DEFAULT_TOKENS` (today's values) apply.
+
+### Old behaviour kept, and reported
+
+- Australia is listed as "Ashmore and Cartier Is." in the Country picker:
+  two shapes carry AUS and the last name wins.
+- Choosing an untracked country in Location (France), or its button in the
+  keyboard list, opens a country page titled with its ISO code ("FRA").
+  Previous from that page goes to the second-to-last country, not the last.
+- The keyboard country list's buttons have `tabindex="-1"`, so Tab never
+  reaches the list that stands in for the map (DEV-13 D21).
+- The legend counts every entry of a medicine's list, tracked or not, while
+  "No data" is the tracked countries less those. No untracked entry today.
+- Map hover names a country as WHO does ("United Republic of Tanzania
+  (mainland)"), the keyboard list as the map does ("Tanzania").
+- The French and Portuguese pages' map text, for the message files: "Scène"
+  (stage), "Utiliser" (use), "Mix d'accès à la scène", "{name} En phase de
+  pré-lancement", "Aucune donnée ... pour le moment. GanLum.", "listes";
+  the donut's "country/countries" and the tooltip's "verified data" are
+  English on both; Portuguese "Mistura de palco de acesso".
+- `renderDetail` set `scrollTop = 0` on the panel, which does not scroll
+  (its rail does); kept, probably does nothing.
+- One change: a Location chosen before the map finished loading was never
+  applied to the map on the old page; here it is applied on load.
+
+### Deferred, and found on the way
+
+- The message files replace `mapTextEn`. The `#tip` tooltip id will clash
+  with the board's when that is ported: make it one tooltip.
+- Without the ported stylesheet, the keyboard country list shows as 235
+  visible buttons; the page wraps the map in `.launch-dashboard` for it.
+- Names sort with `localeCompare()` without a locale, as before: by the
+  server's or browser's own default. A browser with an unusual default can
+  then disagree with the server's render (a hydration mismatch). Dates
+  (`toLocaleDateString`) likewise; `lib/format.ts` should settle both.
+- Next.js serves `public/` with `max-age=0`: browsers re-check the 1.5 MB
+  shapes file on every visit. RBM should cache it and the worker longer.
+- For RBM's content security policy: everything is same-origin (scripts,
+  the CSS with MapLibre's in it, `fetch` of the shapes, the worker), plus
+  `img-src data:` for MapLibre's +/- icons and inline style attributes, as
+  today. Checked by logging every request in headless Chrome: none remote.
+- `next dev` writes an `AGENTS.md` (Next.js 16 `agentRules`). Removed here;
+  set `agentRules: false` or commit it.
+- The golden test reads `en|fr|pt/data/world-map*.js`; when the static pages
+  leave the branch it rebuilds them from the assets, and skips the
+  extractor's freshness check.
+
 ## Status
 
+- **27 Oct 2026, map section.** `feat/react-port-map`, uncommitted: 29 tests
+  pass (16 dataset, 11 golden, 2 assets), `tsc` and `next build` pass,
+  `npm audit --omit=dev` 1 critical (M5). Map drawn in headless Chrome
+  (software GL) on the production build, `/en` and `/fr`.
 - **27 Oct 2026.** Step 0 done: scaffold, pinned versions. Step 1 started:
   `lib/locales.ts`, `lib/dataset.ts`, `lib/data.ts`, 16 tests passing;
   `next build` passes with `/en`, `/fr` and `/pt` pre-built from the live
