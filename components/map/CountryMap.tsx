@@ -7,11 +7,11 @@
 // server renders the empty frame and never touches `window`. Two static files
 // come with it, from wherever the host serves them: the country shapes
 // (public/launch-map/world-shapes.json) and MapLibre's worker
-// (public/launch-map/maplibre-gl-csp-worker.js). Nothing else is loaded: the
+// (public/launch-map/maplibre-gl-worker.mjs). Nothing else is loaded: the
 // style has no tiles, fonts or sprites.
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
-import type { FilterSpecification, Map as MapLibreMap, MapLayerMouseEvent, MapOptions } from "maplibre-gl";
+import type { ExpressionSpecification, FilterSpecification, Map as MapLibreMap, MapLayerMouseEvent, MapOptions } from "maplibre-gl";
 import {
   POLICY_LAYERS,
   cameraFit,
@@ -37,29 +37,20 @@ import { fill, type MapText } from "./text";
 
 type MapLibre = typeof import("maplibre-gl");
 
-// MapLibre's CSP build, not its main file. The main file makes its web
-// worker at run time from its own functions' source text, and a bundler that
-// re-minifies it breaks that: in this app's production build only a corner
-// of the map drew (the development build, not minified, drew it all). The
-// CSP build loads the worker from a file instead, which no bundler touches,
-// and so needs only `worker-src 'self'` in a content security policy, not
-// `blob:`. Same version, same API.
+// MapLibre 6 is ES modules only: one file for the page, one for its web
+// worker, and the worker always comes from a file. (5.x's main file made its
+// worker at run time from its own functions' source text, and Next's
+// re-minifying broke that: only a corner of the map drew. Its CSP build,
+// which loaded the worker from a file, is gone in 6.) Under a bundler
+// MapLibre cannot find that file itself, so it is told where the host serves
+// its copy. The worker is then same-origin: a content security policy needs
+// `worker-src 'self'`, not `blob:`.
 //
-// Its file is a UMD bundle. Depending on how the bundler reads that,
-// import() hands back its exports, a `default` holding them, or nothing but
-// the window.maplibregl global the bundle sets as a last resort. Take
-// whichever has the Map class.
+// It starts as a module worker (`new Worker(url, { type: "module" })`), which
+// the browser refuses unless the file comes with a JavaScript content type.
 async function loadMapLibre(workerUrl: string): Promise<MapLibre> {
-  // its shape depends on the bundler, so it is checked below, not trusted
-  const mod = (await import("maplibre-gl/dist/maplibre-gl-csp.js")) as unknown as MapLibre & { default?: MapLibre };
-  let ml: MapLibre | undefined;
-  if (typeof mod.Map === "function") ml = mod;
-  else if (mod.default && typeof mod.default.Map === "function") ml = mod.default;
-  else {
-    const g = (globalThis as { maplibregl?: MapLibre }).maplibregl;
-    if (g && typeof g.Map === "function") ml = g;
-  }
-  if (!ml) throw new Error("maplibre-gl loaded without its Map class");
+  const ml = await import("maplibre-gl");
+  if (typeof ml.Map !== "function") throw new Error("maplibre-gl loaded without its Map class");
   // before the first map: the workers start with it
   ml.setWorkerUrl(workerUrl);
   return ml;
@@ -83,7 +74,7 @@ interface Props {
   token: TokenReader;
   /** where the browser fetches public/launch-map/world-shapes.json from */
   shapesUrl: string;
-  /** where it fetches public/launch-map/maplibre-gl-csp-worker.js from */
+  /** where it fetches public/launch-map/maplibre-gl-worker.mjs from */
   workerUrl: string;
   actions: MapActions;
   tips: MapTips;
@@ -184,7 +175,8 @@ export function CountryMap({ ctx, st, text, token, shapesUrl, workerUrl, actions
     const c = readMapColors(cssTokens(el));
     m.setPaintProperty("bg", "background-color", c.surface2);
     m.setPaintProperty("country-line", "line-color", c.border);
-    m.setPaintProperty("country-fill", "fill-color", fillColor(c));
+    // MapLibre 6 types each paint value; lib/map.ts's are plain JSON arrays
+    m.setPaintProperty("country-fill", "fill-color", fillColor(c) as ExpressionSpecification);
   }, [ready, token]);
 
   // Each shape's stage for the medicine (old: applyCountryLevels).
@@ -200,7 +192,7 @@ export function CountryMap({ ctx, st, text, token, shapesUrl, workerUrl, actions
   useEffect(() => {
     const m = map.current;
     if (!ready || !m) return;
-    m.setPaintProperty("country-fill", "fill-opacity", fillOpacity(st));
+    m.setPaintProperty("country-fill", "fill-opacity", fillOpacity(st) as ExpressionSpecification);
     if (m.getLayer("sel-line")) {
       const f = selectionFilter(st) as FilterSpecification;
       m.setFilter("sel-halo", f);

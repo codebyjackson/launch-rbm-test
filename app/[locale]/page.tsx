@@ -90,7 +90,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         input={mapInput(ds, mapCountries(locale), locale)}
         text={mapTextEn}
         shapesUrl="/launch-map/world-shapes.json"
-        workerUrl="/launch-map/maplibre-gl-csp-worker.js"
+        workerUrl="/launch-map/maplibre-gl-worker.mjs"
       />
       {/* ==== end MAP AREA ==== */}
     </DashboardFrame>

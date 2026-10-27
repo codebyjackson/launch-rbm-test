@@ -48,7 +48,7 @@ export interface MapSectionProps {
   text: MapText;
   /** where the browser fetches public/launch-map/world-shapes.json from */
   shapesUrl: string;
-  /** where it fetches public/launch-map/maplibre-gl-csp-worker.js from */
+  /** where it fetches public/launch-map/maplibre-gl-worker.mjs from */
   workerUrl: string;
 }
 

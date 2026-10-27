@@ -10,8 +10,8 @@ describe("the map's static files", () => {
   it("serves the installed maplibre-gl's own worker", () => {
     // MapLibre's page code and its worker must be the same version; after an
     // upgrade, rerun node scripts/build-map-assets.mjs
-    const installed = read("node_modules/maplibre-gl/dist/maplibre-gl-csp-worker.js");
-    expect(read("public/launch-map/maplibre-gl-csp-worker.js").equals(installed)).toBe(true);
+    const installed = read("node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs");
+    expect(read("public/launch-map/maplibre-gl-worker.mjs").equals(installed)).toBe(true);
   });
 
   it("names every shape, in the shapes file's order, in each language", () => {

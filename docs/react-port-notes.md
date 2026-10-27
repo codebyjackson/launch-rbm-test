@@ -506,27 +506,106 @@ shows it below the list. Built in a separate worktree, beside the agents doing
   (11 KB, 4.6 KB gzipped) are in `lib/map-countries.json`; only the page's
   language goes to the browser. `scripts/build-map-assets.mjs` makes both and
   refuses if geometry or order ever differ between languages.
-- **M4. MapLibre's CSP build, its worker served as a file.** Rejected: the
-  package's main file. In `next build` (minified) it drew only a 28 x 175 px
-  corner of the map; `next dev` (not minified) and the untouched npm file
-  drew the whole world. The main file makes its worker from its own source
-  text, which re-minifying breaks. The CSP build loads
-  `public/launch-map/maplibre-gl-csp-worker.js` (458 KB, copied unchanged;
-  `tests/map-assets.test.ts` fails if it is not the installed version's), so
-  a security policy needs `worker-src 'self'`, not `blob:`. RBM serves both
-  files and passes their addresses (`shapesUrl`, `workerUrl`).
-- **M5. maplibre-gl 5.24.0, although `npm audit --omit=dev` reports 1
-  critical** (GHSA-jrc7-96c5-q579, versions up to 6.4.0, `DOM.sanitize()`). Its
-  only caller is the attribution control, which the map turns off; today's
-  live page loads the same 5.24.0 from cdnjs. There is no fixed 5.x; the
-  first fixed release is 6.4.1 (18 Aug 2026), a major upgrade. **Owner's
-  decision, open.**
+- **M4. MapLibre's worker served as a file.** Rejected: letting MapLibre
+  make its worker itself. On 5.x, the package's main file in `next build`
+  (minified) drew only a 28 x 175 px corner of the map; `next dev` (not
+  minified) and the untouched npm file drew the whole world. That file made
+  its worker from its own source text, which re-minifying breaks; 5.x's CSP
+  build, which loaded `maplibre-gl-csp-worker.js` from a file, was the fix.
+  MapLibre 6 (M5) has neither: it is ES modules only and always loads its
+  worker from a file, which under a bundler it cannot find by itself. The
+  page passes the address to `setWorkerUrl()`:
+  `public/launch-map/maplibre-gl-worker.mjs` (508 KB, copied unchanged by
+  `scripts/build-map-assets.mjs`; `tests/map-assets.test.ts` fails if it is
+  not the installed version's). A security policy needs `worker-src 'self'`,
+  not `blob:`. RBM serves both files and passes their addresses
+  (`shapesUrl`, `workerUrl`).
+- **M5. maplibre-gl 6.14.0** (released 11 Oct 2026), up from 5.24.0, to
+  close GHSA-jrc7-96c5-q579 (critical, XSS in `DOM.sanitize()`, versions up
+  to 6.4.0; first fixed 6.4.1, 18 Aug). `npm audit --omit=dev`: 0
+  vulnerabilities; GitHub lists no other maplibre-gl advisory. Rejected:
+  staying on 5.24.0 (no fixed 5.x; the sanitizer's only caller is the
+  attribution control, which the map turns off, but the audit flags it all
+  the same); 6.15.0 and 6.16.0 (18 and 25 Oct, younger than the two-week
+  rule; `npm audit fix --force` would have taken 6.16.0). Today's live page
+  still loads 5.24.0 from cdnjs. What 6.x changed here: "The MapLibre 6
+  upgrade" below.
 - **M6. Drawn on the server, not after the map loads.** The old page filled
   the tabs, filters, legend and Detail panel only on MapLibre's load event;
   these render at once, so they work even where WebGL does not.
 - **M7. Colours read from the map's own element, not `<html>`**, so a
   stylesheet scoped under `.launch-dashboard` is seen. Before that, and on
   the server, `DEFAULT_TOKENS` (today's values) apply.
+
+### The MapLibre 6 upgrade (branch `feat/react-port-maplibre6`)
+
+Read from MapLibre's CHANGELOG at the `v6.14.0` tag (6.x no longer ships it
+in the package) and its v5-to-v6 migration guide. Every breaking entry is in
+6.0.0 and its pre-releases; 6.1.0 to 6.14.0 mark none. What applied here:
+
+- **ES modules only; the UMD and CSP builds are gone** (6.0.0, #6254).
+  `CountryMap.tsx` now does `import("maplibre-gl")`, which resolves to
+  `dist/maplibre-gl.mjs`. It has named exports only, so the old fallbacks to
+  `default` and `window.maplibregl` had nothing left to find and are removed.
+  `types/maplibre-gl-csp.d.ts` is deleted: the package's `exports` carry its
+  own types.
+- **The worker is its own file**, `dist/maplibre-gl-worker.mjs`, started as a
+  module worker (`new Worker(url, { type: "module" })`; only a `.cjs` URL gets
+  a classic one). Under a bundler `setWorkerUrl()` is still required: the
+  default comes from `import.meta.url`, which Turbopack turns into a `file:`
+  URL. Since 6.13 the worker imports nothing (`maplibre-gl-shared*.mjs` are
+  now empty files), so one copied file is enough. Copied under its own name;
+  Next serves `.mjs` as `application/javascript`.
+- **Paint and layout values are typed per property** (6.0.0, #7481). The two
+  `setPaintProperty` calls with `fillColor()` and `fillOpacity()` failed
+  `tsc`; they are now asserted to `ExpressionSpecification` at the call, as
+  the filters already were. Same values: `lib/map.ts` and the golden test
+  are untouched.
+- **CSS**: same path, `maplibre-gl/dist/maplibre-gl.css`. Compared rule by
+  rule with 5.24.0: the same selectors, declarations reordered and the
+  data-URI icons re-encoded by another minifier; new are
+  `-webkit-touch-callout: none` on the map, `user-select: none` on control
+  buttons and a draggable-marker rule. Every class the skin styles is still
+  there.
+- **The zoom-out button greys out when `maxBounds` stops zooming out**, not
+  only at `minZoom` (6.7.0, #5316): the one visible difference, below.
+- **WebGL2 is required** (6.0.0, #7453). Without it the constructor throws
+  `GPUInitializationError` (6.7.0); `CountryMap` catches it and logs "[LAUNCH]
+  the map could not start", and the rest of the section still works (M6).
+  5.x fell back to WebGL1.
+- Checked, not applying: events as classes and typed `on()` (6.0.0, 6.3.0;
+  the three layer handlers compile unchanged); `map.transform` removed (not
+  used); `styleimagemissing`, `setData`, nested GeoJSON properties (the shapes
+  carry `iso3` only), `zoomLevelsToOverscale` (vector tiles), `Hash`,
+  `#pragma` (none used); the five `locale` keys the map overrides (same names
+  in 6.14); style spec 25's warning on legacy filters (every filter here is an
+  expression); `fitBounds`'s new `absolutePadding` (off by default) and
+  padding now counted in the `maxBounds` constraint (6.12); `DOM.sanitize`
+  (called only by the attribution control, off).
+
+**Draw check** (production builds, `next start`). 5.24.0 was built from this
+branch's `HEAD` exported to a scratch folder (the sibling worktree was in the
+middle of a merge); both builds read the same live dataset (SHA-256 checked
+before and after). Headless Chrome with SwiftShader (WebGL2 available), 1280 px
+wide, `/en` and `/fr`, each in a fresh profile: load, hover a country, Region
+= Africa, Right arrow twice, Down arrow twice, Region = all. After every step
+6.14's map area matched 5.24's pixel for pixel, but for at most 4 pixels off by
+1 in one colour channel (corner antialiasing; the same appears outside the
+map). Each step changed 30,000 to 75,000 map pixels, so each did move it. The
+whole world drew (504 x 360 canvas, drawn to every edge) with country fills
+and both policy borders; hovering Nigeria showed its tooltip; Africa was framed
+at 2.3×. Requests: all same-origin plus MapLibre's two `data:` icons; the
+worker once, from `/launch-map/maplibre-gl-worker.mjs` (200,
+`application/javascript`). Console: the example app's missing favicon only,
+in both; 5.24 also logged SwiftShader "GPU stall due to ReadPixels" warnings,
+6.14 none.
+
+**One visible difference.** At 700 and 1600 px wide (map 620 and 798 px),
+6.14 greys out "−" at the opening view where 5.24 left it active; clicking it
+in 5.24 changed nothing (checked), as the view is already as far out as
+`maxBounds` allows. 48 pixels, all in the icon. At 1280 px (504 px map) both
+grey it; at 1920 px (1118 px map) neither does. Kept: MapLibre's fix, not
+ours to undo.
 
 ### Old behaviour kept, and reported
 
@@ -563,6 +642,22 @@ shows it below the list. Built in a separate worktree, beside the agents doing
   (`toLocaleDateString`) likewise; `lib/format.ts` should settle both.
 - Next.js serves `public/` with `max-age=0`: browsers re-check the 1.5 MB
   shapes file on every visit. RBM should cache it and the worker longer.
+  But the worker's address carries no version: if it is cached long, the
+  next MapLibre upgrade must rename it or add `?v=`, or browsers pair new
+  page code with an old worker (MapLibre 6.13 versions only its own default
+  address).
+- **The worker is a module worker**: browsers refuse it unless it comes with
+  a JavaScript content type. Next sends `application/javascript` for `.mjs`;
+  RBM's host or CDN must too (an older nginx `mime.types` has no `.mjs`).
+- `next build` (Turbopack) copies all six `.mjs` files of
+  `maplibre-gl/dist` into `.next/static/media` (5.2 MB, two of them empty),
+  as it reads MapLibre's default worker address as "any file there". The
+  page never requests them (network log). Build output only.
+- Since 6.x, a browser without WebGL2 shows no map at all (see the upgrade
+  above); 5.x drew with WebGL1.
+- `#tip` is already on the page twice, the pathway's (`components/pathway/Tip.tsx`)
+  and the map's, so `getElementById("tip")` finds the pathway's. Found during
+  the MapLibre draw check; not changed here.
 - For RBM's content security policy: everything is same-origin (scripts,
   the CSS with MapLibre's in it, `fetch` of the shapes, the worker), plus
   `img-src data:` for MapLibre's +/- icons and inline style attributes, as
@@ -623,7 +718,8 @@ shows it below the list. Built in a separate worktree, beside the agents doing
 
 - **27 Oct 2026, map section.** `feat/react-port-map`, uncommitted: 29 tests
   pass (16 dataset, 11 golden, 2 assets), `tsc` and `next build` pass,
-  `npm audit --omit=dev` 1 critical (M5). Map drawn in headless Chrome
+  `npm audit --omit=dev` 1 critical (maplibre-gl 5.24.0; closed by the
+  MapLibre 6 upgrade, M5). Map drawn in headless Chrome
   (software GL) on the production build, `/en` and `/fr`.
 - **27 Oct 2026.** Step 0 done: scaffold, pinned versions. Step 1 started:
   `lib/locales.ts`, `lib/dataset.ts`, `lib/data.ts`, 16 tests passing;
@@ -671,8 +767,19 @@ shows it below the list. Built in a separate worktree, beside the agents doing
   the built CSS has no selector outside the root; no NUL bytes. Smoke-tested
   in headless Chrome against `next start`: 18 checks pass, no hydration
   warnings.
+- **27 Oct 2026, MapLibre 6** (branch `feat/react-port-maplibre6`,
+  uncommitted, not pushed): maplibre-gl 6.14.0 (M5); `npm audit --omit=dev`
+  0 vulnerabilities; 179 tests pass, as before; `tsc --noEmit` clean; `next
+  build` passes; draw check in the Map section. Files: `package.json`,
+  `package-lock.json`, `components/map/CountryMap.tsx`,
+  `components/map/MapSection.tsx` (a comment), `app/[locale]/page.tsx`
+  (`workerUrl`), `scripts/build-map-assets.mjs`, `tests/map-assets.test.ts`,
+  `public/launch-map/maplibre-gl-worker.mjs` (new;
+  `maplibre-gl-csp-worker.js` removed), `types/maplibre-gl-csp.d.ts`
+  (removed), this file. The regenerated shapes and names came back
+  byte-identical.
 - **Next:** the board (branch `feat/react-port-board`, in progress); the
-  MapLibre 6.x upgrade (security advisory, below); then one Dashboard component
+  MapLibre 6.x upgrade (done above, to review and merge); then one Dashboard component
   wiring the areas inside `DashboardFrame`, with the text from `messagesFor()`
   replacing the temporary `text.ts` tables and `lib/strings.ts`.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
