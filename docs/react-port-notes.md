@@ -132,6 +132,88 @@ This file is updated in the same commit as each change it describes.
     never been through the pipeline and already show in English on /fr and /pt.
     `tests/messages.test.ts` keeps the three files' keys and `{placeholders}`
     in step.
+17. **The pathway area is more than the strip** (branch
+    `feat/react-port-pathway`, `components/pathway/`). On the page,
+    `gatePanelHTML` draws a *medicine's* stage panel (`#<id>-gate`, inside the
+    board's row, opened from a stage marker), not `#gatewrap`, and
+    `countryAccessKv` draws rows of the board's Country access card. Both came
+    to this area as assigned, as components the board places: `GatePanel`
+    (container and content) and `CountryAccessKv`. `#gatewrap` itself was
+    written inline by `openGatePanel`; it is `StepPanel`. `Pathway` renders
+    `#pathway` and `#gatewrap` as the page had them, two siblings with no
+    wrapper, and keeps the open step itself unless the dashboard holds it
+    (`openStep` with `onOpenStep`), which it must, because the board lights the
+    step's column (`highlightStep`, now `colIndexOf(openStep, ctx)`).
+18. **Hints are components with an imperative handle, not state in the
+    dashboard.** `#tip` serves the board (stage peeks, glossary terms) and the
+    map (every mouse move over a country); `.stat-tip` serves the board's
+    `.info` buttons. `useTipControls()` and `useStatTipControls()` give a ref
+    for `<Tip>` / `<StatTip>` and stable controls to hand to the areas, so a
+    hint re-renders only itself. Rejected: hint state in the dashboard (the
+    map would re-render the whole page on every mouse move); a portal to the
+    nearest `.launch-dashboard` (needs the DOM before it can render, and
+    nothing is gained when the dashboard can simply render both inside its
+    root, after `.wrap`, where the page had `#tip`). `statTipHandlers()` is
+    the page's delegated listeners on `#board`, as props for the board's
+    element; the document click and window scroll that hide `.stat-tip` stay.
+19. **Escape's order between the two panels travels as a prop.** The page had
+    one handler: a medicine's panel closed first, else the step panel, and
+    focus went back to the button that opened it. Now each owner closes its
+    own, and the board passes `cellPanelOpen` so `Pathway` stands aside while
+    a medicine's panel is open. Rejected: relying on listener order or
+    `preventDefault()` between two areas' document listeners.
+20. **The strip re-measures when its own width changes** (`ResizeObserver`),
+    and once web fonts land. The page re-ran `fitPathway` and
+    `alignPathGroup` on window resize and whenever a row opened. Inside RBM's
+    page the strip can change width with no window event (a sidebar), and
+    watching the strip covers both old triggers. Window `resize` is the
+    fallback where there is no `ResizeObserver`. The page also did not
+    re-measure when a step opened (its label turns bold and may rewrap); kept.
+21. **Stage icons: the sprite and `<use>`, as the page drew them.** The glyph
+    set (`assets/journey-icons/icons-solid.js`) is ported into
+    `components/pathway/icons.tsx`; `<JourneyIconSprite>` replaces the
+    sprite the page injected at the start of `<body>`, and the dashboard renders
+    it once. The WHO emblem stays an `<img>` (it must keep its colours); its
+    address is `WHO_EMBLEM_SRC` (`/launch-icons/who-emblem.svg`, served by the
+    example app from `public/launch-icons/`) or the `whoEmblemSrc` prop.
+    Rejected: an inline SVG per icon (different markup, every glyph repeated
+    on every row); importing the SVG file (`tsc` then needs `next-env.d.ts`,
+    which only exists after a build, and Vitest returns a different shape).
+22. **Pathway text is a temporary typed table, `components/pathway/text.ts`**
+    (`pathwayText`), like `lib/strings.ts` and replaced with it in step 2. The
+    status words, the phase names and "N years" come from `lib/strings.ts`,
+    not a second copy. Where a value is markup ("{years} expected" with the
+    years bold, "Source: {cites}"), `fillNodes()` fills the template.
+23. **`lib/pathway.ts` holds the area's pure rules**, old names kept:
+    `tracked`, `colIndexOf`, `stepNo`, `lateAt`, `stalledSince` (whose
+    `nowYear` is `ctx.asOfYear`), and the counts the page worked out inside
+    its markup (`statusCounts`, `levelCounts`, `countryList`,
+    `countryAccessCounts`, `phaseColumns`, `parallelPair`). Not ported:
+    `sameColumn`, which nothing on the page calls; `preBoundaryDone`, which
+    draws the board's rail. Two switches that are not in `DISPLAY` live here
+    for now, as `PATHWAY_DISPLAY`: `showStageExpected` (`SHOW_STAGE_EXPECTED`)
+    and `showBarriers` (`SHOW_BARRIERS`, which the board reads too). They
+    belong in `DISPLAY` in `lib/stages.ts`; moved when the areas merge.
+24. **Two tests, both against the page's own code.**
+    `tests/golden-pathway/extract.mjs` freezes 47 declarations and two
+    statements (the `SHOW_LATE` rewrite, the one that fills `#pathway`) from
+    each of `git show 7c1bf11:{en,fr,pt}/index.html`, the three elements'
+    static markup, and `icons-solid.js` (`--check` confirms them).
+    `tests/golden-pathway.test.ts` compares the pure rules over 7 scenarios
+    (switches off, all on, late kept with words hidden, "today" in 2020 and
+    2033, no `stageColumns`/`yardstick`/`stageInfo`): 36,438 comparisons,
+    all equal. `tests/markup-pathway.test.ts` renders every component with
+    `renderToStaticMarkup` and compares it with the page's markup for every
+    step and for every medicine variant at every stage (sprite, icons, strip
+    closed and with each step open, step panel, stage panel and its
+    container, stage peek, Country access rows with three source lists):
+    97,056 comparisons, all equal after normalising attribute order, boolean
+    attributes, entities and whitespace between blocks
+    (`tests/golden-pathway/html.ts`). Where the page changed the DOM instead
+    of a string (un-hiding, `aria-expanded`, `#gatewrap`'s label, the
+    `.gatepanel` container), the test applies the same change to the page's
+    string. Planted bugs: golden 7 of 8 caught (the miss, `stalledSince`'s
+    `j.length < 2` as `< 1`, cannot change a result); markup 12 of 12.
 
 ## Deferred, and found on the way
 
@@ -193,6 +275,78 @@ This file is updated in the same commit as each change it describes.
 - `styles/launch-dashboard.css` is a copy of `89b2011`. CSS changes to
   `index.html` after that are ported by hand.
 
+### The pathway area (`feat/react-port-pathway`)
+
+- **What the dashboard must wire.** Render `<JourneyIconSprite />` once, and
+  `<Tip ref>` and `<StatTip ref>` once, inside the root after `.wrap`. Hold
+  `openStep` and pass it to `Pathway` (with `onOpenStep`) and to the board.
+  Compute `tracked(applyShowLate(data.products, ctx.display))` once and give
+  the same list to every area. The board places `GatePanel` (one open at a
+  time, board-wide; it owns the marker's `aria-expanded`, the row's
+  `gate-flag` class, Escape and focus for it), `CountryAccessKv` in its
+  Country access card, `StagePeek` as its markers' hint
+  (`tip.showAt(marker, <StagePeek …/>)` on hover and focus unless the
+  marker's panel is open, `tip.hide()` on leave, blur and when a panel opens),
+  spreads `statTipHandlers(statTip)` (memoised) on `#board`, and passes
+  `cellPanelOpen`. The map calls `tip.showAtPoint` / `tip.showAt` / `tip.hide`.
+- **Shared pieces that live here for now:** `StageIcon` and the sprite (the
+  board's markers and chips use the same glyphs), `Cites` (the board's
+  milestone sources and procurement source draw citations the same way),
+  `tracked`. Move them to a shared folder when the areas merge, rather than
+  copy them.
+- **Types added to `lib/dataset.ts`:** `StageInfo` (and `LaunchData.stageInfo`
+  typed with it, a type-only cast in `localize()`), `CountryEntry`,
+  `CountrySurvey`, `CountrySummary`, `ProductDetail.adoption`, `.countries`,
+  `.country`, and `Source.category`. The map's area may add its own country
+  types; merge them into these.
+- **Intended differences from today's markup** (everything else is equal):
+  - React 19 preloads the WHO emblem: server rendering writes
+    `<link rel="preload" as="image">` for it, into `<head>` on a real page.
+  - The emblem's address is `/launch-icons/who-emblem.svg`, not
+    `../assets/who-emblem.svg`. `public/launch-icons/who-emblem.svg` is a
+    copy of `assets/who-emblem.svg`; RBM serves it there or passes
+    `whoEmblemSrc`.
+  - `#pathway` arrives drawn from the server. The page kept it `hidden`
+    until its script had built and measured it; now the strip shows first and
+    is measured after hydration, so on a narrow screen it can shift once
+    (stacking, the pair's lift). Hiding it until then was rejected: a reader
+    without the script would get no strip.
+  - Closed, `#gatewrap` has no `aria-label` and `.gatepanel` no `late` class;
+    the page left the last ones on the hidden element.
+  - The sprite, `#tip` and `.stat-tip` sit inside the root, not in `<body>`.
+- **Not checked in a browser.** The tests compare markup; the measured
+  layout (`stack`, `--pg-lift`), the hints' placement, Escape and focus were
+  ported line by line but not driven in a browser. Check on `npm run dev`
+  (`/en`, `/fr`, `/pt`; the preview under the list stands in for the board).
+- **Fixed hints inside RBM's page.** `#tip` and `.stat-tip` are
+  `position: fixed` and placed in window coordinates. If RBM puts the
+  dashboard inside an element with a `transform` or `filter`, they are placed
+  relative to that element instead and land in the wrong place. Check on
+  staging.
+- **Old behaviour kept as it is, and worth a decision later (pathway):**
+  - Translations: Portuguese Close is "Perto" ("near"); French names the step
+    panel "Scène" ("scene"); Portuguese "Gravado" for Recorded and
+    "Registrado" (Brazilian) beside European Portuguese elsewhere; Portuguese
+    uses five words for "stage" (Estágio, Etapa, Fase, estádio, passo); French
+    puts the count after the noun ("État des médicaments 4 à ce stade");
+    Portuguese ends one survey note in a full stop inside a " · " list and
+    words the other differently ("pesquisa de país …"); ", N delayed" in a
+    step's label is English on every page (unreachable while `showLate` is
+    off).
+  - `#pathway`'s label is static text that names "eight milestones across
+    seven stages" and the WHO pair, so it goes stale if the data changes; the
+    English has no final full stop.
+  - `#gatewrap` (a `div`) and `.gw-sum` (a `span`) carry an `aria-label` with
+    no role; screen readers may not announce a name on a generic element.
+  - Close (in both panels) removes the focused button, so focus falls to the
+    page; only Escape returns it to the step or marker.
+  - A stage whose source ids all fail to resolve, with no free-text source,
+    shows "Source: " and nothing after it; a country survey with no status
+    shows "country survey is " and nothing after it.
+  - `stalledSince` and the stage panel read `p.detail` unchecked, and the
+    Country access rows break on a medicine with neither a country list nor
+    `detail.country`. Today's data always has both.
+
 ## Status
 
 - **27 Oct 2026.** Step 0 done: scaffold, pinned versions. Step 1 started:
@@ -219,8 +373,15 @@ This file is updated in the same commit as each change it describes.
   metal), Portuguese "Close" as "Perto" ("near"), several garbled French
   sentences, and Brazilian forms in what the pages declare as European
   Portuguese. Carried over unchanged.
-- **Next:** the components (step 3: pathway, board, frame, in progress on their
-  own branches) and the map (branch `feat/react-port-map`, in progress); then
+- **27 Oct 2026, pathway** (branch `feat/react-port-pathway`,
+  committed `ab9141a`, merged here; 85 tests pass): `components/pathway/` (`Pathway`, `PathwayStrip`, `StepPanel`,
+  `GatePanel`, `CountryAccessKv`, `Tip` with `StagePeek`, `StatTip`, the
+  icons, `Cites`, `fillNodes`, `layout.ts`, `text.ts` temporary),
+  `lib/pathway.ts`, types in `lib/dataset.ts`, the two tests and
+  `tests/golden-pathway/`, `public/launch-icons/who-emblem.svg`, and a marked
+  example block on `app/[locale]/page.tsx` (`PathwayPreview.tsx`).
+- **Next:** the components (step 3: board and frame, in progress on their own
+  branches; pathway merged) and the map (branch `feat/react-port-map`, in progress); then
   one Dashboard component wiring them together, with the text from
   `messagesFor()` replacing the temporary `text.ts` tables and `lib/strings.ts`.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
