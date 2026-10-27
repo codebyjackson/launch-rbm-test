@@ -68,9 +68,44 @@ export interface JourneyStep {
   year: number | string;
 }
 
+/** One country in detail.countries.list: the furthest access level it has reached. */
+export interface CountryEntry {
+  iso3: string;
+  /**
+   * "registered", "guidelines" or "mft" in today's data. Typed as text, not
+   * as those three: the page counts only those and passes over any other.
+   */
+  level: string;
+  /** source ids; a national register among them confirms the entry */
+  sources?: string[];
+  [key: string]: unknown;
+}
+
+/** detail.countries: the medicine's country list, the one the map is painted from. */
+export interface CountrySurvey {
+  /** "verified" in today's data; "illustrative" or another key while it is not */
+  status?: string;
+  note?: string;
+  list?: CountryEntry[];
+  [key: string]: unknown;
+}
+
+/** detail.country: the summary the Country access card shows when there is no list. */
+export interface CountrySummary {
+  registered: number | string;
+  inGuidelines: number | string;
+  inMft: number | string;
+  forecastDemand?: string;
+  [key: string]: unknown;
+}
+
 export interface ProductDetail {
   journey?: JourneyStep[];
   milestones?: Milestone[];
+  /** what adoption needs; the national-policy step's panel lists them */
+  adoption?: string[];
+  countries?: CountrySurvey;
+  country?: CountrySummary;
   [key: string]: unknown;
 }
 
@@ -108,12 +143,21 @@ export interface Yardstick {
   expected: (YardstickStep | null)[];
 }
 
+/** One step explained, as the step panel (#gatewrap) shows it: general to the step, not to a medicine. */
+export interface StageInfo {
+  what: string;
+  who: string;
+  stall: string;
+  source: string;
+}
+
 /** Same shape as window.LAUNCH_DATA on the static pages. */
 export interface LaunchData {
   meta: { lastUpdated: string; dataStatus: string; host: unknown };
   stages: string[];
   stageColumns?: StageColumn[];
-  stageInfo: unknown;
+  /** by stage index; a step without one shows its panel without the explanation */
+  stageInfo?: (StageInfo | null)[] | null;
   yardstick?: Yardstick | null;
   glossary: unknown;
   changelog: unknown;
@@ -127,6 +171,8 @@ export interface Source {
   /** the short name a citation shows */
   label?: string;
   url?: string;
+  /** "National register", "Policy / guidelines", …: English on every page */
+  category?: string;
   [key: string]: unknown;
 }
 
@@ -180,7 +226,7 @@ export function localize(raw: unknown, locale: Locale, url: string): Localized {
       },
       stages: d.stages as string[],
       stageColumns: d.stageColumns as StageColumn[] | undefined,
-      stageInfo: d.stageInfo,
+      stageInfo: d.stageInfo as LaunchData["stageInfo"],
       yardstick: d.yardstick as Yardstick | null | undefined,
       glossary: d.glossary,
       changelog: d.changelog,
