@@ -1,0 +1,352 @@
+{
+  "header": {
+    "title": "Malaria Product Launch Dashboard",
+    "poweredBy": "Powered by",
+    "unitaidLogoAlt": "Unitaid",
+    "description": "Tracking new antimalarial medicines along the market access pathway",
+    "lastUpdated": "Last updated {date}"
+  },
+  "banner": {
+    "mockupTitle": "Design mockup.",
+    "mockupBody": "All statuses, dates, prices and volumes below are illustrative placeholders for layout review — not real programme data.",
+    "mockupLink": "Read the disclaimer"
+  },
+  "subscribe": {
+    "button": "Subscribe for updates",
+    "title": "Subscribe for updates",
+    "intro": "Receive an email when product information is updated.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "emailPlaceholder": "you@organisation.org",
+    "organisation": "Organisation",
+    "optional": "(optional)",
+    "submit": "Notify me",
+    "sending": "Sending…",
+    "privacyNote": "Your details go to the LAUNCH team and are used only to email you about updates to this page.",
+    "nameMissing": "Please enter your first and last name.",
+    "emailInvalid": "Please enter an email address we can reach you at.",
+    "failed": "Sorry — we could not add you just now. Please try again in a moment.",
+    "subscribed": "Thank you for subscribing. You'll receive an email whenever the dashboard's data is updated.",
+    "alreadySubscribed": "This email address is already subscribed. You'll continue to receive an email whenever the dashboard's data is updated."
+  },
+  "pathway": {
+    "label": "The access pathway: eight milestones across seven stages. WHO recommendation and WHO PQ listing are parallel milestones within stage 3. Choose a stage to see what happens there and where each medicine is",
+    "stageButtonLabel": "Stage {n}, {stage}. Shows what happens here and where each medicine is.",
+    "parallelGroupLabel": "{names} — independent approvals with no defined order between them"
+  },
+  "stepPanel": {
+    "label": "Stage {n}: {stage}",
+    "stepOfTotal": "Stage {n} of {total}",
+    "statusSummaryLabel": "Status of the {count} medicines at this stage",
+    "parallelMilestones": "{first} and {second} are parallel milestones within stage {n}.",
+    "whatHappens": "What happens here",
+    "whoDecides": "Who decides",
+    "whyItCanStall": "Why it can stall",
+    "source": "Source"
+  },
+  "board": {
+    "columns": {
+      "medicine": "Medicine",
+      "journey": "Journey",
+      "currentStage": "Current stage",
+      "status": "Status",
+      "access": "Access"
+    },
+    "accessDefinition": "Market Access is reached when a medicine is both recommended by WHO and WHO-prequalified. Country Access runs from then until national registration, policy adoption, procurement in significant volumes and in-country delivery are all complete.",
+    "showJourney": "Show journey for {medicine}",
+    "milestonesComplete": "{done} of {total} milestones complete",
+    "accessNotReached": "Not yet reached",
+    "accessReachedIn": "Reached in {year}",
+    "accessReachedNoYear": "Reached, year not recorded",
+    "accessSoFar": "{duration} so far",
+    "accessUnderOneYear": "Under 1 year so far"
+  },
+  "product": {
+    "accessLine": "{phase}: {figure}",
+    "journeyView": "Journey view",
+    "viewTimeline": "Actual timeline",
+    "viewPathway": "Pathway order",
+    "stageMarkerLabel": "{stage}. {status}. Opens the full detail.",
+    "parallelGroupLabel": "{names} — independent approvals, no defined order between them",
+    "timeline": {
+      "today": "today",
+      "since": "since {milestone} ({year}) · {duration}",
+      "reachedNoYear": "Reached · year not recorded",
+      "ongoingNoDate": "Ongoing · no date",
+      "notYetDated": "Not yet dated",
+      "notStarted": "Not started · {count}",
+      "ongoing": "ongoing",
+      "none": "None"
+    },
+    "stagePanel": {
+      "recorded": "Recorded",
+      "nextStep": "Next step",
+      "expected": "Expected",
+      "pendingSince": "Pending since",
+      "adoptionNeeds": "What adoption needs",
+      "verifiedOn": "verified {date}",
+      "surveyIllustrative": "country survey is illustrative",
+      "surveyStatus": "country survey is {status}"
+    },
+    "moreDetail": "More detail",
+    "hideDetail": "Hide detail",
+    "cards": {
+      "useCase": "Target use case",
+      "accessCommitments": "Access & supply commitments",
+      "adoption": "Adoption requirements",
+      "countryAccess": "Country access",
+      "countriesOnMap": "Countries on the map",
+      "confirmedInRegisters": "Confirmed in national registers",
+      "forecastDemand": "Forecast demand",
+      "research": "Operational research",
+      "researchLead": "Lead",
+      "researchGeographies": "Geographies",
+      "researchTimeline": "Timeline",
+      "acknowledgement": "Acknowledgement"
+    },
+    "procurement": {
+      "title": "Procurement through public channels",
+      "globalFundOnly": "100% of transactions in the dataset shown are from Global Fund PQR; this is not the product's total global procurement.",
+      "notAvailable": "Data not yet available",
+      "presentation": "Presentation",
+      "transactions": "Transactions",
+      "packs": "Packs",
+      "courses": "Treatment courses (est.)",
+      "notEstimated": "not estimated"
+    },
+    "milestones": {
+      "milestone": "Milestone",
+      "status": "Status",
+      "dateAchieved": "Date achieved / submitted",
+      "nextStep": "Next expected step",
+      "anticipated": "Anticipated"
+    }
+  },
+  "tooltip": {
+    "clickForDetail": "Click for the full detail",
+    "expected": "expected {date}",
+    "mapClickForDetails": "Click for details ›",
+    "notListed": "not listed",
+    "dataStatus": "{medicine} · {status} data"
+  },
+  "map": {
+    "title": "Country access map",
+    "note": "Each country is shaded by the furthest stage it has reached.",
+    "hint": "Drag to pan · Ctrl + scroll or double-click to zoom · arrow keys pan when the map has focus",
+    "canvasLabel": "World map, pan and zoom with the mouse or arrow keys",
+    "countryListLabel": "Countries on this map, list form",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "ctrlScrollHelp": "Use Ctrl + scroll to zoom the map",
+    "cmdScrollHelp": "Use ⌘ + scroll to zoom the map",
+    "twoFingerHelp": "Use two fingers to move the map",
+    "preLaunch": "{medicine} is pre-launch — no country access yet.",
+    "noCountryData": "No country-level data yet for {medicine}.",
+    "accessStage": "Access stage",
+    "countHeading": "No. of countries",
+    "recommendedUse": "Country recommended use",
+    "noPolicy": "No national treatment policy lists {medicine} yet.",
+    "policySource": "Source: WHO {edition}, Annex 4B ({year} policy).",
+    "regions": {
+      "all": "All regions",
+      "afro": "Africa",
+      "amro": "Americas",
+      "emro": "Eastern Mediterranean",
+      "euro": "Europe",
+      "searo": "South-East Asia",
+      "wpro": "Western Pacific"
+    },
+    "groups": {
+      "testedShort": "Recommended for P. falciparum",
+      "testedLabel": "Recommended for Plasmodium falciparum malaria",
+      "testedWhy": "First-line for confirmed (tested) cases in national policy",
+      "vivaxShort": "Recommended for P. vivax",
+      "vivaxLabel": "Recommended for Plasmodium vivax malaria",
+      "vivaxWhy": "Listed as treatment in national policy"
+    },
+    "tabs": {
+      "heading": "Medicine",
+      "label": "Select medicine for map"
+    },
+    "filters": {
+      "heading": "Filters",
+      "reset": "Reset",
+      "show": "Show on map",
+      "tickHint": "Tick a group to draw its borders on the map.",
+      "location": "Location",
+      "region": "Region",
+      "regionLabel": "Filter map by WHO region",
+      "country": "Country or area",
+      "countryLabel": "Filter map by country",
+      "allCountries": "All countries"
+    },
+    "legend": {
+      "heading": "Legend",
+      "resistanceNote": "Drug-resistance results are not shown on this map. To explore them, see the",
+      "resistanceLink": "WHO Malaria Threats Map"
+    },
+    "finder": {
+      "title": "Find a country",
+      "count": "{shown} of {total}",
+      "searchPlaceholder": "Type a country name…",
+      "searchLabel": "Search countries",
+      "noMatch": "No country matches.",
+      "noneMatchFilters": "No countries match the filters on the left.",
+      "resetFilters": "Reset filters"
+    },
+    "table": {
+      "country": "Country",
+      "stage": "Stage",
+      "use": "Use"
+    },
+    "panel": {
+      "heading": "Detail",
+      "overviewTab": "Overview",
+      "countriesTab": "Countries",
+      "selectHint": "Select any country on the map, or from the Countries tab, to open its page.",
+      "factsTitle": "{medicine} · medicine facts",
+      "currentStage": "Current stage",
+      "procurement": "Public-channel procurement (Global Fund)",
+      "preLaunchOverview": "{medicine} is pre-launch, so there is no country-level status or policy yet.",
+      "preLaunchCountry": "{medicine} is pre-launch, so there is no country status or policy yet.",
+      "stageMixTitle": "Access stage mix · {medicine}",
+      "stageMixCount": "of {total} countries have an access stage",
+      "tickLeft": "Tick a group on the left to see its countries.",
+      "group": "Group",
+      "donutLabelOne": "{count} country by patient group",
+      "donutLabelOther": "{count} countries by patient group",
+      "donutUnitOne": "country",
+      "donutUnitOther": "countries",
+      "notDrawn": "Also in policy but not drawn on this map: {countries}.",
+      "backToCountries": "Back to countries",
+      "backToOverview": "Back to overview",
+      "previousCountry": "Previous country",
+      "nextCountry": "Next country",
+      "inWhoPolicy": "in WHO policy {year}",
+      "notInPolicy": "Not listed in national treatment policy",
+      "partLists": "{part}: lists {medicine}.",
+      "partDoesNotList": "{part}: does not list {medicine}.",
+      "amongRegion": "{country} among {count} {region} countries · {medicine}",
+      "sameStage": "Other countries at the same stage · {stage}",
+      "moreInCountriesTab": "+{count} more in the Countries tab",
+      "countrySources": "Sources for this access stage:",
+      "checkedOn": "Checked on {date}."
+    }
+  },
+  "download": {
+    "button": "Download CSV",
+    "columns": {
+      "product": "Product",
+      "record": "Record",
+      "item": "Item",
+      "status": "Status",
+      "detail": "Detail",
+      "date": "Date",
+      "nextStep": "Next step",
+      "anticipated": "Anticipated",
+      "source": "Source",
+      "asOf": "As of"
+    },
+    "records": {
+      "stage": "Stage",
+      "milestone": "Milestone"
+    }
+  },
+  "feedback": {
+    "open": "Send feedback",
+    "title": "Send feedback",
+    "intro": "Does something look wrong or out of date? Tell us what you are seeing.",
+    "closeLabel": "Close",
+    "typeLabel": "What is your feedback about?",
+    "types": {
+      "correction": "Something on the page looks wrong",
+      "source": "A source is missing or out of date",
+      "suggestion": "An idea for making this clearer or more useful",
+      "other": "Something else"
+    },
+    "productLabel": "Which medicine does it concern?",
+    "productGeneral": "General — the dashboard as a whole",
+    "productPlanned": "{medicine} (planned)",
+    "optional": "optional",
+    "messageLabel": "What would you like to tell us?",
+    "messagePlaceholder": "e.g. The map shows this medicine as not yet registered in Tanzania, but it was approved there in June 2026.",
+    "name": "Your name",
+    "email": "Email",
+    "organisation": "Organisation",
+    "organisationPlaceholder": "Ministry of health, manufacturer, partner…",
+    "note": "Your email is optional and used only to reply to you. With your message we send the page you are on, the version of the data it shows, and your browser, so the team can see what you saw.",
+    "cancel": "Cancel",
+    "submit": "Send feedback",
+    "sending": "Sending…",
+    "failed": "Sorry — your feedback could not be sent just now. Please try again in a moment.",
+    "messageMissing": "Please describe the issue.",
+    "messageTooShort": "A little more detail, please — at least 10 characters.",
+    "emailInvalid": "That email address does not look right.",
+    "doneTitle": "Thanks — your feedback has been sent.",
+    "doneMessage": "The LAUNCH team reads every message, and where you have pointed us to a public source that checks out, we correct the data at the next update. If you left an email address, any reply from us will quote the reference below.",
+    "reference": "Reference {ref}",
+    "again": "Send more feedback",
+    "notConnected": {
+      "note": "Mock only — Send feedback isn't connected yet.",
+      "doneTitle": "Thanks — though this isn't sent anywhere yet.",
+      "doneMessage": "This form has no inbox behind it yet, so nothing was actually sent — your note stayed in this browser tab. Once it is connected, the LAUNCH team will read every message, and where you have pointed us to a public source that checks out, we correct the data at the next update."
+    }
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "notComplete": "Users should not consider the LAUNCH dashboard a complete and authoritative source of access information. It provides a snapshot at a point in time, based on publicly available information and on figures a manufacturer has confirmed in writing.",
+    "noLiability": "Unitaid does not accept legal responsibility for the accuracy of the data. Unitaid does not guarantee that it is complete, up to date or fit for a specific purpose.",
+    "countriesVerified": "Country registrations have been verified for: {medicines}.",
+    "countriesNotVerified": "Country stages have not been verified yet for: {medicines}.",
+    "ownChecks": "Users should carry out their own country-level checks before making any decision based on this data.",
+    "notEverything": "A full understanding of a medicine's access situation in any country may require information that is not in this dashboard."
+  },
+  "about": {
+    "launchTitle": "About LAUNCH",
+    "launchPurpose": "LAUNCH, funded by Unitaid, is a proof of concept for making the access pathway of new antimalarial medicines transparent. It brings public information on each medicine together in one place, from development and regulatory approval through WHO recommendation and prequalification to registration, policy, procurement and delivery in countries, so that partners can see where access is held up and act on it.",
+    "launchScope": "It starts with four medicines relevant to multiple first-line therapy (MFT) strategies, which use more than one first-line treatment in a population to reduce the risk of drug resistance. Two are already recommended by WHO but underused: artesunate–pyronaridine (ASPY) and dihydroartemisinin–piperaquine (DHA–PPQ). Two are in late-stage development: ganaplacide–lumefantrine (GanLum) and artemether–lumefantrine–amodiaquine (ALAQ). Together they cover both halves of the pathway: approval for the medicines in development, and adoption and procurement for those already recommended.",
+    "launchNoEndorsement": "Tracking a medicine here does not mean that LAUNCH or Unitaid endorses it or recommends it for any use. The dashboard reports where each medicine stands on the access pathway, not whether it should be used. For this proof of concept the scope is these four medicines; it may later expand to other medicines and malaria tools.",
+    "dataTitle": "About the data",
+    "dataBody": "The LAUNCH dashboard displays publicly available information only. Product-specific details appear solely where the manufacturer has confirmed in writing that they may be shared. Health authority reviews may take place at any stage of development, and their status is generally not public, so regulatory steps change only when a regulator or the manufacturer announces an outcome. Procurement figures cover public channels only. Hover any stage for status detail; select a medicine to open its full profile.",
+    "definitionsTitle": "Definitions"
+  },
+  "sources": {
+    "title": "Sources",
+    "intro": "Everything on this page is traceable to one of the public sources below.",
+    "keyDocumentsTitle": "Key documents.",
+    "keyDocumentsIntro": "Individual studies, assessments and announcements behind specific medicines.",
+    "rawData": "Raw data (for developers):"
+  },
+  "errors": {
+    "dataFailedTitle": "The dashboard data could not be loaded.",
+    "dataFailedReload": "Please reload the page to try again.",
+    "dataFailedRetry": "Please try again in a few minutes.",
+    "updatingTitle": "This dashboard is being updated.",
+    "updatingBody": "Please check back shortly.",
+    "sourcesFailed": "The source list could not be loaded. Please reload the page to try again."
+  },
+  "common": {
+    "close": "Close",
+    "and": "and",
+    "sourceLabel": "Source:",
+    "yearsOne": "{n} year",
+    "yearsOther": "{n} years",
+    "status": {
+      "complete": "Complete",
+      "inProgress": "In progress",
+      "notStarted": "Not started"
+    },
+    "phases": {
+      "market": "Market Access",
+      "country": "Country Access"
+    },
+    "accessLevels": {
+      "registered": "Registered",
+      "guidelines": "In national guidelines",
+      "guidelinesShort": "In guidelines",
+      "mft": "In MFT plans",
+      "none": "No data"
+    }
+  }
+}

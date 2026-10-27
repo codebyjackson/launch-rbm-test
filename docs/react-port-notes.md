@@ -120,6 +120,18 @@ This file is updated in the same commit as each change it describes.
       and stay.
     - `tests/styles.test.ts` checks the fence, the keyframes, and that its own
       checks can fail.
+16. **The interface text is copied in, not written here** (`messages/*.json`,
+    `lib/messages.ts`). The English source is `i18n/ui.en.json` in
+    launch-development-test (276 keys, by component area), translated and
+    approved by the existing pipeline; `scripts/build-rbm-messages.js` writes the
+    three files from the translation memory. Rejected: the English next to the
+    code here, which would take the text out of the approval flow. Copy
+    `feat/rbm-messages` `280ad5d`, built with `--allow-stale`: 269 of 276
+    strings are translated in fr and pt; the 7 that are not (four download
+    table headings, "country"/"countries" on the map, "data" in a hint) have
+    never been through the pipeline and already show in English on /fr and /pt.
+    `tests/messages.test.ts` keeps the three files' keys and `{placeholders}`
+    in step.
 
 ## Deferred, and found on the way
 
@@ -197,6 +209,20 @@ This file is updated in the same commit as each change it describes.
   layout imports the file and wraps its children in `.launch-dashboard`. 23
   tests pass; `tsc --noEmit` and `next build` pass, and the built CSS has no
   selector outside the root. Committed `5f5447b`, merged here.
-- **Next:** step 2, the message files (branch `feat/rbm-messages` in
-  launch-development-test, in progress), replacing `lib/strings.ts`; the map
-  (branch `feat/react-port-map`, in progress); then the components (step 3).
+- **27 Oct 2026, message files.** `messages/{en,fr,pt}.json` copied from
+  launch-development-test `feat/rbm-messages` `280ad5d` (its verify block as
+  expected; its test 46 passed), with `lib/messages.ts`, `messages/README.md`
+  and `tests/messages.test.ts`. Not yet used by any component.
+- **Found in the translations, already live on /fr and /pt** (listed in
+  launch-development-test `docs/rbm-messages-notes.md` for a bilingual
+  reviewer): French "Stage" as "Scène" (theatre) and "Lead" as "Plomb" (the
+  metal), Portuguese "Close" as "Perto" ("near"), several garbled French
+  sentences, and Brazilian forms in what the pages declare as European
+  Portuguese. Carried over unchanged.
+- **Next:** the components (step 3: pathway, board, frame, in progress on their
+  own branches) and the map (branch `feat/react-port-map`, in progress); then
+  one Dashboard component wiring them together, with the text from
+  `messagesFor()` replacing the temporary `text.ts` tables and `lib/strings.ts`.
+- **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
+  form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
+  is 16.4.1 or later (decision 2).
