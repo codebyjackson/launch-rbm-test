@@ -4,7 +4,7 @@
 //                                        every language (GeoJSON, iso3 only)
 //   lib/map-countries.json               each shape's name per language, and
 //                                        the countries the access map tracks
-//   public/launch-map/maplibre-gl-csp-worker.js
+//   public/launch-map/maplibre-gl-worker.mjs
 //                                        MapLibre's worker, copied unchanged
 //                                        from node_modules (see below)
 //
@@ -20,7 +20,7 @@
 // from the one names list).
 //
 // Usage: node scripts/build-map-assets.mjs
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,11 +84,15 @@ const lines = Object.entries(countries).map(([k, v]) =>
     ? `  "names": {\n${LANGS.map((l) => `    ${JSON.stringify(l)}: ${JSON.stringify(v[l])}`).join(",\n")}\n  }`
     : `  ${JSON.stringify(k)}: ${JSON.stringify(v)}`);
 writeFileSync(join(ROOT, "lib/map-countries.json"), `{\n${lines.join(",\n")}\n}\n`);
-// MapLibre's CSP build loads its worker from a file instead of making it
-// from its own source text at run time; a bundler that re-minifies MapLibre
-// breaks the latter (only part of the map drew in a production build). The
-// worker must be the same version as the installed maplibre-gl:
-// tests/map-assets.test.ts checks the copy.
-copyFileSync(join(ROOT, "node_modules/maplibre-gl/dist/maplibre-gl-csp-worker.js"), join(ROOT, "public/launch-map/maplibre-gl-csp-worker.js"));
+// MapLibre 6 loads its worker from a file (5.x's main file made it from its
+// own source text at run time, which re-minifying broke: only part of the
+// map drew in a production build). Under a bundler it cannot find that file
+// itself, so the page serves this copy and passes its address to
+// setWorkerUrl(). Since 6.13 the worker imports nothing, so one file is
+// enough. It must be the same version as the installed maplibre-gl:
+// tests/map-assets.test.ts checks the copy. 5.x's copy is removed, so a host
+// that still links it fails visibly rather than running an old worker.
+copyFileSync(join(ROOT, "node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs"), join(ROOT, "public/launch-map/maplibre-gl-worker.mjs"));
+rmSync(join(ROOT, "public/launch-map/maplibre-gl-csp-worker.js"), { force: true });
 const version = JSON.parse(readFileSync(join(ROOT, "node_modules/maplibre-gl/package.json"), "utf8")).version;
 console.log(`build-map-assets: ${shapes.features.length} shapes, ${countries.drawn.length} tracked countries, ${LANGS.length} languages; maplibre-gl ${version} worker`);
