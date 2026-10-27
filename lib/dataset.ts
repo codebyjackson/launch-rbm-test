@@ -99,13 +99,72 @@ export interface CountrySummary {
   [key: string]: unknown;
 }
 
+/**
+ * detail.countries as the board reads it: a checked list. The data type is
+ * the looser CountrySurvey; the board narrows to this where it needs it.
+ */
+export interface CountryList {
+  /** "verified", "illustrative", or another word shown as it is */
+  status: string;
+  note?: string;
+  list: CountryEntry[];
+}
+
+export interface ProcurementChannel {
+  channel: string;
+  pct: number;
+}
+
+export interface ProcurementPresentation {
+  label: string;
+  transactions: number;
+  packs: number;
+  /** treatment courses, where the build could work them out */
+  courses: number | null;
+}
+
+/** detail.volume: procurement through public channels. */
+export interface Procurement {
+  total: string;
+  period: string;
+  split: ProcurementChannel[];
+  source?: string;
+  sources?: string[];
+  byPresentation?: ProcurementPresentation[];
+  /** how treatment courses were counted */
+  coursesRule?: string;
+}
+
+export interface Research {
+  lead: string;
+  geographies: string;
+  timeline: string;
+  question: string;
+}
+
+/** detail.price: in the data, not shown on today's page. */
+export interface Price {
+  value: string;
+  note?: string;
+  source?: string;
+  confirmedInWriting?: boolean;
+  asOf?: string;
+}
+
 export interface ProductDetail {
   journey?: JourneyStep[];
   milestones?: Milestone[];
+  price?: Price;
+  useCase?: string;
+  access?: string[];
   /** what adoption needs; the national-policy step's panel lists them */
   adoption?: string[];
-  countries?: CountrySurvey;
+  research?: Research;
+  countries?: CountrySurvey | null;
   country?: CountrySummary;
+  volume?: Procurement | null;
+  /** shown in place of procurement figures when there are none */
+  volumeNote?: string;
   [key: string]: unknown;
 }
 
@@ -119,7 +178,14 @@ export interface Product {
   phase: string;
   currentStage: number;
   flag: string | null;
+  /** the medicines table's Main barrier text, read before flag */
+  barrier?: string;
+  /** a card of its own under the product's detail */
+  acknowledgement?: string;
+  /** a row not yet tracked: drawn with its note, no journey */
   placeholder?: boolean;
+  /** a placeholder row's text */
+  note?: string;
   stages: StageEntry[];
   detail: ProductDetail;
   [key: string]: unknown;

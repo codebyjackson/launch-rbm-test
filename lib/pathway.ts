@@ -150,7 +150,7 @@ export function levelCounts(list: readonly CountryEntry[]): LevelCounts {
 
 /** detail.countries.list, when the medicine has one. */
 export function countryList(detail: ProductDetail): CountryEntry[] | null {
-  const s: CountrySurvey | undefined = detail.countries;
+  const s: CountrySurvey | null | undefined = detail.countries;
   return s && Array.isArray(s.list) ? s.list : null;
 }
 

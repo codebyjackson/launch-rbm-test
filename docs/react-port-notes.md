@@ -336,6 +336,86 @@ This file is updated in the same commit as each change it describes.
     a fixed Portuguese word, a dropped space and a lost French no-break
     space are each caught.
 
+35. **The medicine board (`components/board/`, branch `feat/react-port-board`)
+    talks to the other areas only through props and callbacks.** `Board` takes
+    the localized data, sources, locale and its text, and: `openProduct` (a
+    medicine to open and scroll to, as `#pyramax` did) with `onOpenProduct`
+    (the reader opened a row; an `openProduct` that echoes it is not a new
+    request, so the page does not jump); `openStep` (the strip's open step,
+    lit in the Journey column); `onStageHover`/`onStageLeave`,
+    `onTermHover`/`onTermLeave` and `statTipHandlers` (spread on `#board`) for
+    the hints the pathway area draws; `onCellChange` (the open stage panel, so
+    Escape closes it before the strip's step panel, as the page's one Escape
+    handler did). Rejected: reading `location.hash` (RBM's router decides how
+    state is carried) and a shared store. Listeners go on `document` (Escape)
+    and `window` (resize), never on `<html>` or `<body>`.
+36. **The pathway area's parts come in as slots** (coordinator, 27 Oct):
+    `renderStageIcon`, `renderCountryAccess`, `renderCites`, `renderGatePanel`.
+    The board keeps the stage panel's container (`${id}-gate`, `hidden`, its
+    `late` class), which panel is open, and Escape; the slot draws the
+    content and gets a `close` callback. My own versions of the icons and
+    sprite, the Country access rows, the citation links and the stage panel
+    were written first and then removed. `trackedProducts` and `colIndexOf`
+    stay in `lib/board.ts` because this branch cannot see `lib/pathway.ts`:
+    the same rules, golden-tested against the same page code; on merge,
+    delete them and import the pathway's.
+37. **The glossary terms are marked in the element tree before render, not
+    in the DOM after it.** The page walked each row's text nodes once the rows
+    existed and wrapped the first occurrence of each term (on the live data
+    of 27 Oct, 25 terms marked in `/en`, 22 in `/fr`, 24 in `/pt`, counted in
+    this app's `next build` output). Changing text React has
+    rendered breaks its next update, so `gloss.tsx` walks the row's elements
+    instead, in the same document order, with the page's rules (skip `.exp`,
+    `.swg`, `.more`, `.smark`; and `.gatepanel`, which was empty when the page
+    walked). That needs the row's text in the tree, so the markup builders are
+    hook-free functions the row calls, not components it mounts; the stateful
+    parts are `Board` and `ProductRow`. Rejected: a post-render DOM walk (stale
+    or failing updates on a data refresh) and a shared "seen" set read during
+    render (a render that runs twice, as in Strict Mode, marks nothing the
+    second time). Cost: text inside a slot is marked only if the slot returns
+    plain elements, so the Dashboard should call the pathway's hook-free
+    components as functions in the slots (`renderCountryAccess={(d) =>
+    CountryAccessKv({ ... })}`); mounted as `<CountryAccessKv/>`, "MFT" in
+    "In MFT plans" and terms in source names are not marked.
+38. **Measuring stays measuring; the arithmetic is pure.** `fitTimeline`
+    became `useTimelineFit` (a ResizeObserver, refitting on a new width, and
+    once the fonts arrive) returning tier tops that React renders, with the
+    arithmetic in `fitTiers`. Rejected: writing `style.top` directly as the
+    page did, which a re-render after a data refresh would leave fitted to the
+    old layout. The forks (`useStageForks`) write `--sg-lift` to the track
+    directly, because it must be 0 while measuring and a state round would
+    paint that first; React never sets the track's style. The strokes come
+    back as state (`forkGeometry`). The page measured hidden tracks too, to 0;
+    here only a shown track is laid out, with the same visible result.
+39. **The board's words are a temporary table, `components/board/text.ts`**,
+    as `lib/strings.ts` is for `lib/stages.ts`: en/fr/pt values pulled out of
+    the built pages by script, not retyped, with `{name}` templates. Words the
+    board shares with `lib/stages.ts` (status words, phases, "3 years") stay
+    in `lib/strings.ts`. Mistranslations are copied as they are (below).
+40. **Tests.** `tests/golden-board.test.ts`: `lib/board.ts` against the page's
+    code frozen by `tests/golden-board/extract.mjs` (`--check` confirms it is
+    current), including the timeline's layout read back out of the old
+    markup, and `fitTimeline`, `alignStageForks` and `drawStageForks` run on
+    fake boxes with made-up sizes: 20,931 comparisons, 6 scenarios per
+    language, 0 clock reads. `tests/markup-board.test.ts`: `<Board>` through
+    `renderToStaticMarkup` against the board the page's own statements built
+    and glossed (on a small DOM in `tests/golden-board/html.ts`, no new
+    dependency), in a normal form (attributes sorted, white space folded,
+    white-space-only text dropped, entities decoded, boolean attributes as
+    `name=""`): 1,776 comparisons, 1,656 whole rows, all equal, with the
+    pathway's slots stubbed in today's markup (`tests/markup-board/slots.tsx`).
+    Twelve planted bugs: 10 caught; the 2 missed cannot change any result
+    (removing `.more` from the walk's skip list: no term is in that text in
+    any language; a tick rule `>= 1.5` against `> 1.5` on whole years).
+    Three variants with chosen stage years were added after the first round
+    missed a change to the 21% tier gap.
+41. **Types added to `lib/dataset.ts`, nothing changed:** `CountrySummary`,
+    `CountryEntry`, `CountryList`, `ProcurementChannel`,
+    `ProcurementPresentation`, `Procurement`, `Research`, `Price`; the detail
+    fields they type (`useCase`, `access`, `adoption`, `research`, `country`,
+    `countries`, `volume`, `volumeNote`, `price`); `Product.barrier`,
+    `acknowledgement`, `note`; `Source.category`.
+
 ## Deferred, and found on the way
 
 - `app/` is the example app only, to prove the data path. RBM takes the
@@ -398,6 +478,45 @@ This file is updated in the same commit as each change it describes.
   (decision 27).
 - `styles/launch-dashboard.css` is a copy of `89b2011`. CSS changes to
   `index.html` after that are ported by hand.
+- **The board (decisions 35 to 41).**
+  - Only the markup at load is tested. Opening rows, switching views, the
+    stage panel, Escape, the fade, the timeline fit and the forks are React
+    state and DOM work with no test here (no DOM library is installed), and
+    the board has not been checked in a browser. Do that on the Dashboard.
+  - The example page shows the board without callbacks or slots (a server
+    page cannot pass functions), so its icons, Country access rows and stage
+    panels are empty there and citations are plain names.
+  - `#det-list` was in this area's brief; it is the map's "Find a country"
+    list (`finderRows`, in the map's Detail rail, built from the map's
+    filters), so it is left to the map area.
+  - `detail.price` is in the data but today's page never draws it; not drawn.
+  - Where the page read a detail field without checking it (`d.access.map`),
+    a missing field stopped the whole page; here it draws empty.
+  - Intended differences, none visible at load: a closed stage panel loses
+    its `late` class (the page left it on the hidden panel); the timeline no
+    longer writes `data-w`/`data-base`; `.info` hints count only inside
+    `#board` if `statTipHandlers` checks it (RBM's page may have its own
+    `.info`, which the page's `closest(".info")` would have caught).
+  - React 19 server rendering adds a `<link rel="preload" as="image">` for
+    each `<img>` (the WHO emblem in the pathway's stage icon); harmless, for
+    the pathway area to know.
+  - Hydration: the procurement table formats numbers with
+    `Intl.NumberFormat` on the server and again in the browser; French uses a
+    narrow no-break space, and an ICU difference between Node and a browser
+    would show as a text mismatch warning.
+  - `onOpenProduct`'s echo rule: a router that never echoes leaves the last
+    id remembered, so a real link to that same medicine is skipped once.
+  - Kept as they are, worth a decision: the yardstick box says "{n} years"
+    even for 1; `.gp-kv` puts `dt`/`dd` in a `div`, not a `dl` (the pathway's
+    panel now); the page's `sameColumn` is dead code, not ported.
+  - Mistranslations copied from the built pages: fr "Plomb" (the metal) for
+    Lead, "Médecine"/"Voyage"/"Accéder" for the Medicine/Journey/Access
+    headings, "Scène" for Stage, "Durée du traitement" (duration) for
+    treatment courses, and "Presentation", "Transactions", "Packs", "not
+    estimated" left in English; pt "Liderar" (to lead), "viagem" (a trip) for
+    journey, "Até ao momento, está tudo bem." ("so far all is well") for
+    Actual so far, and "data de expiração" (expiry date) for a dated
+    approval.
 
 ### The pathway area (`feat/react-port-pathway`)
 
@@ -671,10 +790,20 @@ shows it below the list. Built in a separate worktree, beside the agents doing
   the built CSS has no selector outside the root; no NUL bytes. Smoke-tested
   in headless Chrome against `next start`: 18 checks pass, no hydration
   warnings.
-- **Next:** the board (branch `feat/react-port-board`, in progress); the
-  MapLibre 6.x upgrade (security advisory, below); then one Dashboard component
-  wiring the areas inside `DashboardFrame`, with the text from `messagesFor()`
-  replacing the temporary `text.ts` tables and `lib/strings.ts`.
+- **27 Oct 2026, board** (branch `feat/react-port-board`, committed `3f8ab91`, merged here): `lib/board.ts`,
+  `components/board/` (`Board`, `ProductRow`, builders, hooks, `text.ts`),
+  types added to `lib/dataset.ts`, the example page's board block, and
+  `tests/golden-board.test.ts`, `tests/markup-board.test.ts` with
+  `tests/golden-board/` and `tests/markup-board/`. 91 tests pass (45 + 46
+  new); `tsc --noEmit` clean; `next build` passes with the board in `/en`,
+  `/fr` and `/pt`. Not committed; not checked in a browser.
+- **Next:** the MapLibre 6.x upgrade (branch `feat/react-port-maplibre6`, in
+  progress); then one client `Dashboard` component that wires the five areas
+  inside `DashboardFrame` (slots, open step and medicine, hints, Escape
+  order), takes its text from `messagesFor()` in place of the temporary
+  `text.ts` tables and `lib/strings.ts`, and keeps one copy each of
+  `tracked()` and `colIndexOf()` (today in `lib/pathway.ts`, `lib/frame.ts`
+  and `lib/board.ts`).
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).

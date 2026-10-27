@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { BOARD_TEXT, Board } from "@/components/board";
 import { DashboardFrame } from "@/components/frame/DashboardFrame";
 import { FRAME_TEXT } from "@/components/frame/text";
 import { frameView } from "@/components/frame/view";
@@ -83,6 +84,15 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         text={pathwayText[locale]}
       />
       {/* ==== end PATHWAY AREA ==== */}
+      {/* ==== MEDICINE BOARD (feat/react-port-board): example only. No slots or
+          callbacks: a server page cannot pass functions to a client
+          component, so the stage icons, Country access rows and stage panel
+          content are empty and there are no hints, until the Dashboard wires
+          the areas together. ==== */}
+      <div className="wrap">
+        <Board data={data} sources={ds.sources.sources} locale={locale} text={BOARD_TEXT[locale]} />
+      </div>
+      {/* ==== end MEDICINE BOARD ==== */}
       {/* ==== MAP AREA (feat/react-port-map): example only. English text in
           every language until the message files are wired; the data is the
           page's language. ==== */}
