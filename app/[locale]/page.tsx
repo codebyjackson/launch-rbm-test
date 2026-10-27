@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation";
+import { MapSection } from "@/components/map/MapSection";
+import { mapTextEn } from "@/components/map/text";
 import { pathwayText } from "@/components/pathway/text";
 import { getDashboard } from "@/lib/data";
 import { DatasetError, type Localized } from "@/lib/dataset";
 import { isLocale } from "@/lib/locales";
+import { mapInput } from "@/lib/map";
+import { mapCountries } from "@/lib/map-countries";
 import { tracked } from "@/lib/pathway";
 import { applyShowLate, stageContext } from "@/lib/stages";
 import { PathwayPreview } from "./PathwayPreview";
@@ -59,6 +63,16 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         text={pathwayText[locale]}
       />
       {/* ==== end PATHWAY AREA ==== */}
+      {/* ==== MAP AREA (feat/react-port-map): example only. English text in
+          every language until the message files are wired; the data is the
+          page's language. ==== */}
+      <MapSection
+        input={mapInput(ds, mapCountries(locale), locale)}
+        text={mapTextEn}
+        shapesUrl="/launch-map/world-shapes.json"
+        workerUrl="/launch-map/maplibre-gl-csp-worker.js"
+      />
+      {/* ==== end MAP AREA ==== */}
     </>
   );
 }
