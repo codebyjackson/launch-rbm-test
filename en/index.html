@@ -1723,7 +1723,7 @@
 /* Loads the LAUNCH dataset (scripts/build-rbm-pages.js). Generated; do not edit. */
 (function () {
   "use strict";
-  var DATA_URL = "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json", LANG = "en", SCHEMA = 1;
+  var DATA_URL = "../data/dashboard.json", LANG = "en", SCHEMA = 1;
   var MSG = {"fail":"<b>The dashboard data could not be loaded.</b> Please try again in a few minutes.","schema":"<b>This dashboard is being updated.</b> Please check back shortly."};
   // every reader-facing text in dashboard.json is { en, fr, pt, ... }, one key
   // per language the file lists in ds.locales: keep this page's, or the English
@@ -1877,9 +1877,8 @@
     ? `<img class="${cls} whoemb" src="../assets/who-emblem.svg" alt="" width="205" height="181">`
     : (JI ? JI.use(i, cls) : "");
 
-  // Dates follow the page's language: the French, Portuguese and Spanish copies
-  // carry <html lang="fr"> / "pt-PT" / "es", so their dates read "2 oct. 2026" /
-  // "2/10/2026" / "2 oct 2026".
+  // Dates follow the page's language: the French and Portuguese copies carry
+  // <html lang="fr"> / "pt-PT", so their dates read "2 oct. 2026" / "2/10/2026".
   // English keeps en-GB ("2 Oct 2026").
   const PAGE_LANG = document.documentElement.lang || "en";
   const DATE_LANG = /^en\b/i.test(PAGE_LANG) ? "en-GB" : PAGE_LANG;
@@ -2152,10 +2151,9 @@
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
-  // "Desde 2018" in Portuguese and Spanish), so the word is matched in every
-  // page language. Spanish may also read "Desde el 2018".
+  // "Desde 2018"), so the word is matched in all three page languages.
   function sinceYearOf(st) {
-    const m = String(st && st.date || "").match(/(?:Since|Depuis|Desde)\s+(?:el\s+)?((?:19|20)\d{2})/i);
+    const m = String(st && st.date || "").match(/(?:Since|Depuis|Desde)\s+((?:19|20)\d{2})/i);
     return m ? +m[1] : null;
   }
   function yardstick(p) {
