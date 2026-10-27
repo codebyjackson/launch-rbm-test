@@ -1,0 +1,103 @@
+/*
+ * The feedback widget's styles (Send feedback), fenced in like
+ * styles/launch-dashboard.css. Imported by components/frame/FeedbackForm.tsx.
+ *
+ * Contents, in today's cascade order:
+ *   1. the widget's own stylesheet: the CSS string in assets/report-issue.js,
+ *      which the widget appended to <head> at load (launch-rbm-test 7c1bf11,
+ *      identical in en, fr and pt), one rule per line, its source comments kept;
+ *   2. the Unitaid skin's rules for the widget (scripts/rbm-skin.js), moved
+ *      here from the end of styles/launch-dashboard.css.
+ *
+ * Changed from those sources, and nothing else:
+ *   - every selector is scoped under .launch-dashboard, as in
+ *     launch-dashboard.css (the pill and dialog render inside the root now);
+ *   - @keyframes ri-spin is ld-ri-spin, like every keyframe of the dashboard.
+ *
+ * Why part 2 lives here. On the page the skin beat the widget on specificity:
+ * "html .ri-dialog" (0,1,1) against ".ri-dialog" (0,1,0). Fenced, both read
+ * ".launch-dashboard .ri-dialog" (0,2,0), a tie, and a tie goes to whichever
+ * file the bundler happens to load last. In one file the skin comes after
+ * the widget, so it wins by order, wherever this file loads. No other rule
+ * of launch-dashboard.css ties with a rule here: its only .ri- selector is
+ * ".launch-dashboard.sub-open .ri-pill" (visibility, which the widget never
+ * sets), and its element rules that reach the dialog (button, input, select,
+ * textarea, *) are (0,1,1) or lower against (0,2,0) here, as they were lower
+ * on the page. tests/styles.test.ts checks this file's fence, its keyframes,
+ * that part 1 matches the widget's CSS rule for rule, and that no .ri- rule is
+ * left in launch-dashboard.css.
+ */
+
+/* ---------- 1. the widget: assets/report-issue.js ---------- */
+  /* floating opener */
+  .launch-dashboard .ri-pill { position:fixed;right:20px;bottom:20px;z-index:900;display:inline-flex;align-items:center;padding:12px 22px;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink,#fff);font-family:inherit;font-size:13px;font-weight:650;letter-spacing:.01em;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18),0 1px 3px rgba(0,0,0,.12);transition:transform .15s ease,box-shadow .15s ease }
+  .launch-dashboard .ri-pill:hover { transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,0,0,.22),0 2px 5px rgba(0,0,0,.14) }
+  .launch-dashboard .ri-pill:focus-visible { outline:2px solid var(--ink);outline-offset:3px }
+  @media (max-width:560px) { .launch-dashboard .ri-pill { right:12px;bottom:12px;padding:10px 18px;font-size:12px } }
+  /* footer link */
+  .launch-dashboard .report-link { color:var(--accent);font-weight:650;text-decoration:underline;text-underline-offset:2px;cursor:pointer }
+  /* dialog shell */
+  .launch-dashboard .ri-dialog { position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;z-index:1000;width:min(580px,calc(100vw - 28px));max-height:calc(100vh - 40px);display:flex;flex-direction:column;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font-family:inherit;font-size:14px;line-height:1.5;box-shadow:0 30px 70px rgba(0,0,0,.32) }
+  .launch-dashboard .ri-dialog:not([open]) { display:none }
+  .launch-dashboard .ri-form { flex:1 1 auto;min-height:0;display:flex;flex-direction:column }
+  .launch-dashboard .ri-form[hidden], .launch-dashboard .ri-done[hidden] { display:none }
+  .launch-dashboard .ri-dialog::backdrop { background:rgba(12,24,32,.55) }
+  /* header */
+  .launch-dashboard .ri-head { position:relative;flex:none;padding:17px 52px 14px 22px;background:var(--accent-soft);border-bottom:1px solid var(--line) }
+  .launch-dashboard .ri-head h2 { margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em }
+  .launch-dashboard .ri-head p { margin:4px 0 0;font-size:12.5px;color:var(--ink-2) }
+  .launch-dashboard .ri-x { position:absolute;top:12px;right:12px;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:8px;background:transparent;color:var(--ink-2);font-size:20px;line-height:1;cursor:pointer }
+  .launch-dashboard .ri-x:hover { background:var(--surface);color:var(--ink) }
+  .launch-dashboard .ri-x:focus-visible { outline:2px solid var(--accent);outline-offset:1px }
+  /* body */
+  .launch-dashboard .ri-body { flex:1 1 auto;min-height:0;overflow:auto;padding:18px 22px 6px }
+  .launch-dashboard .ri-field { margin:0 0 14px }
+  .launch-dashboard .ri-field>label { display:block;margin:0 0 5px;font-size:12px;font-weight:650;color:var(--ink-2) }
+  .launch-dashboard .ri-opt { font-weight:400;color:var(--ink-3) }
+  .launch-dashboard .ri-input, .launch-dashboard .ri-select, .launch-dashboard .ri-textarea { width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:inherit;font-size:14px;line-height:1.45 }
+  .launch-dashboard .ri-textarea { min-height:104px;resize:vertical }
+  .launch-dashboard .ri-input:focus, .launch-dashboard .ri-select:focus, .launch-dashboard .ri-textarea:focus { outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft) }
+  .launch-dashboard .ri-row { display:grid;grid-template-columns:1fr 1fr;gap:0 12px }
+  @media (max-width:520px) { .launch-dashboard .ri-row { grid-template-columns:1fr } }
+  /* iOS zooms the whole page into any field under 16px when it gets the */
+  /* cursor, and does not zoom back out; at 14px every field did it */
+  @media (max-width:760px) { .launch-dashboard .ri-input, .launch-dashboard .ri-select, .launch-dashboard .ri-textarea { font-size:16px } }
+  /* the title takes focus on touch screens (open(), below): no ring on it */
+  .launch-dashboard #ri-title:focus { outline:0 }
+  .launch-dashboard .ri-err { display:none;margin:5px 0 0;font-size:12px;font-weight:600;color:var(--crit) }
+  .launch-dashboard .ri-field.is-bad .ri-err { display:block }
+  .launch-dashboard .ri-field.is-bad .ri-input, .launch-dashboard .ri-field.is-bad .ri-textarea { border-color:var(--crit) }
+  .launch-dashboard .ri-note { margin:0 0 14px;font-size:11.5px;color:var(--ink-3);line-height:1.5 }
+  .launch-dashboard .ri-note.ri-mock { color:var(--crit,#C0392B);font-weight:700 }
+  .launch-dashboard .ri-alert { display:none;margin:0 0 14px;padding:10px 12px;border-radius:8px;border:1px solid var(--crit);background:var(--crit-soft);color:var(--crit);font-size:12.5px;font-weight:600 }
+  .launch-dashboard .ri-alert.is-on { display:block }
+  /* footer */
+  .launch-dashboard .ri-foot { flex:none;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:13px 22px;border-top:1px solid var(--line);background:var(--surface-2) }
+  .launch-dashboard .ri-btn { border-radius:8px;padding:8px 15px;font-family:inherit;font-size:13px;font-weight:650;cursor:pointer }
+  .launch-dashboard .ri-btn:focus-visible { outline:2px solid var(--ink);outline-offset:2px }
+  .launch-dashboard .ri-primary { border:1px solid transparent;background:var(--accent);color:var(--accent-ink,#fff) }
+  .launch-dashboard .ri-ghost { border:1px solid var(--line);background:transparent;color:var(--ink-2) }
+  .launch-dashboard .ri-ghost:hover { color:var(--ink);border-color:var(--ink-3) }
+  .launch-dashboard .ri-btn[disabled] { opacity:.65;cursor:progress }
+  .launch-dashboard .ri-spin { display:inline-block;width:11px;height:11px;margin-right:7px;vertical-align:-1px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ld-ri-spin .6s linear infinite }
+  @keyframes ld-ri-spin {to{transform:rotate(360deg)}}
+  /* success */
+  .launch-dashboard .ri-done { flex:1 1 auto;min-height:0;overflow:auto;padding:32px 26px 28px;text-align:center }
+  .launch-dashboard .ri-check { width:46px;height:46px;margin:0 auto 14px;display:grid;place-items:center;border-radius:50%;background:var(--good-soft,#E2F2EA);color:var(--good,#1E8A5A);font-size:23px;font-weight:700 }
+  .launch-dashboard .ri-done h3 { margin:0 0 7px;font-size:16px }
+  .launch-dashboard .ri-done p { margin:0 auto 15px;max-width:36em;font-size:13px;color:var(--ink-2) }
+  .launch-dashboard .ri-ref { display:inline-block;padding:6px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink);letter-spacing:.05em;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace }
+  .launch-dashboard .ri-again { background:none;border:0;padding:0;color:var(--accent);font-family:inherit;font-size:12.5px;font-weight:650;text-decoration:underline;text-underline-offset:2px;cursor:pointer }
+  /* respect the reader */
+  @media (prefers-reduced-motion:reduce) { .launch-dashboard .ri-pill { transition:none } .launch-dashboard .ri-spin { animation-duration:1.6s } }
+  @media print { .launch-dashboard .ri-pill, .launch-dashboard .ri-dialog { display:none!important } }
+
+/* ---------- 2. the Unitaid skin's rules for the widget: scripts/rbm-skin.js ---------- */
+  /* feedback dialog: Unitaid Grey head strip, rounded-lg, shadow-xl. On the
+     page these carried an extra "html" to beat the widget's stylesheet, which
+     loaded after them; here they come after it in the same file instead. */
+  .launch-dashboard .ri-dialog { border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
+  .launch-dashboard .ri-head { background: #F0F2F5; }
+  .launch-dashboard .ri-dialog::backdrop { background: rgba(0,0,0,.5); }
+  .launch-dashboard .ri-btn, .launch-dashboard .ri-input, .launch-dashboard .ri-select, .launch-dashboard .ri-textarea { border-radius: 6px; }
+  .launch-dashboard .ri-primary:hover { background: #212E92; }

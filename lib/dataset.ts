@@ -173,6 +173,14 @@ export interface Source {
   url?: string;
   /** "National register", "Policy / guidelines", …: English on every page */
   category?: string;
+  /** "document": a one-off document behind one medicine (Key documents); anything else is a register or feed */
+  group?: string;
+  /** one sentence on what the source is, in the Sources list */
+  plain?: string;
+  /** further links shown after `plain`, each followed by a full stop */
+  alsoSee?: { label?: string; url?: string }[];
+  /** the address a fetcher reads, shown to developers as text, never as a link */
+  dataUrl?: string;
   [key: string]: unknown;
 }
 

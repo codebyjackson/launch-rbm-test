@@ -1,10 +1,13 @@
-// styles/launch-dashboard.css: every rule stays inside the .launch-dashboard
-// fence, so the dashboard's CSS cannot restyle RBM's page around it.
+// styles/launch-dashboard.css and styles/feedback.css: every rule stays
+// inside the .launch-dashboard fence, so the dashboard's CSS cannot restyle
+// RBM's page around it. feedback.css is also checked against the feedback
+// widget's own stylesheet, rule for rule.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const ROOT = ".launch-dashboard";
 const CSS = readFileSync(new URL("../styles/launch-dashboard.css", import.meta.url), "utf8");
+const FEEDBACK_CSS = readFileSync(new URL("../styles/feedback.css", import.meta.url), "utf8");
 
 // ---------- a small CSS tokenizer, enough for this file ----------
 // It reads style rules, block at-rules (@media, @supports, @keyframes,
@@ -13,7 +16,8 @@ const CSS = readFileSync(new URL("../styles/launch-dashboard.css", import.meta.u
 // throw, so a construct it cannot read fails the test instead of slipping
 // past the checks.
 
-type StyleRule = { selectors: string[]; declarations: { property: string; value: string }[]; line: number };
+// `media` is the chain of grouping at-rules around the rule ("" at top level).
+type StyleRule = { selectors: string[]; declarations: { property: string; value: string }[]; line: number; media: string };
 type Parsed = { rules: StyleRule[]; keyframes: string[]; statements: string[] };
 
 // Comments and the inside of strings become spaces (newlines kept), so a "{"
@@ -78,7 +82,7 @@ function parse(css: string): Parsed {
     throw new Error(`line ${lineAt(open)}: no closing brace`);
   };
 
-  const blockList = (start: number, end: number): void => {
+  const blockList = (start: number, end: number, media = ""): void => {
     let i = start;
     while (i < end) {
       if (/\s/.test(m[i])) {
@@ -99,7 +103,7 @@ function parse(css: string): Parsed {
       if (close >= end) throw new Error(`line ${lineAt(i)}: block runs past its parent`);
       if (prelude.startsWith("@")) {
         const name = /^@([\w-]+)/.exec(prelude)?.[1].toLowerCase() ?? "";
-        if (GROUPING.has(name)) blockList(j + 1, close);
+        if (GROUPING.has(name)) blockList(j + 1, close, (media ? media + " " : "") + prelude.replace(/\s+/g, " "));
         else if (OPAQUE.has(name)) {
           if (name !== "font-face") parsed.keyframes.push(prelude.split(/\s+/)[1] ?? "");
         } else throw new Error(`line ${lineAt(i)}: @${name} is not read by this tokenizer`);
@@ -116,6 +120,7 @@ function parse(css: string): Parsed {
               return { property: d.slice(0, colon).trim().toLowerCase(), value: d.slice(colon + 1).trim() };
             }),
           line: lineAt(i),
+          media,
         });
       }
       i = close + 1;
@@ -219,21 +224,88 @@ describe("the checks themselves", () => {
   });
 });
 
-describe("styles/launch-dashboard.css", () => {
-  const parsed = parse(CSS);
+for (const [file, css] of [["styles/launch-dashboard.css", CSS], ["styles/feedback.css", FEEDBACK_CSS]] as const) {
+  describe(file, () => {
+    const parsed = parse(css);
 
-  it("scopes every selector under .launch-dashboard", () => {
-    expect(parsed.rules.length).toBeGreaterThan(0);
-    expect(unscoped(parsed)).toEqual([]);
+    it("scopes every selector under .launch-dashboard", () => {
+      expect(parsed.rules.length).toBeGreaterThan(0);
+      expect(unscoped(parsed)).toEqual([]);
+    });
+
+    it("has no :root, html or body selector left", () => {
+      expect(rootSelectors(parsed)).toEqual([]);
+    });
+
+    it("names only ld- keyframes in animations, and each one exists", () => {
+      expect(parsed.keyframes.filter((k) => !k.startsWith("ld-"))).toEqual([]);
+      expect(animationRefs(parsed).length).toBeGreaterThan(0);
+      expect(badAnimations(parsed)).toEqual([]);
+    });
+  });
+}
+
+// ---- feedback.css against the widget ----------------------------------------
+
+// The widget's stylesheet as the page injected it: the CSS array in
+// assets/report-issue.js at launch-rbm-test 7c1bf11, frozen with the page by
+// tests/golden-frame/extract.mjs.
+function widgetCss(lang: string): string {
+  const js = readFileSync(new URL(`./golden-frame/reference/${lang}.feedback.js`, import.meta.url), "utf8");
+  const start = js.indexOf("var CSS = [");
+  const end = js.indexOf('].join("")', start);
+  if (start < 0 || end < 0) throw new Error(`reference/${lang}.feedback.js: no CSS array`);
+  return (new Function(`return [${js.slice(start + "var CSS = [".length, end)}]`)() as string[]).join("");
+}
+
+// A rule as compared: where it sits, its selectors, and its declarations.
+const shape = (p: Parsed) =>
+  p.rules.map((r) => ({
+    media: r.media,
+    selectors: r.selectors,
+    declarations: r.declarations.map((d) => `${d.property}:${d.value}`),
+  }));
+
+describe("styles/feedback.css: the widget's stylesheet, fenced", () => {
+  const marker = FEEDBACK_CSS.indexOf("---------- 2.");
+  const widgetPart = parse(FEEDBACK_CSS.slice(0, FEEDBACK_CSS.lastIndexOf("\n", marker)));
+  const skinPart = parse(FEEDBACK_CSS.slice(FEEDBACK_CSS.indexOf("\n", marker)));
+
+  it("is the same in every language", () => {
+    expect(widgetCss("fr")).toBe(widgetCss("en"));
+    expect(widgetCss("pt")).toBe(widgetCss("en"));
   });
 
-  it("has no :root, html or body selector left", () => {
-    expect(rootSelectors(parsed)).toEqual([]);
+  it("part 1 is the widget's CSS rule for rule, with only the fence and the keyframe name added", () => {
+    const old = parse(widgetCss("en"));
+    const fenced = shape(old).map((r) => ({
+      media: r.media,
+      selectors: r.selectors.map((s) => `${ROOT} ${s}`),
+      declarations: r.declarations.map((d) => d.replace(/^animation:ri-spin\b/, "animation:ld-ri-spin")),
+    }));
+    expect(shape(widgetPart)).toEqual(fenced);
+    expect(widgetPart.keyframes).toEqual(old.keyframes.map((k) => `ld-${k}`));
   });
 
-  it("names only ld- keyframes in animations, and each one exists", () => {
-    expect(parsed.keyframes.filter((k) => !k.startsWith("ld-"))).toEqual([]);
-    expect(animationRefs(parsed).length).toBeGreaterThan(0);
-    expect(badAnimations(parsed)).toEqual([]);
+  it("part 2 is the skin's five rules for the widget, after it", () => {
+    expect(skinPart.rules.map((r) => r.selectors.join(", "))).toEqual([
+      `${ROOT} .ri-dialog`,
+      `${ROOT} .ri-head`,
+      `${ROOT} .ri-dialog::backdrop`,
+      `${ROOT} .ri-btn, ${ROOT} .ri-input, ${ROOT} .ri-select, ${ROOT} .ri-textarea`,
+      `${ROOT} .ri-primary:hover`,
+    ]);
+  });
+
+  // Ties between the two files would be decided by load order, which nothing
+  // here controls. launch-dashboard.css keeps one .ri- rule, and it sets
+  // nothing the widget sets.
+  it("leaves launch-dashboard.css no .ri- rule that could tie with it", () => {
+    const left = parse(CSS).rules.filter((r) => r.selectors.some((s) => /\.ri-/.test(s)));
+    expect(left.map((r) => r.selectors.join(", "))).toEqual([`${ROOT}.sub-open .ri-pill`]);
+    const pillProps = new Set(
+      widgetPart.rules.filter((r) => r.selectors.includes(`${ROOT} .ri-pill`)).flatMap((r) => r.declarations.map((d) => d.property)),
+    );
+    expect(left[0].declarations.map((d) => d.property).filter((p) => pillProps.has(p))).toEqual([]);
   });
 });

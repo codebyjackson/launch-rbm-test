@@ -16,6 +16,9 @@
  * The fence works one way: these rules cannot reach RBM's page, but RBM's own
  * global CSS still reaches inside it.
  *
+ * The skin's rules for the feedback widget are in styles/feedback.css, with
+ * the widget's own: fenced alike, the two would tie (see that file).
+ *
  * Not in this file, so the host page loads them: the Source Sans 3 web font
  * (the RBM build links it from Google Fonts) and MapLibre's stylesheet
  * (maplibre-gl.css).
@@ -1548,11 +1551,6 @@
   .launch-dashboard .swg button:not([aria-pressed="true"]):hover { background: var(--accent-soft); color: var(--ink); }
   .launch-dashboard .tab[aria-selected="false"]:hover { color: var(--ink); border-color: var(--accent); }
 
-  /* feedback dialog: Unitaid Grey head strip, rounded-lg, shadow-xl. The widget
-     adds its own stylesheet when it loads, after this one, so these rules carry
-     an extra "html" to win on specificity instead of source order. */
-  .launch-dashboard .ri-dialog { border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
-  .launch-dashboard .ri-head { background: #F0F2F5; }
-  .launch-dashboard .ri-dialog::backdrop { background: rgba(0,0,0,.5); }
-  .launch-dashboard .ri-btn, .launch-dashboard .ri-input, .launch-dashboard .ri-select, .launch-dashboard .ri-textarea { border-radius: 6px; }
-  .launch-dashboard .ri-primary:hover { background: #212E92; }
+  /* The skin's five rules for the feedback dialog moved to styles/feedback.css,
+     after the widget's own rules: fenced the same way, they would tie with
+     them here (see that file). */
