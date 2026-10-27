@@ -68,9 +68,86 @@ export interface JourneyStep {
   year: number | string;
 }
 
+/** detail.country: the summary figures, shown when there is no country list. */
+export interface CountrySummary {
+  registered: number | string;
+  inGuidelines: number | string;
+  inMft: number | string;
+  forecastDemand: string;
+}
+
+/** One country on the map, at the furthest access level it has reached. */
+export interface CountryEntry {
+  iso3: string;
+  /** "registered", "guidelines" or "mft" */
+  level: string;
+  /** source ids: a "National register" source confirms the registration */
+  sources?: string[];
+  [key: string]: unknown;
+}
+
+/** detail.countries: the list the map is painted from, and how far it is checked. */
+export interface CountryList {
+  /** "verified", "illustrative", or another word shown as it is */
+  status: string;
+  note?: string;
+  list: CountryEntry[];
+}
+
+export interface ProcurementChannel {
+  channel: string;
+  pct: number;
+}
+
+export interface ProcurementPresentation {
+  label: string;
+  transactions: number;
+  packs: number;
+  /** treatment courses, where the build could work them out */
+  courses: number | null;
+}
+
+/** detail.volume: procurement through public channels. */
+export interface Procurement {
+  total: string;
+  period: string;
+  split: ProcurementChannel[];
+  source?: string;
+  sources?: string[];
+  byPresentation?: ProcurementPresentation[];
+  /** how treatment courses were counted */
+  coursesRule?: string;
+}
+
+export interface Research {
+  lead: string;
+  geographies: string;
+  timeline: string;
+  question: string;
+}
+
+/** detail.price: in the data, not shown on today's page. */
+export interface Price {
+  value: string;
+  note?: string;
+  source?: string;
+  confirmedInWriting?: boolean;
+  asOf?: string;
+}
+
 export interface ProductDetail {
   journey?: JourneyStep[];
   milestones?: Milestone[];
+  price?: Price;
+  useCase?: string;
+  access?: string[];
+  adoption?: string[];
+  research?: Research;
+  country?: CountrySummary;
+  countries?: CountryList | null;
+  volume?: Procurement | null;
+  /** shown in place of procurement figures when there are none */
+  volumeNote?: string;
   [key: string]: unknown;
 }
 
@@ -84,7 +161,14 @@ export interface Product {
   phase: string;
   currentStage: number;
   flag: string | null;
+  /** the medicines table's Main barrier text, read before flag */
+  barrier?: string;
+  /** a card of its own under the product's detail */
+  acknowledgement?: string;
+  /** a row not yet tracked: drawn with its note, no journey */
   placeholder?: boolean;
+  /** a placeholder row's text */
+  note?: string;
   stages: StageEntry[];
   detail: ProductDetail;
   [key: string]: unknown;
@@ -127,6 +211,8 @@ export interface Source {
   /** the short name a citation shows */
   label?: string;
   url?: string;
+  /** "National register", "Policy / guidelines", ...; English on every page */
+  category?: string;
   [key: string]: unknown;
 }
 
