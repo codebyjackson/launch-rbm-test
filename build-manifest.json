@@ -1,11 +1,19 @@
 {
-  "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. scripts/copy-rbm-pages.js compares every file below with what is here before it copies a new build, and stops if one was changed.",
-  "built_from": "fba200d436ca9ca7f824351c37d2ce0bec89a451",
+  "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. data/dashboard.json is the latest file published to the data repo, replaced after each publish by scripts/copy-rbm-pages.js --data-only. scripts/copy-rbm-pages.js compares every file below with what is here before it copies, and stops if one was changed.",
+  "built_from": "2d30ff3395d5755ed4a1f63c2ca38fd04915fb33",
   "clean": true,
   "translations_current": true,
-  "data_url": "https://codebyjackson.github.io/launch-data-test/v1/dashboard.json",
+  "data_url": "../data/dashboard.json",
   "api_url": "https://launch-development-test.vercel.app",
   "test_build": false,
+  "schema": 1,
+  "dataset": {
+    "data_repo_commit": "68bdf4b3558598a95735ea7eb34b40370ac03d56",
+    "generated_at": "2026-10-27T08:38:13.617Z",
+    "last_updated": "2026-10-19",
+    "schema_version": 1
+  },
+  "dataset_problems": [],
   "files": {
     "assets/journey-icons/01-rnd-clinical.svg": "dc71f0cce45820c81d9a59e05842715a833faee486ab940cf7ec11e073964872",
     "assets/journey-icons/02-regulatory-approval.svg": "6317d48a7affd7567314bfde56801afe020484b066f93b2b1d14a952d72e4a1c",
@@ -29,21 +37,18 @@
     "assets/journey-icons/png/journey-strip.png": "f1fdf0fc1497df18a5c4b0862b0d9658733e68873dc9df7e4130c380b9ba8dd5",
     "assets/unitaid-logo.svg": "d630e129c6691075244212964fb2bc625340ae301e833996365dbd8f1e1d4979",
     "assets/who-emblem.svg": "1f635076a3a49d050103db9df46baa7a7b5457eef538655f52807c1b6cd054a2",
-    "en/assets/report-issue.js": "9f1bcbd0d4627a65de78137888326b420efb97478db7b774a3efb66d76e668cc",
+    "data/dashboard.json": "01129c64e287644da9630b7725b281e6f012ebb19a75294836b8c3ea98ca0b87",
+    "en/assets/report-issue.js": "a197b552294f4fd544d6cbbb36b45a4752d7d84f556710b503e66b88d9b27b48",
     "en/data/world-map-geo.js": "65a36ace62a02003b125cb4749e39ed6aa54de6aa57c4cf36bb2d7307b6997d4",
     "en/data/world-map.js": "0857fef8a8709953bb887bf39e3f47007566978fc736731dfc434eb8ae088a02",
-    "en/index.html": "aca573da891156cb149836e33757d48a7cf240c20596f806ebbe91abb5b176ab",
-    "es/assets/report-issue.js": "333ec2ae835cda1f016a94ef72ef1f8566000f96ca5b01c16de801f7083e76e7",
-    "es/data/world-map-geo.js": "0dfd08890408cc768203f6dd859954a05231e37f5387c21b855be273b6d71fc5",
-    "es/data/world-map.js": "89f4e545945ef9371b4c45cb2ca367e8951f3586aa51b36e16ec30f0403e1d1c",
-    "es/index.html": "2f07b11ebbbb2051efe918b06cbe0b64149b102bad19fa494446f5b677daeaa5",
-    "fr/assets/report-issue.js": "41b94b9ed6f18ce96d86976693ee3ab588c9866fc5446aaa8d7168792eceb681",
+    "en/index.html": "a8b215992565cf7e17ca49e8578d9c30369a24c1bd8621420f21a857448d4af6",
+    "fr/assets/report-issue.js": "437b3881a7fc41b378691380664c9aebc7482d5c9be5edb864d81ebfec6bc810",
     "fr/data/world-map-geo.js": "1b423c379af752f61ac8fd0d61de934fbf5a5e8ac1b4737174bfd2115df1c2bf",
     "fr/data/world-map.js": "2825a19db46405dfb51c018ad42022f942be14668105721cd2612a04fc25cb07",
-    "fr/index.html": "29ced3da5972a5c151b09ecc5d06a2fb43d673bb635f7b497c021524dbc57ec4",
-    "pt/assets/report-issue.js": "d7e105272a9630d851779c1ad219d0a8b2511f8b47f2295bbdaf695fcbde0b06",
+    "fr/index.html": "56acf492fd71f4e012ff9a2af5d7da11935bbd3e320ee397f2d6b7a2ef73fe1c",
+    "pt/assets/report-issue.js": "40fc22d0b7133f120cb1ced4e3c1136743d2f39e5e67ce1919461b6d7202824a",
     "pt/data/world-map-geo.js": "32f0a5c1f0c5611343c3e9d141c1f036c363f93b96fd08ddb4875e190c46014c",
     "pt/data/world-map.js": "2f8d7722a0390c51a5efcc91808ef9115372c69cc315ec1ab6e16c993c4bba80",
-    "pt/index.html": "842ef31e1277f99300370ecd53fccae41852814d97d6c1890821bfe33cda7161"
+    "pt/index.html": "bde2161cdef4739ee927376407862c99244527cb61ce3537bccee818053966d9"
   }
 }
