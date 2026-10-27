@@ -30,15 +30,47 @@ export class DatasetError extends Error {
   }
 }
 
+/**
+ * A stage's or milestone's status. The data keeps "late" even while the page
+ * shows it as "prog" (DISPLAY.showLate in lib/stages.ts).
+ */
+export type Status = "done" | "prog" | "late" | "idle";
+
 export interface StageEntry {
-  status: string;
+  status: Status;
   note?: string;
+  /** Free text for a reader ("2012 (label update 2025)", "Since 2018", "Rolling"). */
   date?: string;
   next?: string;
   nextDate?: string;
   source?: string;
   asOf?: string;
   sources?: string[];
+  [key: string]: unknown;
+}
+
+export interface Milestone {
+  milestone: string;
+  status: Status;
+  label?: string;
+  date?: string;
+  next?: string;
+  anticipated?: string;
+  source?: string;
+  sources?: string[];
+  [key: string]: unknown;
+}
+
+/** One access milestone in detail.journey: a product-level list, not one entry per stage. */
+export interface JourneyStep {
+  label: string;
+  /** a year, or "TBC" for the gate still pending */
+  year: number | string;
+}
+
+export interface ProductDetail {
+  journey?: JourneyStep[];
+  milestones?: Milestone[];
   [key: string]: unknown;
 }
 
@@ -52,18 +84,37 @@ export interface Product {
   phase: string;
   currentStage: number;
   flag: string | null;
+  placeholder?: boolean;
   stages: StageEntry[];
-  detail: { [key: string]: unknown };
+  detail: ProductDetail;
   [key: string]: unknown;
+}
+
+/** Stage indices drawn as one column; [2, 3] is a pair with no order between them. */
+export interface StageColumn {
+  stages: number[];
+}
+
+export interface YardstickStep {
+  years: number;
+  /** a published timeline, or LAUNCH's working estimate */
+  basis: "published" | "estimate";
+}
+
+/** The years each stage, and the whole journey, is expected to take. */
+export interface Yardstick {
+  wholeYears: number;
+  /** by stage index; null where a stage has no expected time */
+  expected: (YardstickStep | null)[];
 }
 
 /** Same shape as window.LAUNCH_DATA on the static pages. */
 export interface LaunchData {
   meta: { lastUpdated: string; dataStatus: string; host: unknown };
   stages: string[];
-  stageColumns: unknown[];
+  stageColumns?: StageColumn[];
   stageInfo: unknown;
-  yardstick: unknown;
+  yardstick?: Yardstick | null;
   glossary: unknown;
   changelog: unknown;
   products: Product[];
@@ -72,6 +123,10 @@ export interface LaunchData {
 export interface Source {
   id: string;
   public: true;
+  title?: string;
+  /** the short name a citation shows */
+  label?: string;
+  url?: string;
   [key: string]: unknown;
 }
 
@@ -124,9 +179,9 @@ export function localize(raw: unknown, locale: Locale, url: string): Localized {
         host: d.host,
       },
       stages: d.stages as string[],
-      stageColumns: d.stageColumns as unknown[],
+      stageColumns: d.stageColumns as StageColumn[] | undefined,
       stageInfo: d.stageInfo,
-      yardstick: d.yardstick,
+      yardstick: d.yardstick as Yardstick | null | undefined,
       glossary: d.glossary,
       changelog: d.changelog,
       products: d.products as Product[],

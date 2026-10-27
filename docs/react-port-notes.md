@@ -49,6 +49,50 @@ This file is updated in the same commit as each change it describes.
    `ERR_REQUIRE_ESM`. As `.mts` it loads and all tests run. Development machines
    should still use Node 22.12+ or 24. RBM's server needs only what Next.js needs
    (20.9+).
+9. **What "the pure logic" is.** Ported: the formatting helpers (`readableDate`,
+   `shortDate`, `fmtFig`, `firstClause`, `citeLinks`, `citeHtml` as
+   `citeOrText`) to `lib/format.ts`, and the stage rules from `stageYear` to
+   `yardResult`, with every helper they read (`statusShown`, `peekLine`,
+   `peekLineFor`, `phaseOf`, and the start-up statement that rewrites `late` as
+   `prog`, as `applyShowLate`) to `lib/stages.ts`. Old names kept. Not ported:
+   functions that only build markup (`yardBadge`, `yardPill`, `yardBox`,
+   `yardTable`, `yardNote`, `accessCell`, `accessInfo`, `lateInfo`); they
+   become components. Rejected: porting the small values inside those now
+   (`yardBox`'s due year, `yardTable`'s phase headers, `yardNote`'s stage
+   lists). No old function returns them alone, so the golden test could check
+   them only by writing the markup again.
+10. **The page's globals and switches travel in a `StageContext`**
+    (`stageContext()`), and "today" is its `asOfYear`: the year of the
+    dataset's `lastUpdated`, as `ASOF_YEAR` was, overridable for tests.
+    Rejected: injecting a clock. The page never reads one (the golden test
+    counts 0 clock reads across its 82,911 comparisons), so a clock would be
+    new behaviour.
+11. **The display switches are `DISPLAY`, as shipped** (`showProgress`,
+    `progressKept`, `showLate`, `yardCompare`). The golden test also runs them
+    turned on. As shipped, `yardstick()` returns null for every medicine, so
+    its port would otherwise never be compared on a real result.
+12. **Language text is a temporary table, `lib/strings.ts`**, one typed entry
+    per language, copied from the built fr/pt pages, with `{name}`
+    placeholders, the form the message files will use. Step 2 replaces it.
+    Rejected: one copy of the functions per language, which is what the pages
+    did (the build wrote translations into the code); and message files now,
+    which is step 2 and needs its library chosen first.
+13. **Citations are values, not markup**: `{ label, url? }[]`. Two quirks of
+    the page are kept, so the port behaves the same: ids are looked up on a
+    plain object, so `"constructor"` finds `Object.prototype`'s and shows as an
+    empty name; and the free-text fallback is judged on the joined markup being
+    empty, so one nameless, unlinked source also falls back.
+14. **The golden test runs the page's own code.** `tests/golden/extract.mjs`
+    copies the needed top-level declarations, verbatim, out of
+    `git show 7c1bf11:{en,fr,pt}/index.html` into `tests/golden/reference/`
+    (`--check` confirms they are current), so it works after the static pages
+    are deleted. The test loads each copy into `node:vm` with the globals from
+    `localize()`, and compares old and new over 85 product variants, every
+    stage, every string, date and citation in the data, and synthetic edge
+    cases, in 6 scenarios (switches, three "today" years, no `stageColumns`)
+    per language: 82,911 comparisons, all equal. Eleven planted bugs: 9
+    caught; the 2 missed cannot change any result (`sinceFrom`'s
+    `j.length > 1` against `> 0`; `stageYear`'s unreachable `<= 2100`).
 
 ## Deferred, and found on the way
 
@@ -61,6 +105,29 @@ This file is updated in the same commit as each change it describes.
 - `tests/fixtures/dashboard.json` is the published file of 27 Oct 2026
   (pipeline commit `2d30ff3`). Refresh it when the data or schema changes in a
   way the tests should see.
+- **Old behaviour kept as it is, and worth a decision later:**
+  - `fmtFig` reads a comma as a thousands separator in every language: a French
+    or Portuguese decimal with three digits after the comma (`"0,125 mg"`)
+    would show as `"125 mg"`, and `"US$1,234.50"` as `"US$1.23K.50"`. Neither
+    is in today's data. It changes only English text today; fr/pt write the
+    figures out ("11,6 millions de dollars").
+  - Singular for exactly 1 in every language: French reads "0 années".
+  - The Portuguese status word for Complete is `"Concluir"` ("to complete"),
+    not "Concluído". Two Portuguese yardstick labels end in a full stop where
+    English has none.
+  - `yardstick()` treats a final stage that is done but undated as still
+    going, so the whole journey counts on to today.
+  - `peekLine` with a status outside the four writes "undefined"; the types
+    now rule that out.
+  - `readableDate` is not called anywhere on today's page.
+- **Pure, but outside this step**, to port with their components:
+  `colIndexOf`, `sameColumn`, `preBoundaryDone`, `stalledSince` (with
+  `nowYear`, the same value as `ASOF_YEAR`), `lateAt`, `stepNo`, the `tracked`
+  order, `csvCell`, `journeyTime`'s axis and tier layout, and the counts in
+  `countryAccessKv` and `gatePanelHTML`.
+- The texts inside the markup builders (`LATE_DEF`, `ACCESS_DEF`, the
+  yardstick box and table labels) are not in `lib/strings.ts`; they go
+  straight to the message files with their components.
 
 ## Status
 
@@ -68,5 +135,9 @@ This file is updated in the same commit as each change it describes.
   `lib/locales.ts`, `lib/dataset.ts`, `lib/data.ts`, 16 tests passing;
   `next build` passes with `/en`, `/fr` and `/pt` pre-built from the live
   dataset; `npm audit`: 0 vulnerabilities. Not pushed.
-- **Next:** `lib/format.ts`, `lib/stages.ts`, and the golden test against the
-  static pages' own functions.
+- **27 Oct 2026, later.** Step 1 continued: `lib/format.ts`, `lib/stages.ts`,
+  `lib/strings.ts` (temporary), types filled in `lib/dataset.ts` (no change to
+  what `localize()` returns), and the golden test (`tests/golden.test.ts`,
+  `tests/golden/`). 38 tests pass (16 + 22), `tsc --noEmit` clean, `next build`
+  passes. Not committed.
+- **Next:** step 2, the message files, replacing `lib/strings.ts`.
