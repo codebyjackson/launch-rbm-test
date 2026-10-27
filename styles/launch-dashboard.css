@@ -1,0 +1,1558 @@
+/*
+ * The LAUNCH dashboard's styles, fenced in for RBM's Next.js platform.
+ *
+ * Contents, in the built RBM page's cascade order (en/index.html):
+ *   1. the page's own CSS: the <style> block of index.html;
+ *   2. the Unitaid look RBM's copies wear on top: the CSS in
+ *      scripts/rbm-skin.js (applySkin).
+ * Both from launch-development main at 89b2011, 27 Oct 2026.
+ *
+ * Changed from those sources, and nothing else:
+ *   - every selector is scoped under .launch-dashboard, the one element the
+ *     components render around the whole dashboard;
+ *   - :root, html and body rules apply to that element itself, so the design
+ *     tokens are defined there, not on <html>;
+ *   - @keyframes carry an "ld-" prefix (disc-flash -> ld-disc-flash).
+ * The fence works one way: these rules cannot reach RBM's page, but RBM's own
+ * global CSS still reaches inside it.
+ *
+ * Not in this file, so the host page loads them: the Source Sans 3 web font
+ * (the RBM build links it from Google Fonts) and MapLibre's stylesheet
+ * (maplibre-gl.css).
+ *
+ * Two uses of <html> in the page's script move to the root element: the
+ * sub-open class (toggled while the Subscribe panel is open) and the map's
+ * colour reads (getComputedStyle(document.documentElement) finds no tokens
+ * on <html> now). Elements that sat directly under <body> (#tip, .stat-tip,
+ * the feedback widget's pill and dialog) must render inside the root to be
+ * styled.
+ */
+
+/* ---------- 1. page CSS: index.html <style> ---------- */
+  .launch-dashboard {
+    color-scheme: light;
+    /* The page ground is a cool light gray (2 Oct 2026, was white) so the white
+       cards — pathway strip, medicines table, map, sources — stand off it
+       (1.13:1) instead of melting into it. Same blue-grey family as --ink.
+       Every text colour still clears 4.5:1 on it: --ink-3, the lightest, is
+       5.0:1. Print stays white (see the print view). */
+    --ground: #EEF2F4;
+    --surface: #FFFFFF;
+    --surface-2: #F4F7F8;
+    --ink: #16303F;
+    /* Secondary/tertiary text. Both were darkened for sheet rows 15+17: the old
+       --ink-3 (#7C8E99) was 3.15:1 on the detail panel's --surface-2, under the
+       4.5:1 AA floor; now 5.2:1. --ink-2 moved with it to keep the three steps apart. */
+    --ink-2: #3F5564;
+    --ink-3: #566A77;
+    /* expected time and the two access groups (8 Oct 2026) */
+    --exp-line: #94A3B8; --exp-ink: #111827;
+    --diff: #1D4ED8; --diff-soft: #EFF6FF;
+    --ph-mkt-soft: #EFF6FF; --ph-mkt-ink: #1D4ED8;
+    --ph-cty-soft: #EFF6FF; --ph-cty-ink: #1D4ED8;
+    --line: #DCE3E7;
+    --accent: #0F5A72;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E6F1F4;
+    /* The WHO emblem (assets/who-emblem.svg) can't be recoloured — its blue
+       is WHO's own, fixed by their usage policy. So the other journey glyphs
+       take that same blue instead, everywhere they appear (the overview
+       pathway strip and each product's stage markers) — every other use of
+       --accent on the page (buttons, links, chips) is unaffected. */
+    --journey-icon: #009EDB;
+    --good: #1E8A5A;
+    /* Text-only shades of the two status hues (2 Oct 2026). --good and --warn
+       stay the fills, borders and dots; as small text they measured 3.3-4.3:1,
+       under the 4.5:1 floor. These are the same hues, darker: 5.0-5.9:1 on
+       white, --surface-2, the ground and their own soft fills. */
+    --good-text: #17734B;
+    --good-soft: #E2F2EA;
+    --warn: #B87500;
+    --warn-text: #8C5A00;
+    --warn-soft: #FBF0DA;
+    --crit: #C0392B;
+    --crit-soft: #FAE7E4;
+    --idle: #7A8A94;
+    --idle-soft: #EEF1F3;
+    --map1: #6FC1CF;
+    --map2: #2A7FA8;
+    --map3: #1B2A5E;
+    --map-nodata: #FFFFFF;
+    --map-border: #8299A2;
+    /* map roles — components reference these; the --mapN steps above are the
+       ramp primitives each edition re-skins. */
+    --map-registered: var(--map1);
+    --map-guidelines: var(--map2);
+    --map-mft: var(--map3);
+    --shadow: 0 1px 3px rgba(22,48,63,.07), 0 8px 24px rgba(22,48,63,.08);
+  }
+  /* Light theme only — dark mode intentionally removed so the page always
+     renders on the same light ground regardless of OS/browser color-scheme. */
+  .launch-dashboard, .launch-dashboard * { box-sizing: border-box; }
+  .launch-dashboard {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 15px/1.5 -apple-system, "Segoe UI", system-ui, Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .launch-dashboard .wrap { margin: 0; padding: 16px clamp(24px, 4vw, 64px) 32px; position: relative; }
+
+  /* ---------- header ---------- */
+  /* Two rows (sheet rows 18/20 follow-up, 30 Sep 2026):
+       1. title on the left, "Powered by" Unitaid logo on the right (the
+          Prototype pill after the title was removed by request, 15 Oct 2026)
+       2. the description with "Last updated" under it on the left, Download
+          CSV + Subscribe on the right, bottom-aligned with the date
+          (capped at 120ch, balanced wrapping)
+     Replaces the old brand/meta two-column header, which left the middle empty
+     and stacked the logo, date and buttons in one right-hand column. */
+  .launch-dashboard header { margin-bottom: 6px; }
+  .launch-dashboard .hd-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px 24px; }
+  .launch-dashboard .hd-title { margin: 0; font-size: 26px; font-weight: 750; letter-spacing: -.01em; }
+  .launch-dashboard .hd-title span { color: var(--accent); }
+  /* text-wrap: balance splits a two-line description into two even lines, so
+     the last word never sits alone on a second line (it did at ~1800px with the
+     plain 160ch cap). */
+  .launch-dashboard .hd-desc { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 120ch; text-wrap: balance; }
+  .launch-dashboard .hd-bar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px; margin-top: 6px; }
+  /* 500px minimum: below roughly 860px of content the buttons would squeeze the
+     description into four short lines, so they wrap under it instead. */
+  .launch-dashboard .hd-text { flex: 1 1 500px; min-width: 0; }
+  .launch-dashboard .hd-status { margin-top: 6px; font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+  /* "Powered by" + the Unitaid logo. No plate, border, shadow or hover
+     effect (sheet row 11 follow-up): the logo sits directly on the page
+     background and blends in. The logo's SVG has no background of its own,
+     and its navy holds on the light gray page ground, so it needs no plate.
+     Keyboard focus keeps its outline. */
+  .launch-dashboard .attrib { flex: none; display: flex; justify-content: flex-end; }
+  .launch-dashboard .attrib a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 2px 0; border-radius: 4px; text-decoration: none;
+  }
+  .launch-dashboard .attrib a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .attrib .ptxt { font-size: 12.5px; line-height: 1.3; color: var(--ink-3); }
+  .launch-dashboard .attrib img { display: block; width: 112px; height: auto; }
+  .launch-dashboard .demo-banner {
+    margin: 10px 0 12px; padding: 9px 14px; border-radius: 8px;
+    background: var(--accent-soft); color: var(--ink-2); font-size: 13px;
+    border: 1px solid var(--line);
+  }
+  .launch-dashboard .demo-banner b { color: var(--ink); }
+  .launch-dashboard .demo-banner .bl-link { color: inherit; font-weight: 700; text-underline-offset: 2px; white-space: nowrap; }
+  .launch-dashboard .demo-banner.error { background: var(--crit-soft); color: var(--crit); }
+  /* Unverified data has to read as a warning, not as another note in accent
+     blue — amber, a heavier rule down the leading edge and a lead line that
+     states the caveat before any of the detail. */
+  .launch-dashboard .demo-banner.draft {
+    background: var(--warn-soft); color: var(--ink-2);
+    border: 1px solid var(--warn); border-left-width: 5px;
+    padding: 7px 14px; font-size: 13px; line-height: 1.45;
+  }
+  .launch-dashboard .demo-banner.draft .bl {
+    display: block; margin-bottom: 0;
+    font-size: 13.5px; font-weight: 750; letter-spacing: -.01em; color: var(--warn-text);
+  }
+  .launch-dashboard .demo-banner.draft .tbc {
+    font-weight: 700; color: var(--warn-text);
+  }
+
+  /* status dots (shape + color, never color alone) */
+  .launch-dashboard .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; font-size: 11px; font-weight: 800; }
+  .launch-dashboard .dot.done { background: var(--good); color: #fff; }
+  .launch-dashboard .dot.prog { background: var(--warn); color: #fff; }
+  .launch-dashboard .dot.late { background: var(--crit); color: #fff; }
+  .launch-dashboard .dot.idle { background: var(--idle-soft); border: 1.5px dashed var(--idle); color: var(--idle); }
+
+  /* ---------- pathway legend strip (illustrated journey) ---------- */
+  .launch-dashboard .pathway {
+    display: flex; align-items: flex-start; gap: 2px;
+    padding: 48px 18px 8px; margin-bottom: 10px; overflow-x: auto;
+    background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+  }
+  .launch-dashboard .pathnode { flex: 1; min-width: 84px; text-align: center; }
+  /* step number: the pathway is a sequence, so the order is stated, not implied.
+     The two WHO gates share one number because they are parallel. */
+  .launch-dashboard .pathnode .nb {
+    position: absolute; left: -7px; top: -5px; min-width: 20px; height: 20px; padding: 0 5px;
+    border-radius: 10px; background: var(--ink); color: #fff;
+    font-size: 11px; font-weight: 750; line-height: 20px; font-variant-numeric: tabular-nums;
+  }
+  .launch-dashboard .pathnode svg { width: 30px; height: 30px; display: block; margin: 0 auto; color: var(--journey-icon); }
+  /* The WHO emblem sits in the same box as a glyph but keeps its own colour and
+     its own 1.13:1 ratio, so it is contained rather than stretched. */
+  /* Slightly larger than the line glyphs beside it: a solid mark reads smaller
+     than an outline at the same box size, and the emblem is intricate. */
+  .launch-dashboard .pathnode .whoemb { width: 33px; height: 33px; display: block; margin: 0 auto; object-fit: contain; }
+  .launch-dashboard .stage .whoemb { width: 29px; height: 29px; object-fit: contain; }
+  .launch-dashboard .pathnode .pill {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent-soft); border: 1px solid var(--line);
+  }
+  /* expected time under each icon: a clock tag, so it reads as an estimate */
+  .launch-dashboard .pathexp { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; padding: 2px 8px 2px 6px; border: 1px dashed var(--exp-line); background: var(--surface); border-radius: 8px; font-size: 11.5px; line-height: 1.3; color: var(--ink-2); white-space: nowrap; }
+  .launch-dashboard .pathexp b { font-weight: 700; color: var(--exp-ink); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .pathnode .pathexp svg { width: 13px; height: 13px; margin: 0; display: inline-block; color: var(--exp-ink); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .launch-dashboard .pathexp.none { border-color: transparent; background: var(--surface); color: var(--ink-3); padding-inline: 8px; }
+  /* The tag wraps between its parts, never inside them (9 Oct 2026, phones;
+     every width since 19 Oct 2026). The WHO pair's column is 66px inside its
+     bracket on a phone, but the tag could not shrink below 112px (clock,
+     "2 years" and "expected" side by side), so it ran past the column and the
+     card. At tablet widths, and in RBM's iframe beside its sidebar, the same
+     tag ran past the bracket and was cut off ("1.5 years expecte"). Now
+     "expected" drops to a second line whenever the column is too narrow, and
+     the tag stays on one line when it fits. */
+  .launch-dashboard .pathexp { white-space: normal; text-align: center; justify-content: center;
+             flex-wrap: wrap; column-gap: 3px; max-width: 100%; box-sizing: border-box; }
+  .launch-dashboard .pathexp b { white-space: nowrap; }
+  @media (max-width: 640px) {
+    .launch-dashboard .pathexp { padding: 2px 5px; }
+  }
+  /* Market Access / Country Access: two white cards on the canvas,
+     each with a gray title strip and half the width (8 Oct 2026). The card, its
+     shadow and radius moved from .pathway to .phase; the arrow between steps 3
+     and 4 sits in the gap. */
+  .launch-dashboard .pathway { background: transparent; box-shadow: none; border-radius: 0; padding: 2px 4px 12px; gap: 0; align-items: stretch; }
+  .launch-dashboard .phase { flex: 1 1 0; min-width: min-content; display: flex; flex-direction: column; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+  .launch-dashboard .phase-t { background: #E5E7EB; padding: 9px 14px; }
+  .launch-dashboard .phase-t b { display: inline-flex; align-items: center; font-size: 13px; font-weight: 700; line-height: 1.25; color: var(--ph-mkt-ink); white-space: nowrap; }
+  /* the parallel WHO pair is lifted onto the other icons' line (--pg-lift, set by
+     alignPathGroup), so the body leaves that much room above the icons */
+  .launch-dashboard .phase-body { flex: 1; display: flex; align-items: flex-start; gap: 2px; padding: calc(8px + var(--pg-lift, 0px)) 14px 10px; }
+  .launch-dashboard .phn { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 6px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-style: normal; font-weight: 700; line-height: 1; }
+  .launch-dashboard .patharrow.phasegap { align-self: center; width: 44px; margin-top: 0; text-align: center; }
+  .launch-dashboard .pathnode .plabel { display: block; font-size: 12px; line-height: 1.25; color: var(--ink-2); margin-top: 5px; padding: 0 3px; overflow-wrap: break-word; hyphens: auto; }
+  /* always-on badge marking every gate icon as clickable, not just on hover */
+  .launch-dashboard .pathnode .pill::after {
+    content: "\25be"; position: absolute; top: -6px; right: -6px;
+    width: 24px; height: 24px; border-radius: 50%; line-height: 24px; text-align: center;
+    font-size: 15px; font-weight: 700; color: var(--ink-2);
+    background: var(--surface); box-shadow: 0 0 0 1px var(--line);
+    transition: color .15s ease, box-shadow .15s ease, transform .15s ease;
+  }
+  .launch-dashboard .pathnode:hover .pill::after, .launch-dashboard .pathnode[aria-expanded="true"] .pill::after {
+    color: var(--accent); box-shadow: 0 0 0 1px var(--accent);
+  }
+  .launch-dashboard .pathnode[aria-expanded="true"] .pill::after { transform: rotate(180deg); }
+  .launch-dashboard .patharrow { flex: none; color: var(--ink-3); font-size: 15px; margin-top: 15px; user-select: none; }
+  /* A column holding more than one stage (stageColumns groups them) — drawn
+     stacked and bracketed, not side by side, so nothing implies which one
+     comes first. Markers stay the same size as every ungrouped gate; the
+     bracket is the strip's echo of the fork the product rows draw, since the
+     strip has arrows between columns rather than connecting bars.
+
+     Two stacked icons plus the caption between them sit lower, as a block,
+     than one icon does — align-self:stretch only matches its outer height to
+     the row, it does not centre its content within that height. Left alone,
+     the whole pair (and the arrows either side of it, which point at a single
+     icon's fixed centre) reads off-axis from every other gate. alignPathGroup()
+     measures the gap and publishes it as --pg-lift; transform (not margin)
+     shifts the group so nothing else in the row's flex sizing has to change,
+     the same reason --sg-lift stays off percentages further down this file. */
+  .launch-dashboard .pathgroup {
+    flex: 1; min-width: 84px; display: flex; flex-direction: column; align-items: center;
+    gap: 2px; padding: 4px 6px 6px; align-self: stretch;
+    border-left: 3px solid var(--line); border-right: 3px solid var(--line);
+    border-radius: 14px;
+    transform: translateY(calc(-1 * var(--pg-lift, 0px)));
+    /* The transform moves paint, not layout, so without this the row stays
+       --pg-lift taller than the bracket's painted bottom edge and the card
+       keeps that much empty space under it. Pulling the layout box up by the
+       same amount makes the card's bottom padding the real gap. */
+    margin-bottom: calc(-1 * var(--pg-lift, 0px));
+  }
+  .launch-dashboard .pathgroup .pathnode { flex: none; min-width: 0; width: 100%; }
+  /* Empty spacer between the two parallel gates. It used to read "no fixed
+     order" (removed 30 Sep 2026: the heading line and the bracket say it); the
+     element stays so the pair keeps a gap and alignPathGroup() still measures
+     the same structure. */
+  .launch-dashboard .pathgroup-note { display: block; min-height: 8px; margin: 1px 0 2px; padding: 0 2px; }
+
+  /* ---------- journey table (sheet rows 18/20, 30 Sep 2026) ----------
+     One summary row per medicine, A-Z. Level 1 (the chevron) opens that
+     medicine's journey: the time-scaled view by default, the original
+     pathway-order rail behind a quiet text link. Level 2 ("More detail") opens
+     the cards and milestone table that "View details" used to show. */
+  .launch-dashboard .board {
+    background: var(--surface); border-radius: 14px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .launch-dashboard .product { border-bottom: 1px solid var(--line); }
+  .launch-dashboard .product:last-child { border-bottom: 0; }
+  .launch-dashboard .product.future { opacity: .78; }
+  .launch-dashboard .product.l1-open > .srow { background: var(--surface-2); }
+  .launch-dashboard .srow {
+    display: grid; column-gap: 30px; align-items: center; padding: 10px 18px; min-height: 58px;
+    grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(150px, 1.2fr) 112px 112px minmax(150px, 1.2fr);
+  }
+  .launch-dashboard .srow.hd {
+    min-height: 34px; padding-block: 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+    font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .launch-dashboard .exp {
+    width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface);
+    color: var(--ink-2); cursor: pointer; display: grid; place-items: center; padding: 0; font: inherit;
+    font-size: 14px; font-weight: 700; transition: transform .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .launch-dashboard .exp:hover { color: var(--accent); border-color: var(--accent); }
+  /* the whole row opens the journey (the chevron stays the keyboard route) */
+  .launch-dashboard .srow:has(> .exp) { cursor: pointer; }
+  .launch-dashboard .exp[aria-expanded="true"] { transform: rotate(180deg); color: var(--accent); border-color: var(--accent); }
+  .launch-dashboard .exp:focus-visible, .launch-dashboard .swg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .nm { min-width: 0; }
+  .launch-dashboard .nm b { display: block; font-size: 15.5px; font-weight: 700; line-height: 1.2; letter-spacing: -.005em; }
+  .launch-dashboard .nm small { display: block; font-size: 12px; color: var(--ink-2); }
+  .launch-dashboard .mini { display: flex; align-items: center; gap: 3px; }
+  /* Each journey column is a cell so the step selected on the pathway strip can
+     light it up in every row (30 Sep 2026). The cell stretches to the full row
+     height, so the lit cells read as one continuous column down the table. */
+  .launch-dashboard .srow > .c-mini { align-self: stretch; margin-block: -10px; display: flex; align-items: stretch; }
+  .launch-dashboard .srow > .c-mini .mini { align-items: stretch; }
+  .launch-dashboard .jcell { flex: none; display: flex; align-items: center; justify-content: center; padding: 0 4px; margin: 0 -4px; }
+  .launch-dashboard .mini .ln { align-self: center; }
+  /* the lit band alone marks the step: a ring on each dot made the two stacked
+     WHO dots merge into an "8" (removed 30 Sep 2026) */
+  .launch-dashboard .jcell.on { background: var(--accent-soft); box-shadow: inset 1px 0 0 #B7D6DF, inset -1px 0 0 #B7D6DF; }
+  .launch-dashboard .srow.hd .c-mini { margin-block: 0; align-self: center; display: block; }
+  /* the journey sits in the middle of its column, so the space to the medicine on one side
+     and to the current stage on the other is the same (8 Oct 2026) */
+  @media (min-width: 681px) { .launch-dashboard .srow > .c-mini { justify-content: center; } .launch-dashboard .srow.hd .c-mini { text-align: center; } }
+  .launch-dashboard .md { width: 14px; height: 14px; border-radius: 50%; flex: none; box-sizing: border-box; }
+  .launch-dashboard .md.done { background: var(--good); }
+  .launch-dashboard .md.prog { background: var(--warn-soft); border: 2px solid var(--warn); }
+  /* a diamond: in the Journey column "complete" and "delayed" were the same
+     solid circle in green and red, which merge under red-green colour blindness */
+  .launch-dashboard .md.late { background: var(--crit); border-radius: 2px; transform: rotate(45deg) scale(.8); }
+  .launch-dashboard .md.idle { background: var(--idle-soft); border: 1.5px dashed var(--idle); }
+  .launch-dashboard .mp { display: flex; flex-direction: column; gap: 2px; padding: 0 2px; border-left: 2px solid var(--line); border-right: 2px solid var(--line); border-radius: 6px; }
+  .launch-dashboard .mp .md { width: 9px; height: 9px; }
+  .launch-dashboard .mini .ln { width: 6px; height: 2px; background: var(--line); flex: none; }
+  .launch-dashboard .light { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+  /* the status shows the same symbol as the Journey (dot, ring, diamond, dashed ring) */
+  .launch-dashboard .light i { width: 12px; height: 12px; border-radius: 50%; flex: none; box-sizing: border-box; }
+  .launch-dashboard .light.done { color: var(--good-text); } .launch-dashboard .light.done i { background: var(--good); }
+  .launch-dashboard .light.prog { color: var(--warn-text); } .launch-dashboard .light.prog i { background: var(--warn-soft); border: 2px solid var(--warn); }
+  .launch-dashboard .light.late { color: var(--crit); } .launch-dashboard .light.late i { background: var(--crit); border-radius: 2px; transform: rotate(45deg) scale(.8); }
+  .launch-dashboard .light.idle { color: var(--ink-3); } .launch-dashboard .light.idle i { background: var(--idle-soft); border: 1.5px dashed var(--idle); }
+  .launch-dashboard .srow .cell { font-size: 13.5px; }
+  /* Current stage and Status are two columns again (20 Oct 2026; one cell
+     since 8 Oct). "Delayed" carries an i that explains it (hover, focus or
+     tap). Where the status word is hidden (SHOW_PROGRESS in the script) the
+     Status cell shows a dash. */
+  .launch-dashboard .srow .c-stage { display: grid; gap: 2px; min-width: 0; }
+  .launch-dashboard .c-stage .note { font-size: 12px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
+  .launch-dashboard .c-stage .stg { font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .launch-dashboard .srow.hd .c-stage { display: block; }
+  .launch-dashboard .srow .c-stat { min-width: 0; }
+  /* wraps inside its fixed column: fr "Pas encore commencé" is wider than it */
+  .launch-dashboard .c-stat .light { white-space: normal; line-height: 1.3; }
+  .launch-dashboard .c-stat.none { font-size: 13px; color: var(--ink-3); }
+  .launch-dashboard .info { display: inline-grid; place-items: center; flex: none; width: 15px; height: 15px; margin-left: 1px; padding: 0; border: 1.5px solid currentColor; border-radius: 50%;
+          background: none; color: inherit; font: 700 10px/1 inherit; cursor: help; }
+  .launch-dashboard .info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .stat-tip { position: fixed; z-index: 60; max-width: 240px; background: var(--ink); color: #fff; font-size: 12px; line-height: 1.4; padding: 7px 10px; border-radius: 6px; pointer-events: none; }
+  .launch-dashboard .srow .num { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .launch-dashboard .c-bar { font-size: 13px; line-height: 1.35; color: var(--ink); min-width: 0; text-wrap: balance; }
+  .launch-dashboard .srow.hd .c-bar { font-size: 10.5px; line-height: inherit; color: var(--ink-3); }
+  .launch-dashboard .c-bar.none { color: var(--ink-3); }
+  .launch-dashboard .chip {
+    font-size: 11px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase;
+    padding: 2.5px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2);
+  }
+  .launch-dashboard .chip.pipeline { background: var(--accent-soft); color: var(--accent); }
+  .launch-dashboard .chip.soon { background: var(--idle-soft); color: var(--ink-3); }
+
+  /* level 1: the journey */
+  .launch-dashboard .l1 { display: none; padding: 4px 18px 16px; background: var(--surface-2); border-top: 1px dashed var(--line); }
+  .launch-dashboard .product.l1-open .l1 { display: block; }
+  .launch-dashboard .l1in { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px 14px; }
+  .launch-dashboard .l1h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-bottom: 16px; }
+  .launch-dashboard .l1id { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 12.5px; color: var(--ink-3); min-width: 0; }
+  .launch-dashboard .l1ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+  .launch-dashboard .l1t { font-size: 12.5px; font-weight: 650; color: var(--ink-2); }
+  /* The view switch: equal-weight buttons, timeline first (30 Sep 2026).
+     It was a quiet text link; Keith asked for a button group. A third button,
+     "Time taken", joined it on 7 Oct 2026 when data has a yardstick. */
+  .launch-dashboard .swg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .launch-dashboard .swg button {
+    border: 0; background: var(--surface); color: var(--ink-2); font: inherit; font-size: 12.5px; font-weight: 600;
+    padding: 5px 12px; min-height: 30px; cursor: pointer;
+  }
+  .launch-dashboard .swg button + button { border-left: 1px solid var(--line); }
+  .launch-dashboard .swg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .launch-dashboard .swg button:not([aria-pressed="true"]):hover { background: var(--accent-soft); color: var(--accent); }
+  .launch-dashboard .swg button:focus-visible { outline-offset: -2px; }
+  .launch-dashboard .swg button[aria-pressed="true"]:focus-visible { outline-color: var(--accent-ink); }
+  /* Yardstick (7 Oct 2026): expected time against time taken, in plain words.
+     A badge under "On pathway", a box at the top of an open row, and a third
+     view, "Time taken". A difference is shown as a signed number in RBM blue, not
+     as red "late": the wording is neutral on purpose (8 Oct 2026). Green means
+     no difference, grey has nothing to compare. See docs/jackson/yardstick.md. */
+  .launch-dashboard .srow .c-path { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  /* Access milestones (partner feedback, 19 Oct 2026): the column that was
+     "On pathway" names the two phases, each with what it has reached. */
+  .launch-dashboard .acc { display: grid; gap: 1px; font-size: 12.5px; line-height: 1.3; }
+  .launch-dashboard .acc small { font-size: 11px; color: var(--ink-3); }
+  .launch-dashboard .acc small + small, .launch-dashboard .acc b + small { margin-top: 4px; }
+  .launch-dashboard .acc b { font-weight: 700; color: var(--ink); }
+  .launch-dashboard .acc b.ok { color: var(--good-text); }
+  .launch-dashboard .acc .none { color: var(--ink-3); }
+  .launch-dashboard .srow.hd .c-path { display: flex; flex-direction: row; align-items: center; gap: 5px; }
+  .launch-dashboard .srow.hd .info { text-transform: none; }
+  .launch-dashboard .ysp { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; line-height: 1.4; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+  .launch-dashboard .ysp i { font-style: normal; font-weight: 500; }
+  .launch-dashboard .ysp.sm { font-size: 11.5px; padding: 1px 8px; }
+  .launch-dashboard .ysp.diff { background: var(--diff-soft); color: var(--diff); }
+  .launch-dashboard .ysp.good { background: var(--good-soft); color: var(--good-text); }
+  .launch-dashboard .ysp.none { background: var(--surface-2); color: var(--ink-3); font-weight: 500; }
+  .launch-dashboard .ysb-none { font-size: 11.5px; font-weight: 500; color: var(--ink-3); line-height: 1.3; }
+  .launch-dashboard .ysbox { display: grid; gap: 4px; margin: 0 0 16px; }
+  .launch-dashboard .ysfigs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface-2); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+  .launch-dashboard .ysfigs > div { display: grid; gap: 2px; padding: 12px 16px; border-right: 1px solid var(--line); }
+  .launch-dashboard .ysfigs > div:last-child { border-right: 0; }
+  .launch-dashboard .ysfigs small { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .launch-dashboard .ysfigs strong { font-size: 22px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .launch-dashboard .ysfigs span { font-size: 12.5px; color: var(--ink-3); }
+  .launch-dashboard .ysfigs .ysdiff { background: var(--diff-soft); }
+  .launch-dashboard .ysfigs .ysdiff strong { color: var(--diff); }
+  .launch-dashboard .ysbox p { margin: 0; font-size: 14px; color: var(--ink-2); }
+  .launch-dashboard .ysbox p b { color: var(--ink); }
+  .launch-dashboard .ysbox p i { font-style: normal; color: var(--ink-3); }
+  .launch-dashboard .ystable { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .launch-dashboard .ystable th, .launch-dashboard .ystable td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  .launch-dashboard .ystable thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; border-bottom: 0; padding-block: 8px; }
+  .launch-dashboard .ystable tbody th { font-weight: 500; color: var(--ink); }
+  .launch-dashboard .ystable td { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .launch-dashboard .ystable td i { font-size: 12.5px; color: var(--ink-3); }
+  .launch-dashboard .ystable tr.ysgrp th { padding: 8px 12px; background: #F8FAFC; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--ph-ink); }
+  .launch-dashboard .ystable tr.ph0 { --ph-ink: var(--ph-mkt-ink); }
+  .launch-dashboard .ystable tr.ph1 { --ph-ink: var(--ph-cty-ink); }
+  .launch-dashboard .ystable tr.whole > * { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; color: var(--ink); }
+  .launch-dashboard .ysnote { margin: 10px 0 0; font-size: 12px; color: var(--ink-3); }
+  .launch-dashboard .ysempty { background: var(--surface-2); border-radius: 8px; padding: 12px 16px; font-size: 13.5px; color: var(--ink-2); }
+  .launch-dashboard .ysempty b { color: var(--ink); }
+  @media (max-width: 560px) {
+    .launch-dashboard .ysfigs { grid-template-columns: minmax(0, 1fr); }
+    .launch-dashboard .ysfigs > div { border-right: 0; border-bottom: 1px solid var(--line); }
+  }
+  /* On a phone the Variance column sat past the scroll edge, so the one thing
+     the table is for was out of sight. Step and Variance only. */
+  @media (max-width: 560px) {
+    .launch-dashboard .ystable th:nth-child(2), .launch-dashboard .ystable td:nth-child(2), .launch-dashboard .ystable th:nth-child(3), .launch-dashboard .ystable td:nth-child(3) { display: none; }
+    .launch-dashboard .ystable .ysp { display: inline-block; white-space: normal; border-radius: 10px; }
+  }
+  .launch-dashboard .view { transition: opacity .28s ease, transform .28s ease; }
+  .launch-dashboard .view[hidden] { display: none; }
+  .launch-dashboard .view.fade-in { opacity: 0; transform: translateY(6px); }
+  .launch-dashboard .cscroll { overflow-x: auto; overflow-y: hidden; }
+  /* "More detail" is a full-width bar across the foot of the panel (30 Sep 2026),
+     a bigger target than the outlined button it replaced. The panel loses its
+     bottom padding so the bar sits on the edge, and overflow:hidden keeps the bar
+     inside the panel's rounded corners. The detail opens below the bar. */
+  .launch-dashboard .l1in { overflow: hidden; padding-bottom: 0; }
+  .launch-dashboard .more {
+    display: flex; align-items: center; justify-content: center; gap: 8px; width: calc(100% + 32px);
+    margin: 10px -16px 0; padding: 10px 12px; background: var(--accent-soft); border: 0; border-top: 1px solid #B7D6DF;
+    color: var(--accent); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  /* --accent-soft, not --surface-2: the bar sat on the same grey as the .l1
+     band around the panel and blended into it, so it was easy to overlook. */
+  .launch-dashboard .more:hover { background: #D5E8ED; }
+  .launch-dashboard .more:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .launch-dashboard .more .ch { transition: transform .15s ease; }
+  .launch-dashboard .more[aria-expanded="true"] .ch { transform: rotate(180deg); }
+  @media (max-width: 1040px) {
+    .launch-dashboard .srow { column-gap: 20px; grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(140px, 1fr) 112px minmax(120px, 1fr); }
+    /* the header's own .c-path rule is more specific, so it is named here too:
+       without it "Access" headed the barrier column (20 Oct 2026) */
+    .launch-dashboard .srow .c-path, .launch-dashboard .srow.hd .c-path { display: none; }
+  }
+  /* Just above that (19 Oct 2026): the fixed minimums and 30px gaps add up to
+     more than the board, which ran 28px past its edge at 1041px, and 52px once
+     the access column grew. Tighter gaps and minimums fit it. */
+  @media (min-width: 1041px) and (max-width: 1180px) {
+    .launch-dashboard .srow { column-gap: 18px; grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(140px, 1.2fr) 112px 112px minmax(140px, 1.2fr); }
+  }
+  @media (max-width: 680px) {
+    .launch-dashboard .srow { column-gap: 14px; grid-template-columns: 34px 1fr auto; row-gap: 6px; }
+    .launch-dashboard .srow.hd { display: none; }
+    .launch-dashboard .srow .c-mini { grid-column: 2 / -1; grid-row: 2; margin-block: 0; }
+    .launch-dashboard .srow .c-bar { grid-column: 2 / -1; grid-row: 3; }
+    .launch-dashboard .srow .c-stage { display: none; }
+    .launch-dashboard .l1 { padding-inline: 10px; }
+  }
+  /* Narrow tablets (9 Oct 2026): the fixed minimums above add up to about
+     714px with the gaps, more than the board has until about 800px, so the
+     main barrier was cut off (60px at 700px). Here the text columns may
+     shrink and the gaps are tighter; the mini journey keeps its 200px. The
+     stage column gets a little more than the barrier (1.1fr) so the longest
+     stage names (es "Adopción de políticas nacionales") fit at 681px. */
+  @media (min-width: 681px) and (max-width: 860px) {
+    .launch-dashboard .srow { column-gap: 12px; grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) 104px minmax(0, 1fr); }
+  }
+  /* Without the Main barrier column (the 10 Nov 2026 release; SHOW_BARRIERS in
+     the script): the same tracks at every width, less the last one. */
+  .launch-dashboard .board.nobar .srow { grid-template-columns: 34px minmax(150px, 1.6fr) 214px minmax(150px, 1.2fr) 112px minmax(112px, 1fr); }
+  @media (max-width: 1040px) {
+    .launch-dashboard .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 200px minmax(140px, 1fr) 112px; }
+  }
+  @media (min-width: 1041px) and (max-width: 1180px) {
+    .launch-dashboard .board.nobar .srow { grid-template-columns: 34px minmax(130px, 1.4fr) 214px minmax(140px, 1.2fr) 112px minmax(112px, 1fr); }
+  }
+  @media (max-width: 680px) {
+    .launch-dashboard .board.nobar .srow { grid-template-columns: 34px 1fr auto; }
+  }
+  @media (min-width: 681px) and (max-width: 860px) {
+    .launch-dashboard .board.nobar .srow { grid-template-columns: 34px minmax(0, 1.2fr) 200px minmax(0, 1.1fr) 104px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .launch-dashboard .view, .launch-dashboard .exp, .launch-dashboard .more .ch, .launch-dashboard .pathnode .pill, .launch-dashboard .pathnode .pill::after, .launch-dashboard .stage .smark, .launch-dashboard .stage .smark::after { transition: none; }
+  }
+
+  /* level 1, default view: the time-scaled journey. Dated gates hang from their
+     real year on one axis that starts at the first milestone, so there are no
+     empty years; gates with no year sit in the panel on the right rather than
+     being given an invented date. */
+  .launch-dashboard .tsp { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 20px; align-items: start; }
+  .launch-dashboard .tsa { position: relative; min-width: 520px; }
+  .launch-dashboard .tsa .ax { position: absolute; left: 0; right: 0; top: 26px; height: 2px; background: var(--line); }
+  .launch-dashboard .tsa .tk { position: absolute; top: 0; transform: translateX(-50%); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .launch-dashboard .tsa .tk.now { font-weight: 700; color: var(--ink-2); }
+  .launch-dashboard .tsa .tk.now i { font-weight: 400; font-style: italic; color: var(--ink-3); }
+  .launch-dashboard .tsa .tt { position: absolute; top: 22px; width: 1px; height: 10px; margin-left: -.5px; background: var(--ink-3); opacity: .5; }
+  .launch-dashboard .tsa .today { position: absolute; top: 20px; width: 0; border-left: 1px dashed var(--ink-3); }
+  .launch-dashboard .tsa .run { position: absolute; top: 24px; height: 6px; border-radius: 3px; }
+  .launch-dashboard .tsa .run.prog { background: var(--warn); } .launch-dashboard .tsa .run.late { background: var(--crit); }
+  .launch-dashboard .tsa .pt { position: absolute; top: 22px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 2px var(--surface); }
+  .launch-dashboard .tsa .pt.prog { background: var(--warn); } .launch-dashboard .tsa .pt.late { background: var(--crit); }
+  .launch-dashboard .tsa .stem { position: absolute; top: 32px; width: 1px; margin-left: -.5px; background: var(--line); }
+  .launch-dashboard .tsa .it { position: absolute; z-index: 1; flex: none; min-width: 0; width: 104px; margin-left: -52px; display: flex; flex-direction: column; align-items: center; }
+  .launch-dashboard .tsa .it .smark { margin: 0; }
+  .launch-dashboard .tsa .snow { font-size: 12px; font-weight: 700; margin-top: 3px; }
+  .launch-dashboard .tsa .snow.prog { color: var(--warn-text); } .launch-dashboard .tsa .snow.late { color: var(--crit); }
+  .launch-dashboard .tsa .ssince { font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .tsz { display: flex; flex-direction: column; gap: 12px; border-left: 1px dashed var(--line); padding-left: 16px; }
+  /* On a phone the side panel goes under the axis instead of off to its right,
+     where it sat past the scroll edge with nothing to say it was there. */
+  @media (max-width: 760px) {
+    .launch-dashboard .tsp { grid-template-columns: minmax(0, 1fr); }
+    .launch-dashboard .tsz { border-left: 0; padding-left: 0; border-top: 1px dashed var(--line); padding-top: 12px; }
+  }
+  .launch-dashboard .ugrp .h { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+  .launch-dashboard .uchips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .launch-dashboard .uchip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; line-height: 1.3; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px 2px 3px; }
+  .launch-dashboard .uchip .ui { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; color: var(--journey-icon); background: var(--surface); }
+  .launch-dashboard .uchip .ui svg { width: 12px; height: 12px; }
+  .launch-dashboard .uchip .ui .whoemb { width: 14px; height: 14px; }
+  .launch-dashboard .uchip .ui.m-done { background: var(--good-soft); }
+  .launch-dashboard .uchip .ui.m-prog { box-shadow: inset 0 0 0 1.5px var(--warn); }
+  .launch-dashboard .uchip .ui.m-late { box-shadow: inset 0 0 0 1.5px var(--crit); }
+  .launch-dashboard .uchip .ui.m-idle { color: var(--idle); box-shadow: inset 0 0 0 1px var(--line); }
+  .launch-dashboard .uchip .st { font-weight: 700; } .launch-dashboard .uchip .st.prog { color: var(--warn-text); } .launch-dashboard .uchip .st.late { color: var(--crit); }
+  .launch-dashboard .unone { font-size: 12px; color: var(--ink-3); }
+  .launch-dashboard .uicons { display: flex; flex-wrap: wrap; gap: 5px; }
+  .launch-dashboard .uicons .ui { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--idle); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+  .launch-dashboard .uicons .ui svg { width: 14px; height: 14px; }
+  .launch-dashboard .uicons .ui .whoemb { width: 16px; height: 16px; filter: grayscale(1) opacity(.8); }
+
+  /* pipeline track */
+  /* overflow-x: auto here forces overflow-y to a used value of auto too (a
+     browser can't leave one axis visible while the other scrolls) — so with
+     no padding, the top of the "cur" stage's smark ring (.stage.cur .smark's
+     4px box-shadow) sits exactly on that invisible clip line and gets sheared
+     flat instead of curving. padding-top gives it (and the hover lift, and
+     the focus/aria-expanded rings) room to draw before the clip. */
+  /* overflow-y hidden: the rail overflows its box by a few px (fork labels) and
+     overflow-x:auto alone gave every card its own vertical scrollbar arrows. The
+     4px bottom padding keeps the last label's descenders from being clipped. */
+  .launch-dashboard .trackbox { overflow-x: auto; overflow-y: hidden; padding-top: 8px; padding-bottom: 4px; }
+  .launch-dashboard .track { display: flex; align-items: flex-start; min-width: 700px; padding-top: var(--sg-lift, 0px); }
+  .launch-dashboard .stage { flex: 1; min-width: 80px; position: relative; text-align: center; }
+  .launch-dashboard .stage .row { display: flex; align-items: center; }
+  .launch-dashboard .stage .bar { flex: 1; height: 3px; background: var(--line); }
+  .launch-dashboard .stage .bar.done-bar { background: var(--good); }
+  /* Hide the two dangling bar-ends at the far left and far right of the ROW.
+     Must stay scoped to direct children of .track: a stage nested inside a
+     .stagegroup is first/last of its *group*, not of the row, and hiding its
+     bars there breaks the fork's arms. */
+  .launch-dashboard .track > .stage:first-child .bar.pre, .launch-dashboard .track > .stage:last-child .bar.post { visibility: hidden; }
+  .launch-dashboard .stage .lbl { font-size: 11px; line-height: 1.25; color: var(--ink-3); margin-top: 7px; padding: 0 3px; }
+  .launch-dashboard .stage.cur .lbl { color: var(--ink); font-weight: 650; }
+  /* year a gate was reached, under its label — also the value plotted on the
+     real-year timeline view, so this and that stay honest twins */
+  .launch-dashboard .stage .syear { font-size: 11px; font-weight: 650; color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .launch-dashboard .stage.s-idle .syear { color: var(--ink-3); }
+  /* ---------- parallel gate pair, drawn as a fork ----------
+     A column holding more than one stage (stageColumns groups them) is drawn
+     as a branch: the incoming bar meets a vertical, which carries it up and
+     down to two same-size markers, and a matching vertical rejoins them on
+     the way out. Neither branch is above the other in any sense the layout
+     can imply — that is the whole point of drawing it this way.
+
+     Markers stay full size, identical to every ungrouped gate. The two
+     branches mirror about the spine: the top one runs year / label / marker
+     (column-reverse), the bottom one marker / label / year, so both labels
+     sit on the OUTSIDE and the two markers end up adjacent, separated only
+     by the caption band.
+
+     --sg-lift is measured once at runtime (alignStageForks) and pulls the
+     group up so its spine lands exactly on the neighbouring markers'
+     centreline; .track absorbs the same amount as padding so nothing clips.
+     The strokes themselves are then measured off the two markers by
+     drawStageForks() — see the block below. */
+  .launch-dashboard .stagegroup {
+    flex: 1; min-width: 80px; display: flex; flex-direction: column;
+    align-items: stretch; margin-top: calc(-1 * var(--sg-lift, 0px));
+  }
+  .launch-dashboard .stagegroup .stage { flex: none; min-width: 0; }
+  /* top branch mirrors the bottom one: year, label, marker (top to bottom) */
+  .launch-dashboard .stagegroup .sg-top { display: flex; flex-direction: column-reverse; }
+  /* margins mirror too, so the label/year spacing matches the bottom branch */
+  .launch-dashboard .stagegroup .sg-top .lbl { margin-top: 0; margin-bottom: 7px; }
+  .launch-dashboard .stagegroup .sg-top .syear { margin-top: 0; margin-bottom: 3px; }
+
+  /* the caption band sits on the spine, in the gap between the two markers */
+  .launch-dashboard .stagegroup-note {
+    height: var(--sg-note); line-height: var(--sg-note);
+    text-align: center; font-size: 9px; font-style: italic; letter-spacing: .01em;
+    color: var(--ink-3);
+  }
+
+  /* ---- the fork itself: one path per side, drawn into .forkline ----
+     Each side is a single stroke — arm, rounded corner, spine, corner, arm —
+     emitted by drawStageForks() from the two markers' measured positions,
+     plus a node where the neighbouring column's bar lands on the spine.
+
+     It used to be four ::before/::after boxes, each a border-corner. Two
+     things were wrong with that and neither was a matter of taste:
+
+       - a border-top's 3px stroke hangs BELOW the box's top edge, while
+         .stage .bar's 3px is centred on the marker centreline the box's top
+         edge sits on — so every corner stepped 1.5px off the arm it was
+         supposed to continue, four times, and the two branches stepped
+         opposite ways;
+       - the incoming bar ended at x=0 and the spine's border-left occupied
+         x=0–3, so they shared one edge and never overlapped. A butt joint at
+         a T is what "the fork looks not connected" was.
+
+     A whole path cannot be misaligned with itself, and the node puts ink on
+     the junction rather than leaving it to two edges touching.
+
+     The geometry is measured off the markers rather than derived from
+     constants, so --sg-mark, --sg-arm and --sg-r are gone with the elbows and
+     the caption band no longer has to be kept in sync with anything.
+     --sg-note stays: it still sets that band's height.
+
+     overflow: visible is load-bearing. The spine's centreline sits ON the
+     group's own edge (x=0 and x=100%) — where the neighbouring bars end — so
+     half of each stroke and most of each node falls outside the viewBox by
+     design. That overlap is the fix. */
+  .launch-dashboard .stagegroup { --sg-note: 15px; position: relative; }
+  .launch-dashboard .stagegroup .forkline {
+    position: absolute; inset: 0; overflow: visible; pointer-events: none;
+  }
+  /* markers and the caption paint over the strokes, never under them */
+  .launch-dashboard .stagegroup > .stage { z-index: 1; }
+  .launch-dashboard .stagegroup > .stagegroup-note { position: relative; z-index: 1; }
+  .launch-dashboard .stagegroup .fk-arm { fill: none; stroke: var(--line); stroke-width: 3; }
+  .launch-dashboard .stagegroup .fk-node { fill: var(--line); stroke: none; }
+  /* the strokes take the same green as a cleared bar: the incoming side when
+     the column before the fork is cleared, the outgoing side when BOTH gates
+     in it are — leaving the fork needs both, which is the honest rule */
+  .launch-dashboard .stagegroup.sg-pre-done .fk-arm.is-in { stroke: var(--good); }
+  .launch-dashboard .stagegroup.sg-pre-done .fk-node.is-in { fill: var(--good); }
+  .launch-dashboard .stagegroup.sg-post-done .fk-arm.is-out { stroke: var(--good); }
+  .launch-dashboard .stagegroup.sg-post-done .fk-node.is-out { fill: var(--good); }
+
+  /* Inside the fork every stroke comes from the overlay above. The bars stay
+     in the markup as layout spacers — .bar's flex:1 either side of the marker
+     is what centres it in its row — but must not paint, or the fork would
+     again be two strokes that have to meet. */
+  .launch-dashboard .stagegroup .stage .bar { visibility: hidden; }
+
+  /* same small pill the status legend uses for the timeline's two facts —
+     a reached gate's real year (good), and one reached out of pathway order
+     (neutral grey: a fact about sequence, not a delay) */
+
+  /* illustrated stage marker: journey icon + status badge overlay */
+  .launch-dashboard .stage .smark {
+    position: relative; flex: none; margin: 0 4px; cursor: pointer;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--idle-soft); color: var(--idle); border: 1px solid transparent;
+    padding: 0; font: inherit; -webkit-appearance: none; appearance: none;
+    transition: box-shadow .12s ease, transform .12s ease;
+  }
+  .launch-dashboard .stage .smark:hover { transform: translateY(-1px); }
+  .launch-dashboard .stage .smark:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .stage .sicon { width: 26px; height: 26px; display: block; }
+  /* Reached gates all share the icon row's blue (matching the WHO emblem,
+     which can't take a status colour) — status lives in the background tint
+     and the corner .dot badge instead, same split the WHO gates always used,
+     now applied to every gate so the icon colour itself doesn't fight the
+     emblem's fixed blue. Green pairs fine with blue (good-soft stays), but
+     amber/red pastels read as a clash next to a blue icon, so in-progress and
+     delayed go neutral instead — the corner badge alone still carries amber
+     or red clearly. */
+  /* Every marker carries a ring in its own status colour (30 Sep 2026): complete
+     green, in progress amber, delayed red, not started grey. --ring is that
+     colour and --ring-soft its tint; the selected ring and the current-stage
+     glow below both read them, so neither introduces a second colour. */
+  .launch-dashboard .stage.s-done { --ring: var(--good); --ring-soft: var(--good-soft); }
+  .launch-dashboard .stage.s-prog { --ring: var(--warn); --ring-soft: var(--warn-soft); }
+  .launch-dashboard .stage.s-late { --ring: var(--crit); --ring-soft: var(--crit-soft); }
+  .launch-dashboard .stage.s-idle { --ring: var(--idle); --ring-soft: var(--idle-soft); }
+  .launch-dashboard .stage.s-done .smark { background: var(--good-soft); color: var(--journey-icon); border: 2px solid var(--good); }
+  .launch-dashboard .stage.s-prog .smark { background: var(--surface-2); color: var(--journey-icon); border: 2px solid var(--warn); }
+  .launch-dashboard .stage.s-late .smark { background: var(--surface-2); color: var(--journey-icon); border: 2px solid var(--crit); }
+  .launch-dashboard .stage.s-idle .smark { background: none; border: 1.5px dashed var(--idle); }
+  /* The WHO emblem can't take the idle grey tint the other glyphs get from
+     `color` — it's an image with WHO's own fixed blue (assets/who-emblem.svg),
+     not a currentColor stroke. Left alone it reads as active/blue against
+     siblings that have faded to grey. Grayscale plus extra fade neutralises
+     that only for a not-yet-reached gate; a reached WHO gate keeps its normal
+     colour like the emblem does everywhere else on the page. */
+  .launch-dashboard .stage.s-idle .whoemb { filter: grayscale(1) opacity(.8); }
+  .launch-dashboard .stage .smark .dot { position: absolute; right: -3px; bottom: -3px; width: 16px; height: 16px; font-size: 9.5px; box-shadow: 0 0 0 2px var(--surface); cursor: help; }
+  .launch-dashboard .stage.s-idle .smark .dot { display: none; }
+  .launch-dashboard .stage.cur .smark { box-shadow: 0 0 0 4px var(--ring-soft); }
+  /* selected: a 3px ring in the status colour with a 2px gap, so it cannot clash
+     with the marker's own border (it used to be teal whatever the status) */
+  .launch-dashboard .stage .smark[aria-expanded="true"], .launch-dashboard .stage.cur .smark[aria-expanded="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 5px var(--ring); }
+  /* always-on badge marking every stage marker as clickable, not just on hover —
+     top-right so it doesn't collide with the status .dot at bottom-right */
+  .launch-dashboard .stage .smark::after {
+    content: "\25be"; position: absolute; top: -5px; right: -5px;
+    width: 22px; height: 22px; border-radius: 50%; line-height: 22px; text-align: center;
+    font-size: 14px; font-weight: 700; color: var(--ink-2);
+    background: var(--surface); box-shadow: 0 0 0 1px var(--line);
+    transition: color .15s ease, box-shadow .15s ease, transform .15s ease;
+  }
+  .launch-dashboard .stage .smark:hover::after, .launch-dashboard .stage .smark[aria-expanded="true"]::after {
+    color: var(--accent); box-shadow: 0 0 0 1px var(--accent);
+  }
+  .launch-dashboard .stage .smark[aria-expanded="true"]::after { transform: rotate(180deg); }
+  /* ---------- gate drill-down (cell tier) ----------
+     Sits inside the open journey (.l1in), under the marker row. Kept
+     independent of .detail: "why is this stuck" and "what is this medicine"
+     are different questions, and nesting one inside the other slows the
+     common case. */
+  .launch-dashboard .gatepanel {
+    margin: 10px 0 0; padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+  }
+  .launch-dashboard .gatepanel[hidden] { display: none; }
+  .launch-dashboard .gatepanel.late { border-left-color: var(--crit); }
+  .launch-dashboard .gp-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+  .launch-dashboard .gp-head .gp-stage { font-size: 15px; font-weight: 700; }
+  .launch-dashboard .gp-head .gp-close {
+    margin-left: auto; background: none; border: 0; padding: 3px 8px; cursor: pointer;
+    font: inherit; font-size: 13px; color: var(--ink-2); border-radius: 6px;
+  }
+  .launch-dashboard .gp-head .gp-close:hover { background: var(--surface-2); color: var(--ink); }
+  .launch-dashboard .gp-pill {
+    font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    padding: 2.5px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .launch-dashboard .gp-pill.done { background: var(--good-soft); color: var(--good-text); }
+  .launch-dashboard .gp-pill.prog { background: var(--warn-soft); color: var(--warn-text); }
+  .launch-dashboard .gp-pill.late { background: var(--crit-soft); color: var(--crit); }
+  .launch-dashboard .gp-pill.idle { background: var(--idle-soft); color: var(--ink-3); }
+  .launch-dashboard .gp-note { margin: 9px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
+  .launch-dashboard .gp-why {
+    margin-top: 10px; padding: 9px 12px; border-radius: 8px;
+    background: var(--crit-soft); color: var(--crit);
+    font-size: 14.5px; font-weight: 600; line-height: 1.45;
+  }
+  .launch-dashboard .gp-grid {
+    margin-top: 12px; display: grid; gap: 8px 22px;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+  .launch-dashboard .gp-kv { display: flex; flex-direction: column; gap: 1px; font-size: 14.5px; }
+  .launch-dashboard .gp-kv dt { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+  .launch-dashboard .gp-kv dd { margin: 0; color: var(--ink); }
+  .launch-dashboard .gp-elapsed { color: var(--crit); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .launch-dashboard .gp-countries { margin-top: 11px; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--ink-2); }
+  .launch-dashboard .gp-countries .key { display: inline-flex; align-items: center; gap: 6px; }
+  .launch-dashboard .gp-countries .n { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .gp-prov { margin-top: 11px; padding-top: 9px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--ink-3); }
+
+  /* ---------- gate tier: the pathway strip becomes the control ---------- */
+  .launch-dashboard .pathnode {
+    background: none; border: 0; font: inherit; color: inherit; cursor: pointer;
+    padding: 2px 0 4px; border-radius: 9px;
+  }
+  .launch-dashboard .pathnode:hover .pill { border-color: var(--accent); transform: translateY(-1px); }
+  .launch-dashboard .pathnode:hover .plabel { color: var(--ink); }
+  .launch-dashboard .pathnode:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .pathnode .pill { transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease; }
+  .launch-dashboard .pathnode[aria-expanded="true"] .pill { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .launch-dashboard .pathnode[aria-expanded="true"] .plabel { color: var(--accent); font-weight: 700; }
+
+  .launch-dashboard .gatewrap {
+    margin: 0 0 10px; padding: 16px 18px 18px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent); border-radius: 12px; box-shadow: var(--shadow);
+  }
+  .launch-dashboard .gatewrap[hidden] { display: none; }
+  .launch-dashboard .gw-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .launch-dashboard .gw-ico { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); display: grid; place-items: center; flex: none; color: var(--journey-icon); }
+  .launch-dashboard .gw-ico svg { width: 24px; height: 24px; }
+  .launch-dashboard .gw-ico .whoemb { width: 26px; height: 26px; }
+  .launch-dashboard .gw-step { font-size: 12px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+  .launch-dashboard .gw-head h3 { margin: 0; font-size: 17px; font-weight: 750; letter-spacing: -.005em; }
+  .launch-dashboard .gw-head .gp-close {
+    margin-left: auto; background: none; border: 0; padding: 4px 8px; cursor: pointer;
+    font: inherit; font-size: 13px; color: var(--ink-2); border-radius: 6px;
+  }
+  .launch-dashboard .gw-head .gp-close:hover { background: var(--surface-2); color: var(--ink); }
+  /* The step panel: an explanation band and a status-count summary (30 Sep 2026).
+     It used to repeat where each medicine is, which the summary table already
+     says; the table now lights up the selected step instead. */
+  .launch-dashboard .gw-sum { display: flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; }
+  /* empty while the status words are hidden (SHOW_PROGRESS in the script) */
+  .launch-dashboard .gw-sum:empty { display: none; }
+  /* Phones (9 Oct 2026): the head was one row that never wrapped, so the
+     chips and Close ran past the card and the page grew wider than the
+     screen (446px on a 390px phone, /fr step 3). Now icon, title and Close
+     share the first row and the chips get a row of their own under the
+     title (52px = the 40px icon and the 12px gap). */
+  @media (max-width: 640px) {
+    .launch-dashboard .gw-head { flex-wrap: wrap; align-items: flex-start; row-gap: 8px; }
+    .launch-dashboard .gw-head > div { flex: 1 1 0; min-width: 0; }
+    .launch-dashboard .gw-head h3 { overflow-wrap: break-word; }
+    .launch-dashboard .gw-head .gp-close { order: 2; flex: none; }
+    .launch-dashboard .gw-sum { order: 3; flex-basis: 100%; margin-left: 52px; }
+  }
+  .launch-dashboard .gw-par { margin: -4px 0 12px; font-size: 14px; color: var(--ink-2); }
+  .launch-dashboard .gw-band { background: var(--surface-2); border-radius: 10px; padding: 14px 16px 16px; }
+  .launch-dashboard .gw-band h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .launch-dashboard .gw-band > p { margin: 0; font-size: 15.5px; color: var(--ink); max-width: 110ch; }
+  .launch-dashboard .gw-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 22px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .launch-dashboard .gw-facts h5 { margin: 0 0 2px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+  .launch-dashboard .gw-facts p { margin: 0; font-size: 14px; color: var(--ink); }
+
+  /* the panel carries the flag for the current gate; don't say it twice */
+  .launch-dashboard .product.gate-flag .flagnote { display: none; }
+  .launch-dashboard .flagnote {
+    margin: 8px 0 0; font-size: 13px; color: var(--crit);
+    display: flex; gap: 7px; align-items: baseline;
+  }
+  .launch-dashboard .flagnote::before { content: "▲"; font-size: 9px; }
+
+  /* ---------- tooltip ---------- */
+  .launch-dashboard #tip {
+    position: fixed; z-index: 50; max-width: 280px; pointer-events: none;
+    background: var(--ink); color: var(--surface); padding: 10px 12px; border-radius: 8px;
+    font-size: 12.5px; line-height: 1.45; box-shadow: var(--shadow); display: none;
+  }
+  .launch-dashboard #tip b { display: block; margin-bottom: 2px; }
+  .launch-dashboard #tip .thint { margin-top: 5px; font-size: 11px; opacity: .6; }
+  .launch-dashboard #tip .trow { display: flex; gap: 8px; justify-content: space-between; }
+  .launch-dashboard #tip .trow span:first-child { opacity: .7; }
+  /* country readout: every stage listed, ticked up to the one reached */
+  .launch-dashboard #tip .tlvl { display: flex; align-items: center; gap: 7px; margin-top: 3px; }
+  .launch-dashboard #tip .tlvl .tmark { width: 9px; flex: none; font-weight: 800; text-align: center; }
+  .launch-dashboard #tip .tlvl.off { opacity: .72; }
+  .launch-dashboard #tip .tlvl .mapsw { width: 11px; height: 11px; }
+  /* the tooltip is inverted (ink ground, white text), and the hairline is
+     drawn from currentColor so it follows the text */
+  .launch-dashboard #tip .tprod { position: relative; margin-top: 6px; padding-top: 6px; font-size: 11.5px; opacity: .72; }
+  .launch-dashboard #tip .tprod::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: currentColor; opacity: .3;
+  }
+
+  /* ---------- detail panel ---------- */
+  .launch-dashboard .detail { display: none; margin: 12px 0 14px; border-radius: 10px; background: var(--surface-2); padding: 16px; }
+  .launch-dashboard .product.open .detail { display: block; }
+  .launch-dashboard .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+  .launch-dashboard .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+  }
+  .launch-dashboard .card h3 { margin: 0 0 8px; font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .launch-dashboard .card .big { font-size: 24px; font-weight: 750; font-variant-numeric: tabular-nums; }
+  .launch-dashboard .card .sub { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
+  .launch-dashboard .card .prov { font-size: 12.5px; color: var(--ink-3); margin-top: 6px; overflow-wrap: anywhere; }
+  /* Citations on each claim (15 Oct feedback, 19 Oct 2026): the reference's
+     name from the Sources list, linked to the reference itself. They wrap
+     inside their panel or cell, never past it. */
+  .launch-dashboard a.cite { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+  .launch-dashboard a.cite .ext { font-size: .85em; margin-left: 2px; text-decoration: none; display: inline-block; }
+  .launch-dashboard .mcite { display: block; margin-top: 3px; font-size: 12px; font-weight: 400; line-height: 1.4; color: var(--ink-3); overflow-wrap: anywhere; }
+  .launch-dashboard .card ul { margin: 0; padding-left: 18px; font-size: 15px; color: var(--ink); }
+  .launch-dashboard .card ul li { margin: 3px 0; }
+  .launch-dashboard .card p { margin: 0; font-size: 15px; color: var(--ink); }
+  .launch-dashboard .kv { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .launch-dashboard .kv:last-child { border-bottom: 0; }
+  .launch-dashboard .kv.sub span:first-child { padding-left: 14px; }
+  .launch-dashboard .kv span:first-child { color: var(--ink-2); }
+  .launch-dashboard .kv span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+  .launch-dashboard .mtable-box { overflow-x: auto; margin-top: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .launch-dashboard table.mtable { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 620px; }
+  .launch-dashboard .mtable th {
+    text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink-2); font-weight: 700; padding: 10px 14px; border-bottom: 1px solid var(--line);
+  }
+  .launch-dashboard .mtable td { padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: top; }
+  .launch-dashboard .mtable tr:last-child td { border-bottom: 0; }
+  .launch-dashboard .mtable td:first-child { color: var(--ink); font-weight: 600; }
+  .launch-dashboard .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 650; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .launch-dashboard .pill.done { background: var(--good-soft); color: var(--good-text); }
+  .launch-dashboard .pill.prog { background: var(--warn-soft); color: var(--warn-text); }
+  .launch-dashboard .pill.late { background: var(--crit-soft); color: var(--crit); }
+  .launch-dashboard .pill.idle { background: var(--idle-soft); color: var(--ink-3); }
+
+  /* channel split bar */
+  .launch-dashboard .split { display: flex; height: 14px; border-radius: 7px; overflow: hidden; margin: 8px 0 6px; }
+  .launch-dashboard .split div + div { margin-left: 2px; }
+  .launch-dashboard .split-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13.5px; color: var(--ink-2); }
+  .launch-dashboard .split-legend .key { display: inline-flex; align-items: center; gap: 5px; }
+  /* Procurement by presentation (15 Oct 2026): the yardstick table's look,
+     smaller, with the presentation free to wrap. */
+  .launch-dashboard .cards .card-wide { grid-column: 1 / -1; }
+  .launch-dashboard .card .proc-scope { margin: 8px 0 4px; font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
+  .launch-dashboard .proc-table { margin-top: 10px; font-size: 13px; }
+  .launch-dashboard .proc-table th, .launch-dashboard .proc-table td { padding: 7px 10px; }
+  .launch-dashboard .proc-table tbody th { white-space: normal; min-width: 170px; }
+  .launch-dashboard .card .proc-rule { margin: 6px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.45; }
+  .launch-dashboard .proc-table .pk { display: none; }
+  /* On a phone four columns do not fit, and the courses column, the point of
+     the table, ended up past the scroll edge. Each presentation becomes a
+     block instead: its name, then three labelled figures. It also escapes
+     .ystable's phone rule, which hides columns 2 and 3 (the yardstick's
+     Expected and Actual; here Transactions and Packs). */
+  @media (max-width: 560px) {
+    .launch-dashboard .proc-table thead { display: none; }
+    .launch-dashboard .proc-table tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+    .launch-dashboard .proc-table tbody th { grid-column: 1 / -1; padding: 0; border: 0; min-width: 0; }
+    .launch-dashboard .proc-table td, .launch-dashboard .proc-table td:nth-child(2), .launch-dashboard .proc-table td:nth-child(3) { display: block; padding: 0; border: 0; white-space: normal; }
+    .launch-dashboard .proc-table .pk { display: block; font-size: 11px; font-weight: 600; color: var(--ink-3); }
+  }
+  .launch-dashboard .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  /* recent updates */
+  .launch-dashboard .updates {
+    margin-top: 14px; background: var(--surface);
+    border-radius: 12px; box-shadow: var(--shadow); padding: 10px 18px;
+  }
+  .launch-dashboard .updates summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink-2); letter-spacing: .04em; text-transform: uppercase; }
+  .launch-dashboard .updates ul { margin: 10px 0 4px; padding-left: 0; list-style: none; }
+  .launch-dashboard .updates li { display: flex; gap: 12px; font-size: 13px; color: var(--ink-2); padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .launch-dashboard .updates li:last-child { border-bottom: 0; }
+  .launch-dashboard .updates .ud { flex: none; width: 84px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .updates .up { flex: none; width: 84px; font-weight: 650; color: var(--ink); }
+
+  .launch-dashboard footer { margin-top: 18px; font-size: 14px; color: var(--ink-2); line-height: 1.65; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 16px; }
+  /* Sources: one named source per line, each opening its own official site.
+     Two columns on a wide screen so the list stays a footnote rather than
+     becoming a page of its own; one column once that would squeeze the text. */
+  .launch-dashboard .srclist {
+    margin: 8px 0 12px; padding: 0; list-style: none;
+    columns: 2; column-gap: 34px;
+  }
+  .launch-dashboard .srclist li { break-inside: avoid; margin: 0 0 7px; line-height: 1.5; }
+  .launch-dashboard .srclist a { color: var(--accent); font-weight: 650; text-decoration: none; }
+  .launch-dashboard .srclist a:hover, .launch-dashboard .srclist a:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
+  .launch-dashboard .srclist .srcname { font-weight: 650; color: var(--ink-2); }
+  .launch-dashboard .srclist li > span { display: block; }
+  .launch-dashboard .srclist li > span a { font-weight: 400; }
+  /* A fetcher's address: plain, selectable text, never a link (12 Oct 2026).
+     Long API addresses break anywhere, so a phone never scrolls sideways. */
+  .launch-dashboard .srclist .srcraw { display: block; font-size: 12.5px; color: var(--ink-2); }
+  .launch-dashboard .srclist .srcraw code { font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 12px;
+    overflow-wrap: anywhere; word-break: break-all; user-select: all; background: var(--surface-2); border-radius: 4px; padding: 0 4px; }
+  /* Footer: the disclaimer leads, in a tinted panel with an accent edge, so it is not overlooked. */
+  /* Section cards under the map (8 Oct 2026): About the data, Sources and Definitions
+     share one card and one plain bold title; the disclaimer keeps its blue notice. */
+  .launch-dashboard .ft-sec { background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); padding: 14px 20px 16px; }
+  .launch-dashboard .ft-sec h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); }
+  .launch-dashboard .ft-sec p { margin: 0; }
+  .launch-dashboard .ft-sec p + p { margin-top: 8px; }
+  .launch-dashboard .disclaimer { background: var(--accent-soft); border: 1px solid var(--line); border-left: 5px solid var(--accent);
+                border-radius: 10px; padding: 14px 18px; color: var(--ink); scroll-margin-top: 16px; }
+  .launch-dashboard .disclaimer:focus { outline: none; }
+  .launch-dashboard .disclaimer h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 16px; color: var(--ink); }
+  .launch-dashboard .disclaimer h3 svg { flex: none; color: var(--accent); }
+  .launch-dashboard .disclaimer p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; }
+  .launch-dashboard .disclaimer p:last-child { margin-bottom: 0; }
+  /* When the draft banner's link (or #disclaimer) brings the reader here, a brief glow shows where they landed. */
+  .launch-dashboard .disclaimer.flash { animation: ld-disc-flash 1.6s ease-out 1; }
+  @keyframes ld-disc-flash { 0%, 35% { box-shadow: 0 0 0 6px rgba(245, 200, 66, .55); } 100% { box-shadow: 0 0 0 0 rgba(245, 200, 66, 0); } }
+  @media (prefers-reduced-motion: reduce) { .launch-dashboard .disclaimer.flash { animation: none; outline: 3px solid rgba(245, 200, 66, .9); } }
+  /* The Definitions band's box and summary type, with more room (ui-notes §3.33): a 48 px toggle row,
+     a chevron in place of the browser's triangle, and a rule between the toggle and the list when open.
+     No outer border, like every card on the gray ground (§3.32). */
+  .launch-dashboard .srcs { margin-top: 0; background: var(--surface); border-radius: 12px;
+          box-shadow: var(--shadow); padding: 0 20px; }
+  .launch-dashboard .srcs[open] { padding-bottom: 8px; }
+  .launch-dashboard .srcs summary { cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 48px; padding-block: 12px;
+                  list-style: none; }
+  .launch-dashboard .srcs-title { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: 0; text-transform: none; }
+  .launch-dashboard .srcs summary::-webkit-details-marker { display: none; }
+  .launch-dashboard .srcs[open] summary { border-bottom: 1px solid var(--line); }
+  .launch-dashboard .srcs summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .launch-dashboard .srcs-chev { flex: none; margin-left: auto; color: var(--accent); transition: transform .18s ease; }
+  .launch-dashboard .srcs[open] .srcs-chev { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .launch-dashboard .srcs-chev { transition: none; } }
+  /* .srcs scopes it so it outranks `.ft-sec p { margin: 0 }`, which had silently zeroed this margin. */
+  .launch-dashboard .srcs .srcs-intro { margin: 14px 0 12px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  @media print { .launch-dashboard .srcs summary { display: none; } }
+  .launch-dashboard .ext { margin-left: 3px; font-size: .85em; opacity: .75; }
+  @media (max-width: 720px) { .launch-dashboard .srclist { columns: 1; } }
+  .launch-dashboard footer a { color: var(--accent); }
+
+  /* glossary terms */
+  .launch-dashboard .gloss { text-decoration: underline dotted; text-decoration-color: var(--ink-3); text-underline-offset: 2px; cursor: help; }
+  .launch-dashboard .gloss:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 2px; }
+  .launch-dashboard .glossary-panel .gt { flex: none; width: 84px; font-weight: 650; color: var(--ink); }
+
+  /* ---------- visualization sections (map, timing) ---------- */
+  .launch-dashboard .viz {
+    margin-top: 14px; background: var(--surface);
+    border-radius: 14px; box-shadow: var(--shadow); padding: 14px 18px;
+  }
+  .launch-dashboard .viz h2 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -.005em; }
+  .launch-dashboard .viz .viznote { margin: 3px 0 12px; font-size: 12.5px; color: var(--ink-3); }
+  .launch-dashboard .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+  /* ---------- map dock layout (left filter rail / map / right legend+detail rail) ---------- */
+  .launch-dashboard .map-dock { display: grid; grid-template-columns: 250px minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+  .launch-dashboard .map-dock-center { min-width: 0; }   /* lets the grid track shrink below the map's content size */
+  .launch-dashboard .map-dock-rail {
+    background: var(--surface-2); border-radius: 10px;
+    padding: 12px 14px; max-height: 480px; overflow-y: auto;
+  }
+  /* Both rails otherwise end wherever their own content does, leaving a gap
+     of bare page below whichever one is shorter than the map (plus its hint
+     and legend) beside them. Grid's own align-self: stretch would fit a
+     rail to the ROW's height instead — the tallest of all three columns,
+     which at narrow widths is the left rail itself, not the map — so a
+     script keeps both rails' height matched to .map-dock-center specifically
+     (see the ResizeObserver below). Left keeps its own scrollbar for when
+     its filters (Drug/MFT policy/Location) still don't fit in that height.
+     Right is held too (8 Oct 2026), so all three columns end together. Its
+     tabs stay pinned at the top while the cards scroll, which is the cue that
+     there is more below (the fade was tried and dropped). */
+  .launch-dashboard .map-dock-left { max-height: none; overflow-y: auto; }
+  .launch-dashboard .map-dock-right { max-height: none; overflow-y: auto; }
+  /* `display` on .map-dock-rail is an author rule and so outranks the browser's
+     [hidden] { display: none } — same trap .map-empty already carries a fix for. */
+  .launch-dashboard .map-dock-rail[hidden] { display: none; }
+  .launch-dashboard .dock-section { margin-bottom: 18px; }
+  .launch-dashboard .map-dock-rail > .dock-section:last-child { margin-bottom: 0; }
+  /* Direct child only — a heading nested deeper inside .dock-detail must not
+     pick up this label style. */
+  .launch-dashboard .dock-section > h3 {
+    margin: 0 0 8px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--ink-3);
+  }
+  @media (max-width: 760px) {
+    .launch-dashboard .map-dock { grid-template-columns: 1fr; }
+    .launch-dashboard .map-dock-rail { max-height: none; }
+    .launch-dashboard .det-tabs { position: static; margin-top: 0; padding-top: 0; }
+  }
+  .launch-dashboard .tab {
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 14px; font: inherit; font-size: 13px; font-weight: 650; color: var(--ink-2); cursor: pointer;
+  }
+  .launch-dashboard .tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .launch-dashboard .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .tab[aria-selected="false"]:hover, .launch-dashboard .det-tabs button[aria-selected="false"]:hover { color: var(--accent); }
+
+  /* ---------- MFT policy switch (WHO World Malaria Report, Annex 4B) ----------
+     Off by default: until the switch is on, nothing below is visible and the
+     map is exactly the access-stage map. Borders, not fills, so the stage
+     colours underneath stay readable. Border colours are
+     per product; the page never names a drug outside the four it tracks. */
+  /* One colour per MFT policy GROUP, the same for every medicine. Chosen to stay
+     separable under protan, deutan and tritan vision and to hold at least 3.8:1
+     against the white halo drawn under every border. Not the status colours. */
+  .launch-dashboard { --mfg-tested: #D55E00; --mfg-vivax: #7A4B00; }
+  .launch-dashboard .mft-hint { font-size: 11.5px; line-height: 1.45; color: var(--ink-3); margin: 6px 0 0; }
+  /* Both legends share one key style: swatch (square for a fill, line for a
+     border) + label + count. The MFT keys used to be pills; they are not now. */
+  /* Filters (left rail): access-stage and MFT policy-group checklists. */
+  .launch-dashboard .flt-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .launch-dashboard .flt-head h3 { margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  .launch-dashboard .flt-act { font-size: 11px; font-weight: 700; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; letter-spacing: 0; }
+  .launch-dashboard .flt-reset { font: inherit; font-size: 12px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .launch-dashboard .flt-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .flt-list { margin-bottom: 0; }
+  .launch-dashboard .mft-lsw { flex: none; display: block; }
+  .launch-dashboard .mft-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; flex: none; }
+  .launch-dashboard .mft-panel { margin-bottom: 10px; }
+  .launch-dashboard .mft-panel[hidden] { display: none; }
+  .launch-dashboard .mft-panel .mft-h { margin: 0 0 10px; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .05em;
+                      color: var(--ink-2); display: flex; align-items: center; gap: 8px; }
+  .launch-dashboard .mft-panel .mft-h .mft-dot { width: 12px; height: 12px; }
+  .launch-dashboard .mft-donut { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 10px; margin: 2px 0 14px; }
+  .launch-dashboard .mft-donut svg { display: block; }
+  .launch-dashboard .mft-donut .ct-n { font-size: 26px; font-weight: 750; fill: var(--ink); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .mft-donut .ct-l { font-size: 10.5px; fill: var(--ink-3); }
+  .launch-dashboard .mft-donut .rows { display: grid; gap: 7px; font-size: 13px; color: var(--ink-2); width: 100%; min-width: 0; }
+  .launch-dashboard .mft-donut .rows div { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+  .launch-dashboard .mft-donut .rows b { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 750; }
+  .launch-dashboard .mft-donut .rows .off, .launch-dashboard .mft-donut .rows .off b { color: var(--ink-3); font-weight: 400; }
+  .launch-dashboard .mft-donut .rows .off .mft-sq { opacity: .45; }
+  .launch-dashboard .mft-sq { width: 14px; height: 14px; border-radius: 3px; display: inline-block; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+  .launch-dashboard .mft-grp { font-size: 11.5px; font-weight: 750; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 4px; }
+  .launch-dashboard .mft-name { margin: 0; font-size: 16px; font-weight: 700; color: var(--ink); }
+  .launch-dashboard .mft-sub { font-size: 12.5px; color: var(--ink-3); margin: 0 0 10px; }
+  .launch-dashboard .mft-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .launch-dashboard .mft-pchip { font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: #EDF1F3; color: var(--ink-3); }
+  .launch-dashboard .mft-pchip.yes { background: var(--good-soft); color: var(--good-text); font-weight: 650; }
+  .launch-dashboard .mft-note { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 12px 0 0; }
+  /* Detail rail: tabs, overview cards, country finder and country page. */
+  .launch-dashboard .det-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: -4px 0 10px; padding-top: 4px;
+              position: sticky; top: -12px; z-index: 3; background: var(--surface-2); }
+  .launch-dashboard .det-tabs button { font: inherit; font-size: 13px; font-weight: 650; color: var(--ink-2); background: none; border: 0;
+                     border-bottom: 3px solid transparent; padding: 6px 10px; cursor: pointer; }
+  .launch-dashboard .det-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .launch-dashboard .det-tabs button:focus-visible, .launch-dashboard .det-back:focus-visible, .launch-dashboard .det-nav button:focus-visible, .launch-dashboard .det-chip:focus-visible,
+  .launch-dashboard .det-row:focus-visible, .launch-dashboard .det-q:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .launch-dashboard .det-n { font-size: 10.5px; font-weight: 700; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 0 6px; margin-left: 4px; letter-spacing: 0; }
+  /* A hint, so it no longer wears the filled accent of the page's buttons. */
+  .launch-dashboard .det-banner { display: flex; gap: 9px; align-items: center; color: var(--ink-2);
+                font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
+  .launch-dashboard .det-banner svg { flex: none; color: var(--ink-3); }
+  .launch-dashboard .det-card { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; margin-bottom: 10px; min-width: 0; }
+  .launch-dashboard .det-card h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  .launch-dashboard .det-small { font-size: 12px; color: var(--ink-3); line-height: 1.4; }
+  .launch-dashboard .det-flag { margin: 8px 0 0; }
+  .launch-dashboard .det-k { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
+  .launch-dashboard .det-v { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .launch-dashboard .det-big { font-size: 26px; font-weight: 750; line-height: 1.15; color: var(--ink); margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+  .launch-dashboard .det-big .det-small { font-size: 12.5px; font-weight: 400; }
+  .launch-dashboard .det-empty { margin: 0; font-size: 13px; color: var(--ink-3); }
+  .launch-dashboard .det-bar { display: flex; height: 16px; border-radius: 5px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line); }
+  .launch-dashboard .det-bar i { display: block; min-width: 0; }
+  .launch-dashboard .det-lg { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 7px; font-size: 12px; color: var(--ink-2); }
+  .launch-dashboard .det-lg span { display: inline-flex; align-items: center; gap: 5px; } .launch-dashboard .det-lg b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .det-pill { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+  .launch-dashboard .det-pill.registered { background: var(--map-registered); color: #0B2A30; }
+  .launch-dashboard .det-pill.guidelines { background: var(--map-guidelines); color: #fff; }
+  .launch-dashboard .det-pill.mft { background: var(--map-mft); color: #fff; }
+  .launch-dashboard .det-pill.none { background: var(--surface-2); color: var(--ink-3); border: 1px solid var(--line); }
+  .launch-dashboard .det-q { width: 100%; font: inherit; font-size: 13px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); margin-bottom: 6px; }
+  .launch-dashboard .det-list { max-height: 360px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; }
+  /* Find a country (8 Oct 2026): a table (Country, Stage, Use) that follows the left
+     Filters. Names are cut with an ellipsis, the full name is in the title. */
+  .launch-dashboard .det-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+  .launch-dashboard .det-table th { position: sticky; top: 0; z-index: 1; padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
+  .launch-dashboard .det-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .launch-dashboard .det-table tr:last-child td { border-bottom: 0; }
+  .launch-dashboard .det-row { cursor: pointer; }
+  .launch-dashboard .det-row:hover { background: var(--surface-2); }
+  .launch-dashboard .det-table .stg { font-size: 12px; }
+  .launch-dashboard .det-table .stg .mapsw { margin-right: 6px; vertical-align: -1px; }
+  .launch-dashboard .det-table .use .mft-lsw { display: inline-block; margin-right: 2px; }
+  .launch-dashboard .det-table .go { color: var(--accent); font-weight: 700; text-align: right; }
+  .launch-dashboard .det-name { display: block; width: 100%; font: inherit; color: var(--ink); background: none; border: 0; padding: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .launch-dashboard .det-name:focus-visible, .launch-dashboard .det-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  .launch-dashboard .det-nomatch { padding: 14px 12px; display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .launch-dashboard .det-nomatch p { margin: 0; }
+  .launch-dashboard .det-reset { justify-self: start; font: inherit; font-size: 12.5px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+  .launch-dashboard .det-back { font: inherit; font-size: 13px; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0 0 6px; cursor: pointer; }
+  .launch-dashboard .det-chead { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .launch-dashboard .det-cname { margin: 0; font-size: 18px; line-height: 1.2; font-weight: 750; color: var(--ink); text-transform: none; letter-spacing: 0; }
+  .launch-dashboard .det-reg { font-size: 12.5px; color: var(--ink-3); }
+  .launch-dashboard .det-nav { margin-left: auto; display: flex; gap: 4px; flex: none; }
+  .launch-dashboard .det-nav button { font: inherit; font-weight: 700; font-size: 15px; line-height: 1; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 7px; padding: 5px 10px; cursor: pointer; }
+  .launch-dashboard .det-nav button:hover { border-color: var(--accent); }
+  .launch-dashboard .det-top { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+  .launch-dashboard .det-trk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin: 8px 0 3px; }
+  .launch-dashboard .det-trk i { height: 8px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); }
+  .launch-dashboard .det-trk i[style] { border-color: transparent; }
+  .launch-dashboard .det-trkl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; font-size: 10.5px; color: var(--ink-3); text-align: center; }
+  .launch-dashboard .det-gline { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); margin-top: 10px; flex-wrap: wrap; }
+  .launch-dashboard .det-mkr { position: relative; padding-top: 8px; }
+  .launch-dashboard .det-mkr .pin { position: absolute; top: 0; width: 2px; height: 32px; background: var(--ink); }
+  .launch-dashboard .det-chips { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .launch-dashboard .det-chip { font: inherit; font-size: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 2px 9px; cursor: pointer; }
+  .launch-dashboard .det-chip:hover { border-color: var(--accent); }
+  .launch-dashboard .det-cta { margin-top: 4px; font-weight: 700; }
+  .launch-dashboard .mapwrap { position: relative; }
+  /* MapLibre's canvas has no viewBox/height:auto equivalent — an explicit
+     aspect-ratio keeps the same responsive width-drives-height behaviour the
+     old SVG had (960x420, the fitted lon/lat window build-map-geo.js shares
+     with build-map.js). */
+  .launch-dashboard #mapwrap-gl { width: 100%; min-height: 360px; aspect-ratio: 960 / 480; background: var(--surface-2); border-radius: 10px; }
+  .launch-dashboard #mapwrap-gl .maplibregl-canvas { border-radius: 10px; }
+  /* Rotation/pitch are locked off in the map's own options (DEV-13 D19) — the
+     choropleth has always read north-up and fixed, and nothing asked for that
+     to change. */
+  /* MapLibre's stock zoom-icon SVGs are dark-on-transparent; dark theme needs
+     them inverted the same way the rest of this page swaps its own tokens. */
+  .launch-dashboard .maplibregl-ctrl-attrib, .launch-dashboard .maplibregl-ctrl-bottom-right .maplibregl-ctrl { display: none; }
+  /* Custom zoom-level readout beside MapLibre's own NavigationControl — the
+     control draws +/- buttons but no "2.6x" readout, which D13's affordance
+     line and aria-live behaviour depended on. */
+  .launch-dashboard .map-zoom-lvl {
+    position: absolute; top: 8px; right: 46px; z-index: 2; font-size: 11.5px;
+    font-variant-numeric: tabular-nums; color: var(--ink-3); background: var(--surface);
+    box-shadow: 0 0 0 2px rgba(0,0,0,.1); border-radius: 6px; padding: 4px 8px; line-height: 1;
+  }
+  /* Countries have no per-feature DOM node on a canvas map to tab through
+     (DEV-13 D21) — this list is the keyboard/screen-reader equivalent of the
+     old focusable <path> elements: visually hidden until one of its buttons
+     is focused, at which point it reads and behaves exactly like the old
+     per-country tooltip-on-focus did. The list itself must NOT clip — only
+     each button hides itself (the standard visually-hidden-until-focus
+     pattern); a clipped ancestor would cut off a focused button trying to
+     reveal itself, defeating the point. */
+  .launch-dashboard .map-country-list { position: absolute; top: 0; left: 0; z-index: 3; margin: 0; padding: 0; list-style: none; }
+  .launch-dashboard .map-country-list button {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);
+    margin: -1px; white-space: nowrap;
+    font: inherit; background: none; border: 0; padding: 0; cursor: pointer;
+  }
+  .launch-dashboard .map-country-list button:focus-visible {
+    position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal;
+    display: block; margin: 2px 4px; padding: 4px 8px; background: var(--surface); color: var(--ink);
+    border: 1px solid var(--accent); border-radius: 6px; outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .launch-dashboard .map-empty {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 13.5px; color: var(--ink-3); text-align: center; padding: 20px;
+    pointer-events: none;   /* it is a message, never a hit target */
+  }
+  /* `display: flex` above is an author rule and so outranks the browser's
+     [hidden] { display: none }. Without this the box stays laid out over the
+     whole map, invisible, and swallows every country hover. */
+  .launch-dashboard .map-empty[hidden] { display: none; }
+  .launch-dashboard .map-legend-bar {
+    margin-top: 10px; background: var(--surface-2); border-radius: 10px;
+    padding: 12px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px;
+  }
+  .launch-dashboard .map-legend-bar .dock-section { margin: 0; }
+  .launch-dashboard .map-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12.5px; color: var(--ink-2); }
+  /* one swatch definition, shared by the legend, the country tooltip and the
+     gate panel's counts, so none of them can drift from the map */
+  .launch-dashboard .mapsw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; border: 1px solid var(--map-border); }
+  .launch-dashboard .mapsw.registered { background: var(--map-registered); }
+  .launch-dashboard .mapsw.guidelines { background: var(--map-guidelines); }
+  .launch-dashboard .mapsw.mft { background: var(--map-mft); }
+  .launch-dashboard .mapsw.none { background: var(--map-nodata); }
+  .launch-dashboard .map-legend .ct { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--ink); }
+  .launch-dashboard .map-legend .ct.zero { color: var(--ink-3); font-weight: 400; }
+  .launch-dashboard .res-pick { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 10px; }
+  .launch-dashboard .res-pick:last-child { margin-bottom: 0; }
+  .launch-dashboard .res-pick select { font: inherit; padding: 5px 6px; width: 100%; }
+  /* The reading rule under a legend (the MFT policy rule uses it). */
+  .launch-dashboard .res-rule { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 4px 0 0; }
+  .launch-dashboard .res-rule a { color: var(--accent); }
+  /* Filter and legend tables (8 Oct 2026): each list is a small table with the
+     number of countries as its own column under a heading, and the gray-200
+     head from the RBM guidelines. The legends are fixed: they always show. */
+  .launch-dashboard .ftab { width: 100%; border-collapse: collapse; font-size: 12.5px; color: var(--ink-2); }
+  .launch-dashboard .ftab th, .launch-dashboard .ftab td { padding: 5px 8px; text-align: left; vertical-align: middle; }
+  .launch-dashboard .ftab thead th { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #4B5563; background: #E5E7EB; }
+  .launch-dashboard .ftab thead th:first-child { border-radius: 4px 0 0 4px; }
+  .launch-dashboard .ftab thead th:last-child { border-radius: 0 4px 4px 0; }
+  .launch-dashboard .ftab .n { text-align: center; width: 76px; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .launch-dashboard .ftab thead th.n { font-weight: 700; color: #4B5563; white-space: normal; line-height: 1.2; width: 76px; }
+  .launch-dashboard .ftab .n .zero, .launch-dashboard .ftab .n.zero { color: var(--ink-3); font-weight: 400; }
+  .launch-dashboard .ftab tbody td { border-bottom: 1px solid var(--line); }
+  .launch-dashboard .ftab tbody tr:last-child td { border-bottom: 0; }
+  .launch-dashboard .ftab tr.gr th { padding: 12px 8px 4px; font-size: 12px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); }
+  .launch-dashboard .ftab tr.dim { opacity: .45; }
+  .launch-dashboard .ftab td.cbx { width: 22px; padding-right: 0; }
+  .launch-dashboard .ftab td.sw { width: 36px; padding-right: 0; }
+  .launch-dashboard .ftab td small { display: block; font-size: 11.5px; line-height: 1.35; color: var(--ink-3); margin-top: 1px; }
+  .launch-dashboard .ftab input { margin: 0; accent-color: var(--accent); }
+  .launch-dashboard .ftab label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .launch-dashboard .ftab tr:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .launch-dashboard .ftab .flt-all { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .launch-dashboard .ftab .mft-sq { vertical-align: middle; }
+  .launch-dashboard .legend-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px 24px; align-items: start; margin-top: 10px; }
+  .launch-dashboard .map-legend, .launch-dashboard .mft-legend { display: block; margin: 0; font-size: 12.5px; color: var(--ink-2); }
+  .launch-dashboard .mft-legend[hidden] { display: none; }
+  .launch-dashboard .map-legend-bar .dock-section { flex: 1 1 100%; min-width: 0; }
+  .launch-dashboard .mft-donut { justify-items: center; }
+  .launch-dashboard .mft-donut .ftab th, .launch-dashboard .mft-donut .ftab td { padding-inline: 6px; font-size: 12px; }
+  .launch-dashboard .mft-donut .ftab td.sw { width: 20px; padding-right: 0; }
+  .launch-dashboard .mft-donut .ftab thead th.n { width: 52px; }
+  .launch-dashboard .map-hint { font-size: 11.5px; line-height: 1.5; color: var(--ink-3); margin: 6px 0 0; }
+  /* header actions — Download CSV + Subscribe -------------------------------
+     These used to be the last two flex items of a legend strip, alongside three
+     stats and six legend keys. That could not hold: the strip wraps, the
+     legend is wide enough to fill its row at most widths, so Download CSV was
+     pushed onto a line of its own while `margin-left:auto` kept Subscribe up
+     with the legend — the two actions read as unrelated things. Here they are
+     one flex group in the header rail, so they wrap as a unit or not at all.
+     (The status-legend strip these once sat in was removed on 30 Sep 2026.)
+
+     Emphasis is the reverse of what it was. Subscribe is the only conversion
+     point on the page and now takes the solid accent block; Download CSV is a
+     utility and is outlined beside it. */
+  .launch-dashboard .hdr-actions { position: relative; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+  .launch-dashboard .hdr-actions button { display: inline-flex; align-items: center; gap: 7px; }
+  .launch-dashboard .hd-bar .hdr-actions { margin-top: 0; margin-left: auto; }
+  /* Both buttons' mock flags used to float here in the header (Subscribe)
+     and beside the feedback pill (Send feedback), always visible whether or
+     not either panel was open. Both moved inside their own panel instead,
+     10 Sep 2026 — Subscribe's as .sub-note's text, Send feedback's as
+     LAUNCH_FEEDBACK_COPY.note (below, page-local override) styled red by
+     .ri-dialog .ri-note further down this stylesheet. Neither shows on the
+     dashboard itself any more; both show once their button is pressed.
+     Subscribe's flag went on 1 Oct 2026, when it was connected to
+     api/subscribe.js — .sub-note is a plain privacy line now. Send
+     feedback's went on 2 Oct 2026, when it was connected to api/feedback.js;
+     the widget shows its own privacy line in its place. */
+  /* The glyph is an anchor for the eye, never the label — both buttons keep
+     their words — so it is aria-hidden and is not allowed to shrink. */
+  .launch-dashboard .hdr-actions svg { flex: none; width: 14px; height: 14px; }
+  .launch-dashboard .dl-btn {
+    background: transparent; color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 8px; padding: 6px 13px; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+  }
+  .launch-dashboard .dl-btn:hover { background: var(--accent-soft); }
+  .launch-dashboard .dl-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .launch-dashboard .sub-btn {
+    background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent);
+    border-radius: 8px; padding: 6px 13px; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+  }
+  .launch-dashboard .sub-btn:hover { background: #0C4A5E; border-color: #0C4A5E; }
+  .launch-dashboard .sub-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* The panel it opens. Front end only for now — see the seam in the script.
+     Anchored to .hdr-actions rather than sitting inline in the document: an
+     inline panel pushed the whole pathway section down and opened two blocks
+     away from the button that triggered it. This floats directly under
+     Subscribe instead, so the dashboard underneath never shifts. Closes on
+     Escape and on a click outside it — see the script. */
+  .launch-dashboard .subwrap {
+    position: absolute; top: calc(100% + 10px); right: 0; z-index: 20;
+    width: 380px; max-width: calc(100vw - 48px);
+    padding: 14px 18px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-top: 3px solid var(--accent); border-radius: 12px; box-shadow: var(--shadow);
+    text-align: left; color: var(--ink);
+  }
+  /* Pointer tail: a 10px square rotated 45deg, same fill and side borders as
+     the panel, clipped so only its top-left edge (now pointing up) shows a
+     border — the other three sides sit under the panel body and must stay
+     seamless. */
+  .launch-dashboard .subwrap::before {
+    content: ""; position: absolute; top: -6px; right: 24px;
+    width: 10px; height: 10px; background: var(--surface);
+    border: 1px solid var(--line); border-bottom: 0; border-right: 0;
+    transform: rotate(45deg);
+  }
+  .launch-dashboard .subwrap[hidden] { display: none; }
+  @media (max-width: 760px) {
+    /* Full-width sheet: at phone widths a 380px card would either overflow or
+       leave awkward margins on both sides, so it spans the header instead. */
+    .launch-dashboard .subwrap { left: 0; right: 0; width: auto; max-width: none; }
+    /* The tail points at Subscribe, the right-hand of the two equal buttons
+       (8px apart), whose centre is at 75% + 2px of the row; the tail is 10px
+       wide. It sat at left: 24px, under Download CSV, until 7 Oct. */
+    .launch-dashboard .subwrap::before { left: calc(75% - 3px); right: auto; }
+  }
+  .launch-dashboard .subwrap h2:focus { outline: 0; }   /* takes focus on touch screens: openSub() */
+  /* On a phone the floating Send feedback button (assets/report-issue.js)
+     landed on the open panel: over "Notify me" and the end of its privacy
+     line, on a 375px-wide screen (7 Oct). It steps aside while the panel is
+     open (openSub/closeSub set the class). */
+  @media (max-width: 760px) { .launch-dashboard.sub-open .ri-pill { visibility: hidden; } }
+  .launch-dashboard .subwrap h2 { margin: 0 0 3px; font-size: 15px; font-weight: 700; }
+  .launch-dashboard .subwrap p { margin: 0 0 10px; font-size: 12.5px; color: var(--ink-2); max-width: 64ch; }
+  .launch-dashboard .subrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .launch-dashboard .subrow input {
+    flex: 1 1 260px; max-width: 340px; box-sizing: border-box; padding: 8px 11px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+    color: var(--ink); font: inherit; font-size: 13.5px;
+  }
+  .launch-dashboard .subrow input:focus { outline: 0; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .launch-dashboard .subrow input[aria-invalid="true"] { border-color: var(--crit); }
+  @media (max-width: 760px) { .launch-dashboard .subrow input, .launch-dashboard .det-q, .launch-dashboard .res-pick select { font-size: 16px; } }
+  /* Four fields since 8 Oct 2026 (the owner's list: first and last name and the
+     address, required; the organisation, optional), each with a visible label:
+     the names side by side, the rest full width. Stacked on the narrowest
+     phones. */
+  .launch-dashboard .subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 12px; }
+  .launch-dashboard .subfield { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .launch-dashboard .subfield-wide { grid-column: 1 / -1; }
+  .launch-dashboard .subfield label { font-size: 12px; font-weight: 650; color: var(--ink-2); }
+  .launch-dashboard .sub-opt { font-weight: 400; color: var(--ink-3); }
+  .launch-dashboard .subform { display: block; }
+  .launch-dashboard .subform input { width: 100%; max-width: none; flex: none; }
+  @media (max-width: 380px) { .launch-dashboard .subgrid { grid-template-columns: 1fr; } }
+  .launch-dashboard .sub-go {
+    background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px;
+    padding: 8px 15px; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+  }
+  .launch-dashboard .sub-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .launch-dashboard .sub-go[disabled] { opacity: .65; cursor: progress; }
+  .launch-dashboard .visually-hidden {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .launch-dashboard .sub-msg { margin: 9px 0 0; font-size: 12.5px; font-weight: 600; }
+  .launch-dashboard .sub-msg.bad { color: var(--crit); }
+  .launch-dashboard .sub-msg.ok { color: var(--good-text); }
+  /* .subwrap p (below) sets color:var(--ink-2) at specificity (0,1,1) — one
+     type-selector point above plain .sub-note's (0,1,0) — so it would win
+     this regardless of source order. Scoped to .subwrap .sub-note instead of
+     just bumping specificity some other way, since that's what it actually
+     is: a rule for this one paragraph inside this one panel. Muted rather
+     than the red it was while it said "Mock only" — it is fine print now. */
+  .launch-dashboard .subwrap .sub-note { margin: 9px 0 0; font-size: 11.5px; color: var(--ink-3); }
+  @media print { .launch-dashboard .subwrap { display: none !important; } }
+
+  /* print view */
+  @media print {
+    .launch-dashboard { background: #fff; }
+    /* on screen the cards are separated by the gray ground and a shadow,
+       neither of which prints */
+    .launch-dashboard .pathway, .launch-dashboard .board, .launch-dashboard .viz, .launch-dashboard .updates, .launch-dashboard .srcs, .launch-dashboard .gatewrap { border: 1px solid var(--line); box-shadow: none; }
+    .launch-dashboard .product .detail { display: block !important; }
+    .launch-dashboard .product .l1 { display: block !important; }
+    .launch-dashboard .view[data-v="path"] { display: none !important; }
+    .launch-dashboard .view[data-v="time"] { display: block !important; }
+    .launch-dashboard .exp, .launch-dashboard .swg, .launch-dashboard .more { display: none !important; }
+    .launch-dashboard .product { break-inside: avoid; box-shadow: none; }
+    .launch-dashboard .hdr-actions, .launch-dashboard #tip, .launch-dashboard .gp-close { display: none !important; }
+    /* an open drill-down carries the analysis — keep it in the PDF */
+    .launch-dashboard .gatepanel[hidden], .launch-dashboard .gatewrap[hidden] { display: none !important; }
+    .launch-dashboard .gatepanel, .launch-dashboard .gatewrap { break-inside: avoid; box-shadow: none; }
+    /* .updates excluded while its screen panel is disabled (10 Sep 2026) —
+       this rule used to force it open for print/PDF regardless of on-screen
+       state; left in it would print "Recent dashboard updates" on a page
+       where it no longer shows at all. Restore alongside the .hidden=false
+       line above if the panel comes back. */
+    .launch-dashboard .glossary-panel { display: block; }
+    .launch-dashboard .updates[open] summary, .launch-dashboard .glossary-panel[open] summary { list-style: none; }
+  }
+
+  @media (max-width: 760px) {
+    .launch-dashboard .wrap { padding: 20px 14px 48px; }
+    .launch-dashboard .hd-title { font-size: 20px; line-height: 1.25; }
+    /* Same rows as desktop. The logo shrinks and keeps its top-right place,
+       and the last row wraps: date on top, the two buttons sharing the row
+       below at equal width. */
+    .launch-dashboard .attrib img { width: 72px; }
+    .launch-dashboard .attrib .ptxt { display: none; }
+    /* The button row is full width by rule, not by stretching (8 Oct 2026).
+       On an iPhone it came out as wide as its own words: 289 of 362px in
+       English (two 140px buttons), 354 in Portuguese, while French and
+       Spanish, whose words are wider than the screen, looked right. nowrap
+       makes .hd-bar one line, which is always the container's width; the
+       100% does not depend on the browser stretching the row at all. */
+    .launch-dashboard .hd-bar { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 8px; }
+    .launch-dashboard .hd-text { flex: none; }
+    .launch-dashboard .hd-bar .hdr-actions { margin-left: 0; width: 100%; }
+    .launch-dashboard .hd-bar .hdr-actions button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 10px 6px; gap: 5px; }
+    .launch-dashboard .updates li { flex-wrap: wrap; gap: 4px 12px; }
+    .launch-dashboard .hdr-actions button { padding: 10px 15px; }
+    .launch-dashboard .pathway { padding: 2px 4px 12px; }
+    .launch-dashboard .pathnode { min-width: 72px; }
+    .launch-dashboard .pathnode .pill { width: 38px; height: 38px; }
+    .launch-dashboard .pathnode svg, .launch-dashboard .pathnode .whoemb { width: 25px; height: 25px; }
+    .launch-dashboard .detail { padding: 14px; }
+  }
+  /* Phones: step names break only between words (9 Oct 2026). With
+     overflow-wrap: break-word and hyphens: auto a long word split inside
+     itself ("recommenda-tion", "Recommandati|on", "Adquisicion|es"): 7 words
+     across en/fr/pt/es at 360px and 390px. Each column is now at least as
+     wide as its longest word, in every language. The strip already scrolls
+     sideways, and measured it is no wider than before. After the 760px block
+     on purpose: that block sets .pathnode { min-width: 72px } at the same
+     specificity. */
+  /* Every width since 19 Oct 2026: between 641 and 760px the old rule still
+     split "recommenda-tion" (an iPad mini showing RBM's iframe). */
+  .launch-dashboard .pathnode .plabel { overflow-wrap: normal; hyphens: manual; }
+  .launch-dashboard .pathnode { flex: 1 0 72px; min-width: min-content; }
+  .launch-dashboard .pathgroup { flex: 1 0 84px; min-width: min-content; }
+  /* Market Access above Country Access (19 Oct 2026). Side by side, the two
+     cards need about 1,150px in English and more in French; anything
+     narrower, a tablet or RBM's iframe beside its 270px sidebar, cut Country
+     Access off at the edge and left it to a sideways scroll nobody saw.
+     fitPathway() measures, so the switch follows the language and the fonts
+     rather than a fixed breakpoint, and stacks the cards full width with the
+     arrow turned down. A card still too narrow for its steps (Country Access
+     on a small phone) scrolls inside itself. */
+  .launch-dashboard .pathway.stack { flex-direction: column; }
+  .launch-dashboard .pathway.stack .phase { flex: none; min-width: 0; }
+  .launch-dashboard .pathway.stack .phase-body { overflow-x: auto; }
+  /* stacked, only the card holding the WHO pair needs the room it is lifted into */
+  .launch-dashboard .pathway.stack .phase-body:not(:has(.pathgroup)) { padding-top: 8px; }
+  .launch-dashboard .pathway.stack .patharrow.phasegap { width: auto; margin: 2px 0; transform: rotate(90deg); }
+  @media (max-width: 640px) {
+    /* Safari (10 Oct 2026): WebKit sizes each card (.phase, min-width:
+       min-content) from its steps' min-content alone and leaves out their
+       72px flex-basis, so a step with short words ("R&D & clinical") was
+       laid out at 72px but counted narrower. The card came out up to 29px
+       too narrow and its hidden overflow cut off the last step and the WHO
+       bracket. With the label at least 72px, a step's min-content is never
+       below its basis, so both engines agree. Chrome was never affected. */
+    .launch-dashboard .pathnode .plabel { min-width: 72px; box-sizing: border-box; }
+    /* Stacked on a phone, each card has the whole width, so it gives its
+       steps the room its padding and arrows took: four Country Access steps
+       then fit at 375px in English. Step and label minimums move together,
+       for the Safari reason above. */
+    .launch-dashboard .pathway.stack .phase-body { padding-left: 4px; padding-right: 4px; gap: 0; }
+    .launch-dashboard .pathway.stack .phase-body > .patharrow { font-size: 12px; }
+    .launch-dashboard .pathway.stack .pathnode { flex-basis: 64px; }
+    .launch-dashboard .pathway.stack .pathnode .plabel { min-width: 64px; }
+  }
+
+/* ---------- 2. Unitaid look: scripts/rbm-skin.js ---------- */
+  /* Unitaid look — from scripts/rbm-skin.js (CSS in applySkin). */
+  .launch-dashboard, .launch-dashboard:not([data-theme="light"]), .launch-dashboard[data-theme="dark"] {
+    --ground: #F0F2F5; --surface: #FFFFFF; --surface-2: #F7F8FA;
+    --ink: #212E92; --ink-2: #3D4678; --ink-3: #525A82; --line: #DEE0EF;
+    --accent: #0066FF; --accent-ink: #FFFFFF; --accent-soft: #EBF3FF;
+    --good: #00804F; --good-text: #00704A; --good-soft: #D9F7EC;
+    --warn: #B87500; --warn-text: #8C5A00; --warn-soft: #FBF0DA;
+    --crit: #CC0033; --crit-soft: #FBEBEF;
+    --idle: #5F6690; --idle-soft: #EEF0F5;
+    --exp-line: #7A82BE; --exp-ink: #212E92;
+    --diff: #212E92; --diff-soft: #EBF3FF;
+    --ph-mkt-soft: #EBF3FF; --ph-mkt-ink: #212E92;
+    --ph-cty-soft: #EBF3FF; --ph-cty-ink: #212E92;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  }
+  .launch-dashboard, .launch-dashboard button, .launch-dashboard input, .launch-dashboard select, .launch-dashboard textarea { font-family: "Source Sans 3", Arial, sans-serif; }
+  /* headings in the brand's Bold, navy */
+  .launch-dashboard .hd-title, .launch-dashboard .viz h2, .launch-dashboard .disclaimer h3, .launch-dashboard .srcs-title, .launch-dashboard .ft-sec h3, .launch-dashboard .mft-name, .launch-dashboard .det-cname, .launch-dashboard .card .big {
+    font-weight: 700; color: var(--ink); letter-spacing: 0;
+  }
+
+  /* cards: rounded-lg on the canvas; panels inside them rounded-md (as in the RBM look) */
+  .launch-dashboard .pathway, .launch-dashboard .board, .launch-dashboard .updates, .launch-dashboard .disclaimer, .launch-dashboard .srcs, .launch-dashboard .viz, .launch-dashboard .gatewrap, .launch-dashboard .subwrap { border-radius: 8px; }
+  .launch-dashboard .l1in, .launch-dashboard .gatepanel, .launch-dashboard .gw-band, .launch-dashboard .detail, .launch-dashboard .card, .launch-dashboard .mtable-box, .launch-dashboard .det-card, .launch-dashboard .map-legend-bar, .launch-dashboard .map-dock-rail,
+  .launch-dashboard #mapwrap-gl, .launch-dashboard #mapwrap-gl .maplibregl-canvas { border-radius: 6px; }
+
+  /* table and panel heads: Unitaid Grey strip, navy-grey bold labels */
+  .launch-dashboard .srow.hd, .launch-dashboard .phase-t, .launch-dashboard .ystable thead th, .launch-dashboard .det-table th, .launch-dashboard .ftab thead th { background: #E6EAEE; color: var(--ink-2); }
+  .launch-dashboard .srow.hd .c-bar, .launch-dashboard .ftab thead th.n { color: var(--ink-2); }
+  .launch-dashboard .ystable tr.ysgrp th { background: var(--surface-2); }
+
+  /* the source page's hard-coded teal tints, in Unitaid Blue tints (30% and 15%) */
+  .launch-dashboard .jcell.on { box-shadow: inset 1px 0 0 #B2D1FF, inset -1px 0 0 #B2D1FF; }
+  .launch-dashboard .more { border-top-color: #B2D1FF; color: var(--ink); }   /* it sits on --accent-soft */
+  .launch-dashboard .more:hover { background: #D9E8FF; }
+  .launch-dashboard .mft-pchip { background: #F0F2F5; }
+  .launch-dashboard .chip.pipeline { color: var(--ink); }
+
+  /* buttons: rounded-md, Unitaid Blue, navy on hover, no gradients */
+  .launch-dashboard .dl-btn, .launch-dashboard .sub-btn, .launch-dashboard .sub-go, .launch-dashboard .swg, .launch-dashboard .det-q, .launch-dashboard .det-nav button { border-radius: 6px; }
+  .launch-dashboard .dl-btn { background: var(--surface); }
+  .launch-dashboard .dl-btn:hover { background: var(--accent); color: var(--accent-ink); }
+  .launch-dashboard .sub-btn:hover, .launch-dashboard .sub-go:hover { background: #212E92; border-color: #212E92; }
+  .launch-dashboard .swg button:not([aria-pressed="true"]):hover { background: var(--accent-soft); color: var(--ink); }
+  .launch-dashboard .tab[aria-selected="false"]:hover { color: var(--ink); border-color: var(--accent); }
+
+  /* feedback dialog: Unitaid Grey head strip, rounded-lg, shadow-xl. The widget
+     adds its own stylesheet when it loads, after this one, so these rules carry
+     an extra "html" to win on specificity instead of source order. */
+  .launch-dashboard .ri-dialog { border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
+  .launch-dashboard .ri-head { background: #F0F2F5; }
+  .launch-dashboard .ri-dialog::backdrop { background: rgba(0,0,0,.5); }
+  .launch-dashboard .ri-btn, .launch-dashboard .ri-input, .launch-dashboard .ri-select, .launch-dashboard .ri-textarea { border-radius: 6px; }
+  .launch-dashboard .ri-primary:hover { background: #212E92; }
