@@ -1322,6 +1322,14 @@ ours to undo.
   each page fetched its own language's file. Smoke test on that build,
   `SMOKE_LOCALES=en,fr,pt`: 85 of 87 on the first run, straight after the
   server started (the two failing checks were not kept), then 87 of 87 twice.
+- **28 Oct 2026, the language files are published**: launch-development-test
+  #131 (`c9b315c`) and #132 (`4d4625d`) merged, "Publish now" run
+  40711081840, launch-data-test `e663da3` (`v1/dashboard.en/fr/pt.json`,
+  `schema.lang.json`; data unchanged). Each online file equals
+  `forLocale()` of the online `dashboard.json`. `next build` against the
+  published address (no `LAUNCH_DATA_URL`) passes; each page shows its own
+  language's stage names from those files; smoke test `SMOKE_LOCALES=en,fr,pt`
+  87 of 87 on the first run.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the
