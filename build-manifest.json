@@ -1,6 +1,6 @@
 {
   "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. data/dashboard.json is the latest file published to the data repo, replaced after each publish by scripts/copy-rbm-pages.js --data-only. scripts/copy-rbm-pages.js compares every file below with what is here before it copies, and stops if one was changed.",
-  "built_from": "2d30ff3395d5755ed4a1f63c2ca38fd04915fb33",
+  "built_from": "e9aff928997158944ae495251eb0b8eb85337491",
   "clean": true,
   "translations_current": true,
   "data_url": "../data/dashboard.json",
@@ -45,10 +45,10 @@
     "fr/assets/report-issue.js": "437b3881a7fc41b378691380664c9aebc7482d5c9be5edb864d81ebfec6bc810",
     "fr/data/world-map-geo.js": "1b423c379af752f61ac8fd0d61de934fbf5a5e8ac1b4737174bfd2115df1c2bf",
     "fr/data/world-map.js": "2825a19db46405dfb51c018ad42022f942be14668105721cd2612a04fc25cb07",
-    "fr/index.html": "56acf492fd71f4e012ff9a2af5d7da11935bbd3e320ee397f2d6b7a2ef73fe1c",
+    "fr/index.html": "4ce70112e25d47afc1d0956542dfef69c1eb0f0867d64eb532cc3630428c389a",
     "pt/assets/report-issue.js": "40fc22d0b7133f120cb1ced4e3c1136743d2f39e5e67ce1919461b6d7202824a",
     "pt/data/world-map-geo.js": "32f0a5c1f0c5611343c3e9d141c1f036c363f93b96fd08ddb4875e190c46014c",
     "pt/data/world-map.js": "2f8d7722a0390c51a5efcc91808ef9115372c69cc315ec1ab6e16c993c4bba80",
-    "pt/index.html": "bde2161cdef4739ee927376407862c99244527cb61ce3537bccee818053966d9"
+    "pt/index.html": "5878b167001ffe2f3c23a7361104a9d48da934ed3e25e6d3d77e2be6d532d352"
   }
 }
