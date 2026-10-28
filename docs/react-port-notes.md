@@ -543,6 +543,19 @@ This file is updated in the same commit as each change it describes.
     ReadPixels" under SwiftShader (4 per run, about the page's WebGL canvas;
     whether MapLibre or Chrome's compositor reads the pixels is not
     established).
+52. **The example app's `<body>` has `margin: 0`** (`app/[locale]/layout.tsx`,
+    an inline style). Today's page sets it in `body { margin: 0; … }`;
+    fenced, that rule lands on `.launch-dashboard` (as `:root` and `body`
+    both do), so the example's own `<body>` kept Chrome's 8px default. The
+    dashboard came out 16px narrower than today's page at every width: lines
+    wrapped earlier in the map section and the footer, and the page grew by
+    31px on `/en` at 1440px, 139px at 390px, 176px on `/fr` at 390px (found
+    by the side-by-side check, below). Rejected: a `body` rule in
+    `styles/launch-dashboard.css` (the file has no selector outside the
+    root, `tests/styles.test.ts` keeps it so, and RBM's `<body>` is RBM's);
+    leaving it (every comparison with today's page would show it, and the
+    example is what RBM looks at). Nothing changes for RBM: their layout
+    decides their `<body>`, and the dashboard fills the width it is given.
 
 ## Deferred, and found on the way
 
@@ -752,13 +765,71 @@ This file is updated in the same commit as each change it describes.
 - The browser check covers `/en` and `/fr`, not `/pt` (`SMOKE_LOCALES=pt`
   runs it), nor narrow screens, switching journey views, the timeline fit,
   the forks or the forms' sends. It needs `NEXT_PUBLIC_LAUNCH_FORMS_URL` set
-  at `next build`, or the Subscribe check fails by design.
+  at `next build`, or the Subscribe check fails by design. (28 Oct: run with
+  `SMOKE_LOCALES=en,fr,pt`, 87 of 87. Narrow screens and `/pt` against
+  today's page: the side-by-side check, below.)
 - If 20.4 KB of gzipped text in the browser matters (decision 42): pass the
   text in, and give `lib/stages.ts` its words through the context; the
   golden tests' calls would change with it.
 - At the merge with MapLibre 6.14: the example page's `ASSETS.mapWorker`
   becomes `/launch-map/maplibre-gl-worker.mjs`. Nothing in the Dashboard.
 - The example app has no icon: Chrome logs a `/favicon.ico` 404.
+
+### The side-by-side check (step 5, 28 Oct 2026)
+
+How, so it can be repeated (the scripts were kept outside the repo, like the
+smoke screenshots):
+
+- **Same data in both.** Today's pages (`en/`, `fr/`, `pt/` on this branch,
+  unchanged from `main`; built from launch-development-test `2d30ff3`, and
+  only a Vercel redirect commit separates that from `89b2011`, the CSS's
+  source) served by `python3 -m http.server 3125`; the port's `next build`
+  and `next start -p 3124` with
+  `LAUNCH_DATA_URL=http://127.0.0.1:3125/data/dashboard.json`.
+- **Same font.** The example app does not load Source Sans 3 (the host page
+  does, see "Remote loads outside this file"), so the port's page was given
+  the same Google Fonts link in its `<head>`, as RBM's page will need.
+- Headless Chrome (SwiftShader) over the DevTools protocol, at 1440, 1024,
+  768, 390 and 360px (the last two as a phone: mobile viewport, touch), in
+  en, fr and pt. Per page: a full-page screenshot, the height, horizontal
+  overflow, `document.body.innerText`, console errors; each block of `.wrap`
+  (header, pathway, board, map, footer) cropped at its own position and
+  compared pixel by pixel (a pixel counts when a channel moves by more than
+  40 of 255). Three states at 1440 and 390px: a medicine opened by link
+  (`#ganlum` today, `?product=ganlum` in the port, each loaded fresh),
+  Subscribe open, the feedback dialog open.
+
+Result, after decision 52:
+
+- All 15 pages: the same height to the pixel, the same visible text line for
+  line, no horizontal overflow, no console errors in either.
+- Header, pathway and board 0.0% different on every page; the map section
+  and the footer under 0.12% (0 to 975 pixels).
+- The 18 states: open in both, the medicine's row at the top of the window
+  (0px) in both, 0.0% different, the same text.
+- The leftover pixels, looked at one by one: anti-aliasing on single letters
+  (most on the disclaimer's "Country registrations have been verified for…"
+  sentence), and the text inside the map's two drop-downs sitting 1–2px
+  higher at 360px. The drop-downs measure the same in both (36px high,
+  `5px 6px` padding, 16px type). Forcing them to lay out again moves the
+  text by the same 975 pixels on *both* pages, and loaded side by side they
+  matched exactly: Chrome repaints a native `<select>` after the web font
+  swaps in, at a moment of its own. Not a difference between the two.
+- Before decision 52 the same run found nothing else: identical text, the
+  same states, no overflow; only the 16px narrowing.
+
+Not covered: real phones and Safari (Chrome's mobile emulation only; iOS
+WebKit has behaved differently before); hover hints, the journey views, the
+map beyond its first frame, the forms' sends; RBM's own page around the
+dashboard (its sidebar: see "Breakpoints now measure RBM's window").
+
+A trap in the method: to test today's `#id` link, load it in a fresh tab.
+Loading the page, then changing only the hash and reloading, left the row
+closed (3,204px above the window); a fresh load opens it, at both widths.
+
+For the README (step 6): RBM must link Source Sans 3 (or serve it with
+`next/font`), or the dashboard falls back to Arial and every line wraps
+differently from today's page.
 
 ## Map section (step 3, branch `feat/react-port-map`)
 
@@ -1100,11 +1171,15 @@ ours to undo.
   files; `tsc --noEmit` clean; `next build` passes with `/en`, `/fr`, `/pt`
   pre-built; smoke test 58 of 58 checks on `/en` and `/fr` (screenshots kept
   outside the repo); no NUL bytes, no line-ending churn.
-- **Next:** re-run the smoke test on the merged branch (maplibre-gl 6.14,
-  and `/pt`); the side-by-side check against today's pages in all three
-  languages (step 5); add the 37 missing keys to launch-development-test's
+- **28 Oct 2026, side-by-side check** (step 5, on `feat/react-port`):
+  decision 52 (`app/[locale]/layout.tsx`) and this file; method and results
+  in "The side-by-side check" above. 274 tests pass, `tsc --noEmit` clean,
+  `npm audit --omit=dev` 0, `next build` passes; smoke test re-run on the
+  merged branch (maplibre-gl 6.14) with `SMOKE_LOCALES=en,fr,pt`: 87 of 87.
+- **Next:** add the 37 missing keys to launch-development-test's
   `i18n/ui.en.json` and fix the French apostrophes in the message build, so
-  `lib/held-text.ts` can go; the README for RBM (step 6).
+  `lib/held-text.ts` can go; the README for RBM (step 6), with the font
+  (see the side-by-side check); a check on a real iPhone and in Safari.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).

@@ -21,9 +21,12 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  // margin 0: the static page's body rule did this, but fenced it now lands on
+  // .launch-dashboard, and the browser's 8px default narrowed the example by
+  // 16px (more wrapped lines: +139px on /en at 390px, side-by-side 28 Oct).
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body style={{ margin: 0 }}>{children}</body>
     </html>
   );
 }
