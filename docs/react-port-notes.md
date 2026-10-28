@@ -904,6 +904,15 @@ ours to undo.
   `maplibre-gl-csp-worker.js` removed), `types/maplibre-gl-csp.d.ts`
   (removed), this file. The regenerated shapes and names came back
   byte-identical.
+- **28 Oct 2026, message copy.** `messages/` now comes in through
+  launch-development-test's `scripts/copy-rbm-messages.js` (branch
+  `feat/rbm-messages`, `18f6a6d`): the first copy wrote only
+  `messages/manifest.json`, since the three files already matched. The
+  manifest records the source commit, `allow_stale` and the keys still in
+  English; the next copy refuses to overwrite a file edited here by hand.
+  `messages/README.md` corrected: it named four of the seven untranslated
+  keys `download.*`; they are `product.procurement.*`. It now points to the
+  manifest instead of repeating it.
 - **Next:** one client `Dashboard` component (branch
   `feat/react-port-dashboard`, in progress) that wires the five areas inside
   `DashboardFrame` (slots, open step and medicine, hints, Escape order), takes
