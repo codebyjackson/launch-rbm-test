@@ -2536,8 +2536,8 @@
     const NUMF = new Intl.NumberFormat(DATE_LANG);
     const byPres = d.volume && Array.isArray(d.volume.byPresentation) && d.volume.byPresentation.length ? `
         <div class="cscroll"><table class="ystable proc-table">
-          <thead><tr><th scope="col">Presentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Cursos de tratamento (est.)</th></tr></thead>
-          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Cursos de tratamento (est.)</span>${b.courses == null ? "<i>not estimated</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
+          <thead><tr><th scope="col">Apresentação</th><th scope="col">Transações</th><th scope="col">Pacotes</th><th scope="col">Cursos de tratamento (est.)</th></tr></thead>
+          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transações</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Pacotes</span>${NUMF.format(b.packs)}</td><td><span class="pk">Cursos de tratamento (est.)</span>${b.courses == null ? "<i>não estimado</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
         </table></div>
         ${d.volume.coursesRule ? `<p class="proc-rule">${esc(d.volume.coursesRule)}</p>` : ""}` : "";
     const volumeCard = d.volume ? `
@@ -3404,7 +3404,7 @@
     const countryTip = el => {
       const rank = LEVEL_ORDER.indexOf(el.dataset.lvl);
       const foot = mapProduct
-        ? `<div class="tprod">${esc(mapProduct)}${mapStatus ? " · " + esc(mapStatus) + " data" : ""}</div>`
+        ? `<div class="tprod">${esc(mapProduct)}${mapStatus ? " · " + esc(mapStatus) + " dados" : ""}</div>`
         : "";
       const rows = rank < 0
         ? `<div class="tlvl"><span class="tmark">–</span><span class="mapsw none"></span>${LEVEL_LABEL.none}</div>`
@@ -3742,7 +3742,7 @@
         `aria-label="${n} ${n === 1 ? "país por grupo de doentes" : "países por grupo de doentes"}">` +
         `<circle cx="56" cy="56" r="${R}" fill="none" stroke="#EDF1F3" stroke-width="${W}"></circle>${arcs}` +
         `<text class="ct-n" x="56" y="58" text-anchor="middle">${n}</text>` +
-        `<text class="ct-l" x="56" y="74" text-anchor="middle">${n === 1 ? "country" : "countries"}</text></svg>` +
+        `<text class="ct-l" x="56" y="74" text-anchor="middle">${n === 1 ? "país" : "países"}</text></svg>` +
         `<div class="rows">${rows}</div></div>`;
     }
 
