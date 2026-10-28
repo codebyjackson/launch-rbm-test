@@ -16,7 +16,7 @@ import { Fragment, type Ref } from "react";
 import type { Product, StageColumn } from "@/lib/dataset";
 import { PATHWAY_DISPLAY, lateAt, phaseColumns, stepNo, type PathwayDisplay } from "@/lib/pathway";
 import { phaseOf, yrsText, type StageContext } from "@/lib/stages";
-import { PAGE_TEXT, fill } from "@/lib/strings";
+import { fill, pageText } from "@/lib/strings";
 import { fillNodes } from "./fillNodes";
 import { StageIcon } from "./icons";
 import type { PathwayText } from "./text";
@@ -45,7 +45,7 @@ export function PathwayStrip({
   whoEmblemSrc,
   ref,
 }: PathwayStripProps) {
-  const phases = PAGE_TEXT[ctx.locale].phases;
+  const phases = pageText(ctx.locale).phases;
 
   const node = (i: number, stacked: boolean) => {
     const s = ctx.stages[i];

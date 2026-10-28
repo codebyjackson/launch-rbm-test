@@ -6,14 +6,15 @@
 // the old names where there were any; tests/golden-frame.test.ts checks each
 // against the original in all three languages.
 //
-// Words come in as arguments (components/frame/text.ts, until the message
-// files), so these stay pure. The two send* functions are the forms' one seam
+// Words come in as arguments (frameText() in components/frame/text.ts, from
+// the message files), so these stay pure. The two send* functions are the forms' one seam
 // each, as on the page; they take fetch as an argument so tests can stub it.
 import type { Product, Source, Status } from "./dataset";
 import { DATE_LOCALE, type Citation } from "./format";
 import type { Locale } from "./locales";
+import { tracked } from "./pathway";
 import { DISPLAY, applyShowLate, statusShown, type Display } from "./stages";
-import { PAGE_TEXT, fill } from "./strings";
+import { fill, pageText } from "./strings";
 
 /**
  * PAGE_LANG: the static pages' <html lang>. The Sources list is sorted in
@@ -49,19 +50,6 @@ export type BannerKind = "illustrative" | "fail" | "schema";
  */
 export function statusBanner(dataStatus: string): "illustrative" | null {
   return dataStatus === "illustrative" ? "illustrative" : null;
-}
-
-// ---- the medicines the page lists ------------------------------------------
-
-/**
- * `tracked`: the medicines the page lists, placeholders left out, A–Z by
- * name (30 Sep 2026). Every list built from it follows this order: the
- * board, the gate panels, the map tabs and the CSV.
- */
-export function tracked(products: readonly Product[]): Product[] {
-  return products
-    .filter((p) => !p.placeholder)
-    .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
 }
 
 // ---- CSV download -----------------------------------------------------------
@@ -106,7 +94,7 @@ export function csvRows(
   text: CsvText,
   display: Display = DISPLAY,
 ): unknown[][] {
-  const label: Record<Status, string> = PAGE_TEXT[locale].status;
+  const label: Record<Status, string> = pageText(locale).status;
   const c = text.columns;
   const rows: unknown[][] = [
     [c.product, c.record, c.item, c.status, c.detail, c.date, c.next, c.anticipated, c.source, c.asOf],

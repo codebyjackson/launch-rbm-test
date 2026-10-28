@@ -19,7 +19,7 @@ import { JourneyIconSprite, StageIcon } from "@/components/pathway/icons";
 import { PathwayStrip } from "@/components/pathway/PathwayStrip";
 import { StatTip } from "@/components/pathway/StatTip";
 import { StepPanel } from "@/components/pathway/StepPanel";
-import { pathwayText } from "@/components/pathway/text";
+import { pathwayText } from "./fixtures/text/pathway-text";
 import { StagePeek, Tip } from "@/components/pathway/Tip";
 import type { Product, Source } from "@/lib/dataset";
 import { LOCALES, type Locale } from "@/lib/locales";

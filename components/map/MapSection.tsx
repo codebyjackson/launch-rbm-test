@@ -8,7 +8,12 @@
 // colours; MapSectionView draws them and keeps nothing, so a test can render
 // it for any state. Same ids, classes and structure as the static page, so
 // its stylesheet applies.
-import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
+//
+// Its hints go in the dashboard's one #tip (the pathway area's <Tip>), as on
+// the page, where the board's and the map's hints shared one element: the
+// section is given that Tip's controls and draws only what the hint says.
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
+import type { TipControls } from "@/components/pathway/Tip";
 import {
   DEFAULT_TOKENS,
   closeCountry,
@@ -38,8 +43,8 @@ import { MapFilters } from "./MapFilters";
 import { MapLegend } from "./MapLegend";
 import { MapLocation } from "./MapLocation";
 import { MapTabs } from "./MapTabs";
-import { ListTipBody, MapTipBody, MapTooltip, type TooltipHandle } from "./MapTooltip";
-import type { MapActions, MapTips } from "./parts";
+import { ListTipBody, MapTipBody } from "./MapTooltip";
+import type { MapActions, MapTips, TipAt } from "./parts";
 import type { MapText } from "./text";
 
 export interface MapSectionProps {
@@ -50,30 +55,34 @@ export interface MapSectionProps {
   shapesUrl: string;
   /** where it fetches public/launch-map/maplibre-gl-worker.mjs from */
   workerUrl: string;
+  /** the dashboard's hint (#tip): useTipControls() in components/pathway/Tip.tsx */
+  tip: TipControls;
 }
 
 // every colour the section reads, the old fallbacks (--map1..3) included
 const TOKEN_NAMES = [...Object.keys(DEFAULT_TOKENS), "--map1", "--map2", "--map3"];
 
-export function MapSection({ input, text, shapesUrl, workerUrl }: MapSectionProps) {
+export function MapSection({ input, text, shapesUrl, workerUrl, tip }: MapSectionProps) {
   const ctx = useMemo(() => mapContext(input), [input]);
   const [st, setSt] = useState<MapState>(() => initialState(ctx));
   const [q, setQ] = useState("");
   const [seq, setSeq] = useState(0);
   const [tokens, setTokens] = useState<Record<string, string>>({});
   const root = useRef<HTMLElement>(null);
-  const tip = useRef<TooltipHandle>(null);
   const token = useMemo(() => withDefaults((n) => tokens[n] || ""), [tokens]);
 
   // Every choice but typing in the search box also empties that box: the
   // old page rebuilt the Detail panel, box included. Filter changes and
   // Reset also hide the tooltip, as they did there.
-  const update = useCallback((f: (s: MapState) => MapState, hideTip = false) => {
-    setSt(f);
-    setQ("");
-    setSeq((n) => n + 1);
-    if (hideTip) tip.current?.hide();
-  }, []);
+  const update = useCallback(
+    (f: (s: MapState) => MapState, hideTip = false) => {
+      setSt(f);
+      setQ("");
+      setSeq((n) => n + 1);
+      if (hideTip) tip.hide();
+    },
+    [tip],
+  );
   const actions = useMemo<MapActions>(
     () => ({
       product: (id) => update((s) => selectProduct(s, id)),
@@ -97,18 +106,20 @@ export function MapSection({ input, text, shapesUrl, workerUrl }: MapSectionProp
   useEffect(() => {
     now.current = st;
   });
-  const tips = useMemo<MapTips>(
-    () => ({
+  const tips = useMemo<MapTips>(() => {
+    // beside the pointer (showTipAtPoint), or above the focused button (showTipAt)
+    const show = (content: ReactNode, at: TipAt) =>
+      "el" in at ? tip.showAt(at.el, content) : tip.showAtPoint(at.x, at.y, content);
+    return {
       showMap: (iso3, at) => {
         const t = mapTip(ctx, now.current, iso3);
-        if (t) tip.current?.show(<MapTipBody tip={t} text={text} />, at);
-        else tip.current?.hide();
+        if (t) show(<MapTipBody tip={t} text={text} />, at);
+        else tip.hide();
       },
-      showList: (shape, level, at) => tip.current?.show(<ListTipBody tip={listTip(ctx, now.current, shape, level)} text={text} />, at),
-      hide: () => tip.current?.hide(),
-    }),
-    [ctx, text],
-  );
+      showList: (shape, level, at) => show(<ListTipBody tip={listTip(ctx, now.current, shape, level)} text={text} />, at),
+      hide: () => tip.hide(),
+    };
+  }, [ctx, text, tip]);
 
   // The page's colours: read once in the page, and again when the theme
   // changes (old: repaintTheme's listeners). Today's CSS is light only, so
@@ -155,22 +166,19 @@ export function MapSection({ input, text, shapesUrl, workerUrl }: MapSectionProp
 
   if (!ctx.products.length) return null;
   return (
-    <>
-      <MapSectionView
-        rootRef={root}
-        ctx={ctx}
-        st={st}
-        q={q}
-        seq={seq}
-        text={text}
-        token={token}
-        shapesUrl={shapesUrl}
-        workerUrl={workerUrl}
-        actions={actions}
-        tips={tips}
-      />
-      <MapTooltip ref={tip} />
-    </>
+    <MapSectionView
+      rootRef={root}
+      ctx={ctx}
+      st={st}
+      q={q}
+      seq={seq}
+      text={text}
+      token={token}
+      shapesUrl={shapesUrl}
+      workerUrl={workerUrl}
+      actions={actions}
+      tips={tips}
+    />
   );
 }
 

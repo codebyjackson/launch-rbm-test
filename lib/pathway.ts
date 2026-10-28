@@ -35,12 +35,14 @@ export interface PathwayDisplay {
 export const PATHWAY_DISPLAY: PathwayDisplay = { showStageExpected: false, showBarriers: false };
 
 /**
- * The medicines the page lists: placeholders out, then A to Z by name. Every
+ * The medicines the page lists: placeholders out, then A to Z by name ("en"
+ * in every language, so the order never changes with it; 30 Sep 2026). Every
  * list on the page (board, step panels, map tabs, CSV) follows this order.
  * Give it the products as shown (applyShowLate), as the page computed it
- * after rewriting "late".
+ * after rewriting "late". The one copy: the frame, the board and the map
+ * import it (each area had its own until the areas were wired together).
  */
-export function tracked(products: Product[]): Product[] {
+export function tracked<P extends Pick<Product, "name" | "placeholder">>(products: readonly P[]): P[] {
   return products
     .filter((p) => !p.placeholder)
     .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));

@@ -32,7 +32,7 @@ export function DashboardFrame({
   children,
   outside,
 }: {
-  /** this language's FrameText (components/frame/text.ts until the message files) */
+  /** this language's FrameText: frameText(locale), from the message files */
   text: FrameText;
   /** frameView(dataset, locale, text), worked out on the server */
   view: FrameView;

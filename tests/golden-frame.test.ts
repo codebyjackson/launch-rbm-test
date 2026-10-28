@@ -13,9 +13,10 @@ import { isDeepStrictEqual } from "node:util";
 import { afterAll, describe, expect, it } from "vitest";
 import { feedbackErrorText } from "@/components/frame/FeedbackForm";
 import { subscribeMessage } from "@/components/frame/Subscribe";
-import { FRAME_TEXT } from "@/components/frame/text";
+import { FRAME_TEXT } from "./fixtures/text/frame-text";
 import { localize, type Product, type Source } from "@/lib/dataset";
 import * as frame from "@/lib/frame";
+import * as pathway from "@/lib/pathway";
 import { LOCALES, type Locale } from "@/lib/locales";
 import { DISPLAY, applyShowLate, type Display } from "@/lib/stages";
 import { fill } from "@/lib/strings";
@@ -166,7 +167,7 @@ for (const locale of LOCALES) {
 
       const ds = input(locale);
       const old = runOldPage(locale, { data: ds.data, sources: ds.sources });
-      same("tracked", "published", frame.tracked(applyShowLate(ds.data.products, DISPLAY)), old.get("tracked"));
+      same("tracked", "published", pathway.tracked(applyShowLate(ds.data.products, DISPLAY)), old.get("tracked"));
       const csvCell = old.get("csvCell") as Fn;
       const strings = new Set<string>();
       const visit = (v: unknown): void => {

@@ -16,7 +16,7 @@ import type { Product, Source } from "@/lib/dataset";
 import { citeOrText, shortDate } from "@/lib/format";
 import { PATHWAY_DISPLAY, levelCounts, stalledSince, type PathwayDisplay } from "@/lib/pathway";
 import { statusShown, yrsText, type StageContext } from "@/lib/stages";
-import { PAGE_TEXT, fill } from "@/lib/strings";
+import { fill, pageText } from "@/lib/strings";
 import { Cites } from "./Cites";
 import { fillNodes } from "./fillNodes";
 import type { PathwayText } from "./text";
@@ -98,7 +98,7 @@ export function GatePanelContent({
     <>
       <div className="gp-head">
         <span className="gp-stage">{ctx.stages[i]}</span>
-        {shown ? <span className={`gp-pill ${st.status}`}>{PAGE_TEXT[ctx.locale].status[st.status]}</span> : null}
+        {shown ? <span className={`gp-pill ${st.status}`}>{pageText(ctx.locale).status[st.status]}</span> : null}
         <button className="gp-close" type="button" data-close="cell" onClick={onClose}>
           {text.close}
         </button>

@@ -11,6 +11,7 @@
 // drawStageForks), the measuring stays in components/board/hooks.ts and only
 // the arithmetic is here, so the arithmetic can be compared on its own.
 import type { Procurement, Product, Status } from "./dataset";
+import { colIndexOf } from "./pathway";
 import { sinceFrom, stageYear, statusShown, type StageContext } from "./stages";
 
 /**
@@ -37,29 +38,9 @@ export const BOARD_DISPLAY: BoardDisplay = { showBarriers: false, showStageNote:
 /** The symbol inside a stage marker, by status. */
 export const ICON: Record<Status, string> = { done: "✓", prog: "›", late: "!", idle: "" };
 
-// trackedProducts and colIndexOf are the same rules as lib/pathway.ts's
-// `tracked` and `colIndexOf` (the pathway area, branch feat/react-port), which
-// this branch cannot see; both are golden-tested against the same page code.
-// On merge, delete these two and import those (Board.tsx, and preBoundaryDone
-// below). The pathway area also has lateAt and stalledSince, so they are not
-// here.
-
-/**
- * `tracked` on the page: the medicines the board, the step panels, the map
- * and the CSV list, in that order everywhere. Placeholders are left out, and
- * the rest sorted by name (30 Sep 2026), not kept in the data's order. "en"
- * in every language, as on the page, so the order never changes with it.
- */
-export function trackedProducts(products: readonly Product[]): Product[] {
-  return products
-    .filter((p) => !p.placeholder)
-    .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
-}
-
-/** The display column a stage is drawn in; -1 if none. */
-export function colIndexOf(i: number, ctx: StageContext): number {
-  return ctx.stageColumns.findIndex((c) => c.stages.includes(i));
-}
+// Which medicines are listed (`tracked`) and a stage's column (`colIndexOf`)
+// are lib/pathway.ts's: one copy each for every area. The pathway area also
+// has lateAt and stalledSince, so they are not here.
 
 /**
  * Is the column before stage i's column fully cleared? For a stage alone in

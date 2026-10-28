@@ -1,15 +1,19 @@
-// The map section's visible text: what the components need, by key.
-//
-// TEMPORARY: mapTextEn below is today's English page (en/index.html at
-// launch-rbm-test 7c1bf11), copied by hand. The message files (step 2 of the
-// port) replace it and supply French and Portuguese; MapText is the shape
-// they must fill. Keys follow the old code's own strings: where it wrote the
-// same English twice in separate places, there are two keys, because a
-// translation can differ (the French "Étape d'accès" and "Access stage").
+// The map section's visible text: what the components need, by key, built
+// from the message files (lib/ui-text.ts) in the page's language. Until 28 Oct
+// 2026 it was a table of today's English page (mapTextEn, now
+// tests/fixtures/text/map-text.ts), used in every language. Keys follow the
+// old code's own strings: where it wrote the same English twice in separate
+// places, there are two keys, because a translation can differ (the French
+// "Étape d'accès" and "Access stage"). tests/text-parity.test.ts proves
+// mapText() returns today's text: the English table, and for French and
+// Portuguese the text the old pages showed (tests/golden-map/translate.ts).
 //
 // Texts are plain strings so a server component can pass them to these
 // client components. "{name}"-style slots are filled by fill().
+import type { Locale } from "@/lib/locales";
 import type { GroupId, MapLibreText, Region, StageKey } from "@/lib/map";
+import { KEPT_IN_ONE_PLACE } from "@/lib/held-text";
+import { around, rename, uiText } from "@/lib/ui-text";
 
 export interface MapText {
   heading: string;
@@ -114,118 +118,139 @@ export function fill(template: string, values: Record<string, string | number>):
   return template.replace(/\{(\w+)\}/g, (m, k: string) => (k in values ? String(values[k]) : m));
 }
 
-/** TEMPORARY, until the message files: today's English page. */
-export const mapTextEn: MapText = {
-  heading: "Country access map",
-  note: "Each country is shaded by the furthest stage it has reached.",
-  medicine: "Medicine",
-  filters: "Filters",
-  location: "Location",
-  legend: "Legend",
-  detail: "Detail",
+const built = new Map<Locale, MapText>();
 
-  tabsLabel: "Select medicine for map",
-  reset: "Reset",
-  filtersLabel: "Show on map",
-  region: "Region",
-  regionLabel: "Filter map by WHO region",
-  country: "Country or area",
-  countryLabel: "Filter map by country",
-  allRegions: "All regions",
-  allCountries: "All countries",
-  regions: {
-    AFRO: "Africa", AMRO: "Americas", EMRO: "Eastern Mediterranean",
-    EURO: "Europe", SEARO: "South-East Asia", WPRO: "Western Pacific",
-  },
-  mapHint: "Drag to pan · Ctrl + scroll or double-click to zoom · arrow keys pan when the map has focus",
+/** One language's MapText, built once. */
+export function mapText(locale: Locale): MapText {
+  let t = built.get(locale);
+  if (t) return t;
+  const m = uiText(locale);
+  const map = m.map;
+  const f = map.filters;
+  const p = map.panel;
+  const levels = m.common.accessLevels;
+  const stage = { registered: levels.registered, guidelines: levels.guidelines, mft: levels.mft, none: levels.none };
+  // "{shown} of {total}": the finder and the Countries tab write the word between the numbers themselves
+  const [, of] = around(map.finder.count, "shown");
+  t = {
+    heading: map.title,
+    note: map.note,
+    medicine: map.tabs.heading,
+    filters: f.heading,
+    location: f.location,
+    legend: map.legend.heading,
+    detail: p.heading,
 
-  legendStage: "Access stage",
-  legendCount: "No. of countries",
-  legendRows: { registered: "Registered", guidelines: "In national guidelines", mft: "In MFT plans", none: "No data" },
-  resBefore: "Drug-resistance results are not shown on this map. To explore them, see the ",
-  resLink: "WHO Malaria Threats Map",
-  resAfter: ".",
-
-  stage: { registered: "Registered", guidelines: "In national guidelines", mft: "In MFT plans", none: "No data" },
-  inGuidelines: "In guidelines",
-  track: ["Registered", "In guidelines", "In MFT plans"],
-
-  map: {
-    zoomIn: "Zoom in",
-    zoomOut: "Zoom out",
-    windowsHelp: "Use Ctrl + scroll to zoom the map",
-    macHelp: "Use ⌘ + scroll to zoom the map",
-    mobileHelp: "Use two fingers to move the map",
-    canvasLabel: "World map, pan and zoom with the mouse or arrow keys",
-    listLabel: "Countries on this map, list form",
-  },
-  emptyPipeline: "{name} is pre-launch — no country access yet.",
-  emptyNoData: "No country-level data yet for {name}.",
-
-  groups: {
-    tested: {
-      short: "Recommended for P. falciparum",
-      label: "Recommended for Plasmodium falciparum malaria",
-      why: "First-line for confirmed (tested) cases in national policy",
+    tabsLabel: map.tabs.label,
+    reset: f.reset,
+    filtersLabel: f.show,
+    region: f.region,
+    regionLabel: f.regionLabel,
+    country: f.country,
+    countryLabel: f.countryLabel,
+    allRegions: map.regions.all,
+    allCountries: f.allCountries,
+    regions: {
+      AFRO: map.regions.afro,
+      AMRO: map.regions.amro,
+      EMRO: map.regions.emro,
+      EURO: map.regions.euro,
+      SEARO: map.regions.searo,
+      WPRO: map.regions.wpro,
     },
-    vivax: {
-      short: "Recommended for P. vivax",
-      label: "Recommended for Plasmodium vivax malaria",
-      why: "Listed as treatment in national policy",
+    mapHint: map.hint,
+
+    legendStage: map.accessStage,
+    legendCount: map.countHeading,
+    legendRows: { ...stage },
+    // the link sits between the two: "… see the <a>WHO Malaria Threats Map</a>."
+    resBefore: `${map.legend.resistanceNote} `,
+    resLink: map.legend.resistanceLink,
+    resAfter: ".",
+
+    stage,
+    inGuidelines: levels.guidelinesShort,
+    track: [levels.registered, levels.guidelinesShort, levels.mft],
+
+    map: {
+      zoomIn: map.zoomIn,
+      zoomOut: map.zoomOut,
+      windowsHelp: map.ctrlScrollHelp,
+      macHelp: map.cmdScrollHelp,
+      mobileHelp: map.twoFingerHelp,
+      canvasLabel: map.canvasLabel,
+      listLabel: map.countryListLabel,
     },
-  },
-  show: "Show on map",
-  count: "No. of countries",
-  use: "Country recommended use",
-  group: "Group",
-  filterStage: "Access stage",
-  tickHint: "Tick a group to draw its borders on the map.",
-  tickLeft: "Tick a group on the left to see its countries.",
-  noPolicy: "No national treatment policy lists {name} yet.",
-  notListed: "not listed",
-  sourcesFor: "Sources for this access stage:",
-  checkedOn: "Checked on",
-  policySource: "Source: WHO {edition}, Annex 4B ({year} policy).",
+    emptyPipeline: rename(map.preLaunch, { medicine: "name" }),
+    emptyNoData: rename(map.noCountryData, { medicine: "name" }),
 
-  donutLabelOne: "{n} country by patient group",
-  donutLabelMany: "{n} countries by patient group",
-  donutOne: "country",
-  donutMany: "countries",
+    groups: {
+      tested: { short: map.groups.testedShort, label: map.groups.testedLabel, why: map.groups.testedWhy },
+      vivax: { short: map.groups.vivaxShort, label: map.groups.vivaxLabel, why: map.groups.vivaxWhy },
+    },
+    show: f.show,
+    count: map.countHeading,
+    use: map.recommendedUse,
+    group: p.group,
+    // today's French page writes this heading differently from the legend's (lib/held-text.ts)
+    filterStage: KEPT_IN_ONE_PLACE[locale]["map.filterStage"] ?? map.accessStage,
+    tickHint: f.tickHint,
+    tickLeft: p.tickLeft,
+    noPolicy: rename(map.noPolicy, { medicine: "name" }),
+    notListed: m.tooltip.notListed,
+    sourcesFor: p.countrySources,
+    // the panel writes " {checkedOn} {date}." itself
+    checkedOn: around(p.checkedOn, "date")[0].trimEnd(),
+    policySource: map.policySource,
 
-  banner: "Select any country on the map, or from the Countries tab, to open its page.",
-  factsTitle: "{name} · medicine facts",
-  currentStage: "Current stage",
-  procurement: "Public-channel procurement (Global Fund)",
-  overviewPre: "{name} is pre-launch, so there is no country-level status or policy yet.",
-  mixTitle: "Access stage mix · {name}",
-  mixOf: " of {n} countries have an access stage",
-  overviewNoPolicy: "No national treatment policy lists {name} yet.",
-  undrawn: "Also in policy but not drawn on this map: {list}.",
+    donutLabelOne: rename(p.donutLabelOne, { count: "n" }),
+    donutLabelMany: rename(p.donutLabelOther, { count: "n" }),
+    donutOne: p.donutUnitOne,
+    donutMany: p.donutUnitOther,
 
-  overviewTab: "Overview",
-  countriesTab: "Countries",
-  find: {
-    country: "Country", stage: "Stage", use: "Use", none: "No countries match the filters on the left.",
-    reset: "Reset filters", of: "of",
-  },
-  noMatch: "No country matches.",
-  findTitle: "Find a country",
-  searchPlaceholder: "Type a country name…",
-  searchLabel: "Search countries",
+    banner: p.selectHint,
+    factsTitle: rename(p.factsTitle, { medicine: "name" }),
+    currentStage: p.currentStage,
+    procurement: p.procurement,
+    overviewPre: rename(p.preLaunchOverview, { medicine: "name" }),
+    mixTitle: rename(p.stageMixTitle, { medicine: "name" }),
+    // follows the count, in its own element
+    mixOf: ` ${rename(p.stageMixCount, { total: "n" })}`,
+    overviewNoPolicy: rename(map.noPolicy, { medicine: "name" }),
+    undrawn: rename(p.notDrawn, { countries: "list" }),
 
-  backCountries: "‹ Back to countries",
-  backOverview: "‹ Back to overview",
-  prev: "Previous country",
-  next: "Next country",
-  countryPre: "{name} is pre-launch, so there is no country status or policy yet.",
-  partLists: "{part}: lists {name}.",
-  partNotLists: "{part}: does not list {name}.",
-  inPolicy: "in WHO policy {year}",
-  notInPolicy: "Not listed in national treatment policy",
-  among: "{country} among {n} {region} countries · {name}",
-  peersTitle: "Other countries at the same stage · {stage}",
-  morePeers: "+{n} more in the Countries tab",
+    overviewTab: p.overviewTab,
+    countriesTab: p.countriesTab,
+    find: {
+      country: map.table.country,
+      stage: map.table.stage,
+      use: map.table.use,
+      none: map.finder.noneMatchFilters,
+      reset: map.finder.resetFilters,
+      of: around(of, "total")[0].trim(),
+    },
+    noMatch: map.finder.noMatch,
+    findTitle: map.finder.title,
+    searchPlaceholder: map.finder.searchPlaceholder,
+    searchLabel: map.finder.searchLabel,
 
-  clickForDetails: "Click for details ›",
-  tipStatus: " · {status} data",
-};
+    backCountries: `‹ ${p.backToCountries}`,
+    backOverview: `‹ ${p.backToOverview}`,
+    prev: p.previousCountry,
+    next: p.nextCountry,
+    countryPre: rename(p.preLaunchCountry, { medicine: "name" }),
+    partLists: rename(p.partLists, { medicine: "name" }),
+    partNotLists: rename(p.partDoesNotList, { medicine: "name" }),
+    inPolicy: p.inWhoPolicy,
+    notInPolicy: p.notInPolicy,
+    among: rename(p.amongRegion, { count: "n", medicine: "name" }),
+    peersTitle: p.sameStage,
+    morePeers: rename(p.moreInCountriesTab, { count: "n" }),
+
+    clickForDetails: m.tooltip.mapClickForDetails,
+    // the tooltip writes the medicine's name, then this
+    tipStatus: around(m.tooltip.dataStatus, "medicine")[1],
+  };
+  built.set(locale, t);
+  return t;
+}

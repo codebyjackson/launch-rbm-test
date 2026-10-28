@@ -1,19 +1,17 @@
-// TEMPORARY: replaced by the message files in step 2 of the port.
+// The page frame's interface text, built from the message files
+// (lib/ui-text.ts). Until 28 Oct 2026 this was a table copied from the built
+// pages at launch-rbm-test 7c1bf11 ({en,fr,pt}/index.html and
+// assets/report-issue.js), mistakes included; that table is now
+// tests/fixtures/text/frame-text.ts, which the frame's tests compare with
+// those files, and tests/text-parity.test.ts proves frameText() returns
+// exactly it. The French has a no-break space (U+00A0) before some colons,
+// semicolons and question marks, not all, as the pages do.
 //
-// The page frame's interface text, one typed entry per language, copied from
-// the built pages at launch-rbm-test 7c1bf11: {en,fr,pt}/index.html (the
-// markup, the main script, the loader's messages and the page's
-// LAUNCH_FEEDBACK_COPY) and {en,fr,pt}/assets/report-issue.js (the feedback
-// widget). Wording, punctuation and apostrophes as they are there, mistakes
-// included (docs/react-port-notes.md lists the ones noticed). The French
-// has a no-break space (U+00A0) before some colons, semicolons and question
-// marks, not all: they are copied exactly, and look like plain spaces here.
-// tests/markup-frame.test.ts checks every entry against those files.
-//
-// "{name}" marks where a value goes, the form the message files will use.
-// The four status words the CSV uses are PAGE_TEXT.status in lib/strings.ts.
+// "{name}" marks where a value goes. The four status words the CSV uses are
+// pageText().status in lib/strings.ts.
 import type { CsvText, FeedbackType } from "@/lib/frame";
 import type { Locale } from "@/lib/locales";
+import { around, uiText } from "@/lib/ui-text";
 
 export interface HeaderText {
   title: string;
@@ -132,396 +130,130 @@ export interface FrameText {
   feedback: FeedbackText;
 }
 
-export const FRAME_TEXT: Record<Locale, FrameText> = {
-  en: {
-    header: {
-      title: "Malaria Product Launch Dashboard",
-      poweredBy: "Powered by",
-      logoAlt: "Unitaid",
-      subtitle: "Tracking new antimalarial medicines along the market access pathway",
-      lastUpdated: "Last updated {date}",
-      downloadCsv: "Download CSV",
-    },
-    subscribe: {
-      open: "Subscribe for updates",
-      title: "Subscribe for updates",
-      intro: "Receive an email when product information is updated.",
-      firstName: "First name",
-      lastName: "Last name",
-      email: "Email address",
-      emailPlaceholder: "you@organisation.org",
-      organisation: "Organisation",
-      optional: "(optional)",
-      submit: "Notify me",
-      sending: "Sending…",
-      note: "Your details go to the LAUNCH team and are used only to email you about updates to this page.",
-      needNames: "Please enter your first and last name.",
-      needEmail: "Please enter an email address we can reach you at.",
-      already:
-        "This email address is already subscribed. You'll continue to receive an email whenever the dashboard's data is updated.",
-      subscribed: "Thank you for subscribing. You'll receive an email whenever the dashboard's data is updated.",
-      failed: "Sorry — we could not add you just now. Please try again in a moment.",
-    },
-    banner: {
-      illustrativeHead: "Design mockup.",
-      illustrativeBody:
-        "All statuses, dates, prices and volumes below are illustrative placeholders for layout review — not real programme data.",
-      disclaimerLink: "Read the disclaimer",
-      failHead: "The dashboard data could not be loaded.",
-      failBody: "Please try again in a few minutes.",
-      schemaHead: "This dashboard is being updated.",
-      schemaBody: "Please check back shortly.",
-    },
-    footer: {
-      disclaimerTitle: "Disclaimer",
-      disclaimer: [
-        "Users should not consider the LAUNCH dashboard a complete and authoritative source of access information. It provides a snapshot at a point in time, based on publicly available information and on figures a manufacturer has confirmed in writing.",
-        "Unitaid does not accept legal responsibility for the accuracy of the data. Unitaid does not guarantee that it is complete, up to date or fit for a specific purpose.",
-        "Users should carry out their own country-level checks before making any decision based on this data.",
-        "A full understanding of a medicine's access situation in any country may require information that is not in this dashboard.",
-      ],
-      verifiedFor: "Country registrations have been verified for:",
-      notVerifiedFor: "Country stages have not been verified yet for:",
-      aboutTitle: "About LAUNCH",
-      about: [
-        "LAUNCH, funded by Unitaid, is a proof of concept for making the access pathway of new antimalarial medicines transparent. It brings public information on each medicine together in one place, from development and regulatory approval through WHO recommendation and prequalification to registration, policy, procurement and delivery in countries, so that partners can see where access is held up and act on it.",
-        "It starts with four medicines relevant to multiple first-line therapy (MFT) strategies, which use more than one first-line treatment in a population to reduce the risk of drug resistance. Two are already recommended by WHO but underused: artesunate–pyronaridine (ASPY) and dihydroartemisinin–piperaquine (DHA–PPQ). Two are in late-stage development: ganaplacide–lumefantrine (GanLum) and artemether–lumefantrine–amodiaquine (ALAQ). Together they cover both halves of the pathway: approval for the medicines in development, and adoption and procurement for those already recommended.",
-        "Tracking a medicine here does not mean that LAUNCH or Unitaid endorses it or recommends it for any use. The dashboard reports where each medicine stands on the access pathway, not whether it should be used. For this proof of concept the scope is these four medicines; it may later expand to other medicines and malaria tools.",
-      ],
-      dataTitle: "About the data",
-      data: "The LAUNCH dashboard displays publicly available information only. Product-specific details appear solely where the manufacturer has confirmed in writing that they may be shared. Health authority reviews may take place at any stage of development, and their status is generally not public, so regulatory steps change only when a regulator or the manufacturer announces an outcome. Procurement figures cover public channels only. Hover any stage for status detail; select a medicine to open its full profile.",
-      sourcesTitle: "Sources",
-      sourcesIntro: "Everything on this page is traceable to one of the public sources below.",
-      keyDocsHead: "Key documents.",
-      keyDocsBody: "Individual studies, assessments and announcements behind specific medicines.",
-      rawData: "Raw data (for developers):",
-      definitionsTitle: "Definitions",
-    },
-    csv: {
-      columns: {
-        product: "Product",
-        record: "Record",
-        item: "Item",
-        status: "Status",
-        detail: "Detail",
-        date: "Date",
-        next: "Next step",
-        anticipated: "Anticipated",
-        source: "Source",
-        asOf: "As of",
-      },
-      stageRow: "Stage",
-      milestoneRow: "Milestone",
-    },
-    feedback: {
-      pill: "Send feedback",
-      title: "Send feedback",
-      intro: "Does something look wrong or out of date? Tell us what you are seeing.",
-      typeLabel: "What is your feedback about?",
-      types: {
-        correction: "Something on the page looks wrong",
-        source: "A source is missing or out of date",
-        suggestion: "An idea for making this clearer or more useful",
-        other: "Something else",
-      },
-      productLabel: "Which medicine does it concern?",
-      optional: "— optional",
-      general: "General — the dashboard as a whole",
-      planned: " (planned)",
-      messageLabel: "What would you like to tell us?",
-      messagePlaceholder:
-        "e.g. The map shows this medicine as not yet registered in Tanzania, but it was approved there in June 2026.",
-      nameLabel: "Your name",
-      emailLabel: "Email",
-      orgLabel: "Organisation",
-      orgPlaceholder: "Ministry of health, manufacturer, partner…",
-      note: {
-        connected:
-          "Your email is optional and used only to reply to you. With your message we send the page you are on, the version of the data it shows, and your browser, so the team can see what you saw.",
-        notConnected: "Mock only — Send feedback isn't connected yet.",
-      },
-      cancel: "Cancel",
-      submit: "Send feedback",
-      sending: "Sending…",
-      failed: "Sorry — your feedback could not be sent just now. Please try again in a moment.",
-      doneTitle: {
-        connected: "Thanks — your feedback has been sent.",
-        notConnected: "Thanks — though this isn't sent anywhere yet.",
-      },
-      doneMessage: {
-        connected:
-          "The LAUNCH team reads every message, and where you have pointed us to a public source that checks out, we correct the data at the next update. If you left an email address, any reply from us will quote the reference below.",
-        notConnected:
-          "This form has no inbox behind it yet, so nothing was actually sent — your note stayed in this browser tab. Once it is connected, the LAUNCH team will read every message, and where you have pointed us to a public source that checks out, we correct the data at the next update.",
-      },
-      reference: "Reference {ref}",
-      again: "Send more feedback",
-      close: "Close",
-      errEmpty: "Please describe the issue.",
-      errShort: "A little more detail, please — at least 10 characters.",
-      errEmail: "That email address does not look right.",
-    },
-  },
+const built = new Map<Locale, FrameText>();
 
-  fr: {
+/** One language's FrameText, built once. */
+export function frameText(locale: Locale): FrameText {
+  let t = built.get(locale);
+  if (t) return t;
+  const m = uiText(locale);
+  const sub = m.subscribe;
+  const fb = m.feedback;
+  const col = m.download.columns;
+  // The disclaimer names the medicines itself (countryCheckText): it takes
+  // the words before {medicines}, and adds the list and ". " after them.
+  const lead = (key: "countriesVerified" | "countriesNotVerified") => {
+    const [before, after] = around(m.disclaimer[key], "medicines");
+    if (after !== ".") throw new Error(`disclaimer.${key} goes on after {medicines}: "${after}"`);
+    return before.trimEnd();
+  };
+  t = {
     header: {
-      title: "Tableau de bord de lancement de produits contre le paludisme",
-      poweredBy: "Alimenté par",
-      logoAlt: "Unitaid",
-      subtitle: "Suivi des nouveaux médicaments antipaludiques tout au long de leur parcours d'accès au marché",
-      lastUpdated: "Dernière mise à jour {date}",
-      downloadCsv: "Télécharger le fichier CSV",
+      title: m.header.title,
+      poweredBy: m.header.poweredBy,
+      logoAlt: m.header.unitaidLogoAlt,
+      subtitle: m.header.description,
+      lastUpdated: m.header.lastUpdated,
+      downloadCsv: m.download.button,
     },
     subscribe: {
-      open: "Abonnez-vous pour recevoir les mises à jour",
-      title: "Abonnez-vous pour recevoir les mises à jour",
-      intro: "Recevez un e-mail lorsque les informations sur le produit sont mises à jour.",
-      firstName: "Prénom",
-      lastName: "Nom de famille",
-      email: "Adresse email",
-      emailPlaceholder: "vous@organisation.org",
-      organisation: "Organisation",
-      optional: "(facultatif)",
-      submit: "Prévenez-moi",
-      sending: "Envoi…",
-      note: "Vos coordonnées sont transmises à l'équipe LAUNCH et ne sont utilisées que pour vous envoyer des e-mails concernant les mises à jour de cette page.",
-      needNames: "Veuillez saisir votre prénom et votre nom.",
-      needEmail: "Veuillez saisir une adresse e-mail à laquelle nous pouvons vous contacter.",
-      already:
-        "Cette adresse e-mail est déjà abonnée. Vous continuerez à recevoir un e-mail à chaque mise à jour des données du tableau de bord.",
-      subscribed:
-        "Merci de votre inscription. Vous recevrez un courriel à chaque mise à jour des données du tableau de bord.",
-      failed: "Désolé, nous n’avons pas pu vous ajouter pour le moment. Veuillez réessayer dans quelques instants.",
+      open: sub.button,
+      title: sub.title,
+      intro: sub.intro,
+      firstName: sub.firstName,
+      lastName: sub.lastName,
+      email: sub.email,
+      emailPlaceholder: sub.emailPlaceholder,
+      organisation: sub.organisation,
+      optional: sub.optional,
+      submit: sub.submit,
+      sending: sub.sending,
+      note: sub.privacyNote,
+      needNames: sub.nameMissing,
+      needEmail: sub.emailInvalid,
+      already: sub.alreadySubscribed,
+      subscribed: sub.subscribed,
+      failed: sub.failed,
     },
     banner: {
-      illustrativeHead: "Maquette de conception.",
-      illustrativeBody:
-        "Tous les statuts, dates, prix et volumes ci-dessous sont des exemples pour la révision de la mise en page — et non des données réelles du programme.",
-      disclaimerLink: "Lisez l’avertissement",
-      failHead: "Les données du tableau de bord n’ont pas pu être chargées.",
-      failBody: "Veuillez réessayer dans quelques minutes.",
-      schemaHead: "Ce tableau de bord est en cours de mise à jour.",
-      schemaBody: "Veuillez revenir bientôt.",
+      illustrativeHead: m.banner.mockupTitle,
+      illustrativeBody: m.banner.mockupBody,
+      disclaimerLink: m.banner.mockupLink,
+      failHead: m.errors.dataFailedTitle,
+      failBody: m.errors.dataFailedRetry,
+      schemaHead: m.errors.updatingTitle,
+      schemaBody: m.errors.updatingBody,
     },
     footer: {
-      disclaimerTitle: "Clause de non-responsabilité",
-      disclaimer: [
-        "Les utilisateurs ne doivent pas considérer le tableau de bord LAUNCH comme une source d'information complète et faisant autorité en matière d'accès. Il fournit un aperçu à un instant T, basé sur des informations publiques et sur des chiffres confirmés par écrit par le fabricant.",
-        "Unitaid décline toute responsabilité quant à l'exactitude des données. Unitaid ne garantit pas que ces données soient complètes, à jour ou adaptées à un usage particulier.",
-        "Les utilisateurs doivent effectuer leurs propres vérifications au niveau national avant de prendre toute décision basée sur ces données.",
-        "Pour bien comprendre la situation d'accès à un médicament dans un pays donné, il peut être nécessaire de se renseigner sur des informations qui ne figurent pas sur ce tableau de bord.",
-      ],
-      verifiedFor: "Les enregistrements des pays ont été vérifiés pour :",
-      notVerifiedFor: "Les étapes nationales n’ont pas encore été vérifiées pour :",
-      aboutTitle: "À propos de LAUNCH",
-      about: [
-        "Le projet LAUNCH, financé par Unitaid, est une preuve de concept visant à rendre transparent le parcours d'accès aux nouveaux médicaments antipaludiques. Il centralise les informations publiques relatives à chaque médicament, depuis son développement et son approbation réglementaire jusqu'à la recommandation et la préqualification de l'OMS, en passant par l'enregistrement, les politiques, l'approvisionnement et la distribution dans les pays. Ainsi, les partenaires peuvent identifier les obstacles à l'accès et agir en conséquence.",
-        "Ce document présente quatre médicaments pertinents pour les stratégies de traitement de première ligne multiple (MFT), qui associent plusieurs traitements de première ligne au sein d'une même population afin de réduire le risque de résistance aux médicaments. Deux d'entre eux sont déjà recommandés par l'OMS mais sous-utilisés : l'artésunate-pyronaridine (ASPY) et la dihydroartémisinine-pipéraquine (DHA-PPQ). Deux autres sont en phase finale de développement : le ganaplacide-luméfantrine (GanLum) et l'artéméther-luméfantrine-amodiaquine (ALAQ). Ensemble, ils couvrent les deux étapes du processus : l'autorisation de mise sur le marché des médicaments en développement, ainsi que leur adoption et leur approvisionnement.",
-        "Le suivi d'un médicament ici ne signifie pas que LAUNCH ou Unitaid l'approuvent ou le recommandent pour quelque usage que ce soit. Le tableau de bord indique la position de chaque médicament dans le processus d'accès, et non s'il doit être utilisé. Pour cette preuve de concept, le périmètre se limite à ces quatre médicaments ; il pourrait être étendu ultérieurement à d'autres médicaments et outils de lutte contre le paludisme.",
-      ],
-      dataTitle: "À propos des données",
-      data: "Le tableau de bord LAUNCH affiche uniquement les informations publiques. Les détails spécifiques à un produit apparaissent uniquement lorsque le fabricant a confirmé par écrit qu'ils pouvaient être partagés. Les évaluations des autorités sanitaires peuvent intervenir à n'importe quel stade du développement et leur statut n'est généralement pas public ; les procédures réglementaires ne changent donc que lorsqu'un organisme de réglementation ou le fabricant annonce une décision. Les données d'approvisionnement concernent uniquement les canaux publics. Survolez une étape pour afficher son statut détaillé ; sélectionnez un médicament pour ouvrir son profil complet.",
-      sourcesTitle: "Sources",
-      sourcesIntro: "Tout le contenu de cette page est traçable jusqu'à l'une des sources publiques ci-dessous.",
-      keyDocsHead: "Documents clés.",
-      keyDocsBody: "Études individuelles, évaluations et annonces concernant des médicaments spécifiques.",
-      rawData: "Données brutes (pour les développeurs) :",
-      definitionsTitle: "Définitions",
+      disclaimerTitle: m.disclaimer.title,
+      disclaimer: [m.disclaimer.notComplete, m.disclaimer.noLiability, m.disclaimer.ownChecks, m.disclaimer.notEverything],
+      verifiedFor: lead("countriesVerified"),
+      notVerifiedFor: lead("countriesNotVerified"),
+      aboutTitle: m.about.launchTitle,
+      about: [m.about.launchPurpose, m.about.launchScope, m.about.launchNoEndorsement],
+      dataTitle: m.about.dataTitle,
+      data: m.about.dataBody,
+      sourcesTitle: m.sources.title,
+      sourcesIntro: m.sources.intro,
+      keyDocsHead: m.sources.keyDocumentsTitle,
+      keyDocsBody: m.sources.keyDocumentsIntro,
+      rawData: m.sources.rawData,
+      definitionsTitle: m.about.definitionsTitle,
     },
     csv: {
       columns: {
-        product: "Produit",
-        record: "Enregistrer",
-        item: "Article",
-        status: "Statut",
-        detail: "Détail",
-        date: "Date",
-        next: "Étape suivante",
-        anticipated: "Prévu",
-        source: "Source",
-        asOf: "À partir de",
+        product: col.product,
+        record: col.record,
+        item: col.item,
+        status: col.status,
+        detail: col.detail,
+        date: col.date,
+        next: col.nextStep,
+        anticipated: col.anticipated,
+        source: col.source,
+        asOf: col.asOf,
       },
-      stageRow: "Scène",
-      milestoneRow: "Jalon",
+      stageRow: m.download.records.stage,
+      milestoneRow: m.download.records.milestone,
     },
     feedback: {
-      pill: "Envoyer des commentaires",
-      title: "Envoyer des commentaires",
-      intro: "Quelque chose vous semble-t-il anormal ou obsolète ? Dites-nous ce que vous voyez.",
-      typeLabel: "Quels sont vos commentaires ?",
+      pill: fb.open,
+      title: fb.title,
+      intro: fb.intro,
+      typeLabel: fb.typeLabel,
       types: {
-        correction: "Il y a quelque chose qui semble incorrect sur la page.",
-        source: "La source est manquante ou obsolète.",
-        suggestion: "Une idée pour rendre cela plus clair ou plus utile",
-        other: "Autre chose",
+        correction: fb.types.correction,
+        source: fb.types.source,
+        suggestion: fb.types.suggestion,
+        other: fb.types.other,
       },
-      productLabel: "De quel médicament s’agit-il ?",
-      optional: "— facultatif",
-      general: "Généralités — le tableau de bord dans son ensemble",
-      planned: " (prévu)",
-      messageLabel: "Que souhaitez-vous nous dire ?",
-      messagePlaceholder:
-        "Par exemple, la carte indique que ce médicament n’est pas encore enregistré en Tanzanie, mais il y a été approuvé en juin 2026.",
-      nameLabel: "Votre nom",
-      emailLabel: "E-mail",
-      orgLabel: "Organisation",
-      orgPlaceholder: "Ministère de la santé, fabricant, partenaire…",
-      note: {
-        connected:
-          "Votre adresse e-mail est facultative et sert uniquement à vous répondre. Votre message nous permet d’envoyer la page que vous consultez, la version des données affichées et votre navigateur, afin que l’équipe puisse voir ce que vous avez vu.",
-        notConnected: "Simulation uniquement — L’envoi de commentaires n’est pas encore activé.",
-      },
-      cancel: "Annuler",
-      submit: "Envoyer des commentaires",
-      sending: "Envoi…",
-      failed:
-        "Désolé(e), votre commentaire n’a pas pu être envoyé pour le moment. Veuillez réessayer dans quelques instants.",
-      doneTitle: {
-        connected: "Merci — vos commentaires ont été envoyés.",
-        notConnected: "Merci — même si ce message n’a encore été envoyé nulle part.",
-      },
-      doneMessage: {
-        connected:
-          "L’équipe LAUNCH lit chaque message et, lorsque vous nous indiquez une source publique vérifiée, nous corrigeons les données lors de la prochaine mise à jour. Si vous avez laissé une adresse e-mail, toute réponse de notre part mentionnera la référence ci-dessous.",
-        notConnected:
-          "Ce formulaire n’est pas encore associé à une boîte de réception ; votre message est donc resté dans cet onglet. Dès que la connexion sera établie, l’équipe LAUNCH lira chaque message et, si vous nous avez indiqué une source publique valide, nous corrigerons les données lors de la prochaine mise à jour.",
-      },
-      reference: "Référence {ref}",
-      again: "Envoyez plus de commentaires",
-      close: "Fermer",
-      errEmpty: "Veuillez décrire le problème.",
-      errShort: "Un peu plus de détails, s’il vous plaît — au moins 10 caractères.",
-      errEmail: "Cette adresse e-mail ne semble pas correcte.",
+      productLabel: fb.productLabel,
+      // the widget wrote the dash itself, in its own span after the label
+      optional: `— ${fb.optional}`,
+      general: fb.productGeneral,
+      // the widget put the medicine's name first, then this
+      planned: around(fb.productPlanned, "medicine")[1],
+      messageLabel: fb.messageLabel,
+      messagePlaceholder: fb.messagePlaceholder,
+      nameLabel: fb.name,
+      emailLabel: fb.email,
+      orgLabel: fb.organisation,
+      orgPlaceholder: fb.organisationPlaceholder,
+      note: { connected: fb.note, notConnected: fb.notConnected.note },
+      cancel: fb.cancel,
+      submit: fb.submit,
+      sending: fb.sending,
+      failed: fb.failed,
+      doneTitle: { connected: fb.doneTitle, notConnected: fb.notConnected.doneTitle },
+      doneMessage: { connected: fb.doneMessage, notConnected: fb.notConnected.doneMessage },
+      reference: fb.reference,
+      again: fb.again,
+      close: fb.closeLabel,
+      errEmpty: fb.messageMissing,
+      errShort: fb.messageTooShort,
+      errEmail: fb.emailInvalid,
     },
-  },
-
-  pt: {
-    header: {
-      title: "Painel de lançamento de produtos para a malária",
-      poweredBy: "Distribuído por",
-      logoAlt: "Unitaid",
-      subtitle: "Acompanhamento dos novos medicamentos antimaláricos ao longo do processo de acesso ao mercado.",
-      lastUpdated: "Última atualização {date}",
-      downloadCsv: "Baixar CSV",
-    },
-    subscribe: {
-      open: "Subscreva para receber atualizações",
-      title: "Subscreva para receber atualizações",
-      intro: "Receba um e-mail quando as informações do produto forem atualizadas.",
-      firstName: "Nome próprio",
-      lastName: "Último nome",
-      email: "Endereço de e-mail",
-      emailPlaceholder: "you@organization.org",
-      organisation: "Organização",
-      optional: "(opcional)",
-      submit: "Avise-me",
-      sending: "Enviando…",
-      note: "Os seus dados serão enviados à equipa LAUNCH e utilizados apenas para lhe enviar emails sobre atualizações desta página.",
-      needNames: "Por favor, introduza o seu nome e apelido.",
-      needEmail: "Por favor, introduza um endereço de e-mail para que possamos entrar em contacto consigo.",
-      already:
-        "Este endereço de e-mail já está registado. Continuará a receber um e-mail sempre que os dados do painel forem atualizados.",
-      subscribed: "Obrigado por se inscrever. Receberá um e-mail sempre que os dados do painel forem atualizados.",
-      failed: "Lamentamos, não foi possível adicioná-lo(a) agora. Por favor, tente novamente dentro de momentos.",
-    },
-    banner: {
-      illustrativeHead: "Projeto de maqueta.",
-      illustrativeBody:
-        "Todos os estados, datas, preços e volumes abaixo são meramente ilustrativos e servem apenas para revisão do layout — não são dados reais do programa.",
-      disclaimerLink: "Leia o aviso legal",
-      failHead: "Não foi possível carregar os dados do painel de controlo.",
-      failBody: "Por favor, tente novamente dentro de alguns minutos.",
-      schemaHead: "Este painel está a ser atualizado.",
-      schemaBody: "Por favor, volte em breve.",
-    },
-    footer: {
-      disclaimerTitle: "Isenção de responsabilidade",
-      disclaimer: [
-        "Os utilizadores não devem considerar o painel LAUNCH como uma fonte completa e definitiva de informação de acesso. Fornece um retrato momentâneo, baseado em informações publicamente disponíveis e em dados confirmados por escrito pelo fabricante.",
-        "Unitaid não assume responsabilidade legal pela exatidão dos dados. Unitaid não garante que os dados estejam completos, atualizados ou adequados a uma finalidade específica.",
-        "Os utilizadores devem realizar as suas próprias verificações a nível nacional antes de tomarem qualquer decisão com base nestes dados.",
-        "Para compreender plenamente a situação de acesso a um medicamento em qualquer país, poderá ser necessário obter informações que não constem deste painel.",
-      ],
-      verifiedFor: "Os registos por país foram verificados para:",
-      notVerifiedFor: "As etapas de verificação de cada país ainda não foram realizadas para:",
-      aboutTitle: "Sobre LAUNCH",
-      about: [
-        "O projeto LAUNCH, financiado pelo Unitaid, é uma prova de conceito para tornar transparente o acesso a novos medicamentos antimaláricos. Reúne informação pública sobre cada medicamento num só local, desde o desenvolvimento e aprovação regulamentar, passando pela recomendação e pré-qualificação da OMS, até ao registo, políticas, aquisição e distribuição nos países, para que os parceiros possam identificar onde o acesso está a ser dificultado e agir para resolver o problema.",
-        "Começa com quatro medicamentos relevantes para estratégias de terapêutica de primeira linha múltipla (MFT), que utilizam mais do que um tratamento de primeira linha numa população para reduzir o risco de resistência aos medicamentos. Dois são já recomendados pela OMS, mas subutilizados: o artesunato-pironaridina (ASPY) e a di-hidroartemisinina-piperaquina (DHA-PPQ). Dois estão em fase final de desenvolvimento: a ganaplacida-lumefantrina (GanLum) e a arteméter-lumefantrina-amodiaquina (ALAQ). Juntos, abrangem ambas as metades do processo: aprovação para os medicamentos em desenvolvimento e adoção e aquisição para os já recomendados.",
-        "O facto de um medicamento estar aqui listado não significa que o LAUNCH ou o Unitaid o endossem ou o recomendem para qualquer utilização. O painel informa a posição de cada medicamento no processo de acesso, e não se deve ser utilizado. Para esta prova de conceito, o âmbito limita-se a estes quatro medicamentos; posteriormente, poderá ser alargado a outros medicamentos e ferramentas de combate à malária.",
-      ],
-      dataTitle: "Sobre os dados",
-      data: "O painel LAUNCH apenas apresenta informações publicamente disponíveis. Os detalhes específicos do produto aparecem apenas quando o fabricante confirma por escrito que podem ser partilhados. As análises das autoridades de saúde podem ocorrer em qualquer fase do desenvolvimento e o seu estado não é geralmente público, pelo que as etapas regulamentares só mudam quando um organismo regulador ou o fabricante anuncia um resultado. Os dados de aquisição abrangem apenas os canais públicos. Passe o cursor sobre qualquer passo para obter detalhes do estado; selecione um medicamento para abrir o seu perfil completo.",
-      sourcesTitle: "Fontes",
-      sourcesIntro: "Todo o conteúdo desta página pode ser rastreado até uma das fontes públicas abaixo.",
-      keyDocsHead: "Documentos essenciais.",
-      keyDocsBody: "Estudos individuais, avaliações e comunicados sobre medicamentos específicos.",
-      rawData: "Dados brutos (para programadores):",
-      definitionsTitle: "Definições",
-    },
-    csv: {
-      columns: {
-        product: "Produto",
-        record: "Registo",
-        item: "Artigo",
-        status: "Estatuto",
-        detail: "Detalhe",
-        date: "Data",
-        next: "Próximo passo",
-        anticipated: "Antecipado",
-        source: "Fonte",
-        asOf: "Até",
-      },
-      stageRow: "Fase",
-      milestoneRow: "Marco",
-    },
-    feedback: {
-      pill: "Enviar feedback",
-      title: "Enviar feedback",
-      intro: "Algo parece errado ou desatualizado? Conte-nos o que está a ver.",
-      typeLabel: "Qual é o seu feedback?",
-      types: {
-        correction: "Algo na página parece errado.",
-        source: "Uma fonte está ausente ou desatualizada.",
-        suggestion: "Uma ideia para tornar isto mais claro ou mais útil.",
-        other: "Outra coisa",
-      },
-      productLabel: "A que medicamento se refere?",
-      optional: "— opcional",
-      general: "Geral — o painel de controlo como um todo",
-      planned: " (planejado)",
-      messageLabel: "O que nos gostaria de dizer?",
-      messagePlaceholder:
-        "Por exemplo, o mapa mostra este medicamento como ainda não registado na Tanzânia, mas foi aí aprovado em Junho de 2026.",
-      nameLabel: "O seu nome",
-      emailLabel: "E-mail",
-      orgLabel: "Organização",
-      orgPlaceholder: "Ministério da saúde, fabricante, parceiro…",
-      note: {
-        connected:
-          "O seu e-mail é opcional e será utilizado apenas para respondermos à sua mensagem. Juntamente com ela, enviamos a página que está a visitar, a versão dos dados apresentados e o seu browser, para que a equipa possa ver o que visualizou.",
-        notConnected: "Apenas simulação — o envio de feedback ainda não está ligado.",
-      },
-      cancel: "Cancelar",
-      submit: "Enviar feedback",
-      sending: "Enviando…",
-      failed: "Lamentamos, o seu feedback não pôde ser enviado agora. Por favor, tente novamente dentro de momentos.",
-      doneTitle: {
-        connected: "Obrigado — o seu feedback foi enviado.",
-        notConnected: "Obrigado — embora isto ainda não tenha sido enviado para lado nenhum.",
-      },
-      doneMessage: {
-        connected:
-          "A equipa LAUNCH lê todas as mensagens e, quando nos indica uma fonte pública fidedigna, corrigimos os dados na próxima atualização. Se deixou um endereço de e-mail, qualquer resposta nossa citará a referência abaixo.",
-        notConnected:
-          "Este formulário ainda não tem caixa de entrada associada, pelo que nada foi enviado — a sua mensagem permaneceu neste separador do browser. Assim que a ligação for estabelecida, a equipa do LAUNCH lerá todas as mensagens e, nos casos em que nos indicar uma fonte pública fidedigna, corrigiremos os dados na próxima atualização.",
-      },
-      reference: "Referência {ref}",
-      again: "Enviar mais comentários",
-      close: "Perto",
-      errEmpty: "Por favor, descreva o problema.",
-      errShort: "Por favor, forneça um pouco mais de detalhe — pelo menos 10 caracteres.",
-      errEmail: "Este endereço de e-mail parece estar incorreto.",
-    },
-  },
-};
+  };
+  built.set(locale, t);
+  return t;
+}

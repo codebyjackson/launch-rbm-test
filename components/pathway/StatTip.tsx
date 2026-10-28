@@ -50,12 +50,14 @@ export function StatTip({ ref }: { ref?: Ref<StatTipControls> }) {
     [],
   );
 
-  // A click anywhere but on an .info, and any scroll, hides it: a fixed hint
-  // would otherwise stay put while its button scrolls away.
+  // A click anywhere but on the board's .info, and any scroll, hides it: a
+  // fixed hint would otherwise stay put while its button scrolls away. Only
+  // the dashboard's own board counts: the host page may have an .info too.
   useEffect(() => {
     const hide = () => setS((p) => (p.shown ? { ...p, shown: false } : p));
     const onClick = (e: MouseEvent) => {
-      if (!(e.target instanceof Element && e.target.closest(".info"))) hide();
+      const info = e.target instanceof Element ? e.target.closest(".info") : null;
+      if (!(info && info.closest(".launch-dashboard #board"))) hide();
     };
     document.addEventListener("click", onClick);
     window.addEventListener("scroll", hide, true);
@@ -93,7 +95,15 @@ export function useStatTipControls(): [RefObject<StatTipControls | null>, StatTi
   return [ref, controls];
 }
 
-const infoOf = (target: EventTarget) => (target instanceof Element ? target.closest(".info") : null);
+/**
+ * The .info button the event is on, if it is inside the element the handlers
+ * are spread on. The page's closest(".info") alone would also find an .info
+ * the host page wraps around the dashboard.
+ */
+const infoOf = (e: { target: EventTarget; currentTarget: EventTarget }) => {
+  const b = e.target instanceof Element ? e.target.closest(".info") : null;
+  return b && e.currentTarget instanceof Element && e.currentTarget.contains(b) ? b : null;
+};
 
 /**
  * The page's listeners on #board, as props for the element that holds the
@@ -107,19 +117,19 @@ export function statTipHandlers(tip: StatTipControls): Pick<
 > {
   return {
     onMouseOver: (e) => {
-      const b = infoOf(e.target);
+      const b = infoOf(e);
       if (b) tip.show(b);
     },
     onMouseOut: (e) => {
-      if (infoOf(e.target)) tip.hide();
+      if (infoOf(e)) tip.hide();
     },
     onFocus: (e) => {
-      const b = infoOf(e.target);
+      const b = infoOf(e);
       if (b) tip.show(b);
     },
     onBlur: () => tip.hide(),
     onClick: (e) => {
-      const b = infoOf(e.target);
+      const b = infoOf(e);
       if (b) tip.show(b);
     },
   };
