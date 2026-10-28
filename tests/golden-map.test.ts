@@ -15,7 +15,8 @@
 //
 // Nothing here reads the clock: no map function does.
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual } from "node:util";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -385,8 +386,8 @@ function choices(side: Side, st: MapState, r: ReturnType<typeof random>): Step[]
 
 describe("golden: the map section against the static pages' own code", () => {
   it("has reference files that match the static pages", () => {
-    if (!existsSync(new URL("../en/index.html", import.meta.url))) return; // the static pages have left the branch
-    execFileSync(process.execPath, [new URL("./golden-map/extract.mjs", import.meta.url).pathname, "--check"], { stdio: "pipe" });
+    // fileURLToPath, not .pathname: "/C:/…" is no path to node on Windows
+    execFileSync(process.execPath, [fileURLToPath(new URL("./golden-map/extract.mjs", import.meta.url)), "--check"], { stdio: "pipe" });
   });
 
   for (const lang of LANGS) {

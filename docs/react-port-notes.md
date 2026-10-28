@@ -632,11 +632,37 @@ This file is updated in the same commit as each change it describes.
     in `lib/stages.ts` alone call `pageText()` in six places);
     taking RBM's copy whole (a stale file would show missing or broken
     messages). `tests/messages.test.ts`: 11 (4 before).
+56. **The static pages left this branch; the tests read them from git**
+    (28 Oct, the owner: "we don't need static pages anymore"). Removed:
+    `en/`, `fr/`, `pt/`, `assets/`, `rbm-shell/`, `data/`, `index.html`,
+    `iframe-test.html`, `build-manifest.json` (45 files); `main` keeps them,
+    and stays the live test site until UNOPS switches. Everything that read
+    them from the checkout now reads commit `7c1bf11` from git, as the other
+    golden extracts already did: `tests/golden-map/extract.mjs`,
+    `tests/text-parity.test.ts`'s map markup check (it skipped once the pages
+    were gone; now it runs) and `scripts/build-map-assets.mjs` (still needed
+    after a MapLibre upgrade, for the worker; it rebuilt both map assets
+    unchanged). `tests/golden-map.test.ts` no longer skips when the pages are
+    missing, and passes the extractor's path with `fileURLToPath`: `.pathname`
+    gave node `/C:/…`, so on Windows the check failed before and after any
+    change. Two byte checks now ignore CRLF (`golden-map/extract.mjs --check`,
+    `map-assets.test.ts`'s worker), which a Windows checkout
+    (`core.autocrlf=true`) writes and git does not store: on Windows the suite
+    went from 286 of 288 to 288 of 288, with nothing else changed by it.
+    `tsconfig.json` excludes `node_modules` only. `README.md` is new, for
+    RBM's developers: requirements, what to copy, the font, a page with
+    next-intl, the message hand-over, the data. Rejected: keeping the pages
+    for the tests (the git reads need no copy, and the pages invited merges
+    from `main` that broke the map check, below).
 
 ## Deferred, and found on the way
 
-- **Do not merge `main` into this branch while the static pages are still
-  in it.** `main` gets the pages rebuilt from launch-development-test (on
+- **28 Oct: the static pages are gone (decision 56), so the paragraph below
+  is history.** Merging `main` into this branch now gives modify/delete
+  conflicts whenever `main` has rebuilt a page; keep the deletion. Nothing on
+  `main` is needed here: the React version takes its text from `messages/`.
+- ~~Do not merge `main` into this branch while the static pages are still
+  in it.~~ `main` gets the pages rebuilt from launch-development-test (on
   28 Oct with the 7 words of its PR #129 translated). The golden tests read
   the pages in the checkout: `tests/golden-map.test.ts` checks its reference
   copies of the old map code against `en/`, `fr/` and `pt/index.html`
@@ -1287,9 +1313,19 @@ ours to undo.
   clean, nothing untranslated), `messages/README.md`, `lib/messages.ts`, the
   five adapters, `components/Dashboard.tsx`, `components/board/Board.tsx`,
   `tests/messages.test.ts`, this file.
-- **Next:** the README for RBM (step 6) is another developer's (owner,
-  28 Oct); it should say to load Source Sans 3 (see the side-by-side check).
-  A check on a real iPhone and in Safari.
+- **28 Oct 2026, static pages removed, README** (on `feat/react-port`):
+  decision 56. `tsc --noEmit` clean; vitest 288 of 288 (Windows, with
+  `--testTimeout=120000`: the markup tests take longer than 5 s on this
+  machine). `next build` stops on the published address until the language
+  files are published (404, as decision 54 says); built against the three
+  fixtures served locally (`LAUNCH_DATA_URL=http://127.0.0.1:3125/dashboard.{locale}.json`),
+  each page fetched its own language's file. Smoke test on that build,
+  `SMOKE_LOCALES=en,fr,pt`: 85 of 87 on the first run, straight after the
+  server started (the two failing checks were not kept), then 87 of 87 twice.
+- **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
+  request (decision 56; it says to load Source Sans 3). A check on a real
+  iPhone and in Safari. Publish the language files, then build against the
+  published address.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).

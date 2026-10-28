@@ -36,12 +36,6 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "en",
-    "fr",
-    "pt",
-    "assets",
-    "data",
-    "rbm-shell"
+    "node_modules"
   ]
 }

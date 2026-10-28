@@ -16,6 +16,7 @@
 // Usage:
 //   node tests/golden-map/extract.mjs           write the reference files
 //   node tests/golden-map/extract.mjs --check   exit 1 if they are out of date
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,7 +26,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "../..");
 const OUT = join(HERE, "reference");
 const LANGS = ["en", "fr", "pt"];
-const SOURCE = "launch-rbm-test commit 7c1bf11";
+const COMMIT = "7c1bf11";
+const SOURCE = `launch-rbm-test commit ${COMMIT}`;
 
 // The top-level names the map block reads, besides browser globals. The
 // extraction fails if one is missing or the block reads another.
@@ -59,7 +61,8 @@ const HOOK = `
 `;
 
 const pageScript = (lang) => {
-  const html = readFileSync(join(ROOT, lang, "index.html"), "utf8");
+  // from git: the static pages left this branch on 28 Oct 2026
+  const html = execFileSync("git", ["-C", ROOT, "show", `${COMMIT}:${lang}/index.html`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   const m = /<script type="text\/x-launch-app">([\s\S]*?)<\/script>/.exec(html);
   if (!m) throw new Error(`${lang}/index.html: no x-launch-app script`);
   return m[1];
@@ -153,7 +156,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const out = join(OUT, `${lang}.js`);
     const next = extract(lang);
     if (check) {
-      if (!existsSync(out) || readFileSync(out, "utf8") !== next) {
+      // a Windows checkout (core.autocrlf) has CRLF on disk; git stores LF
+      if (!existsSync(out) || readFileSync(out, "utf8").replace(/\r\n/g, "\n") !== next) {
         console.error(`extract: ${out} is out of date`);
         stale++;
       }

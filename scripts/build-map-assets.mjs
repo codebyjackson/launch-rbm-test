@@ -10,9 +10,10 @@
 //
 // Source: {en,fr,pt}/data/world-map-geo.js (window.LAUNCH_MAP_GEO: shapes and
 // names, Natural Earth 50m) and {en,fr,pt}/data/world-map.js (window.LAUNCH_MAP:
-// the tracked countries) as on launch-rbm-test 7c1bf11. Those are generated
-// upstream by launch-development-test's scripts/build-map-geo.js and
-// build-map.js; once the static pages leave this branch, regenerate from there.
+// the tracked countries) as on launch-rbm-test 7c1bf11, read from git: the
+// static pages left this branch on 28 Oct 2026. Those are generated upstream
+// by launch-development-test's scripts/build-map-geo.js and build-map.js; for
+// new shapes or names, regenerate from there.
 //
 // The three languages' shapes differ only in names. This script refuses to
 // write anything if that stops being true, or if a tracked country's name in
@@ -20,16 +21,18 @@
 // from the one names list).
 //
 // Usage: node scripts/build-map-assets.mjs
+import { execFileSync } from "node:child_process";
 import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LANGS = ["en", "fr", "pt"];
+const COMMIT = "7c1bf11";
 
 // The files are `window.NAME = {json};` after two comment lines.
 function readGlobal(file, name) {
-  const s = readFileSync(join(ROOT, file), "utf8");
+  const s = execFileSync("git", ["-C", ROOT, "show", `${COMMIT}:${file}`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   const at = s.indexOf(`window.${name} = `);
   if (at < 0) throw new Error(`${file}: no window.${name}`);
   return JSON.parse(s.slice(at + `window.${name} = `.length).trim().replace(/;$/, ""));

@@ -20,7 +20,7 @@
 //     a few script strings.
 //   - CHANGED: values today's pages leave in English that the message files
 //     translate (decision 10).
-import { existsSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { afterAll, describe, expect, it } from "vitest";
 import { boardText } from "@/components/board/text";
 import { frameText } from "@/components/frame/text";
@@ -141,9 +141,10 @@ for (const locale of LOCALES) {
       expect(stale.map(([at]) => at), "today's text or the shipped text has moved: update or delete the entry").toEqual([]);
     });
 
-    const page = new URL(`../${locale}/index.html`, import.meta.url);
-    it.skipIf(!existsSync(page))("the map's static-markup text is today's page's", () => {
-      expect(readMapMarkup(readFileSync(page, "utf8"))).toStrictEqual(MAP_MARKUP[locale]);
+    it("the map's static-markup text is today's page's", () => {
+      // the page as frozen at 7c1bf11, from git: the static pages left this branch on 28 Oct 2026
+      const page = execFileSync("git", ["show", `7c1bf11:${locale}/index.html`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+      expect(readMapMarkup(page)).toStrictEqual(MAP_MARKUP[locale]);
       // the reader picks the fields it names: in English they are the old table's
       if (locale === "en") {
         const en = mapTextEn as unknown as { [k: string]: unknown };
