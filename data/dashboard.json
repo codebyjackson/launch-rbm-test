@@ -1,16 +1,16 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T08:38:13.617Z",
-  "approved_at": "2026-10-27T08:38:13.617Z",
+  "generated_at": "2026-10-28T14:57:39.032Z",
+  "approved_at": "2026-10-28T14:57:39.033Z",
   "approved_by": "codebyjackson",
   "approval": {
     "trigger": "manual",
     "issue": null,
     "pr": null,
-    "reason": "Spanish removed: RBM's platform does not support it"
+    "reason": "One file per language for the React version (dashboard.en/fr/pt.json)"
   },
-  "pipeline_commit": "2d30ff3395d5755ed4a1f63c2ca38fd04915fb33",
-  "content_hash": "da61980a827cea479ed485e7e99223bc0e932c406bf1fcc348bced450931d66a",
+  "pipeline_commit": "4d4625d7306ef1afed68d8d1de1cafa2a89dfdbe",
+  "content_hash": "e200dc0c1ab440f99bcc88210b3eeb8ff445d87a7fec91e5ba46c7c434c54159",
   "locales": [
     "en",
     "fr",
