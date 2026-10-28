@@ -1,58 +1,22 @@
 // The interface text as the areas' adapters read it: one language of the
-// message files (lib/messages.ts), with the texts they do not have yet added
-// and today's wording kept where they differ (lib/held-text.ts).
+// message files (lib/messages.ts), as they are. Until 28 Oct 2026 the texts
+// the files lacked, and today's wording where they differed, were held here
+// (lib/held-text.ts); launch-development-test's message build now supplies
+// both (its decisions 9 and 10).
 //
 // Each area turns this tree into its own typed text object, next to the type
 // (lib/strings.ts pageText, components/*/text.ts). An adapter may only
 // rename a placeholder or cut a message where the old code put a value in
-// the middle of it; anything else is a held text, so it is listed.
-// tests/text-parity.test.ts proves every adapter returns today's text exactly.
-import { KEPT_FROM_PAGES, NOT_IN_MESSAGES, type HeldText } from "./held-text";
+// the middle of it. tests/text-parity.test.ts proves every adapter returns
+// today's text, apart from the changes made on purpose that it lists.
 import type { Locale } from "./locales";
 import { messagesFor, type Messages } from "./messages";
 
-export type UiText = Messages & HeldText;
+export type UiText = Messages;
 
-type Tree = { [key: string]: string | Tree };
-
-// `extra`'s texts over `base`'s, key by key, at every level.
-function merged(base: Tree, extra: Tree): Tree {
-  const out: Tree = { ...base };
-  for (const [k, v] of Object.entries(extra)) {
-    const b = out[k];
-    out[k] = typeof v === "string" || typeof b !== "object" ? v : merged(b, v);
-  }
-  return out;
-}
-
-function setAt(tree: Tree, key: string, value: string): void {
-  const path = key.split(".");
-  let node = tree;
-  for (const k of path.slice(0, -1)) {
-    const next = node[k];
-    if (typeof next !== "object") throw new Error(`held text ${key}: no such key in the message files`);
-    node = next;
-  }
-  node[path[path.length - 1]] = value;
-}
-
-const built = new Map<Locale, UiText>();
-
-/** One language's text: built once, then shared. */
+/** One language's text. The adapters only read it. */
 export function uiText(locale: Locale): UiText {
-  let t = built.get(locale);
-  if (!t) {
-    // The message files are imported JSON modules shared by every caller, so
-    // this works on copies and never writes into them.
-    const tree = merged(
-      structuredClone(messagesFor(locale)) as unknown as Tree,
-      structuredClone(NOT_IN_MESSAGES[locale]) as unknown as Tree,
-    );
-    for (const [key, value] of Object.entries(KEPT_FROM_PAGES[locale])) setAt(tree, key, value as string);
-    t = tree as unknown as UiText;
-    built.set(locale, t);
-  }
-  return t;
+  return messagesFor(locale);
 }
 
 /** The template with its {placeholders} renamed: rename("{duration} so far", { duration: "years" }). */

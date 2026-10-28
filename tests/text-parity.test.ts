@@ -1,9 +1,9 @@
-// The message-file adapters return exactly today's text.
+// The message-file adapters return today's text, apart from the changes
+// made on purpose that CHANGED lists.
 //
 // Each area's text object (pageText, pathwayText, boardText, frameText,
-// mapText) is built from messages/*.json plus the texts held in
-// lib/held-text.ts. The tables they replaced are frozen in
-// tests/fixtures/text/, and the area tests prove those tables against
+// mapText) is built from messages/*.json. The tables they replaced are frozen
+// in tests/fixtures/text/, and the area tests prove those tables against
 // today's pages; this proves the adapters equal the tables, value for value,
 // in every language. For the map, which had only an English table, the
 // French and Portuguese are the old pages' own: their script's strings
@@ -11,18 +11,22 @@
 // against those pages) and their static markup (fixtures/text/map-markup.ts,
 // checked against the pages below while they are in the checkout).
 //
-// It also keeps lib/held-text.ts honest: a held text whose key has reached
-// the message files, or a kept text the message files now match, fails here,
-// so the entry is deleted rather than left to hide a later change.
+// Until 28 Oct 2026 lib/held-text.ts kept today's wording where the message
+// files differed. The message build now writes it (launch-development-test,
+// docs/rbm-messages-notes.md, decisions 9 and 10), except for two changes the
+// owner chose, which are applied to today's text here before comparing:
+//   - French takes the typographic apostrophe ’ for every straight one
+//     (decision 9). Today's French page shows ' in its static markup and in
+//     a few script strings.
+//   - CHANGED: values today's pages leave in English that the message files
+//     translate (decision 10).
 import { existsSync, readFileSync } from "node:fs";
 import { afterAll, describe, expect, it } from "vitest";
 import { boardText } from "@/components/board/text";
 import { frameText } from "@/components/frame/text";
 import { mapText } from "@/components/map/text";
 import { pathwayText } from "@/components/pathway/text";
-import { KEPT_FROM_PAGES, KEPT_IN_ONE_PLACE, NOT_IN_MESSAGES } from "@/lib/held-text";
 import { LOCALES, type Locale } from "@/lib/locales";
-import { messagesFor } from "@/lib/messages";
 import { pageText } from "@/lib/strings";
 import { BOARD_TEXT } from "./fixtures/text/board-text";
 import { FRAME_TEXT } from "./fixtures/text/frame-text";
@@ -33,6 +37,40 @@ import { pathwayText as PATHWAY_TEXT } from "./fixtures/text/pathway-text";
 import { deriveText } from "./golden-map/translate";
 
 type Tree = { readonly [key: string]: unknown };
+
+/**
+ * Today's value → the value shipped, by area and path. Each entry must still
+ * describe both sides, or the test below fails, so it is deleted rather than
+ * left to hide a later change.
+ */
+const CHANGED: Record<Locale, { [areaPath: string]: [today: string, shipped: string] }> = {
+  en: {},
+  // the pathway's per-step delayed count, for screen readers; singular, which
+  // is wrong for two or more (for the translation reviewer). Not rendered
+  // while DISPLAY.showLate is off.
+  fr: { "pathwayText.nodeDelayed": [", {n} delayed", ", {n} retardé"] },
+  pt: { "pathwayText.nodeDelayed": [", {n} delayed", ", {n} atrasado"] },
+};
+
+const retyped: Record<Locale, number> = { en: 0, fr: 0, pt: 0 };
+
+/** Today's text as the message files now ship it: CHANGED, then French ’. */
+function asShipped(locale: Locale, area: string, today: unknown, path = ""): unknown {
+  if (typeof today === "string") {
+    const changed = CHANGED[locale][`${area}.${path}`];
+    if (changed && changed[0] === today) return changed[1];
+    if (locale === "fr" && today.includes("'")) {
+      retyped[locale]++;
+      return today.replace(/'/g, "’");
+    }
+    return today;
+  }
+  if (Array.isArray(today)) return today.map((v, i) => asShipped(locale, area, v, path ? `${path}.${i}` : String(i)));
+  if (today && typeof today === "object") {
+    return Object.fromEntries(Object.entries(today).map(([k, v]) => [k, asShipped(locale, area, v, path ? `${path}.${k}` : k)]));
+  }
+  return today;
+}
 
 /** Every value that differs, by its path: "footer.disclaimer.1". */
 function differences(got: unknown, want: unknown, path = ""): { at: string; adapter: unknown; today: unknown }[] {
@@ -56,22 +94,33 @@ const compared: Record<Locale, number> = { en: 0, fr: 0, pt: 0 };
 
 for (const locale of LOCALES) {
   describe(`text parity: ${locale}`, () => {
-    const cases: [string, () => unknown, unknown][] = [
-      ["pageText (lib/strings.ts)", () => pageText(locale), PAGE_TEXT[locale]],
-      ["pathwayText", () => pathwayText(locale), PATHWAY_TEXT[locale]],
-      ["boardText", () => boardText(locale), BOARD_TEXT[locale]],
-      ["frameText", () => frameText(locale), FRAME_TEXT[locale]],
-      ["mapText", () => mapText(locale), locale === "en" ? mapTextEn : { ...deriveText(locale).text, ...MAP_MARKUP[locale] }],
+    // [area, what the test names it, the adapter, today's text]
+    const cases: [string, string, () => unknown, unknown][] = [
+      ["pageText", "pageText (lib/strings.ts)", () => pageText(locale), PAGE_TEXT[locale]],
+      ["pathwayText", "pathwayText", () => pathwayText(locale), PATHWAY_TEXT[locale]],
+      ["boardText", "boardText", () => boardText(locale), BOARD_TEXT[locale]],
+      ["frameText", "frameText", () => frameText(locale), FRAME_TEXT[locale]],
+      ["mapText", "mapText", () => mapText(locale), locale === "en" ? mapTextEn : { ...deriveText(locale).text, ...MAP_MARKUP[locale] }],
     ];
-    for (const [name, adapter, today] of cases) {
-      it(`${name} equals today's text`, () => {
+    for (const [area, name, adapter, today] of cases) {
+      it(`${name} equals today's text, as shipped`, () => {
         const got = adapter();
+        const want = asShipped(locale, area, today);
         compared[locale] += leaves(today).length;
-        expect(differences(got, today)).toEqual([]);
+        expect(differences(got, want)).toEqual([]);
         // and nothing but text: no stray functions or undefined values
-        expect(got).toStrictEqual(today);
+        expect(got).toStrictEqual(want);
       });
     }
+
+    it("lists only changes that still apply", () => {
+      const stale = Object.entries(CHANGED[locale]).filter(([at, [before, after]]) => {
+        const [area, ...rest] = at.split(".");
+        const c = cases.find(([a]) => a === area);
+        return !c || lookup(c[3], rest.join(".")) !== before || lookup(c[2](), rest.join(".")) !== after;
+      });
+      expect(stale.map(([at]) => at), "today's text or the shipped text has moved: update or delete the entry").toEqual([]);
+    });
 
     const page = new URL(`../${locale}/index.html`, import.meta.url);
     it.skipIf(!existsSync(page))("the map's static-markup text is today's page's", () => {
@@ -82,32 +131,11 @@ for (const locale of LOCALES) {
         expect(Object.fromEntries(Object.keys(MAP_MARKUP.en).map((k) => [k, en[k]]))).toStrictEqual(MAP_MARKUP.en);
       }
     });
-
-    it("holds back only texts the message files do not have", () => {
-      const m = messagesFor(locale);
-      const present = leaves(NOT_IN_MESSAGES[locale])
-        .map(([key]) => key)
-        .filter((key) => lookup(m, key) !== undefined);
-      expect(present, "now in the message files: delete them from NOT_IN_MESSAGES").toEqual([]);
-    });
-
-    it("keeps today's wording only where the message files differ", () => {
-      const m = messagesFor(locale);
-      const stale = Object.entries(KEPT_FROM_PAGES[locale]).filter(([key, today]) => {
-        const v = lookup(m, key);
-        return typeof v !== "string" || v === today;
-      });
-      expect(stale.map(([key]) => key), "missing or now equal in the message files").toEqual([]);
-      const filterStage = KEPT_IN_ONE_PLACE[locale]["map.filterStage"];
-      if (filterStage !== undefined) expect(filterStage).not.toBe(m.map.accessStage);
-    });
   });
 }
 
 afterAll(() => {
-  const held = (l: Locale) => leaves(NOT_IN_MESSAGES[l]).length;
-  const kept = (l: Locale) => Object.keys(KEPT_FROM_PAGES[l]).length + Object.keys(KEPT_IN_ONE_PLACE[l]).length;
   console.log(
-    `text-parity: ${LOCALES.map((l) => `${l} ${compared[l]} values (${held(l)} held, ${kept(l)} kept)`).join(", ")}`,
+    `text-parity: ${LOCALES.map((l) => `${l} ${compared[l]} values (${Object.keys(CHANGED[l]).length} changed, ${retyped[l]} with ’ for ')`).join(", ")}`,
   );
 });

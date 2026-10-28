@@ -465,7 +465,7 @@ This file is updated in the same commit as each change it describes.
     change. Three message keys are read by nothing: `errors.dataFailedReload`
     and `errors.sourcesFailed` (the unreachable messages, noted below) and
     `product.accessLine` (`accessLine()` joins with a fixed ": ", the same
-    text in all three files).
+    text in all three files). **Since 28 Oct nothing is held: decision 53.**
 44. **The map's French and Portuguese reference includes the pages' static
     markup.** `tests/golden-map/translate.ts` builds them from the pages'
     script strings only, so the 21 fields in `#mapsec`'s HTML (heading,
@@ -556,6 +556,35 @@ This file is updated in the same commit as each change it describes.
     leaving it (every comparison with today's page would show it, and the
     example is what RBM looks at). Nothing changes for RBM: their layout
     decides their `<body>`, and the dashboard fills the width it is given.
+53. **`lib/held-text.ts` is gone: the message files supply every text, and
+    the two changes the owner chose are applied to today's text in the
+    parity test, not held in the app** (28 Oct). launch-development-test
+    `ae16ee6` gave the 37 held texts keys, under the paths the port read
+    (its decision 10), and writes French with ’ throughout (its decision 9,
+    the owner's choice over copying the page's mix or straight '
+    throughout). Copied in by `copy-rbm-messages.js` (`messages/manifest.json`:
+    built from `ae16ee6`, clean, 7 still English per language until PR #129
+    there is merged). `uiText()` now returns the message file as it is;
+    `mapText().filterStage` reads `map.accessStage`, like the legend. Before
+    deleting, the built values were checked against every held text: 144 of
+    147 equal. `tests/text-parity.test.ts` compares each adapter with
+    today's table passed through `asShipped()`: French `'` → `’` (16 of the
+    327 compared French values; the 17th changed key, `errors.sourcesFailed`,
+    is read by nothing, decision 43), and `CHANGED`, one entry per language:
+    `pathwayText.nodeDelayed`, which today's French and Portuguese pages
+    leave as ", {n} delayed" and the files now translate (", {n} retardé",
+    ", {n} atrasado"; singular, and not rendered while `showLate` is off). A
+    check fails when a `CHANGED` entry no longer matches today's text or the
+    shipped one (both seen failing when an entry was broken on purpose).
+    Rejected: keeping `held-text.ts` as a list of overrides (the app would
+    show text the files RBM receives do not hold, and a wording would live in
+    two places); rewriting the frozen tables to the new text (the area tests
+    prove those tables against today's pages, and that proof would go).
+    Tests: 271 (274, less the six held-text checks, plus one `CHANGED` check
+    per language). Visible effect, measured in the browser against today's
+    pages with the side-by-side scripts: English and Portuguese identical
+    line for line; French 12 visible lines differ, every one only by `'` →
+    `’`; heights unchanged.
 
 ## Deferred, and found on the way
 
@@ -752,11 +781,9 @@ This file is updated in the same commit as each change it describes.
     speak its language (decision 50).
   - Against the port before this branch, not against today's page: the map
     is no longer English on `/fr` and `/pt`, and there is one `#tip`.
-- **For launch-development-test's message pipeline:** the 37 held texts need
-  keys in `i18n/ui.en.json` (list in decision 43 and `lib/held-text.ts`),
-  and the 36 French apostrophes need a decision (typographic ’ or straight
-  '). Each entry then comes out of `lib/held-text.ts`, and the parity test
-  says so.
+- ~~For launch-development-test's message pipeline: the 37 held texts need
+  keys in `i18n/ui.en.json`, and the 36 French apostrophes need a
+  decision.~~ Done 28 Oct: decision 53.
 - `product.accessLine` could feed `accessLine()`; not wired, as it would
   change a golden-tested function's inputs for the same text.
 - The board still works out its own `stageContext` and `tracked` list from
@@ -1176,10 +1203,21 @@ ours to undo.
   in "The side-by-side check" above. 274 tests pass, `tsc --noEmit` clean,
   `npm audit --omit=dev` 0, `next build` passes; smoke test re-run on the
   merged branch (maplibre-gl 6.14) with `SMOKE_LOCALES=en,fr,pt`: 87 of 87.
-- **Next:** add the 37 missing keys to launch-development-test's
-  `i18n/ui.en.json` and fix the French apostrophes in the message build, so
-  `lib/held-text.ts` can go; the README for RBM (step 6), with the font
-  (see the side-by-side check); a check on a real iPhone and in Safari.
+- **28 Oct 2026, held texts** (on `feat/react-port`): decision 53.
+  `messages/` from launch-development-test `ae16ee6`; `lib/held-text.ts`
+  deleted; `lib/ui-text.ts`, `components/map/text.ts`,
+  `tests/text-parity.test.ts`, this file. 271 tests pass, `tsc --noEmit`
+  clean, `npm audit --omit=dev` 0, `next build` passes; smoke test
+  `SMOKE_LOCALES=en,fr,pt` 87 of 87; side-by-side text check as in decision
+  53.
+- **Next:** after launch-development-test PR #129 is merged and its bot has
+  translated the 7 words, rebuild there without `--allow-stale` and copy
+  again (the manifest's `untranslated` empties). The parity test will then
+  report those words, since its frozen tables hold today's English on
+  `/fr` and `/pt`: add each to `CHANGED` (today's English → the
+  translation), after reading the translations;
+  the README for RBM (step 6), with the font (see the side-by-side check); a
+  check on a real iPhone and in Safari.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).

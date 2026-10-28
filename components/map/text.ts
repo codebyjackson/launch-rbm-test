@@ -12,7 +12,6 @@
 // client components. "{name}"-style slots are filled by fill().
 import type { Locale } from "@/lib/locales";
 import type { GroupId, MapLibreText, Region, StageKey } from "@/lib/map";
-import { KEPT_IN_ONE_PLACE } from "@/lib/held-text";
 import { around, rename, uiText } from "@/lib/ui-text";
 
 export interface MapText {
@@ -192,8 +191,9 @@ export function mapText(locale: Locale): MapText {
     count: map.countHeading,
     use: map.recommendedUse,
     group: p.group,
-    // today's French page writes this heading differently from the legend's (lib/held-text.ts)
-    filterStage: KEPT_IN_ONE_PLACE[locale]["map.filterStage"] ?? map.accessStage,
+    // the legend's text: today's French page writes the two with different
+    // apostrophes, the message files with ’ (tests/text-parity.test.ts)
+    filterStage: map.accessStage,
     tickHint: f.tickHint,
     tickLeft: p.tickLeft,
     noPolicy: rename(map.noPolicy, { medicine: "name" }),

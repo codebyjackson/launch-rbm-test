@@ -33,12 +33,21 @@
   "pathway": {
     "label": "O caminho de acesso: oito marcos em sete etapas. A recomendação da OMS e a inclusão na lista PQ da OMS são marcos paralelos dentro do passo 3. Escolha um passo para ver o que acontece nele e onde se encontra cada medicamento.",
     "stageButtonLabel": "Estágio {n}, {stage}. Mostra o que acontece aqui e onde está cada medicamento.",
-    "parallelGroupLabel": "{names} — aprovações independentes sem ordem definida entre elas"
+    "stageButtonExpected": ", esperado {years}",
+    "stageButtonDelayed": ", {n} atrasado",
+    "parallelGroupLabel": "{names} — aprovações independentes sem ordem definida entre elas",
+    "expectedTag": "{years} esperado"
   },
   "stepPanel": {
     "label": "Fase {n}: {stage}",
     "stepOfTotal": "Etapa {n} de {total}",
     "statusSummaryLabel": "Situação dos medicamentos {count} nesta fase",
+    "statusCounts": {
+      "complete": "concluir",
+      "inProgress": "em curso",
+      "delayed": "atrasado",
+      "notStarted": "não iniciado"
+    },
     "parallelMilestones": "{first} e {second} são marcos paralelos dentro do estádio {n}.",
     "whatHappens": "O que acontece aqui?",
     "whoDecides": "Quem decide?",
@@ -51,7 +60,8 @@
       "journey": "Jornada",
       "currentStage": "Estágio atual",
       "status": "Estatuto",
-      "access": "Acesso"
+      "access": "Acesso",
+      "mainBarrier": "Barreira principal"
     },
     "accessDefinition": "O acesso ao mercado é conseguido quando um medicamento é recomendado pela OMS e pré-qualificado por esta. O acesso no país estende-se a partir desse momento até que o registo nacional, a adoção de políticas, a aquisição em volumes significativos e a distribuição no país estejam concluídos.",
     "showJourney": "Mostrar viagem para {medicine}",
@@ -60,14 +70,19 @@
     "accessReachedIn": "Alcançado em {year}",
     "accessReachedNoYear": "Atingido, ano não registado",
     "accessSoFar": "{duration} até ao momento",
-    "accessUnderOneYear": "Menos de 1 ano até agora"
+    "accessUnderOneYear": "Menos de 1 ano até agora",
+    "delayedDefinition": "O estado atual do medicamento estagnou ou está a avançar de forma excecionalmente lenta, na avaliação de LAUNCH com base em evidência pública. A principal barreira explica o motivo. Não existe um prazo definido para a sua avaliação.",
+    "delayedHint": "{status}: {definition}",
+    "noBarrier": "Nenhuma barreira publicamente documentada foi identificada."
   },
   "product": {
     "accessLine": "{phase}: {figure}",
     "journeyView": "Visão da viagem",
     "viewTimeline": "Cronograma real",
     "viewPathway": "Ordem do caminho",
+    "viewTimeTaken": "Tempo gasto",
     "stageMarkerLabel": "{stage}. {status}. Abre os detalhes completos.",
+    "dotTitle": "{stage}: {status}",
     "parallelGroupLabel": "{names} — aprovações independentes, sem ordem definida entre elas",
     "timeline": {
       "today": "hoje",
@@ -77,6 +92,7 @@
       "notYetDated": "Ainda não tem data.",
       "notStarted": "Não iniciado · {count}",
       "ongoing": "em curso",
+      "delayed": "atrasado",
       "none": "Nenhum"
     },
     "stagePanel": {
@@ -122,6 +138,30 @@
       "nextStep": "Próximo passo esperado",
       "anticipated": "Antecipado"
     }
+  },
+  "yardstick": {
+    "soFar": "até agora",
+    "notApprovedYet": "Ainda não aprovado",
+    "expected": "Esperado",
+    "routineUseBy": "uso de rotina por {year}",
+    "actual": "Real",
+    "actualSoFar": "Até ao momento, está tudo bem.",
+    "since": "desde {year}",
+    "sinceNotRoutine": "desde {year}, ainda não é de uso rotineiro",
+    "variance": "Variância",
+    "fromExpected": "do esperado",
+    "expectedRoutineUse": "Prevê-se que entre em uso de rotina em {due}, {n} anos após o seu primeiro marco em {start}.",
+    "stillNotRoutine": "Ainda não é de uso rotineiro em {year}.",
+    "largestVariance": "Maior variação:",
+    "notApprovedTitle": "Ainda não foi aprovado.",
+    "notApprovedBody": "Começamos a comparar assim que o medicamento tem uma aprovação regulamentar com data de expiração.",
+    "stageHeading": "Fase",
+    "wholeJourney": "Toda a viagem",
+    "notePublished": "Horários previstos com base num cronograma publicado: {stages}.",
+    "noteEstimate": "Tempos previstos a partir das estimativas de trabalho de LAUNCH, ainda a acordar: {stages}.",
+    "doneNoDate": "Feito, sem data registada",
+    "ongoingNoStart": "Em curso, sem data de início definida.",
+    "onTrackSoFar": "Até agora, tudo dentro do esperado."
   },
   "tooltip": {
     "clickForDetail": "Clique para ver todos os detalhes.",
@@ -335,6 +375,7 @@
     "status": {
       "complete": "Concluir",
       "inProgress": "Em curso",
+      "delayed": "Atrasado",
       "notStarted": "Não iniciado"
     },
     "phases": {

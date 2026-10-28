@@ -33,12 +33,21 @@
   "pathway": {
     "label": "The access pathway: eight milestones across seven stages. WHO recommendation and WHO PQ listing are parallel milestones within stage 3. Choose a stage to see what happens there and where each medicine is",
     "stageButtonLabel": "Stage {n}, {stage}. Shows what happens here and where each medicine is.",
-    "parallelGroupLabel": "{names} — independent approvals with no defined order between them"
+    "stageButtonExpected": ", expected {years}",
+    "stageButtonDelayed": ", {n} delayed",
+    "parallelGroupLabel": "{names} — independent approvals with no defined order between them",
+    "expectedTag": "{years} expected"
   },
   "stepPanel": {
     "label": "Stage {n}: {stage}",
     "stepOfTotal": "Stage {n} of {total}",
     "statusSummaryLabel": "Status of the {count} medicines at this stage",
+    "statusCounts": {
+      "complete": "complete",
+      "inProgress": "in progress",
+      "delayed": "delayed",
+      "notStarted": "not started"
+    },
     "parallelMilestones": "{first} and {second} are parallel milestones within stage {n}.",
     "whatHappens": "What happens here",
     "whoDecides": "Who decides",
@@ -51,7 +60,8 @@
       "journey": "Journey",
       "currentStage": "Current stage",
       "status": "Status",
-      "access": "Access"
+      "access": "Access",
+      "mainBarrier": "Main barrier"
     },
     "accessDefinition": "Market Access is reached when a medicine is both recommended by WHO and WHO-prequalified. Country Access runs from then until national registration, policy adoption, procurement in significant volumes and in-country delivery are all complete.",
     "showJourney": "Show journey for {medicine}",
@@ -60,14 +70,19 @@
     "accessReachedIn": "Reached in {year}",
     "accessReachedNoYear": "Reached, year not recorded",
     "accessSoFar": "{duration} so far",
-    "accessUnderOneYear": "Under 1 year so far"
+    "accessUnderOneYear": "Under 1 year so far",
+    "delayedDefinition": "the medicine's current stage has stalled or is moving unusually slowly, in LAUNCH's judgement from public evidence. The main barrier gives the reason. It is not measured against a set deadline.",
+    "delayedHint": "{status}: {definition}",
+    "noBarrier": "No publicly documented barrier identified"
   },
   "product": {
     "accessLine": "{phase}: {figure}",
     "journeyView": "Journey view",
     "viewTimeline": "Actual timeline",
     "viewPathway": "Pathway order",
+    "viewTimeTaken": "Time taken",
     "stageMarkerLabel": "{stage}. {status}. Opens the full detail.",
+    "dotTitle": "{stage}: {status}",
     "parallelGroupLabel": "{names} — independent approvals, no defined order between them",
     "timeline": {
       "today": "today",
@@ -77,6 +92,7 @@
       "notYetDated": "Not yet dated",
       "notStarted": "Not started · {count}",
       "ongoing": "ongoing",
+      "delayed": "delayed",
       "none": "None"
     },
     "stagePanel": {
@@ -122,6 +138,30 @@
       "nextStep": "Next expected step",
       "anticipated": "Anticipated"
     }
+  },
+  "yardstick": {
+    "soFar": "so far",
+    "notApprovedYet": "Not approved yet",
+    "expected": "Expected",
+    "routineUseBy": "routine use by {year}",
+    "actual": "Actual",
+    "actualSoFar": "Actual so far",
+    "since": "since {year}",
+    "sinceNotRoutine": "since {year}, not yet in routine use",
+    "variance": "Variance",
+    "fromExpected": "from expected",
+    "expectedRoutineUse": "Expected in routine use by {due}, {n} years after its first milestone in {start}.",
+    "stillNotRoutine": "Still not in routine use in {year}.",
+    "largestVariance": "Largest variance:",
+    "notApprovedTitle": "Not approved yet.",
+    "notApprovedBody": "We start comparing once the medicine has a dated regulatory approval.",
+    "stageHeading": "Stage",
+    "wholeJourney": "Whole journey",
+    "notePublished": "Expected times from a published timeline: {stages}.",
+    "noteEstimate": "Expected times from LAUNCH's working estimates, still to be agreed: {stages}.",
+    "doneNoDate": "Done, no date recorded",
+    "ongoingNoStart": "Ongoing, no start date",
+    "onTrackSoFar": "On track so far"
   },
   "tooltip": {
     "clickForDetail": "Click for the full detail",
@@ -335,6 +375,7 @@
     "status": {
       "complete": "Complete",
       "inProgress": "In progress",
+      "delayed": "Delayed",
       "notStarted": "Not started"
     },
     "phases": {
