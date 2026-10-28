@@ -41,6 +41,7 @@ import {
 import type { LaunchData, Product, Source } from "@/lib/dataset";
 import type { Locale } from "@/lib/locales";
 import type { MapInput } from "@/lib/map";
+import { messagesFor, provideMessages } from "@/lib/messages";
 import { tracked } from "@/lib/pathway";
 import { applyShowLate, stageContext } from "@/lib/stages";
 
@@ -81,6 +82,13 @@ export interface DashboardProps {
    * that as this report's echo and does not jump to the row.
    */
   onProductChange?: (id: string) => void;
+  /**
+   * RBM's copy of this language's messages: next-intl's
+   * messages.launchDashboard on RBM's page. Each message is used when it is
+   * text with our {placeholders}; anything missing or broken keeps our own
+   * copy (lib/messages.ts provideMessages). Leave it out to use our own copy.
+   */
+  text?: unknown;
 }
 
 export function Dashboard({
@@ -93,15 +101,21 @@ export function Dashboard({
   assets,
   initialProduct,
   onProductChange,
+  text,
 }: DashboardProps) {
-  // Each adapter builds its text once per language and returns the same
-  // object after that, so these never change while the page is open.
+  // RBM's messages first, so the adapters below read them. The same object on
+  // every render changes nothing (provideMessages keeps it).
+  provideMessages(locale, text);
+  // Each adapter builds its text once per language's messages and returns
+  // the same object after that, so these never change while the page is open.
   const ptext = pathwayText(locale);
   const ftext = frameText(locale);
   const btext = boardText(locale);
   const mtext = mapText(locale);
 
-  const ctx = useMemo(() => stageContext(data, locale), [data, locale]);
+  // messagesFor(locale): the stage words come from the messages, which RBM may hand over
+  const messages = messagesFor(locale);
+  const ctx = useMemo(() => stageContext(data, locale), [data, locale, messages]);
   // the medicines as the page lists them, "late" shown as in progress (SHOW_LATE)
   const listed = useMemo(() => tracked(applyShowLate(data.products, ctx.display)), [data.products, ctx.display]);
 

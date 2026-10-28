@@ -11,7 +11,7 @@
 // pageText().status in lib/strings.ts.
 import type { CsvText, FeedbackType } from "@/lib/frame";
 import type { Locale } from "@/lib/locales";
-import { around, uiText } from "@/lib/ui-text";
+import { around, type UiText, uiText } from "@/lib/ui-text";
 
 export interface HeaderText {
   title: string;
@@ -130,13 +130,15 @@ export interface FrameText {
   feedback: FeedbackText;
 }
 
-const built = new Map<Locale, FrameText>();
+// by the messages object, not the language: new messages handed over by RBM
+// (lib/messages.ts provideMessages) build the text again
+const built = new WeakMap<UiText, FrameText>();
 
 /** One language's FrameText, built once. */
 export function frameText(locale: Locale): FrameText {
-  let t = built.get(locale);
-  if (t) return t;
   const m = uiText(locale);
+  let t = built.get(m);
+  if (t) return t;
   const sub = m.subscribe;
   const fb = m.feedback;
   const col = m.download.columns;
@@ -254,6 +256,6 @@ export function frameText(locale: Locale): FrameText {
       errEmail: fb.emailInvalid,
     },
   };
-  built.set(locale, t);
+  built.set(m, t);
   return t;
 }

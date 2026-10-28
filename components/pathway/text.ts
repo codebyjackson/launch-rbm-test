@@ -14,7 +14,7 @@
 // stage rules share.
 import type { Status } from "@/lib/dataset";
 import type { Locale } from "@/lib/locales";
-import { rename, uiText } from "@/lib/ui-text";
+import { rename, type UiText, uiText } from "@/lib/ui-text";
 
 export interface PathwayText {
   // ---- the strip (#pathway) ----
@@ -77,13 +77,15 @@ export interface PathwayText {
   clickForDetail: string;
 }
 
-const built = new Map<Locale, PathwayText>();
+// by the messages object, not the language: new messages handed over by RBM
+// (lib/messages.ts provideMessages) build the text again
+const built = new WeakMap<UiText, PathwayText>();
 
 /** One language's PathwayText, built once. */
 export function pathwayText(locale: Locale): PathwayText {
-  let t = built.get(locale);
-  if (t) return t;
   const m = uiText(locale);
+  let t = built.get(m);
+  if (t) return t;
   const counts = m.stepPanel.statusCounts;
   // The step's label in the message files is the sentence as shown today;
   // the page also had room in it for two parts that are switched off (the
@@ -128,6 +130,6 @@ export function pathwayText(locale: Locale): PathwayText {
     confirmed: m.product.cards.confirmedInRegisters,
     clickForDetail: m.tooltip.clickForDetail,
   };
-  built.set(locale, t);
+  built.set(m, t);
   return t;
 }

@@ -27,6 +27,7 @@ import {
 import { BOARD_DISPLAY, glossPattern, glossaryOf, type BoardDisplay } from "@/lib/board";
 import type { LaunchData, Product, Source } from "@/lib/dataset";
 import type { Locale } from "@/lib/locales";
+import { messagesFor } from "@/lib/messages";
 import { colIndexOf, tracked as trackedOf } from "@/lib/pathway";
 import { DISPLAY, applyShowLate, stageContext, type Display } from "@/lib/stages";
 import { pageText } from "@/lib/strings";
@@ -117,7 +118,9 @@ export function Board(props: BoardProps) {
     asOfYear,
   } = props;
 
-  const ctx = useMemo(() => stageContext(data, locale, { display, asOfYear }), [data, locale, display, asOfYear]);
+  // messagesFor(locale): the stage words come from the messages, which RBM may hand over
+  const messages = messagesFor(locale);
+  const ctx = useMemo(() => stageContext(data, locale, { display, asOfYear }), [data, locale, display, asOfYear, messages]);
   // the page rewrote late as in progress once at start-up (SHOW_LATE)
   const products = useMemo(() => applyShowLate(data.products, display), [data.products, display]);
   const tracked = useMemo(() => trackedOf(products), [products]);

@@ -12,7 +12,7 @@
 // client components. "{name}"-style slots are filled by fill().
 import type { Locale } from "@/lib/locales";
 import type { GroupId, MapLibreText, Region, StageKey } from "@/lib/map";
-import { around, rename, uiText } from "@/lib/ui-text";
+import { around, rename, type UiText, uiText } from "@/lib/ui-text";
 
 export interface MapText {
   heading: string;
@@ -117,13 +117,15 @@ export function fill(template: string, values: Record<string, string | number>):
   return template.replace(/\{(\w+)\}/g, (m, k: string) => (k in values ? String(values[k]) : m));
 }
 
-const built = new Map<Locale, MapText>();
+// by the messages object, not the language: new messages handed over by RBM
+// (lib/messages.ts provideMessages) build the text again
+const built = new WeakMap<UiText, MapText>();
 
 /** One language's MapText, built once. */
 export function mapText(locale: Locale): MapText {
-  let t = built.get(locale);
-  if (t) return t;
   const m = uiText(locale);
+  let t = built.get(m);
+  if (t) return t;
   const map = m.map;
   const f = map.filters;
   const p = map.panel;
@@ -251,6 +253,6 @@ export function mapText(locale: Locale): MapText {
     // the tooltip writes the medicine's name, then this
     tipStatus: around(m.tooltip.dataStatus, "medicine")[1],
   };
-  built.set(locale, t);
+  built.set(m, t);
   return t;
 }

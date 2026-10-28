@@ -9,7 +9,7 @@
 // French writes "0 années".
 import type { Status } from "./dataset";
 import type { Locale } from "./locales";
-import { rename, uiText } from "./ui-text";
+import { rename, type UiText, uiText } from "./ui-text";
 
 export interface PageText {
   /** LABEL: the four status words */
@@ -36,13 +36,15 @@ export interface PageText {
   onTrackSoFar: string;
 }
 
-const built = new Map<Locale, PageText>();
+// by the messages object, not the language: new messages handed over by RBM
+// (lib/messages.ts provideMessages) build the text again
+const built = new WeakMap<UiText, PageText>();
 
-/** One language's PageText. Built once per language: the stage rules call it for every value. */
+/** One language's PageText. Built once per language's messages: the stage rules call it for every value. */
 export function pageText(locale: Locale): PageText {
-  let t = built.get(locale);
+  const m = uiText(locale);
+  let t = built.get(m);
   if (!t) {
-    const m = uiText(locale);
     t = {
       status: {
         done: m.common.status.complete,
@@ -63,7 +65,7 @@ export function pageText(locale: Locale): PageText {
       ongoingNoStart: m.yardstick.ongoingNoStart,
       onTrackSoFar: m.yardstick.onTrackSoFar,
     };
-    built.set(locale, t);
+    built.set(m, t);
   }
   return t;
 }

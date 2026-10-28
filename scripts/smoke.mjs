@@ -274,7 +274,7 @@ function changed(a, b) {
 // ---- the checks ---------------------------------------------------------------
 
 async function smoke(cdp, locale) {
-  const m = JSON.parse(readFileSync(join(ROOT, "messages", `${locale}.json`), "utf8"));
+  const m = JSON.parse(readFileSync(join(ROOT, "messages", `${locale}.json`), "utf8")).launchDashboard;
   const t = await openTab(cdp);
   const url = `${BASE}/${locale}`;
   const hydrated = await t.goto(url);

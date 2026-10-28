@@ -12,7 +12,7 @@
 //
 // "{name}" marks where a value goes.
 import type { Locale } from "@/lib/locales";
-import { rename, uiText } from "@/lib/ui-text";
+import { rename, type UiText, uiText } from "@/lib/ui-text";
 
 export interface BoardText {
   // Header row of the medicines table
@@ -134,13 +134,15 @@ export interface BoardText {
   msAnticipated: string;
 }
 
-const built = new Map<Locale, BoardText>();
+// by the messages object, not the language: new messages handed over by RBM
+// (lib/messages.ts provideMessages) build the text again
+const built = new WeakMap<UiText, BoardText>();
 
 /** One language's BoardText, built once. */
 export function boardText(locale: Locale): BoardText {
-  let t = built.get(locale);
-  if (t) return t;
   const m = uiText(locale);
+  let t = built.get(m);
+  if (t) return t;
   const y = m.yardstick;
   const tl = m.product.timeline;
   const cards = m.product.cards;
@@ -222,6 +224,6 @@ export function boardText(locale: Locale): BoardText {
     msNext: ms.nextStep,
     msAnticipated: ms.anticipated,
   };
-  built.set(locale, t);
+  built.set(m, t);
   return t;
 }

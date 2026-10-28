@@ -608,6 +608,30 @@ This file is updated in the same commit as each change it describes.
     that went wrong). **Order:** the language files must be published
     (launch-development-test merged, then "Publish now") before this branch
     runs anywhere, or the first load finds no file and shows the error page.
+55. **RBM's page hands the dashboard its words; our files are the fallback,
+    message by message** (28 Oct, the owner's choice). RBM loads the message
+    files through its `i18n.ts` (next-intl), merged into its own. Every file
+    now holds one key, `launchDashboard` (launch-development-test
+    `feat/rbm-messages` `b4cbc83`, its decision 13; copied in, the text
+    identical to the `65b969e` copy), so nothing collides with RBM's keys and
+    its page passes `messages.launchDashboard` in one piece: `<Dashboard
+    text>`, and `provideMessages(locale, text)` on the server before
+    `frameText()`/`frameView()` (`lib/messages.ts`). Each handed-over message
+    is used when it is a non-empty string with exactly our `{placeholders}`;
+    otherwise ours stays (and keys we lack are ignored), so an outdated or
+    hand-edited copy cannot blank or break a line. The five text adapters
+    cache by the messages object (`WeakMap`), not by language, so new words
+    rebuild them; the Dashboard's and the Board's `stageContext` memos depend
+    on `messagesFor(locale)` too. A new object with the same words keeps the
+    messages object, so a page that rebuilds `text` on every render costs a
+    comparison, not a rebuild. The server keeps one copy per language for the
+    process: RBM's files are the same for every request, so sharing it is
+    safe. Rejected: next-intl inside our code (`useTranslations`): our
+    Next.js 16 needs next-intl 4, RBM says 3.15.2, whose range stops at
+    Next.js 14; passing the text through every adapter call (the stage rules
+    in `lib/stages.ts` alone call `pageText()` in six places);
+    taking RBM's copy whole (a stale file would show missing or broken
+    messages). `tests/messages.test.ts`: 11 (4 before).
 
 ## Deferred, and found on the way
 
@@ -1258,6 +1282,11 @@ ours to undo.
   `lib/data.ts`, `lib/dataset.ts`, `tests/dataset.test.ts`, three fixtures,
   this file. Not yet online: needs launch-development-test
   `feat/data-per-language` merged and published first.
+- **28 Oct 2026, words handed over** (on `feat/react-port`): decision 55.
+  `messages/` from launch-development-test `b4cbc83` (`manifest.json`:
+  clean, nothing untranslated), `messages/README.md`, `lib/messages.ts`, the
+  five adapters, `components/Dashboard.tsx`, `components/board/Board.tsx`,
+  `tests/messages.test.ts`, this file.
 - **Next:** the README for RBM (step 6) is another developer's (owner,
   28 Oct); it should say to load Source Sans 3 (see the side-by-side check).
   A check on a real iPhone and in Safari.
