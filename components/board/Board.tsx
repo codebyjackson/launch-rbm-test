@@ -1,6 +1,6 @@
 "use client";
 // The medicine board (#board): the medicines table, one section per medicine,
-// in the page's order (trackedProducts), then the rows not yet tracked.
+// in the page's order (tracked, lib/pathway.ts), then the rows not yet tracked.
 //
 // It owns what is board-wide on the page: which rows are open, and the one
 // stage panel open at a time. What crosses into other areas goes through
@@ -24,11 +24,12 @@ import {
   type DOMAttributes,
   type ReactElement,
 } from "react";
-import { BOARD_DISPLAY, colIndexOf, glossPattern, glossaryOf, trackedProducts, type BoardDisplay } from "@/lib/board";
+import { BOARD_DISPLAY, glossPattern, glossaryOf, type BoardDisplay } from "@/lib/board";
 import type { LaunchData, Product, Source } from "@/lib/dataset";
 import type { Locale } from "@/lib/locales";
+import { colIndexOf, tracked as trackedOf } from "@/lib/pathway";
 import { DISPLAY, applyShowLate, stageContext, type Display } from "@/lib/stages";
-import { PAGE_TEXT } from "@/lib/strings";
+import { pageText } from "@/lib/strings";
 import { accessInfo } from "./access";
 import { glossTree } from "./gloss";
 import { useReducedMotion } from "./hooks";
@@ -119,13 +120,13 @@ export function Board(props: BoardProps) {
   const ctx = useMemo(() => stageContext(data, locale, { display, asOfYear }), [data, locale, display, asOfYear]);
   // the page rewrote late as in progress once at start-up (SHOW_LATE)
   const products = useMemo(() => applyShowLate(data.products, display), [data.products, display]);
-  const tracked = useMemo(() => trackedProducts(products), [products]);
+  const tracked = useMemo(() => trackedOf(products), [products]);
   const placeholders = useMemo(() => products.filter((p) => p.placeholder), [products]);
   const s: Scope = useMemo(
     () => ({
       ctx,
       text,
-      t: PAGE_TEXT[locale],
+      t: pageText(locale),
       sources,
       board: boardDisplay,
       slots: { renderStageIcon, renderCountryAccess, renderCites, renderGatePanel },

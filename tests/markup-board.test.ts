@@ -18,8 +18,9 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, describe, expect, it } from "vitest";
-import { Board, BOARD_TEXT, type BoardProps } from "@/components/board";
-import { trackedProducts } from "@/lib/board";
+import { Board, type BoardProps } from "@/components/board";
+import { BOARD_TEXT } from "./fixtures/text/board-text";
+import { tracked } from "@/lib/pathway";
 import type { ProductDetail } from "@/lib/dataset";
 import { LOCALES, type Locale } from "@/lib/locales";
 import { asOfYear } from "@/lib/stages";
@@ -97,7 +98,7 @@ for (const locale of LOCALES) {
         same("header", form(four.children[0]), form(oldHeader));
 
         // one medicine per board: each variant keeps its own id, as on the page
-        const order = trackedProducts(raw);
+        const order = tracked(raw);
         const oldTracked = oldRows.filter((e) => !e.classList.contains("future"));
         expect(oldTracked.length).toBe(order.length);
         order.forEach((p, n) => {

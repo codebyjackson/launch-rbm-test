@@ -15,7 +15,7 @@ import { localize, type LaunchData, type Localized, type Product, type StageEntr
 import * as format from "@/lib/format";
 import { LOCALES, type Locale } from "@/lib/locales";
 import * as stages from "@/lib/stages";
-import { PAGE_TEXT } from "@/lib/strings";
+import { PAGE_TEXT } from "./fixtures/text/page-text";
 
 // The published file on 27 Oct 2026 (pipeline commit 2d30ff3).
 const FIXTURE = JSON.parse(readFileSync(new URL("./fixtures/dashboard.json", import.meta.url), "utf8"));

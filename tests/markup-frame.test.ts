@@ -17,7 +17,7 @@ import { FEEDBACK_START, FeedbackDialog, type FeedbackState } from "@/components
 import { Footer } from "@/components/frame/Footer";
 import { Header } from "@/components/frame/Header";
 import { SubscribePanel, subscribeMessage } from "@/components/frame/Subscribe";
-import { FRAME_TEXT } from "@/components/frame/text";
+import { FRAME_TEXT } from "./fixtures/text/frame-text";
 import { frameView } from "@/components/frame/view";
 import { localize } from "@/lib/dataset";
 import { checkFeedback, feedbackProducts } from "@/lib/frame";

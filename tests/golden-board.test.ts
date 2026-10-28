@@ -11,6 +11,7 @@
 import { isDeepStrictEqual } from "node:util";
 import { afterAll, describe, expect, it } from "vitest";
 import * as board from "@/lib/board";
+import * as pathway from "@/lib/pathway";
 import type { Product } from "@/lib/dataset";
 import { LOCALES, type Locale } from "@/lib/locales";
 import { applyShowLate, asOfYear, stageContext } from "@/lib/stages";
@@ -102,13 +103,13 @@ for (const locale of LOCALES) {
         same("FORK_R", "", board.FORK_R, old.get("FORK_R"));
         same("FORK_NODE", "", board.FORK_NODE, old.get("FORK_NODE"));
 
-        const tracked = board.trackedProducts(products);
+        const tracked = pathway.tracked(products);
         const oldTracked = old.get("tracked") as Product[];
         same("trackedProducts", "order", tracked.map((p) => p.name), oldTracked.map((p) => p.name));
         same("trackedProducts", "products", tracked, oldTracked);
 
         for (let i = -1; i <= 9; i++) {
-          same("colIndexOf", String(i), board.colIndexOf(i, ctx), old.fn("colIndexOf")(i));
+          same("colIndexOf", String(i), pathway.colIndexOf(i, ctx), old.fn("colIndexOf")(i));
         }
 
         // the old rows, in tracked order after the header
@@ -166,7 +167,7 @@ for (const locale of LOCALES) {
       const fitOld = old.fn("fitTimeline");
       const { same, check } = comparer(locale);
       const rnd = random(7);
-      for (const p of board.trackedProducts(products)) {
+      for (const p of pathway.tracked(products)) {
         const L = board.journeyLayout(p, ctx);
         // the page's elements, as plain objects with what fitTimeline reads and writes
         const items = L.items.map((it) => ({ dataset: { tier: String(it.tier) }, style: {} as { top?: string }, offsetHeight: 0 }));

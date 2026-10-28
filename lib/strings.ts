@@ -1,16 +1,15 @@
-// TEMPORARY: replaced by the message files in step 2 of the port.
+// The words lib/format.ts and lib/stages.ts put into their results, and the
+// four status words, two phase names and "N years" every area shares, built
+// from the message files (lib/ui-text.ts). Until 28 Oct 2026 this was a table
+// copied from the built pages; that table is now tests/fixtures/text/page-text.ts,
+// and tests/text-parity.test.ts proves pageText() returns exactly it.
 //
-// The words lib/format.ts and lib/stages.ts put into their results, one table
-// per language. On the static pages the build wrote each translation into the
-// page's code, so these are copied from the built pages at launch-rbm-test
-// 7c1bf11 (en|fr|pt/index.html), wording and punctuation as they are there.
-// tests/golden.test.ts checks every entry against those pages' own functions.
-//
-// "{name}" marks where a value goes, the form the message files will use. The
-// singular is used for exactly 1 in every language, as on the pages, not each
-// language's own plural rule: French writes "0 années".
+// "{name}" marks where a value goes. The singular is used for exactly 1 in
+// every language, as on the pages, not each language's own plural rule:
+// French writes "0 années".
 import type { Status } from "./dataset";
 import type { Locale } from "./locales";
+import { rename, uiText } from "./ui-text";
 
 export interface PageText {
   /** LABEL: the four status words */
@@ -37,53 +36,37 @@ export interface PageText {
   onTrackSoFar: string;
 }
 
-export const PAGE_TEXT: Record<Locale, PageText> = {
-  en: {
-    status: { done: "Complete", prog: "In progress", late: "Delayed", idle: "Not started" },
-    phases: ["Market Access", "Country Access"],
-    year: "{n} year",
-    years: "{n} years",
-    reachedIn: "Reached in {year}",
-    reachedNoYear: "Reached, year not recorded",
-    soFar: "{years} so far",
-    underOneYearSoFar: "Under 1 year so far",
-    notYetReached: "Not yet reached",
-    expected: "expected {date}",
-    doneNoDate: "Done, no date recorded",
-    ongoingNoStart: "Ongoing, no start date",
-    onTrackSoFar: "On track so far",
-  },
-  fr: {
-    status: { done: "Complet", prog: "En cours", late: "Retardé", idle: "Pas encore commencé" },
-    phases: ["Accès au marché", "Accès au pays"],
-    year: "{n} année",
-    years: "{n} années",
-    reachedIn: "Atteint en {year}",
-    reachedNoYear: "Atteint, année non enregistrée",
-    soFar: "{years} jusqu’à présent",
-    underOneYearSoFar: "Moins d’un an jusqu’à présent",
-    notYetReached: "Pas encore atteint",
-    expected: "attendu {date}",
-    doneNoDate: "Terminé, aucune date enregistrée",
-    ongoingNoStart: "En cours, sans date de début",
-    onTrackSoFar: "Tout se déroule comme prévu jusqu’à présent",
-  },
-  pt: {
-    status: { done: "Concluir", prog: "Em curso", late: "Atrasado", idle: "Não iniciado" },
-    phases: ["Acesso ao mercado", "Acesso ao país"],
-    year: "{n} ano",
-    years: "{n} anos",
-    reachedIn: "Alcançado em {year}",
-    reachedNoYear: "Atingido, ano não registado",
-    soFar: "{years} até ao momento",
-    underOneYearSoFar: "Menos de 1 ano até agora",
-    notYetReached: "Ainda não alcançado",
-    expected: "esperado {date}",
-    doneNoDate: "Feito, sem data registada",
-    ongoingNoStart: "Em curso, sem data de início definida.",
-    onTrackSoFar: "Até agora, tudo dentro do esperado.",
-  },
-};
+const built = new Map<Locale, PageText>();
+
+/** One language's PageText. Built once per language: the stage rules call it for every value. */
+export function pageText(locale: Locale): PageText {
+  let t = built.get(locale);
+  if (!t) {
+    const m = uiText(locale);
+    t = {
+      status: {
+        done: m.common.status.complete,
+        prog: m.common.status.inProgress,
+        late: m.common.status.delayed,
+        idle: m.common.status.notStarted,
+      },
+      phases: [m.common.phases.market, m.common.phases.country],
+      year: m.common.yearsOne,
+      years: m.common.yearsOther,
+      reachedIn: m.board.accessReachedIn,
+      reachedNoYear: m.board.accessReachedNoYear,
+      soFar: rename(m.board.accessSoFar, { duration: "years" }),
+      underOneYearSoFar: m.board.accessUnderOneYear,
+      notYetReached: m.board.accessNotReached,
+      expected: m.tooltip.expected,
+      doneNoDate: m.yardstick.doneNoDate,
+      ongoingNoStart: m.yardstick.ongoingNoStart,
+      onTrackSoFar: m.yardstick.onTrackSoFar,
+    };
+    built.set(locale, t);
+  }
+  return t;
+}
 
 /** Puts values into a "{name}" template. */
 export function fill(template: string, values: { [name: string]: string | number }): string {

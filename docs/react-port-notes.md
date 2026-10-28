@@ -415,13 +415,142 @@ This file is updated in the same commit as each change it describes.
     fields they type (`useCase`, `access`, `adoption`, `research`, `country`,
     `countries`, `volume`, `volumeNote`, `price`); `Product.barrier`,
     `acknowledgement`, `note`; `Source.category`.
+42. **One client component, `components/Dashboard.tsx`, takes only what a
+    server component can pass** (branch `feat/react-port-dashboard`): the
+    locale, `data` and `sources` from `localize()`, `frameView` and `mapInput`
+    worked out on the server, `formsUrl`, and `assets` (logo, WHO emblem,
+    map shapes, map worker), plus `initialProduct`/`onProductChange`
+    (decision 47). It works out its words from the locale itself. Rejected:
+    the server passing the five text objects as props. `lib/stages.ts` reads
+    `pageText(locale)` in the browser for every peek line and access figure
+    (the board and `StagePeek` run there), so all three languages' words
+    reach the browser anyway; text props would send them twice. Cost,
+    measured in `next build`: the three message files sit in one client
+    chunk of 64.7 KB (20.4 KB gzipped; the files alone gzip to 6.0, 7.2 and
+    6.9 KB). Before, only `PAGE_TEXT` (13 words a language) went to the
+    browser. Asset addresses are props, never constants in the Dashboard:
+    `feat/react-port` has since moved to MapLibre 6.14, whose worker is
+    `/launch-map/maplibre-gl-worker.mjs`; only the example page's `ASSETS`
+    changes at merge.
+43. **Each area's text is built from the message files by an adapter next to
+    its type, and whatever the files cannot supply as today's pages word it is
+    held in one listed place.** `pageText()` (`lib/strings.ts`),
+    `pathwayText()`, `boardText()`, `frameText()`, `mapText()` read
+    `uiText(locale)` (`lib/ui-text.ts`): the message files, plus
+    `lib/held-text.ts`. An adapter may only rename a placeholder (`rename`) or
+    cut a message where a component puts its own value in it (`around`: the
+    disclaimer's medicine list, the planned medicine's name, "{shown} of
+    {total}"); both throw when the slot is missing, so a reworded message
+    fails the tests instead of showing half a sentence. Rejected: reshaping
+    the text types to the message files (every component and every area
+    test's input would change); picking either value silently where they
+    differ. `tests/text-parity.test.ts` proves all five equal today's tables
+    (frozen in `tests/fixtures/text/`, which the area tests still use):
+    327 values per language. Result: English and Portuguese, no difference.
+    French, 36 differences, every one the apostrophe: today's page has ’
+    (U+2019), the message file ' (U+0027); the page itself mixes them (61 ’
+    and 279 ' in `fr/index.html`; `fr.json` has 8 and 84). Today's wording is
+    kept (`KEPT_FROM_PAGES`, 35 keys; `KEPT_IN_ONE_PLACE`, the map filter
+    table's heading, because the French page writes `map.accessStage` two
+    ways: "Étape d'accès" over the legend, "Étape d’accès" over the filters).
+    37 texts have no key at all (`NOT_IN_MESSAGES`, under the key they
+    should get in `i18n/ui.en.json`), almost all for parts switched off on
+    10 Nov: `common.status.delayed`; `pathway.stageButtonExpected`,
+    `.stageButtonDelayed`, `.expectedTag`; `stepPanel.statusCounts.*` (4);
+    `board.columns.mainBarrier`, `board.delayedDefinition`,
+    `board.delayedHint`, `board.noBarrier`; `product.viewTimeTaken`,
+    `product.dotTitle`, `product.timeline.delayed`; `yardstick.*` (22).
+    The test fails when a held key appears in the message files or a kept
+    text stops differing, so each entry is deleted, not left to hide a later
+    change. Three message keys are read by nothing: `errors.dataFailedReload`
+    and `errors.sourcesFailed` (the unreachable messages, noted below) and
+    `product.accessLine` (`accessLine()` joins with a fixed ": ", the same
+    text in all three files).
+44. **The map's French and Portuguese reference includes the pages' static
+    markup.** `tests/golden-map/translate.ts` builds them from the pages'
+    script strings only, so the 21 fields in `#mapsec`'s HTML (heading,
+    rail titles, labels, legend head and rows, the resistance note) came back
+    in English, while the pages show them translated: the first parity run
+    reported 16 Portuguese and 17 French "differences" that were the
+    reference's. `tests/fixtures/text/map-markup.ts` freezes those fields
+    with a reader; the parity test checks it against `{en,fr,pt}/index.html`
+    while they are in the checkout (all three equal) and skips that check
+    after.
+45. **One `#tip`: the map shows its hints in the pathway area's `Tip`.**
+    `MapSection` takes `tip` (the controls from `useTipControls()`), placing
+    at the pointer (`showAtPoint`) or above a focused list button
+    (`showAt`). `MapTooltip`, the map's own `#tip`, is gone; `MapTipBody` and
+    `ListTipBody`, what the hint says, stay. Rejected: an optional `tip` with
+    the old tooltip as fallback (two hint elements to keep alike, and a page
+    could again render two `#tip`).
+46. **The board's slots are `boardSlots()` (`components/boardSlots.tsx`):
+    `StageIcon`, `CountryAccessKv` and `Cites` called as functions,
+    `GatePanelContent` mounted** (it sits in `.gatepanel`, which the glossary
+    walk skips). A plain function so `tests/markup-dashboard.test.ts` can
+    render the board with exactly these slots and compare it, in every
+    language, 6 scenarios and every medicine variant, with the board using
+    today's markup stubs (which `markup-board` proves against the page):
+    equal. Planted bugs: mounting `Cites` fails 6 cases; mounting
+    `CountryAccessKv` failed none, because on today's data every term in the
+    Country access rows has already appeared earlier in its row, so a
+    targeted case was added (a glossary whose one term is "Countries on the
+    map"), which fails in all three languages.
+47. **Deep links: the host's router decides.** `initialProduct` is the
+    board's `openProduct` (a medicine to open and scroll to, on load and on
+    every change), `onProductChange` its `onOpenProduct`; a router that
+    writes the id into the address should pass it back, which the board takes
+    as the echo (no jump). The example app (`app/[locale]/ExampleDashboard.tsx`)
+    reads `?product=` after hydration and on back/forward, and writes it with
+    `history.replaceState` when a row opens. Rejected: reading `searchParams`
+    in the server page (every request renders anew: `/en`, `/fr`, `/pt` would
+    no longer be pre-built); `useSearchParams()` (in a pre-built page it needs
+    a Suspense boundary, and the whole dashboard would then render in the
+    browser only). Consequence: the page arrives with every row closed and
+    then opens and scrolls, as today's did for `#pyramax` after its script.
+48. **One `tracked()` and one `colIndexOf()`: `lib/pathway.ts`'s.** The
+    copies in `lib/frame.ts` and `lib/board.ts` are deleted, and so is
+    `lib/map.ts`'s `trackedProducts` (the same rule, not on the list but a
+    fourth copy). `tracked` is now typed for any read-only list of things
+    with a name, which the frame (read-only products) and the map (its own
+    product type) need; the body is unchanged. The golden and markup tests
+    call it in place of the copies (golden-board, golden-frame, markup-board);
+    nothing else in them changed, and all pass.
+49. **An `.info` hint answers only to the board's own buttons.**
+    `statTipHandlers` takes the `.info` the event is on only if it is inside
+    the element the handlers are spread on (`#board`), and the document click
+    that hides the hint ignores only an `.info` inside `.launch-dashboard
+    #board`. The page's `closest(".info")` alone would also catch an `.info`
+    in RBM's page around the dashboard.
+50. **The "being updated" notice and the error page are the frame's `Banner`,
+    in the page's language** (`kind="schema"` and `"fail"`, from
+    `frameText(locale).banner`), in their own root inside `.wrap`. The
+    wrapper keeps the example's `role="status"` and `role="alert"`, which
+    today's `#banner` does not have. `error.tsx` takes the locale from
+    `useParams()`, English when it is not one of the three.
+51. **The browser check is `scripts/smoke.mjs`: raw DevTools Protocol over
+    Node's `WebSocket`, no dependency.** It launches Chrome with SwiftShader
+    (no `--disable-gpu`) against `next start -p 3124` and records every check
+    as pass or fail. Found while writing it, and worth knowing for any later
+    headless test: once an Escape key is sent over the protocol, headless
+    Chrome stops running `requestAnimationFrame` in that tab (119 frames in
+    2 s before, 0 after, on a plain `data:` page too), so MapLibre's camera
+    moves only when a screenshot forces a frame; the map checks run in a tab
+    of their own. Whether the camera moved is read from the map's zoom
+    readout (`#mz-lvl`): pixels do not show it, as land and sea are both
+    near white (10.7% of pixels change when Africa fills the frame). Not
+    counted as page errors, and printed: `/favicon.ico` 404 (the example app
+    has no icon) and Chrome's "GL Driver Message … GPU stall due to
+    ReadPixels" under SwiftShader (4 per run, about the page's WebGL canvas;
+    whether MapLibre or Chrome's compositor reads the pixels is not
+    established).
 
 ## Deferred, and found on the way
 
 - `app/` is the example app only, to prove the data path. RBM takes the
   components (step 3), not this app.
 - The error page and the "being updated" notice are English only until the
-  message files exist (step 2).
+  message files exist (step 2). Done: the frame's `Banner`, in the page's
+  language (decision 50).
 - Next.js caches fetched responses of up to 2 MB. `dashboard.json` is 267 KB
   today; past 2 MB, every refresh would fetch it again.
 - `tests/fixtures/dashboard.json` is the published file of 27 Oct 2026
@@ -483,6 +612,9 @@ This file is updated in the same commit as each change it describes.
     stage panel, Escape, the fade, the timeline fit and the forks are React
     state and DOM work with no test here (no DOM library is installed), and
     the board has not been checked in a browser. Do that on the Dashboard.
+    Done in part (decision 51): opening rows, the stage panel, Escape, focus
+    and the hints, in `/en` and `/fr`. Switching views, the fade, the
+    timeline fit and the forks are still unchecked in a browser.
   - The example page shows the board without callbacks or slots (a server
     page cannot pass functions), so its icons, Country access rows and stage
     panels are empty there and citations are plain names.
@@ -561,6 +693,9 @@ This file is updated in the same commit as each change it describes.
   layout (`stack`, `--pg-lift`), the hints' placement, Escape and focus were
   ported line by line but not driven in a browser. Check on `npm run dev`
   (`/en`, `/fr`, `/pt`; the preview under the list stands in for the board).
+  Since the Dashboard, `scripts/smoke.mjs` drives the steps, the step panel,
+  Escape's order and focus, and the hints on hover and focus (decision 51);
+  the narrow-screen stacking is still unchecked, and the preview is gone.
 - **Fixed hints inside RBM's page.** `#tip` and `.stat-tip` are
   `position: fixed` and placed in window coordinates. If RBM puts the
   dashboard inside an element with a `transform` or `filter`, they are placed
@@ -589,6 +724,41 @@ This file is updated in the same commit as each change it describes.
   - `stalledSince` and the stage panel read `p.detail` unchecked, and the
     Country access rows break on a medicine with neither a country list nor
     `detail.country`. Today's data always has both.
+
+### The Dashboard (`feat/react-port-dashboard`, decisions 42 to 51)
+
+- **Differences from today's page** (everything else is equal, by the
+  parity and markup tests, or was checked in the browser):
+  - An `.info` hint answers only to the board's own buttons (decision 49).
+  - The example app writes `?product=<id>` into the address when a row
+    opens (`replaceState`); today's page never wrote the address. RBM's
+    router decides; without `onProductChange` nothing is written.
+  - With `?product=` the row opens after hydration, not in the server's
+    markup (decision 47).
+  - The "being updated" and error notices look like the page's banner and
+    speak its language (decision 50).
+  - Against the port before this branch, not against today's page: the map
+    is no longer English on `/fr` and `/pt`, and there is one `#tip`.
+- **For launch-development-test's message pipeline:** the 37 held texts need
+  keys in `i18n/ui.en.json` (list in decision 43 and `lib/held-text.ts`),
+  and the 36 French apostrophes need a decision (typographic ’ or straight
+  '). Each entry then comes out of `lib/held-text.ts`, and the parity test
+  says so.
+- `product.accessLine` could feed `accessLine()`; not wired, as it would
+  change a golden-tested function's inputs for the same text.
+- The board still works out its own `stageContext` and `tracked` list from
+  `data` (its props take the dataset); the Dashboard works out the same for
+  the strip. Same inputs, same values, computed twice.
+- The browser check covers `/en` and `/fr`, not `/pt` (`SMOKE_LOCALES=pt`
+  runs it), nor narrow screens, switching journey views, the timeline fit,
+  the forks or the forms' sends. It needs `NEXT_PUBLIC_LAUNCH_FORMS_URL` set
+  at `next build`, or the Subscribe check fails by design.
+- If 20.4 KB of gzipped text in the browser matters (decision 42): pass the
+  text in, and give `lib/stages.ts` its words through the context; the
+  golden tests' calls would change with it.
+- At the merge with MapLibre 6.14: the example page's `ASSETS.mapWorker`
+  becomes `/launch-map/maplibre-gl-worker.mjs`. Nothing in the Dashboard.
+- The example app has no icon: Chrome logs a `/favicon.ico` 404.
 
 ## Map section (step 3, branch `feat/react-port-map`)
 
@@ -673,7 +843,9 @@ shows it below the list. Built in a separate worktree, beside the agents doing
 ### Deferred, and found on the way
 
 - The message files replace `mapTextEn`. The `#tip` tooltip id will clash
-  with the board's when that is ported: make it one tooltip.
+  with the board's when that is ported: make it one tooltip. Done
+  (decisions 43 and 45): the map speaks the page's language and shows its
+  hints in the one `#tip`.
 - Without the ported stylesheet, the keyboard country list shows as 235
   visible buttons; the page wraps the map in `.launch-dashboard` for it.
 - Names sort with `localeCompare()` without a locale, as before: by the
@@ -696,7 +868,8 @@ shows it below the list. Built in a separate worktree, beside the agents doing
   (`frameView(dataset, locale, text)`), `formsUrl`, `logoSrc`, `children`
   and `outside`. Nothing else is needed from other areas, and the frame
   calls back into none. `tracked()` is now in `lib/frame.ts`; the board and
-  map should import it rather than port it again. `Banner` also takes
+  map should import it rather than port it again. (Since the Dashboard there
+  is one copy, `lib/pathway.ts`'s, imported by all: decision 48.) `Banner` also takes
   `"fail"` and `"schema"` (the loader's messages, translated), ready for
   `error.tsx` and the page's schema branch, which still say it in English.
   The sources list has its own renderer (`SourceEntry` in `Footer.tsx`): it
@@ -797,13 +970,22 @@ shows it below the list. Built in a separate worktree, beside the agents doing
   `tests/golden-board/` and `tests/markup-board/`. 91 tests pass (45 + 46
   new); `tsc --noEmit` clean; `next build` passes with the board in `/en`,
   `/fr` and `/pt`. Not committed; not checked in a browser.
-- **Next:** the MapLibre 6.x upgrade (branch `feat/react-port-maplibre6`, in
-  progress); then one client `Dashboard` component that wires the five areas
-  inside `DashboardFrame` (slots, open step and medicine, hints, Escape
-  order), takes its text from `messagesFor()` in place of the temporary
-  `text.ts` tables and `lib/strings.ts`, and keeps one copy each of
-  `tracked()` and `colIndexOf()` (today in `lib/pathway.ts`, `lib/frame.ts`
-  and `lib/board.ts`).
+- **28 Oct 2026, dashboard** (branch `feat/react-port-dashboard`, from
+  `2869943`; uncommitted, not pushed): `components/Dashboard.tsx`,
+  `components/boardSlots.tsx`, `lib/ui-text.ts`, `lib/held-text.ts`; the
+  tables in `lib/strings.ts` and `components/{pathway,board,frame,map}/text.ts`
+  replaced by adapters (the tables are now `tests/fixtures/text/`, with
+  `map-markup.ts`); one `tracked`/`colIndexOf`; the map on the shared `Tip`
+  (`MapTooltip` removed); `statTipHandlers` limited to `#board`; the example
+  app (`page.tsx`, `ExampleDashboard.tsx`, `error.tsx`; `PathwayPreview.tsx`
+  and the temporary list deleted); `scripts/smoke.mjs`; tests
+  `text-parity` (24) and `markup-dashboard` (25). 274 tests pass in 15
+  files; `tsc --noEmit` clean; `next build` passes with `/en`, `/fr`, `/pt`
+  pre-built; smoke test 58 of 58 checks on `/en` and `/fr` (screenshots kept
+  outside the repo); no NUL bytes, no line-ending churn.
+- **Next:** merge with `feat/react-port` (MapLibre 6.14: the example's
+  worker address); the held and kept texts to launch-development-test; RBM's
+  staging server (CSP, the fence, fixed hints inside their layout).
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).

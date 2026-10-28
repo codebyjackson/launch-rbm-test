@@ -18,7 +18,7 @@ import type {
 } from "./dataset";
 import { firstClause } from "./format";
 import type { Locale } from "./locales";
-import { PAGE_TEXT, fill } from "./strings";
+import { fill, pageText } from "./strings";
 
 /**
  * The static pages' display switches, as set for the 10 Nov 2026 release.
@@ -126,7 +126,7 @@ export function peekLine(
   shown: boolean,
   locale: Locale,
 ): string {
-  const t = PAGE_TEXT[locale];
+  const t = pageText(locale);
   const when = firstClause(date);
   const due = firstClause(nextDate);
   const expected = due && !/^tbc$/i.test(due) ? " · " + fill(t.expected, { date: due }) : "";
@@ -158,7 +158,7 @@ export function stageYear(st: StageEntry | null | undefined): number | null {
 
 /** "1 year", "3 years". */
 export function yrsText(n: number, locale: Locale): string {
-  const t = PAGE_TEXT[locale];
+  const t = pageText(locale);
   return fill(n === 1 ? t.year : t.years, { n });
 }
 
@@ -191,12 +191,12 @@ export function phaseReached(p: Product, k: number): { year: number | null } | n
 }
 
 export function reachedText(y: number | null, locale: Locale): string {
-  const t = PAGE_TEXT[locale];
+  const t = pageText(locale);
   return y != null ? fill(t.reachedIn, { year: y }) : t.reachedNoYear;
 }
 
 export function soFarText(n: number, locale: Locale): string {
-  const t = PAGE_TEXT[locale];
+  const t = pageText(locale);
   return n > 0 ? fill(t.soFar, { years: yrsText(n, locale) }) : t.underOneYearSoFar;
 }
 
@@ -213,7 +213,7 @@ export type AccessPart = [name: string, figure: string, tone: AccessTone];
  * recommended it).
  */
 export function accessParts(p: Product, ctx: StageContext): AccessPart[] {
-  const t = PAGE_TEXT[ctx.locale];
+  const t = pageText(ctx.locale);
   const m = phaseReached(p, 0);
   if (!m) return [[t.phases[0], t.notYetReached, "none"]];
   const c = phaseReached(p, 1);
@@ -372,7 +372,7 @@ export interface YardResult {
 }
 
 export function yardResult(s: YardStep | YardWhole, locale: Locale): YardResult {
-  const t = PAGE_TEXT[locale];
+  const t = pageText(locale);
   if (s.kind === "idle") return { t: t.status.idle, tone: "none" };
   if (s.kind === "nodate") return { t: t.doneNoDate, tone: "none" };
   if (s.kind === "nostart") return { t: t.ongoingNoStart, tone: "none" };

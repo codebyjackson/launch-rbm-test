@@ -21,7 +21,7 @@ import { describe, expect, it } from "vitest";
 import { DashboardFrame } from "@/components/frame/DashboardFrame";
 import { FEEDBACK_START, FeedbackDialog, feedbackErrorText } from "@/components/frame/FeedbackForm";
 import { SubscribePanel, subscribeMessage } from "@/components/frame/Subscribe";
-import { FRAME_TEXT } from "@/components/frame/text";
+import { FRAME_TEXT } from "./fixtures/text/frame-text";
 import { frameView } from "@/components/frame/view";
 import { localize } from "@/lib/dataset";
 import * as frame from "@/lib/frame";

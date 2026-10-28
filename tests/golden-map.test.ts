@@ -23,7 +23,8 @@ import { describe, expect, it } from "vitest";
 import { MapSectionView } from "@/components/map/MapSection";
 import { ListTipBody, MapTipBody } from "@/components/map/MapTooltip";
 import { NO_ACTIONS, NO_TIPS } from "@/components/map/parts";
-import { mapTextEn, type MapText } from "@/components/map/text";
+import type { MapText } from "@/components/map/text";
+import { mapTextEn } from "./fixtures/text/map-text";
 import { localize } from "@/lib/dataset";
 import type { Locale } from "@/lib/locales";
 import {

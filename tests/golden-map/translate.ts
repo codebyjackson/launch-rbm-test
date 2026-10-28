@@ -11,7 +11,8 @@
 // included, because that is what the old code is compared on.
 import { readFileSync } from "node:fs";
 import { parse } from "acorn";
-import { mapTextEn, type MapText } from "@/components/map/text";
+import type { MapText } from "@/components/map/text";
+import { mapTextEn } from "../fixtures/text/map-text";
 
 type AnyNode = { type: string; [key: string]: unknown };
 

@@ -1,24 +1,20 @@
-// TEMPORARY: replaced by the message files in step 2 of the port.
-//
 // The interface text of the pathway strip (#pathway), the step panel
 // (#gatewrap), a medicine's stage panel (.gatepanel), the Country access
-// card's rows and the stage marker's hover hint, one table per language.
-// Copied from the built pages at launch-rbm-test 7c1bf11 (en|fr|pt/index.html),
-// wording, apostrophes and punctuation as they are there, mistakes included
-// (pt "Perto" for Close; fr "Scène" in the step panel's label; ", N delayed"
-// left in English on every page). tests/markup-pathway.test.ts renders the
-// components with each table and compares the result with those pages' own
-// markup, so a typo here fails it.
+// card's rows and the stage marker's hover hint, built from the message
+// files (lib/ui-text.ts). Until 28 Oct 2026 this was a table copied from the
+// built pages at launch-rbm-test 7c1bf11; that table is now
+// tests/fixtures/text/pathway-text.ts, which tests/markup-pathway.test.ts
+// compares with those pages' markup, and tests/text-parity.test.ts proves
+// pathwayText() returns exactly it, mistakes included (pt "Perto" for Close;
+// fr "Scène" in the step panel's label; ", N delayed" in English everywhere).
 //
-// The French strip label has two no-break spaces ("accès : …", "phase 3"),
-// written as   so they survive copying; a plain space fails the test.
-//
-// "{name}" marks where a value goes, the form the message files will use
-// (filled by fill() in lib/strings.ts, or fillNodes() where the value is
-// markup). The status words, the two phase names and "N years" are not
-// here: they come from lib/strings.ts, which the stage rules share.
+// "{name}" marks where a value goes (filled by fill() in lib/strings.ts, or
+// fillNodes() where the value is markup). The status words, the two phase
+// names and "N years" are not here: they come from lib/strings.ts, which the
+// stage rules share.
 import type { Status } from "@/lib/dataset";
 import type { Locale } from "@/lib/locales";
+import { rename, uiText } from "@/lib/ui-text";
 
 export interface PathwayText {
   // ---- the strip (#pathway) ----
@@ -81,108 +77,57 @@ export interface PathwayText {
   clickForDetail: string;
 }
 
-export const pathwayText: Record<Locale, PathwayText> = {
-  en: {
-    pathwayLabel:
-      "The access pathway: eight milestones across seven stages. WHO recommendation and WHO PQ listing are parallel milestones within stage 3. Choose a stage to see what happens there and where each medicine is",
-    nodeLabel: "Stage {n}, {stage}{expected}. Shows what happens here and where each medicine is{delayed}.",
-    nodeExpected: ", expected {years}",
-    nodeDelayed: ", {n} delayed",
-    expectedTag: "{years} expected",
-    pairJoin: " and ",
-    pairLabel: "{names} — independent approvals with no defined order between them",
-    stepPanelLabel: "Stage {n}: {stage}",
-    stepOf: "Stage {n} of {total}",
-    summaryLabel: "Status of the {count} medicines at this stage",
-    statusNoun: { done: "complete", prog: "in progress", late: "delayed", idle: "not started" },
-    close: "Close",
-    parallel: "{a} and {b} are parallel milestones within stage {n}.",
-    whatHappens: "What happens here",
-    whoDecides: "Who decides",
-    whyStall: "Why it can stall",
-    source: "Source",
-    recorded: "Recorded",
-    nextStep: "Next step",
-    expected: "Expected",
-    pendingSince: "Pending since",
-    adoptionNeeds: "What adoption needs",
-    levels: { registered: "Registered", guidelines: "In national guidelines", mft: "In MFT plans" },
-    sourceLine: "Source: {cites}",
-    verified: "verified {date}",
-    surveyIllustrative: "country survey is illustrative",
-    surveyStatus: "country survey is {status}",
-    onMap: "Countries on the map",
-    confirmed: "Confirmed in national registers",
-    clickForDetail: "Click for the full detail",
-  },
-  fr: {
-    pathwayLabel:
-      "Le parcours d'accès\u00a0: huit étapes clés réparties en sept phases. La recommandation de l'OMS et l'inscription de l'OMS sur la liste PQ sont des étapes clés parallèles au sein de la phase\u00a03. Choisissez une phase pour découvrir ce qui s'y passe et où se trouve chaque médicament.",
-    nodeLabel: "Étape {n}, {stage}{expected}. Indique ce qui se passe ici et où se trouve chaque médicament{delayed}.",
-    nodeExpected: ", attendu {years}",
-    nodeDelayed: ", {n} delayed",
-    expectedTag: "{years} attendu",
-    pairJoin: " et ",
-    pairLabel: "{names} — approbations indépendantes sans ordre défini entre elles",
-    stepPanelLabel: "Scène {n}: {stage}",
-    stepOf: "Étape {n} sur {total}",
-    summaryLabel: "État des médicaments {count} à ce stade",
-    statusNoun: { done: "complet", prog: "en cours", late: "retardé", idle: "pas commencé" },
-    close: "Fermer",
-    parallel: "{a} et {b} sont des étapes parallèles au sein de l’étape {n}.",
-    whatHappens: "Que se passe-t-il ici ?",
-    whoDecides: "Qui décide ?",
-    whyStall: "Pourquoi cela peut bloquer",
-    source: "Source",
-    recorded: "Enregistré",
-    nextStep: "Étape suivante",
-    expected: "Attendu",
-    pendingSince: "En attente depuis",
-    adoptionNeeds: "Quels sont les besoins en matière d’adoption ?",
+const built = new Map<Locale, PathwayText>();
+
+/** One language's PathwayText, built once. */
+export function pathwayText(locale: Locale): PathwayText {
+  let t = built.get(locale);
+  if (t) return t;
+  const m = uiText(locale);
+  const counts = m.stepPanel.statusCounts;
+  // The step's label in the message files is the sentence as shown today;
+  // the page also had room in it for two parts that are switched off (the
+  // expected time after the name, the delayed count before the full stop).
+  const label = m.pathway.stageButtonLabel;
+  if (!label.includes("{stage}") || !label.endsWith(".")) {
+    throw new Error(`pathway.stageButtonLabel "${label}" has no {stage} or no final full stop`);
+  }
+  t = {
+    pathwayLabel: m.pathway.label,
+    nodeLabel: label.replace("{stage}", "{stage}{expected}").replace(/\.$/, "{delayed}."),
+    nodeExpected: m.pathway.stageButtonExpected,
+    nodeDelayed: m.pathway.stageButtonDelayed,
+    expectedTag: m.pathway.expectedTag,
+    pairJoin: ` ${m.common.and} `,
+    pairLabel: m.pathway.parallelGroupLabel,
+    stepPanelLabel: m.stepPanel.label,
+    stepOf: m.stepPanel.stepOfTotal,
+    summaryLabel: m.stepPanel.statusSummaryLabel,
+    statusNoun: { done: counts.complete, prog: counts.inProgress, late: counts.delayed, idle: counts.notStarted },
+    close: m.common.close,
+    parallel: rename(m.stepPanel.parallelMilestones, { first: "a", second: "b" }),
+    whatHappens: m.stepPanel.whatHappens,
+    whoDecides: m.stepPanel.whoDecides,
+    whyStall: m.stepPanel.whyItCanStall,
+    source: m.stepPanel.source,
+    recorded: m.product.stagePanel.recorded,
+    nextStep: m.product.stagePanel.nextStep,
+    expected: m.product.stagePanel.expected,
+    pendingSince: m.product.stagePanel.pendingSince,
+    adoptionNeeds: m.product.stagePanel.adoptionNeeds,
     levels: {
-      registered: "Inscrit",
-      guidelines: "Conformément aux directives nationales",
-      mft: "Dans les plans MFT",
+      registered: m.common.accessLevels.registered,
+      guidelines: m.common.accessLevels.guidelines,
+      mft: m.common.accessLevels.mft,
     },
-    sourceLine: "Source: {cites}",
-    verified: "vérifié {date}",
-    surveyIllustrative: "L’enquête nationale est illustrative",
-    surveyStatus: "L’enquête nationale est {status}",
-    onMap: "Pays sur la carte",
-    confirmed: "Confirmé dans les registres nationaux",
-    clickForDetail: "Cliquez pour plus de détails",
-  },
-  pt: {
-    pathwayLabel:
-      "O caminho de acesso: oito marcos em sete etapas. A recomendação da OMS e a inclusão na lista PQ da OMS são marcos paralelos dentro do passo 3. Escolha um passo para ver o que acontece nele e onde se encontra cada medicamento.",
-    nodeLabel: "Estágio {n}, {stage}{expected}. Mostra o que acontece aqui e onde está cada medicamento{delayed}.",
-    nodeExpected: ", esperado {years}",
-    nodeDelayed: ", {n} delayed",
-    expectedTag: "{years} esperado",
-    pairJoin: " e ",
-    pairLabel: "{names} — aprovações independentes sem ordem definida entre elas",
-    stepPanelLabel: "Fase {n}: {stage}",
-    stepOf: "Etapa {n} de {total}",
-    summaryLabel: "Situação dos medicamentos {count} nesta fase",
-    statusNoun: { done: "concluir", prog: "em curso", late: "atrasado", idle: "não iniciado" },
-    close: "Perto",
-    parallel: "{a} e {b} são marcos paralelos dentro do estádio {n}.",
-    whatHappens: "O que acontece aqui?",
-    whoDecides: "Quem decide?",
-    whyStall: "Porque pode parar",
-    source: "Fonte",
-    recorded: "Gravado",
-    nextStep: "Próximo passo",
-    expected: "Esperado",
-    pendingSince: "Pendente desde",
-    adoptionNeeds: "Quais as necessidades da adoção?",
-    levels: { registered: "Registrado", guidelines: "Em orientações nacionais", mft: "Em planos MFT" },
-    sourceLine: "Fonte: {cites}",
-    verified: "verificado {date}",
-    surveyIllustrative: "O inquérito nacional é ilustrativo.",
-    surveyStatus: "pesquisa de país {status}",
-    onMap: "Países no mapa",
-    confirmed: "Confirmado nos registos nacionais",
-    clickForDetail: "Clique para ver todos os detalhes.",
-  },
-};
+    sourceLine: `${m.common.sourceLabel} {cites}`,
+    verified: m.product.stagePanel.verifiedOn,
+    surveyIllustrative: m.product.stagePanel.surveyIllustrative,
+    surveyStatus: m.product.stagePanel.surveyStatus,
+    onMap: m.product.cards.countriesOnMap,
+    confirmed: m.product.cards.confirmedInRegisters,
+    clickForDetail: m.tooltip.clickForDetail,
+  };
+  built.set(locale, t);
+  return t;
+}

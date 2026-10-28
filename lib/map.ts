@@ -14,6 +14,7 @@
 // lists those places.
 import type { Localized } from "./dataset";
 import type { Locale } from "./locales";
+import { tracked } from "./pathway";
 
 // ---- the fixed vocabulary ----------------------------------------------------
 
@@ -179,19 +180,12 @@ const str = (v: unknown): string => (v == null ? "" : String(v)); // the old esc
 export const DATE_LOCALE: Record<Locale, string> = { en: "en-GB", fr: "fr", pt: "pt-PT" };
 
 /**
- * The medicines the dashboard tracks: every product that is not a
- * placeholder, alphabetical by name (30 Sep 2026). (old: tracked)
- */
-export function trackedProducts<P extends { name: string; placeholder?: unknown }>(products: readonly P[]): P[] {
-  return products.filter((p) => !p.placeholder).sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
-}
-
-/**
  * Picks out of one language of the dataset what the map reads. Small on
  * purpose: this crosses from the server to the browser.
  */
 export function mapInput(ds: Localized, countries: MapCountries, locale: Locale): MapInput {
-  const products = trackedProducts(ds.data.products).map((p): MapProduct => {
+  // the medicines the dashboard tracks, in its order (old: tracked)
+  const products = tracked(ds.data.products).map((p): MapProduct => {
     const detail = isObj(p.detail) ? p.detail : {};
     const c = detail.countries as { status?: string; list: Record<string, unknown>[] } | undefined;
     const vol = isObj(detail.volume) ? detail.volume.total : null;
