@@ -1,5 +1,11 @@
-// The LAUNCH dataset (dashboard.json, schema 1), and how one language is
-// picked out of it. Pure: no fetching, no Next.js, so tests can run it.
+// The LAUNCH dataset (schema 1), read in one language. Pure: no fetching, no
+// Next.js, so tests can run it.
+//
+// Two files hold it. dashboard.<locale>.json (since 28 Oct 2026) is one
+// language, every text a plain string: what the dashboard fetches (lib/data.ts).
+// dashboard.json is all languages, every text { en, fr, pt }: what the static
+// pages read and the golden tests feed both old and new code. datasetFrom()
+// reads either; tests/dataset.test.ts proves the two give the same result.
 //
 // localize() is a line-for-line port of loader() in launch-development-test's
 // scripts/build-rbm-pages.js, which the static pages run in the browser. It
@@ -269,10 +275,7 @@ const isObj = (v: unknown): v is Obj => !!v && typeof v === "object" && !Array.i
  * @throws DatasetError("schema") when schema_version is not SCHEMA_VERSION.
  */
 export function localize(raw: unknown, locale: Locale, url: string): Localized {
-  if (!isObj(raw) || raw.schema_version !== SCHEMA_VERSION) {
-    const got = isObj(raw) ? String(raw.schema_version) : typeof raw;
-    throw new DatasetError("schema", `schema_version ${got} is not ${SCHEMA_VERSION}`);
-  }
+  checkVersion(raw);
   const locs: string[] =
     Array.isArray(raw.locales) && raw.locales.includes("en") ? raw.locales : ["en", "fr", "pt"];
 
@@ -290,7 +293,43 @@ export function localize(raw: unknown, locale: Locale, url: string): Localized {
     return v;
   };
 
-  const d = pick(raw.data) as Obj;
+  return shape(raw, pick(raw.data) as Obj, url);
+}
+
+/**
+ * One language file, dashboard.<locale>.json: already in one language, so it
+ * is only reshaped. The launch-development-test build makes it from
+ * dashboard.json with localize()'s own rule (scripts/build-dataset.js
+ * forLocale()), so it gives the page exactly what localize() would.
+ *
+ * @throws DatasetError("schema") when schema_version is not SCHEMA_VERSION,
+ * or when the file is in another language than `locale`
+ */
+export function readLanguageFile(raw: unknown, locale: Locale, url: string): Localized {
+  checkVersion(raw);
+  if (raw.locale !== locale) {
+    throw new DatasetError("schema", `${url} is in ${String(raw.locale)}, not ${locale}`);
+  }
+  return shape(raw, raw.data as Obj, url);
+}
+
+/**
+ * Either file: a language file says its `locale`, the combined file lists its
+ * `locales`. Lets LAUNCH_DATA_URL point at either (lib/data.ts).
+ */
+export function datasetFrom(raw: unknown, locale: Locale, url: string): Localized {
+  return isObj(raw) && "locale" in raw ? readLanguageFile(raw, locale, url) : localize(raw, locale, url);
+}
+
+function checkVersion(raw: unknown): asserts raw is Obj {
+  if (!isObj(raw) || raw.schema_version !== SCHEMA_VERSION) {
+    const got = isObj(raw) ? String(raw.schema_version) : typeof raw;
+    throw new DatasetError("schema", `schema_version ${got} is not ${SCHEMA_VERSION}`);
+  }
+}
+
+/** The globals the static pages read, from the envelope and one language's data. */
+function shape(raw: Obj, d: Obj, url: string): Localized {
   return {
     data: {
       meta: {

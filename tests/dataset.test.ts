@@ -1,13 +1,17 @@
 // lib/dataset.ts: picking one language out of dashboard.json, as loader() in
-// launch-development-test's scripts/build-rbm-pages.js does on the static pages.
+// launch-development-test's scripts/build-rbm-pages.js does on the static pages,
+// and reading the one-language files the dashboard fetches.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { DatasetError, localize } from "@/lib/dataset";
+import { DatasetError, datasetFrom, localize, readLanguageFile } from "@/lib/dataset";
 
+const read = (name: string) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
 // The published file on 27 Oct 2026 (pipeline commit 2d30ff3).
-const FIXTURE = JSON.parse(
-  readFileSync(new URL("./fixtures/dashboard.json", import.meta.url), "utf8"),
-);
+const FIXTURE = read("dashboard.json");
+// The same file in each language, made from it by launch-development-test's
+// scripts/build-dataset.js forLocale() (feat/data-per-language, 4036b90): what
+// the publish workflow writes beside dashboard.json.
+const LANG_FIXTURE = { en: read("dashboard.en.json"), fr: read("dashboard.fr.json"), pt: read("dashboard.pt.json") };
 const URL_ = "https://example.org/v1/dashboard.json";
 
 const minimal = (data: object, extra: object = {}) => ({
@@ -124,5 +128,53 @@ describe("localize: the published file", () => {
     const ds = localize(FIXTURE, "en", URL_);
     expect(ds.data.products.map((p) => p.id)).toEqual(["ganlum", "alaq", "pyramax", "dhappq"]);
     expect(ds.data.stages).toHaveLength(8);
+  });
+});
+
+describe("readLanguageFile: one file per language", () => {
+  // The point of the files: the page gets exactly what it got from the
+  // combined file, so every golden test run on localize() holds for them too.
+  for (const locale of ["en", "fr", "pt"] as const) {
+    it(`gives the page what localize() gives it (${locale})`, () => {
+      expect(readLanguageFile(LANG_FIXTURE[locale], locale, URL_)).toEqual(localize(FIXTURE, locale, URL_));
+    });
+  }
+
+  it("is in its own language", () => {
+    expect(readLanguageFile(LANG_FIXTURE.fr, "fr", URL_).data.stages[0]).toBe("Recherche et développement et clinique");
+    expect(readLanguageFile(LANG_FIXTURE.pt, "pt", URL_).data.stages[0]).not.toBe(
+      readLanguageFile(LANG_FIXTURE.en, "en", URL_).data.stages[0],
+    );
+  });
+
+  it("refuses a file in another language", () => {
+    try {
+      readLanguageFile(LANG_FIXTURE.fr, "pt", URL_);
+      expect.unreachable();
+    } catch (e) {
+      expect((e as DatasetError).kind).toBe("schema");
+      expect((e as DatasetError).message).toMatch(/in fr, not pt/);
+    }
+  });
+
+  it("refuses another schema_version", () => {
+    expect(() => readLanguageFile({ ...LANG_FIXTURE.en, schema_version: 2 }, "en", URL_)).toThrow(DatasetError);
+  });
+
+  it("does not change the input", () => {
+    const before = JSON.stringify(LANG_FIXTURE.pt);
+    readLanguageFile(LANG_FIXTURE.pt, "pt", URL_);
+    expect(JSON.stringify(LANG_FIXTURE.pt)).toBe(before);
+  });
+});
+
+describe("datasetFrom: either file", () => {
+  it("reads a language file by its locale, and the combined file by its locales", () => {
+    expect(datasetFrom(LANG_FIXTURE.fr, "fr", URL_)).toEqual(localize(FIXTURE, "fr", URL_));
+    expect(datasetFrom(FIXTURE, "fr", URL_)).toEqual(localize(FIXTURE, "fr", URL_));
+  });
+
+  it("still refuses a language file in the wrong language", () => {
+    expect(() => datasetFrom(LANG_FIXTURE.en, "fr", URL_)).toThrow(/in en, not fr/);
   });
 });

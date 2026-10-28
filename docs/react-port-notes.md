@@ -27,7 +27,7 @@ This file is updated in the same commit as each change it describes.
 3. **TypeScript 6.0.3, not 7.0.2.** Next.js 16.4's setup check asks for
    `typescript@^6.0.0`; 7.0 is the native rewrite.
 4. **Data from the published `dashboard.json`, read on the server every 10
-   minutes** (`lib/data.ts`). This is the API RBM asked for (27 Oct): a data
+   minutes** (`lib/data.ts`; one file per language since 28 Oct, decision 54). This is the API RBM asked for (27 Oct): a data
    change reaches the page with nobody involved, and visitors' browsers never
    contact the data host. Rejected: reading a copy beside the pages
    (`data/dashboard.json`, launch-development-test PR #127, from the Hosting Guide
@@ -586,6 +586,28 @@ This file is updated in the same commit as each change it describes.
     pages with the side-by-side scripts: English and Portuguese identical
     line for line; French 12 visible lines differ, every one only by `'` →
     `’`; heights unchanged.
+54. **The data is fetched one file per language, `dashboard.{locale}.json`**
+    (28 Oct, the owner's choice: the same rule as the interface text, one file
+    per language, picked by the page's language). launch-development-test
+    `feat/data-per-language` publishes `v1/dashboard.en/fr/pt.json` beside
+    `dashboard.json`, made from it by `forLocale()`, which follows
+    `localize()`'s rule on purpose. `lib/data.ts` fetches
+    `dataUrl(locale)`; `lib/dataset.ts` `readLanguageFile()` only reshapes
+    (checks `schema_version` and that `locale` is the page's), and
+    `datasetFrom()` reads either file, so `LAUNCH_DATA_URL` can still point
+    at a combined file (the side-by-side check's local server). Proof:
+    `tests/fixtures/dashboard.{en,fr,pt}.json`, made from
+    `fixtures/dashboard.json` by the pipeline's own `forLocale()` (its
+    `4036b90`), read by `readLanguageFile()`, deep-equal `localize()` of the
+    combined file in all three languages, so every golden test, which feeds
+    `localize()`, holds for the files the page now reads. Each file is about
+    half the combined one (fr 128 KB of 257 KB, pretty-printed). Rejected:
+    keeping one file and picking the language here (decision 4 as it was;
+    works, but a different shape from the interface text); a fallback to the
+    combined file when a language file is missing (it would hide a publish
+    that went wrong). **Order:** the language files must be published
+    (launch-development-test merged, then "Publish now") before this branch
+    runs anywhere, or the first load finds no file and shows the error page.
 
 ## Deferred, and found on the way
 
@@ -1232,6 +1254,10 @@ ours to undo.
   --omit=dev` 0, `next build` passes, smoke test en, fr, pt 87 of 87. For
   the reviewer: "Packs" stays "Packs" in French and is "Pacotes" in
   Portuguese (Google; "Boîtes", "Embalagens" are the usual words).
+- **28 Oct 2026, data per language** (on `feat/react-port`): decision 54.
+  `lib/data.ts`, `lib/dataset.ts`, `tests/dataset.test.ts`, three fixtures,
+  this file. Not yet online: needs launch-development-test
+  `feat/data-per-language` merged and published first.
 - **Next:** the README for RBM (step 6) is another developer's (owner,
   28 Oct); it should say to load Source Sans 3 (see the side-by-side check).
   A check on a real iPhone and in Safari.
