@@ -175,7 +175,7 @@
   var TYPES = [
     ["correction", "Algo na página parece errado."],
     ["source",     "Uma fonte está ausente ou desatualizada."],
-    ["suggestion", "Uma ideia para tornar isto mais claro ou mais útil."],
+    ["suggestion", "Uma ideia para tornar isso mais claro ou mais útil."],
     ["other",      "Outra coisa"]
   ];
   // Same four values, relabelled per page via COPY.types below — the value is
@@ -196,26 +196,26 @@
   var COPY = {
     pill:        "Enviar feedback",
     title:       "Enviar feedback",
-    intro:       "Algo parece errado, desatualizado ou difícil de acompanhar? Informe a equipa LAUNCH o que está a ver.",
+    intro:       "Algo parece errado, desatualizado ou difícil de acompanhar? Informe à equipe LAUNCH o que você está vendo.",
     typeLabel:   "Qual é o seu feedback?",
-    messageLabel:"O que nos gostaria de dizer?",
+    messageLabel:"O que você gostaria de nos dizer?",
     messagePlaceholder:
                  "Por exemplo, uma data nesta página parece desatualizada: a fonte que consultei apresenta uma data mais recente.",
-    note:        "Apenas simulação — o envio de feedback ainda não está ligado.",
+    note:        "Apenas simulação — o envio de feedback ainda não está conectado.",
     submit:      "Enviar feedback",
     sending:     "Enviando…",
-    failed:      "Lamentamos, o seu feedback não pôde ser enviado agora. Por favor, tente novamente dentro de momentos.",
-    doneTitle:   "Obrigado — embora isto ainda não tenha sido enviado para lado nenhum.",
-    doneMessage: "Este formulário ainda não tem caixa de entrada associada, pelo que nada foi enviado — a sua mensagem permaneceu neste separador do browser. Assim que a ligação for estabelecida, a equipa do LAUNCH lerá todas as mensagens e, nos casos em que nos indicar uma fonte pública fidedigna, corrigiremos os dados na próxima atualização.",
+    failed:      "Desculpe, seu feedback não pôde ser enviado agora. Por favor, tente novamente em instantes.",
+    doneTitle:   "Obrigado — embora isso ainda não tenha sido enviado para lugar nenhum.",
+    doneMessage: "Este formulário ainda não possui caixa de entrada associada, portanto, nada foi enviado — sua mensagem permaneceu nesta aba do navegador. Assim que a conexão for estabelecida, a equipe do LAUNCH lerá todas as mensagens e, nos casos em que você nos indicar uma fonte pública confiável, corrigiremos os dados na próxima atualização.",
     again:       "Enviar mais comentários"
   };
   // A connected page sends, so the three strings that say it does not are
   // replaced. A page's own overrides (below) still win. One literal each, so
   // i18n/reviewed-strings.json can name them for the translated copies.
   if (CONNECTED) {
-    COPY.note =        "O seu e-mail é opcional e será utilizado apenas para respondermos à sua mensagem. Juntamente com ela, enviamos a página que está a visitar, a versão dos dados apresentados e o seu browser, para que a equipa possa ver o que visualizou.";
-    COPY.doneTitle =   "Obrigado — o seu feedback foi enviado.";
-    COPY.doneMessage = "A equipa LAUNCH lê todas as mensagens e, quando nos indica uma fonte pública fidedigna, corrigimos os dados na próxima atualização. Se deixou um endereço de e-mail, qualquer resposta nossa citará a referência abaixo.";
+    COPY.note =        "Seu e-mail é opcional e será usado apenas para respondermos à sua mensagem. Junto com ela, enviamos a página que você está visitando, a versão dos dados exibidos e o seu navegador, para que a equipe possa ver o que você visualizou.";
+    COPY.doneTitle =   "Obrigado — seu feedback foi enviado.";
+    COPY.doneMessage = "A equipe do LAUNCH lê todas as mensagens e, quando você nos indica uma fonte pública confiável, corrigimos os dados na próxima atualização. Se você deixou um endereço de e-mail, qualquer resposta nossa citará a referência abaixo.";
   }
   (function (over) {
     if (!over) return;
@@ -259,7 +259,7 @@
       '<div class="ri-head">' +
         '<h2 id="ri-title" tabindex="-1">' + esc(COPY.title) + '</h2>' +
         '<p>' + esc(COPY.intro) + '</p>' +
-        '<button type="button" class="ri-x" data-ri-close aria-label="Perto">&times;</button>' +
+        '<button type="button" class="ri-x" data-ri-close aria-label="Fechar">&times;</button>' +
       '</div>' +
       '<div class="ri-body">' +
         '<p class="ri-alert" id="ri-alert" role="alert"></p>' +
@@ -272,7 +272,7 @@
           '</select>' +
         '</div>' +
         '<div class="ri-field">' +
-          '<label for="ri-product">A que medicamento se refere? <span class="ri-opt">— opcional</span></label>' +
+          '<label for="ri-product">A qual medicamento isso se refere? <span class="ri-opt">— opcional</span></label>' +
           '<select class="ri-select" id="ri-product" name="product"></select>' +
         '</div>' +
         '<div class="ri-field" id="ri-f-message">' +
@@ -284,7 +284,7 @@
         '</div>' +
         '<div class="ri-row">' +
           '<div class="ri-field">' +
-            '<label for="ri-name">O seu nome <span class="ri-opt">— opcional</span></label>' +
+            '<label for="ri-name">Seu nome <span class="ri-opt">— opcional</span></label>' +
             '<input class="ri-input" id="ri-name" name="name" type="text" autocomplete="name">' +
           '</div>' +
           '<div class="ri-field" id="ri-f-email">' +
@@ -313,7 +313,7 @@
       '<p><span class="ri-ref" id="ri-ref"></span></p>' +
       '<div class="ri-foot" style="justify-content:center;background:none;border:0;padding-top:6px">' +
         '<button type="button" class="ri-again" id="ri-again">' + esc(COPY.again) + '</button>' +
-        '<button type="button" class="ri-btn ri-primary" data-ri-close>Perto</button>' +
+        '<button type="button" class="ri-btn ri-primary" data-ri-close>Fechar</button>' +
       '</div>' +
     '</div>';
 
@@ -364,7 +364,7 @@
       first = first || txtMsg;
     } else if (msg.length < 10) {
       setErr("#ri-f-message", "#ri-e-message", txtMsg,
-             "Por favor, forneça um pouco mais de detalhe — pelo menos 10 caracteres.");
+             "Por favor, forneça um pouco mais de detalhes — pelo menos 10 caracteres.");
       first = first || txtMsg;
     } else {
       setErr("#ri-f-message", "#ri-e-message", txtMsg, "");
@@ -372,7 +372,7 @@
 
     var mail = inMail.value.trim();
     if (mail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) {
-      setErr("#ri-f-email", "#ri-e-email", inMail, "Este endereço de e-mail parece estar incorreto.");
+      setErr("#ri-f-email", "#ri-e-email", inMail, "Esse endereço de e-mail parece estar incorreto.");
       first = first || inMail;
     } else {
       setErr("#ri-f-email", "#ri-e-email", inMail, "");
@@ -385,7 +385,7 @@
   /* ── open / close ──────────────────────────────────────────────────── */
 
   function fillProducts(preselect) {
-    var opts = ['<option value="">Geral — o painel de controlo como um todo</option>'];
+    var opts = ['<option value="">Geral — o painel de controle como um todo</option>'];
     trackedProducts().forEach(function (p) {
       opts.push('<option value="' + esc(p.id) + '">' + esc(p.name) +
                 (p.placeholder ? " (planejado)" : "") + "</option>");
