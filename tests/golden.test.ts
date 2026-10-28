@@ -14,6 +14,7 @@ import { afterAll, describe, expect, it, vi } from "vitest";
 import { localize, type LaunchData, type Localized, type Product, type StageEntry, type Status } from "@/lib/dataset";
 import * as format from "@/lib/format";
 import { LOCALES, type Locale } from "@/lib/locales";
+import { PAGE_LANG } from "@/lib/frame";
 import * as stages from "@/lib/stages";
 import { PAGE_TEXT } from "./fixtures/text/page-text";
 
@@ -29,7 +30,10 @@ const REFERENCE = Object.fromEntries(
 const htmlLang = (l: Locale) => {
   const m = REFERENCE[l].match(/^\/\/ html-lang: (.+)$/m);
   if (!m) throw new Error(`reference/${l}.js has no html-lang line`);
-  return m[1];
+  // The language the new code declares (lib/frame.ts PAGE_LANG), not the page's
+  // own pt-PT: Portuguese is Brazilian since 28 Oct 2026, and old and new must
+  // format dates and numbers alike for the comparison to test the logic.
+  return PAGE_LANG[l];
 };
 
 type Switch = "SHOW_PROGRESS" | "SHOW_LATE" | "YARD_COMPARE";

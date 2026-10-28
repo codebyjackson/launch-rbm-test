@@ -654,6 +654,28 @@ This file is updated in the same commit as each change it describes.
     next-intl, the message hand-over, the data. Rejected: keeping the pages
     for the tests (the git reads need no copy, and the pages invited merges
     from `main` that broke the map check, below).
+57. **RBM's structure, and Brazilian Portuguese** (28 Oct, from RBM's sample
+    message files and the owner's choice). The message files now follow the
+    sample: `Sidebar.unitaid` and `Sidebar.unitaid_tooltip`, then everything
+    under `Unitaid` (was `launchDashboard`), with the page's `title` and
+    `metadata` first (launch-development-test #133, its decision 14: made
+    from the header's title and description, RBM's name and the keywords in
+    English). `NAMESPACE` is `Unitaid`; the example app's layout uses
+    `Unitaid.metadata` as the page's metadata and `PAGE_LANG` as `<html
+    lang>`. next-intl 3.15.2 read all 319 keys in all three files exactly as
+    written. Portuguese is Brazilian, as RBM's own: the words (the translate
+    bot translated all 964 strings again, `11681f2`), the country names, and
+    the locale for dates and numbers (`DATE_LOCALE`, `PAGE_LANG` and the
+    map's `DATE_LOCALE`: `pt-BR`, so "19 de out. de 2026", "14.500.000,5").
+    The comparisons with the old pages still test the logic: every test file
+    starts with 28 Oct's European words handed over
+    (`tests/setup/european-portuguese.ts`, `fixtures/messages/pt-PT.json`,
+    the same keys), and the five harnesses give the old code the new code's
+    language tag (`PAGE_LANG`) instead of its saved `pt-PT`, so both sides
+    format alike. Rejected: rewriting the frozen references and text tables
+    in Brazilian (the proof that the port matches the pages would then rest
+    on the port's own output); keeping European dates and numbers with
+    Brazilian words.
 
 ## Deferred, and found on the way
 
@@ -1330,6 +1352,19 @@ ours to undo.
   published address (no `LAUNCH_DATA_URL`) passes; each page shows its own
   language's stage names from those files; smoke test `SMOKE_LOCALES=en,fr,pt`
   87 of 87 on the first run.
+- **28 Oct 2026, RBM's structure and Brazilian Portuguese** (decision 57):
+  `messages/` from launch-development-test `11681f2` (after #133 and the
+  bot's retranslation; nothing untranslated); `lib/messages.ts`,
+  `lib/format.ts`, `lib/frame.ts`, `lib/map.ts`, `app/[locale]/layout.tsx`,
+  the five harnesses, `tests/setup/european-portuguese.ts`,
+  `tests/fixtures/messages/pt-PT.json`, `vitest.config.mts`,
+  `tests/messages.test.ts`, `scripts/smoke.mjs`, both READMEs, this file.
+  `tsc` clean, vitest 288 of 288, `next build` passes; `/pt` serves
+  `<html lang="pt-BR">`, the metadata title and keywords, and Brazilian words.
+  Smoke test: its language check now takes `pt-BR` for `pt`, and it waits
+  150 ms between the two Escapes (sent at once, the second was sometimes lost:
+  2 of 5 runs, a different language each time); then 87 of 87 three times.
+  The published data is still European Portuguese until "Publish now" runs.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the

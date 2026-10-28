@@ -5,6 +5,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import vm from "node:vm";
 import { isElement, parseHtml, textOf, type HElement } from "./html";
+import { PAGE_LANG } from "@/lib/frame";
 
 type Listener = (ev: unknown) => void;
 const ROOT = new URL("../../", import.meta.url);
@@ -291,7 +292,9 @@ export function runOldPage(
     return r;
   });
   const documentElement = new FakeEl("html");
-  documentElement.lang = lang === "pt" ? "pt-PT" : lang; // the pages' <html lang>
+  // the language the new code declares (lib/frame.ts PAGE_LANG), not the pages' own
+  // pt-PT: Portuguese is Brazilian since 28 Oct 2026 (see tests/golden.test.ts)
+  documentElement.lang = PAGE_LANG[lang];
   const document = {
     documentElement,
     activeElement: null,

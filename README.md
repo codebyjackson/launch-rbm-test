@@ -6,7 +6,8 @@ holds the components and a small example app that shows them working
 (`app/[locale]/`). The data comes from an API and updates itself; the
 interface text comes as one JSON file per language for your `i18n.ts`.
 
-Languages: English (`en`), French (`fr`), Portuguese (`pt`).
+Languages: English (`en`), French (`fr`), Portuguese (`pt`, Brazilian: words,
+country names, dates and numbers).
 
 ## Requirements
 
@@ -74,7 +75,7 @@ export const revalidate = 600; // check for new data every 10 minutes
 
 export default async function LaunchPage({ params }: { params: Promise<{ locale: "en" | "fr" | "pt" }> }) {
   const { locale } = await params;
-  const text = (await getMessages()).launchDashboard; // our part of your messages
+  const text = (await getMessages()).Unitaid;         // our part of your messages
   provideMessages(locale, text);                       // before frameText()
   const ds = await getDashboard(locale);
   return (
@@ -106,14 +107,24 @@ language.
 
 ## Interface text (your `i18n.ts`)
 
-`messages/en.json`, `fr.json` and `pt.json` each hold one key,
-`launchDashboard`, with all 313 messages under it. Merge them into your own
-message files: under that one key they cannot collide with yours. Then pass
-that part to the dashboard as `text`, and call `provideMessages()` on the
-server, as above.
+`messages/en.json`, `fr.json` and `pt.json` follow the structure of your sample
+files, with the same keys in all three:
+
+| Key | What it is |
+|---|---|
+| `Sidebar.unitaid`, `Sidebar.unitaid_tooltip` | The module's menu entry and its tooltip. |
+| `Unitaid.title` | The page's title. |
+| `Unitaid.metadata` | `title`, `description` and `keywords` for the page's `<head>`. Your name stays in English in the title, and the keywords are the same English list in every language, as in your sample. |
+| `Unitaid.*` (everything else) | The dashboard's 313 messages, by component area (`header`, `subscribe`, `board`, `map`, …). |
+
+Merge them into your own message files: under `Unitaid` our messages cannot
+collide with yours. Then pass `Unitaid` to the dashboard as `text`, and call
+`provideMessages()` on the server, as above. The example app
+(`app/[locale]/layout.tsx`) shows `Unitaid.metadata` used as the page's
+metadata.
 
 - Placeholders are `{name}`, which next-intl reads as they are. next-intl
-  3.15.2 read all 313 messages in all three files exactly as written.
+  3.15.2 read all 319 keys in all three files exactly as written.
 - Each message you pass is used when it is text with the same `{placeholders}`
   as ours. Anything missing or broken shows our own copy (the files in
   `messages/`), so the dashboard never shows a blank or a raw key.

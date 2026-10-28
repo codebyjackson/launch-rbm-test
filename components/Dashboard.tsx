@@ -84,7 +84,7 @@ export interface DashboardProps {
   onProductChange?: (id: string) => void;
   /**
    * RBM's copy of this language's messages: next-intl's
-   * messages.launchDashboard on RBM's page. Each message is used when it is
+   * messages.Unitaid on RBM's page. Each message is used when it is
    * text with our {placeholders}; anything missing or broken keeps our own
    * copy (lib/messages.ts provideMessages). Leave it out to use our own copy.
    */

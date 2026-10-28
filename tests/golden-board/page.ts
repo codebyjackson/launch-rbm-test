@@ -16,6 +16,7 @@ import { LOCALES, type Locale } from "@/lib/locales";
 import { DISPLAY, type Display } from "@/lib/stages";
 import { BOARD_DISPLAY, type BoardDisplay } from "@/lib/board";
 import { El, miniDocument, parse } from "./html";
+import { PAGE_LANG } from "@/lib/frame";
 
 export const FIXTURE = JSON.parse(
   readFileSync(new URL("../fixtures/dashboard.json", import.meta.url), "utf8"),
@@ -29,7 +30,10 @@ export const REFERENCE = Object.fromEntries(
 const htmlLang = (l: Locale) => {
   const m = REFERENCE[l].match(/^\/\/ html-lang: (.+)$/m);
   if (!m) throw new Error(`reference/${l}.js has no html-lang line`);
-  return m[1];
+  // The language the new code declares (lib/frame.ts PAGE_LANG), not the page's
+  // own pt-PT: Portuguese is Brazilian since 28 Oct 2026, and old and new must
+  // format dates and numbers alike for the comparison to test the logic.
+  return PAGE_LANG[l];
 };
 
 export type Switch = "SHOW_PROGRESS" | "SHOW_LATE" | "YARD_COMPARE" | "SHOW_BARRIERS" | "SHOW_STAGE_NOTE";

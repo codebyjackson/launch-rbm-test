@@ -9,6 +9,7 @@ import { expect } from "vitest";
 import type { Localized, Product } from "@/lib/dataset";
 import { LOCALES, type Locale } from "@/lib/locales";
 import type { Switch } from "./inputs";
+import { PAGE_LANG } from "@/lib/frame";
 
 const REFERENCE = Object.fromEntries(
   LOCALES.map((l) => [l, readFileSync(new URL(`./reference/${l}.js`, import.meta.url), "utf8")]),
@@ -19,7 +20,10 @@ const ICONS = readFileSync(new URL("./reference/icons-solid.js", import.meta.url
 const htmlLang = (l: Locale) => {
   const m = REFERENCE[l].match(/^\/\/ html-lang: (.+)$/m);
   if (!m) throw new Error(`reference/${l}.js has no html-lang line`);
-  return m[1];
+  // The language the new code declares (lib/frame.ts PAGE_LANG), not the page's
+  // own pt-PT: Portuguese is Brazilian since 28 Oct 2026, and old and new must
+  // format dates and numbers alike for the comparison to test the logic.
+  return PAGE_LANG[l];
 };
 
 /** #pathway, #gatewrap and #tip as the page's HTML has them before its script runs. */

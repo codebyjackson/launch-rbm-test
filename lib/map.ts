@@ -174,10 +174,10 @@ type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => !!v && typeof v === "object" && !Array.isArray(v);
 const str = (v: unknown): string => (v == null ? "" : String(v)); // the old esc()'s String(), without the escaping
 
-// The static pages derive this from <html lang>: en, fr, pt-PT. English
-// dates are en-GB ("2 Oct 2026").
+// The static pages derive this from <html lang>: en, fr, pt-BR (pt-PT until
+// 28 Oct 2026). English dates are en-GB ("2 Oct 2026").
 // TODO: use lib/format.ts
-export const DATE_LOCALE: Record<Locale, string> = { en: "en-GB", fr: "fr", pt: "pt-PT" };
+export const DATE_LOCALE: Record<Locale, string> = { en: "en-GB", fr: "fr", pt: "pt-BR" };
 
 /**
  * Picks out of one language of the dataset what the map reads. Small on

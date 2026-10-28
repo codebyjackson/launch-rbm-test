@@ -274,7 +274,7 @@ function changed(a, b) {
 // ---- the checks ---------------------------------------------------------------
 
 async function smoke(cdp, locale) {
-  const m = JSON.parse(readFileSync(join(ROOT, "messages", `${locale}.json`), "utf8")).launchDashboard;
+  const m = JSON.parse(readFileSync(join(ROOT, "messages", `${locale}.json`), "utf8")).Unitaid;
   const t = await openTab(cdp);
   const url = `${BASE}/${locale}`;
   const hydrated = await t.goto(url);
@@ -314,7 +314,8 @@ async function smoke(cdp, locale) {
   })`);
   const want = { title: m.header.title, pathway: m.pathway.label, medicine: m.board.columns.medicine, map: m.map.title };
   const wrong = Object.keys(want).filter((k) => words[k] !== want[k]);
-  check(locale, `texts in ${locale} (title, strip, board, map)`, words.lang === locale && !wrong.length, wrong.length ? `differ: ${wrong.map((k) => `${k}=${JSON.stringify(words[k])}`).join("; ")}` : `lang=${words.lang}, map "${words.map}"`);
+  // <html lang> may name the variety (pt-BR): its first part is the locale
+  check(locale, `texts in ${locale} (title, strip, board, map)`, words.lang.split("-")[0] === locale && !wrong.length, wrong.length ? `differ: ${wrong.map((k) => `${k}=${JSON.stringify(words[k])}`).join("; ")}` : `lang=${words.lang}, map "${words.map}"`);
 
   // a step opens #gatewrap and lights its column in every row
   const gate = 4;
@@ -380,6 +381,9 @@ async function smoke(cdp, locale) {
   const esc1 = await t.waitFor(`(() => { const g = document.getElementById(${JSON.stringify(first + "-gate")});
     return g.hidden ? { gatewrap: !document.getElementById("gatewrap").hidden, focus: document.activeElement.classList.contains("smark") } : null; })()`, 2000);
   check(locale, "Escape closes the stage panel first (step panel stays, focus to marker)", esc1 && esc1.gatewrap && esc1.focus, JSON.stringify(esc1));
+  // let React finish the first close before the second key: sent at once, it was
+  // sometimes lost (2 of 5 runs on 28 Oct, a different language each time)
+  await sleep(150);
   await t.key("Escape");
   const esc2 = await t.waitFor(`document.getElementById("gatewrap").hidden ? { focus: document.activeElement.dataset.gate, lit: document.querySelectorAll("#board .jcell.on").length } : null`, 2000);
   check(locale, "then Escape closes the step panel (focus to its step, column unlit)", esc2 && esc2.focus === String(gate) && esc2.lit === 0, JSON.stringify(esc2));

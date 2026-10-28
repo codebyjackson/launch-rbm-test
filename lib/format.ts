@@ -12,8 +12,9 @@ import type { Locale } from "./locales";
 /**
  * The locale each language's dates are written in: the static pages'
  * <html lang>, except English, which is en-GB so a date reads "2 Oct 2026".
+ * Portuguese is Brazilian since 28 Oct 2026, as RBM's site (was pt-PT).
  */
-export const DATE_LOCALE: Record<Locale, string> = { en: "en-GB", fr: "fr", pt: "pt-PT" };
+export const DATE_LOCALE: Record<Locale, string> = { en: "en-GB", fr: "fr", pt: "pt-BR" };
 
 // Midnight local time, then written out in local time: the calendar date is
 // the same in every time zone, so the server and the browser agree.

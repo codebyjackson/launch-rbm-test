@@ -1,12 +1,13 @@
 // The interface text, one file per language (messages/*.json), every message
-// under one key, "launchDashboard" (NAMESPACE). Generated in
+// under one key, "Unitaid" (NAMESPACE, the name RBM gave the module), beside
+// RBM's own Sidebar keys for it. Generated in
 // launch-development-test (i18n/ui.en.json → scripts/build-rbm-messages.js)
 // and copied in: a hand edit here is overwritten by the next copy, so wording
 // changes go to ui.en.json there, where they are translated and approved.
 //
 // RBM's site loads the same files through its own i18n.ts (next-intl), merged
 // into its own en.json, fr.json, pt.json. Its page can hand the dashboard its
-// part, messages.launchDashboard: provideMessages(), or the Dashboard's `text`
+// part, messages.Unitaid: provideMessages(), or the Dashboard's `text`
 // prop. Our own copy is the fallback, message by message, so the dashboard
 // never shows a blank or broken text whatever it is handed.
 import en from "@/messages/en.json";
@@ -15,7 +16,7 @@ import pt from "@/messages/pt.json";
 import type { Locale } from "./locales";
 
 /** The one top-level key of every message file; RBM passes messages[NAMESPACE]. */
-export const NAMESPACE = "launchDashboard";
+export const NAMESPACE = "Unitaid";
 
 export type Messages = (typeof en)[typeof NAMESPACE];
 
@@ -47,7 +48,7 @@ export interface Provided {
 
 /**
  * Hands the dashboard RBM's copy of its messages for one language: next-intl's
- * messages.launchDashboard on RBM's page. Each message is taken when it is a
+ * messages.Unitaid on RBM's page. Each message is taken when it is a
  * non-empty string with exactly our {placeholders}; anything else keeps our
  * own copy, so an outdated or edited file cannot break a line. Keys we do not
  * have are ignored. `undefined` or `null` goes back to our own copy.

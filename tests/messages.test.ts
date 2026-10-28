@@ -47,13 +47,18 @@ describe("messages", () => {
     expect(differ).toEqual([]);
   });
 
-  it("holds every message under one key, launchDashboard", () => {
-    expect(NAMESPACE).toBe("launchDashboard");
-    for (const file of [enFile, frFile, ptFile]) expect(Object.keys(file)).toEqual([NAMESPACE]);
+  it("holds every message under Unitaid, beside RBM's Sidebar keys", () => {
+    expect(NAMESPACE).toBe("Unitaid");
+    for (const file of [enFile, frFile, ptFile]) {
+      expect(Object.keys(file)).toEqual(["Sidebar", NAMESPACE]);
+      expect(Object.keys(file.Sidebar)).toEqual(["unitaid", "unitaid_tooltip"]);
+      expect(file.Sidebar.unitaid).toBe(file[NAMESPACE].header.title);
+      expect(Object.keys(file[NAMESPACE].metadata)).toEqual(["title", "description", "keywords"]);
+    }
   });
 });
 
-// RBM's page hands over next-intl's messages.launchDashboard (Dashboard `text`)
+// RBM's page hands over next-intl's messages.Unitaid (Dashboard `text`)
 describe("provideMessages: RBM's copy", () => {
   afterEach(() => {
     for (const l of LOCALES) provideMessages(l, undefined);

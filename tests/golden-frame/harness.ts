@@ -9,6 +9,7 @@
 import { readFileSync } from "node:fs";
 import { createContext, runInContext } from "node:vm";
 import type { Locale } from "@/lib/locales";
+import { PAGE_LANG } from "@/lib/frame";
 
 const ref = (name: string) => readFileSync(new URL(`./reference/${name}`, import.meta.url), "utf8");
 
@@ -22,7 +23,10 @@ export const REFERENCE = {
 export function htmlLang(l: Locale): string {
   const m = REFERENCE.page(l).match(/^\/\/ html-lang: (.+)$/m);
   if (!m) throw new Error(`reference/${l}.page.js has no html-lang line`);
-  return m[1];
+  // The language the new code declares (lib/frame.ts PAGE_LANG), not the page's
+  // own pt-PT: Portuguese is Brazilian since 28 Oct 2026, and old and new must
+  // format dates and numbers alike for the comparison to test the logic.
+  return PAGE_LANG[l];
 }
 
 /** One part of {lang}.markup.html: "header", "banner" or "footer". */

@@ -19,8 +19,9 @@ import { fill, pageText } from "./strings";
 /**
  * PAGE_LANG: the static pages' <html lang>. The Sources list is sorted in
  * it. Dates use DATE_LOCALE instead, which differs for English (en-GB).
+ * Portuguese is Brazilian since 28 Oct 2026, as RBM's site (was pt-PT).
  */
-export const PAGE_LANG: Record<Locale, string> = { en: "en", fr: "fr", pt: "pt-PT" };
+export const PAGE_LANG: Record<Locale, string> = { en: "en", fr: "fr", pt: "pt-BR" };
 
 // ---- header and banner ------------------------------------------------------
 

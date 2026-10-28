@@ -7,6 +7,8 @@ export default defineConfig({
   },
   test: {
     include: ["tests/**/*.test.ts"],
+    // the comparisons with the old pages read 28 Oct's European Portuguese words
+    setupFiles: ["tests/setup/european-portuguese.ts"],
     environment: "node",
   },
 });

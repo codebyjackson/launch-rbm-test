@@ -1,5 +1,15 @@
 {
-  "launchDashboard": {
+  "Sidebar": {
+    "unitaid": "Malaria Product Launch Dashboard",
+    "unitaid_tooltip": "Tracking new antimalarial medicines along the market access pathway"
+  },
+  "Unitaid": {
+    "title": "Malaria Product Launch Dashboard",
+    "metadata": {
+      "title": "Malaria Product Launch Dashboard | RBM Partnership to End Malaria",
+      "description": "Tracking new antimalarial medicines along the market access pathway",
+      "keywords": "LAUNCH, Unitaid, Malaria, Antimalarial medicines, Market access, Product launch, Dashboard, RBM Partnership to End Malaria"
+    },
     "header": {
       "title": "Malaria Product Launch Dashboard",
       "poweredBy": "Powered by",
