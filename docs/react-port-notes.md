@@ -564,7 +564,8 @@ This file is updated in the same commit as each change it describes.
     the owner's choice over copying the page's mix or straight '
     throughout). Copied in by `copy-rbm-messages.js` (`messages/manifest.json`:
     built from `ae16ee6`, clean, 7 still English per language until PR #129
-    there is merged). `uiText()` now returns the message file as it is;
+    there was merged; since the same day built from `65b969e`, none English,
+    the 7 in `CHANGED` too). `uiText()` now returns the message file as it is;
     `mapText().filterStage` reads `map.accessStage`, like the legend. Before
     deleting, the built values were checked against every held text: 144 of
     147 equal. `tests/text-parity.test.ts` compares each adapter with
@@ -588,6 +589,16 @@ This file is updated in the same commit as each change it describes.
 
 ## Deferred, and found on the way
 
+- **Do not merge `main` into this branch while the static pages are still
+  in it.** `main` gets the pages rebuilt from launch-development-test (on
+  28 Oct with the 7 words of its PR #129 translated). The golden tests read
+  the pages in the checkout: `tests/golden-map.test.ts` checks its reference
+  copies of the old map code against `en/`, `fr/` and `pt/index.html`
+  (`golden-map/extract.mjs --check`), so a rebuilt page fails it although
+  the port is unchanged. Git itself would merge cleanly (this branch never
+  changes those files; trial merge 28 Oct). When the branch goes to
+  `main`: first remove the static pages (handoff step 4), or re-extract the
+  references from the new pages and re-run the golden tests.
 - `app/` is the example app only, to prove the data path. RBM takes the
   components (step 3), not this app.
 - The error page and the "being updated" notice are English only until the
@@ -1210,14 +1221,20 @@ ours to undo.
   clean, `npm audit --omit=dev` 0, `next build` passes; smoke test
   `SMOKE_LOCALES=en,fr,pt` 87 of 87; side-by-side text check as in decision
   53.
-- **Next:** after launch-development-test PR #129 is merged and its bot has
-  translated the 7 words, rebuild there without `--allow-stale` and copy
-  again (the manifest's `untranslated` empties). The parity test will then
-  report those words, since its frozen tables hold today's English on
-  `/fr` and `/pt`: add each to `CHANGED` (today's English → the
-  translation), after reading the translations;
-  the README for RBM (step 6), with the font (see the side-by-side check); a
-  check on a real iPhone and in Safari.
+- **28 Oct 2026, the last 7 words** (on `feat/react-port`):
+  launch-development-test PR #129 merged (`0902567`), its bot translated the
+  7 (`e9aff92`, 0 failed), `feat/rbm-messages` took `main` in (`65b969e`) and
+  built with nothing in English. `messages/` copied from `65b969e`
+  (`manifest.json`: `allow_stale` false, `untranslated` empty). The parity
+  test reported exactly 12 values, all from the 7 words (French 5: "Transactions"
+  and "Packs" are spelled as in English), now in `CHANGED` (fr 6, pt 8 with
+  the delayed count). 271 tests pass, `tsc --noEmit` clean, `npm audit
+  --omit=dev` 0, `next build` passes, smoke test en, fr, pt 87 of 87. For
+  the reviewer: "Packs" stays "Packs" in French and is "Pacotes" in
+  Portuguese (Google; "Boîtes", "Embalagens" are the usual words).
+- **Next:** the README for RBM (step 6) is another developer's (owner,
+  28 Oct); it should say to load Source Sans 3 (see the side-by-side check).
+  A check on a real iPhone and in Safari.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).

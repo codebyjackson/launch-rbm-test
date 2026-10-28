@@ -125,11 +125,11 @@
       "title": "Achats par voie publique",
       "globalFundOnly": "100 % des transactions figurant dans l’ensemble de données présenté proviennent du programme PQR du Fonds mondial ; il ne s’agit pas de l’ensemble des achats mondiaux du produit.",
       "notAvailable": "Données non disponibles pour le moment",
-      "presentation": "Presentation",
+      "presentation": "Présentation",
       "transactions": "Transactions",
       "packs": "Packs",
       "courses": "Durée du traitement (estimation)",
-      "notEstimated": "not estimated"
+      "notEstimated": "non estimé"
     },
     "milestones": {
       "milestone": "Jalon",
@@ -168,7 +168,7 @@
     "expected": "attendu {date}",
     "mapClickForDetails": "Cliquez pour plus de détails ›",
     "notListed": "non répertorié",
-    "dataStatus": "{medicine} · {status} data"
+    "dataStatus": "{medicine} · {status} données"
   },
   "map": {
     "title": "Carte d’accès au pays",
@@ -256,8 +256,8 @@
       "group": "Groupe",
       "donutLabelOne": "{count} pays par groupe de patients",
       "donutLabelOther": "{count} pays par groupe de patients",
-      "donutUnitOne": "country",
-      "donutUnitOther": "countries",
+      "donutUnitOne": "pays",
+      "donutUnitOther": "pays",
       "notDrawn": "Également dans la politique mais non représenté sur cette carte : {countries}.",
       "backToCountries": "Retour aux pays",
       "backToOverview": "Retour à l’aperçu",

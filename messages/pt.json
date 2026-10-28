@@ -125,11 +125,11 @@
       "title": "Contratação através de canais públicos",
       "globalFundOnly": "100% das transações do conjunto de dados apresentado são do Fundo Global PQR; este valor não representa o total das compras globais do produto.",
       "notAvailable": "Dados ainda não disponíveis",
-      "presentation": "Presentation",
-      "transactions": "Transactions",
-      "packs": "Packs",
+      "presentation": "Apresentação",
+      "transactions": "Transações",
+      "packs": "Pacotes",
       "courses": "Cursos de tratamento (est.)",
-      "notEstimated": "not estimated"
+      "notEstimated": "não estimado"
     },
     "milestones": {
       "milestone": "Marco",
@@ -168,7 +168,7 @@
     "expected": "esperado {date}",
     "mapClickForDetails": "Clique para mais detalhes ›",
     "notListed": "não listado",
-    "dataStatus": "{medicine} · {status} data"
+    "dataStatus": "{medicine} · {status} dados"
   },
   "map": {
     "title": "Mapa de acesso ao país",
@@ -256,8 +256,8 @@
       "group": "Grupo",
       "donutLabelOne": "{count} país por grupo de doentes",
       "donutLabelOther": "{count} países por grupo de doentes",
-      "donutUnitOne": "country",
-      "donutUnitOther": "countries",
+      "donutUnitOne": "país",
+      "donutUnitOther": "países",
       "notDrawn": "Também na política, mas não desenhado neste mapa: {countries}.",
       "backToCountries": "Voltar para países",
       "backToOverview": "Voltar à visão geral",

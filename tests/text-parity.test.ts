@@ -45,11 +45,30 @@ type Tree = { readonly [key: string]: unknown };
  */
 const CHANGED: Record<Locale, { [areaPath: string]: [today: string, shipped: string] }> = {
   en: {},
-  // the pathway's per-step delayed count, for screen readers; singular, which
-  // is wrong for two or more (for the translation reviewer). Not rendered
-  // while DISPLAY.showLate is off.
-  fr: { "pathwayText.nodeDelayed": [", {n} delayed", ", {n} retardé"] },
-  pt: { "pathwayText.nodeDelayed": [", {n} delayed", ", {n} atrasado"] },
+  // pathwayText.nodeDelayed: the pathway's per-step delayed count, for screen
+  // readers; singular, which is wrong for two or more (for the translation
+  // reviewer). Not rendered while DISPLAY.showLate is off.
+  // The rest: seven words today's /fr and /pt show in English, translated by
+  // launch-development-test PR #129 (28 Oct). French "Transactions" and
+  // "Packs" are spelled as in English, so they do not change.
+  fr: {
+    "pathwayText.nodeDelayed": [", {n} delayed", ", {n} retardé"],
+    "boardText.presentation": ["Presentation", "Présentation"],
+    "boardText.notEstimated": ["not estimated", "non estimé"],
+    "mapText.donutOne": ["country", "pays"],
+    "mapText.donutMany": ["countries", "pays"],
+    "mapText.tipStatus": [" · {status} data", " · {status} données"],
+  },
+  pt: {
+    "pathwayText.nodeDelayed": [", {n} delayed", ", {n} atrasado"],
+    "boardText.presentation": ["Presentation", "Apresentação"],
+    "boardText.transactions": ["Transactions", "Transações"],
+    "boardText.packs": ["Packs", "Pacotes"],
+    "boardText.notEstimated": ["not estimated", "não estimado"],
+    "mapText.donutOne": ["country", "país"],
+    "mapText.donutMany": ["countries", "países"],
+    "mapText.tipStatus": [" · {status} data", " · {status} dados"],
+  },
 };
 
 const retyped: Record<Locale, number> = { en: 0, fr: 0, pt: 0 };
