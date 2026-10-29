@@ -66,9 +66,12 @@ describe("data route: 200 with the data", () => {
       expect(res.headers.get("content-type")).toMatch(/^application\/json/);
       // what the page gets from getDashboard(), and what the components take
       expect(await res.json()).toEqual(readLanguageFile(LANG_FIXTURE[locale], locale, dataUrl(locale)));
-      // one fetch of that language's file, through Next.js's 5-minute cache
+      // one fetch of that language's file, through Next.js's 5-minute cache,
+      // tagged so a notification can expire it (decision 59)
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(dataUrl(locale), { next: { revalidate: 300 } });
+      expect(fetchMock).toHaveBeenCalledWith(dataUrl(locale), {
+        next: { revalidate: 300, tags: [`launch-data-${locale}`] },
+      });
     });
   }
 });

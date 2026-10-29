@@ -743,8 +743,136 @@ This file is updated in the same commit as each change it describes.
       `lib/data.ts`, `.env.example` (now the `{locale}` form, as
       `lib/data.ts`; it still named the combined file) and `README.md`
       changed; history below keeps the old name.
+59. **The notifications route, `POST /api/unitaid/notifications`** (29 Oct,
+    module spec 2b: a shared token as `Authorization: Bearer`; 202 "accepted
+    and cache refreshed", 200 `duplicate: true`, 400, 401, 413 over 1 MB).
+    The receiver only; the sender, in the pipeline, is not built (below).
+    `app/api/unitaid/notifications/route.ts`, its parts in
+    `lib/notifications.ts` (a route file may export only what Next.js
+    expects), the refresh in `lib/data.ts` `refreshDashboard()`.
+    - **The refresh: read the new file, then `revalidateTag(tag, { expire:
+      0 })`, then, once the route has answered, read the file into the cache
+      again (`after()`).** Every `getDashboard()` fetch now carries the tag
+      `launch-data-<locale>`, and the build shows each page carrying its
+      language's tag (`x-next-cache-tags` in `.next/server/app/en.meta`), so
+      one call expires the cached copy and the pages built from it, wherever
+      RBM's page lives. The bundled docs (`04-functions/revalidateTag.md`,
+      `updateTag.md`, `01-getting-started/09-revalidating.md`): with `"max"`
+      the next request gets the old copy (stale-while-revalidate);
+      `updateTag` expires at once but only in a Server Action (its source
+      throws for a `/route`); for a webhook the docs give `{ expire: 0 }`.
+      Next.js's source (`server/web/spec-extension/revalidate.js`,
+      `server/revalidation-utils.js`,
+      `server/lib/incremental-cache/file-system-cache.js`): in a route, the
+      call only queues the tag; it is applied when the handler returns,
+      stamped `Date.now()` then, and a fetch inside the handler does not see
+      it. So re-reading inside the handler would get the old copy, and what
+      it wrote would be expired with it; `after()` runs once the expiry is
+      in place. Measured on `next start`, built against a local host serving
+      the live files with a `[vN]` mark on the first stage name: after each
+      202, the very next request, page or data route first, showed the new
+      version (the page `x-nextjs-cache: MISS`, then `HIT`); `/fr`, not
+      notified, kept its version; each notification cost the host 2
+      requests (the check, the re-read) and the next requests 0.
+      Rejected: `"max"` (the next visitor gets the old data); `revalidatePath`
+      (it names pages by path, and RBM's page is at a path of theirs);
+      re-reading inside the handler (above); **expiring without re-reading**,
+      measured: with the host failing after the 202, the page answered HTTP
+      500 and the data route 502 until it came back, where without a
+      notification both would have kept the old copy (decision 5). With the
+      re-read, the same test gave both 200 with the new version, and no
+      visitor's request reached the host. What remains is a host failing
+      during the re-read itself.
+    - **The new file is checked before anything is expired** (`cache:
+      "no-store"`, the page's own checks). If it cannot be used: 502 `{"error":
+      "source unavailable", "kind"}`, the cache untouched, the `eventId` not
+      recorded. Measured: host at 500 → 502, page and data route kept the
+      previous version; the same event sent again after the host came back
+      → 202. 502 is not in the spec's list. Rejected: 202 (it says "cache
+      refreshed"), 500 (the fault is the host's).
+    - **Order:** 503 → 401 → 413 → 400 → duplicate → 502 or 202: the brief's
+      order, with the unset token first. The body is not read before the
+      token is checked (test: a 2 MB stream behind a wrong token, at most 1
+      chunk pulled).
+    - **No token set → 503** `{"error": "notifications are not
+      configured"}`, logged. Rejected: 401 (the sender would think its token
+      wrong and rotate a good secret); 500 (nothing is broken). An empty or
+      blank token never matches. `UNITAID_NOTIFY_TOKEN` is read on each
+      request, trimmed.
+    - **The token is compared in constant time:** SHA-256 of both, then
+      `crypto.timingSafeEqual` on the two 32-byte digests (no length leak,
+      no early exit; a missing header is hashed too). `Bearer` in any case
+      (RFC 7235); a 401 carries `WWW-Authenticate: Bearer realm="unitaid"`
+      (RFC 6750).
+    - **1 MB is 1,048,576 bytes.** A `Content-Length` over it → 413 without
+      reading; otherwise counted while reading, which stops at the first
+      chunk past the limit (test: 17 of 32 chunks of 64 KB pulled). Exactly
+      1,048,576 bytes accepted, one more refused. Next.js 16.4.3 sets no limit
+      of its own on a route handler: a 2 MB chunked body reached the route.
+    - **400:** `eventId` non-blank text of at most 256 characters (keeps the
+      duplicate list small: 1,000 × 256); `occurredAt` RFC 3339, the ISO 8601
+      profile with an offset, a real date (`2026-02-30` refused; no offset
+      refused, the moment would be ambiguous; not otherwise used);
+      `data.dataset` one of `LOCALES`, as the data route, so RBM's example
+      `"sample"` is refused. Every problem listed; other fields ignored;
+      `Content-Type` not checked. **An unknown `type` is 400**, not accepted
+      and ignored: there is one sender, ours, changed with the receiver, so
+      an unknown type is a mistake to show, not a newer event to tolerate;
+      and ignoring it would need an answer the spec does not have (202 says
+      refreshed).
+    - **Duplicates:** in memory, 24 hours and at most 1,000 `eventId`s, the
+      oldest dropped first; recorded only after a 202. A restart forgets the
+      list (harmless: a repeated refresh changes nothing and costs 2
+      requests). Several instances each keep a list and a cache, and
+      `revalidateTag` on one invalidates only that one (`02-guides/
+      self-hosting.md`, "Multi-Instance Cache Coordination": a shared
+      `cacheHandler` with `updateTags`/`refreshTags`). Two copies of one
+      event arriving together may both refresh. One notification per
+      language: a publish changes all three files, so the sender sends three.
+    - Logged: 202, 502 with the reason, 503, a failed re-read. Not logged:
+      401, 413, 400 (strangers could fill the log; the sender gets the
+      problems in the answer).
 
 ## Deferred, and found on the way
+
+- **29 Oct, the notifications route (decision 59).**
+  - **What the sender must do** (the pipeline,
+    `Quantum-Sage-Technologies/UnitAid-dev`; not built). After the publish,
+    wait until the GitHub Pages build of the data repository reports
+    `built`, then POST one notification per language (`en`, `fr`, `pt`) to
+    `NOTIFY_URL` with `Authorization: Bearer $NOTIFY_TOKEN` (two repository
+    secrets: RBM's address plus `/api/unitaid/notifications`, and the token
+    RBM generated). `eventId` stable for that publish and language (for
+    example `<data commit>-<locale>`) and the same on every retry;
+    `occurredAt` the publish time in UTC with `Z`. Retry 502, 503 and
+    network errors with a pause, same `eventId`; 400, 401 and 413 are
+    mistakes to fix, not to retry; 200 `duplicate: true` means done.
+  - **GitHub Pages, 29 Oct.** Seen here: `cache-control: max-age=600` on
+    `dashboard.en.json`, `last-modified: 06:33:33 GMT`. Measured by the
+    coordinator, not re-measured here: that day's Pages build took 29 s
+    (06:33:05 → 06:33:34 UTC), and a unique `?v=` query string still came
+    back `x-cache: HIT`, so adding one does not appear to get past Pages'
+    cache. So: notify only after `built`, or the check reads the old file
+    and it is kept 5 minutes. **Untested:** whether Pages' CDN still serves
+    the old file for a while after `built`. Check at the next real publish:
+    after `built`, fetch each file and compare its `generated_at` with the
+    new one.
+  - **The route cannot tell an old file from a new one.** A
+    `data.generatedAt` in the notification (the new file's `generated_at`)
+    would let it answer "not there yet" so the sender tries again. It
+    changes RBM's body; to propose, not done.
+  - The expiry is held in memory (the file-system cache handler's tag
+    list). A restart between a 202 and the re-read would bring the old copy
+    back for up to 5 minutes.
+  - **`scripts/smoke.mjs` can hang for ever.** Its `send()` waits for
+    Chrome's answer with no time limit. One run (of five on this branch
+    today) stopped after `[pt] then Escape closes the step panel`, at the
+    mouse move that starts the next check, and was killed after more than
+    10 minutes; the 73 checks before it passed, the same as a full run. Not
+    the change (no client code changed; the next two runs 87 of 87). Likely
+    the Escape effect in decision 51: an input event Chrome never
+    acknowledges. A time limit in `send()` would turn a hang into a failed
+    check. Not done.
 
 - **29 Oct, found with the data route (decision 58):**
   - A file that says `schema_version: 1` but has no `data`, or no
@@ -1457,6 +1585,27 @@ ours to undo.
   `pt-BR`, `es` and no `dataset` 400. Each new test was seen failing when
   the code it covers was broken on purpose (502 → 503, the name check
   removed, the page's 300 → 600). No NUL bytes. Not pushed.
+- **29 Oct 2026, the notifications route** (branch `feat/data-route`, a
+  second commit; decision 59): `app/api/unitaid/notifications/route.ts` and
+  `lib/notifications.ts` (new), `lib/data.ts` (`dataTag`, the tag on the
+  fetch, `refreshDashboard()`), `tests/notifications.test.ts` (new, 52
+  tests), `tests/data-route.test.ts` (the fetch now carries its tag),
+  `.env.example` (`UNITAID_NOTIFY_TOKEN`, empty; its first line said nothing
+  in it was a secret), `README.md` ("Notifications route"), this file.
+  vitest 357 of 357 in 17 files (305 before); `tsc --noEmit` clean; `next
+  build` passes (the route dynamic). The new tests were seen failing when
+  the code was broken on purpose (no duplicate check; `"max"` for `{ expire:
+  0 }`; no counting while reading; the body read before the token; no check
+  of the new file). One test was wrong, not the code: it expected an
+  `eventId` kept 1000 ms to be there at 1000 ms (the code, as documented,
+  drops it then). curl on `next start`: 503 (no token set), 401 (no header,
+  wrong token, wrong token with 2 MB), 413 (2 MB with a length, 2 MB
+  chunked), 400 (not JSON; `"sample"`; an unknown type with no offset, both
+  listed), 202, 200 duplicate, 502 (host at 500), 405 for GET; the v1 → v2
+  proof in decision 59; against the real address, a notification for `en`:
+  202, then `/en` `MISS`, then `HIT`. Smoke test `SMOKE_LOCALES=en,fr,pt`
+  on that build: the first run hung after 73 checks, none failed (below);
+  then 87 of 87 twice. No NUL bytes. Not pushed.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the
@@ -1468,3 +1617,10 @@ ours to undo.
   names `en`, `fr`, `pt` what the module should take (the spec names none;
   `pt-BR` is refused)? Should the 5 minutes be a setting, or is the default
   enough?
+- **Questions for RBM/UNOPS, from the notifications route (decision 59):**
+  the spec's example dataset, `"sample"`, looks like a placeholder: we take
+  `en`, `fr`, `pt`, one notification per language; agreed? Does the
+  dashboard run as one server process or several (several need a shared
+  cache handler for a notification to reach all of them)? Are 503 (no token
+  set) and 502 (the new file cannot be read; nothing changed), which the
+  spec does not list, acceptable? Is 1 MB 1,048,576 bytes for them too?

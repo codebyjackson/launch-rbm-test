@@ -1,6 +1,8 @@
 // Reads the published LAUNCH dataset on the server. Visitors' browsers never
 // contact the data host: the page arrives with the data already in it.
 import "server-only";
+import { revalidateTag } from "next/cache";
+import { after } from "next/server";
 import { DatasetError, datasetFrom, type Localized } from "./dataset";
 import type { Locale } from "./locales";
 
@@ -30,6 +32,14 @@ export const dataUrl = (locale: Locale): string => DATA_URL.replace("{locale}", 
 export const REVALIDATE = 300;
 
 /**
+ * The cache tag on one language's fetch. The notifications route
+ * (app/api/unitaid/notifications/route.ts) expires it after a publish; every
+ * cached copy and page built from that language's file carries it, wherever
+ * the page lives.
+ */
+export const dataTag = (locale: Locale): string => `launch-data-${locale}`;
+
+/**
  * The dataset in one language.
  *
  * Throws instead of returning a failure, on purpose: when a background
@@ -41,11 +51,42 @@ export const REVALIDATE = 300;
  * @throws DatasetError("schema") when its schema_version is not supported, or
  * it is in another language
  */
-export async function getDashboard(locale: Locale): Promise<Localized> {
+export function getDashboard(locale: Locale): Promise<Localized> {
+  return load(locale, { next: { revalidate: REVALIDATE, tags: [dataTag(locale)] } });
+}
+
+/**
+ * After a publish: reads the language's file from the host, past the cache,
+ * and only when it can be used expires the cached copy and the pages built
+ * from it, so the next request for either reads the file again. Expired, not
+ * merely marked stale ({ expire: 0 }): with a stale window the next visitor
+ * would still get the old copy. A file that cannot be used leaves the cache as
+ * it is, so the dashboard keeps its last good copy.
+ *
+ * Then, once the route has answered, the file is read into the cache again.
+ * Next.js applies the expiry only when the route returns, so this cannot
+ * happen sooner; without it, an expired copy has no stale copy behind it, and
+ * a host failing before the next visitor would show that visitor an error
+ * (measured: the page HTTP 500, the data route 502) instead of the old data.
+ *
+ * @throws DatasetError as getDashboard() does; the cache is then untouched
+ */
+export async function refreshDashboard(locale: Locale): Promise<void> {
+  await load(locale, { cache: "no-store" });
+  revalidateTag(dataTag(locale), { expire: 0 });
+  after(() =>
+    getDashboard(locale).catch((e: Error) => {
+      // the next request reads the file itself
+      console.error(`[LAUNCH] notifications: re-reading ${locale} failed: ${e.message}`);
+    }),
+  );
+}
+
+async function load(locale: Locale, init: RequestInit): Promise<Localized> {
   const url = dataUrl(locale);
   let res: Response;
   try {
-    res = await fetch(url, { next: { revalidate: REVALIDATE } });
+    res = await fetch(url, init);
   } catch {
     throw new DatasetError("unavailable", `could not reach ${url}`);
   }

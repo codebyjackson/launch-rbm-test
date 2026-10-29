@@ -47,6 +47,7 @@ feedback shows as not connected.
 | `public/launch-map/` | The map's shapes (`world-shapes.json`) and MapLibre's worker (`maplibre-gl-worker.mjs`, served as JavaScript). |
 | `public/launch-icons/`, `public/assets/` | The WHO emblem and the Unitaid logo. |
 | `app/api/unitaid/data/route.ts` | The data route, `GET /api/unitaid/data` (see "Data route"). Copy it to the same path in your `app/`. |
+| `app/api/unitaid/notifications/route.ts` | The notifications route, `POST /api/unitaid/notifications` (see "Notifications route"). Copy it to the same path in your `app/`. |
 
 Imports use the `@/` alias for this repository's root (`tsconfig.json`
 `paths`). Map `@/` to wherever you put these folders, or adjust the imports.
@@ -194,9 +195,87 @@ to keep them. The example page does not call the route. It calls
 `getDashboard()` directly, as your page can: same data, same cache, no extra
 network hop, and `next build` has no running server to call.
 
+A notification (next section) refreshes one language at once instead of
+within 5 minutes.
+
+## Notifications route
+
+`POST /api/unitaid/notifications` (`app/api/unitaid/notifications/route.ts`),
+the notifications route of your module spec (2b). The LAUNCH pipeline calls it
+after it publishes the dataset, so the page and the data route show the new
+data on the very next request.
+
+**Token.** Make one with `openssl rand -hex 32` and set it on your server as
+`UNITAID_NOTIFY_TOKEN` (in `.env.local`, which git ignores, or in your host's
+environment); give the same value to the LAUNCH team by a private channel.
+Never commit it and never put it in a `NEXT_PUBLIC_` setting, which is copied
+into visitors' browsers. It is read on each request, so setting or changing it
+needs no new build. Without it every notification is refused.
+
+**Request.**
+
+```http
+POST /api/unitaid/notifications
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{ "eventId": "evt-001", "type": "dataset.updated",
+  "occurredAt": "2026-10-27T12:00:00Z", "data": { "dataset": "en" } }
+```
+
+| Field | Rule |
+|---|---|
+| `eventId` | Text, not empty, at most 256 characters. The same event sent again keeps its `eventId`. |
+| `type` | `dataset.updated`, the only type there is. |
+| `occurredAt` | An ISO 8601 date and time with its offset (`Z` or `+02:00`). |
+| `data.dataset` | `en`, `fr` or `pt`, as for the data route: one notification refreshes one language. |
+
+Other fields are ignored.
+
+**Responses**, checked in this order, so a request without the token costs
+nothing:
+
+| Status | Body | When |
+|---|---|---|
+| **503** | `{"error": "notifications are not configured"}` | `UNITAID_NOTIFY_TOKEN` is not set. |
+| **401** | `{"error": "invalid token"}` | No `Authorization: Bearer`, or the wrong token. The body is not read. |
+| **413** | `{"error": "body larger than 1 MB"}` | Over 1 MB (1,048,576 bytes), by its `Content-Length` or counted while reading (a chunked body has no length). |
+| **400** | `{"error": "invalid body", "problems": [...]}` | Not JSON, or a field missing or wrong; every problem is listed. |
+| **200** | `{"accepted": true, "duplicate": true, "eventId": ...}` | This `eventId` was already received. Nothing is done. |
+| **502** | `{"error": "source unavailable", "kind": ...}` | The new file cannot be read or used. The cache is left as it was, so the dashboard keeps its last good data; send the same event again later. |
+| **202** | `{"accepted": true, "duplicate": false, "eventId": ..., "dataset": ...}` | Accepted, cache refreshed. |
+
+**What a 202 does.** The route reads that language's file from the data host
+past the cache and checks it as the page would. Only then does it expire the
+cached copy and the pages built from it (`revalidateTag` with
+`{ expire: 0 }`, through the tag `launch-data-<language>` on the fetch), and,
+once it has answered, it reads the file into the cache again. The next
+request for that language, page or data route, gets the new data; it waits
+for the data host only if it arrives before that re-read has finished.
+
+**Limits to know.**
+
+- **One server process.** The list of received `eventId`s (kept 24 hours, at
+  most 1,000) and the cache belong to the process that received the
+  notification. A restart forgets the list, which is harmless: a repeated
+  refresh changes nothing. If you run several instances, a notification
+  reaches one of them; the others show the new data within their own 5
+  minutes. Making it reach all of them takes a shared cache handler (Next.js
+  self-hosting guide, "Multi-Instance Cache Coordination"). Tell us which you
+  run.
+- If the data host fails in the moment between the check and the re-read
+  (one fetch long), the expired copy has nothing behind it: until the host is
+  back, the page shows its error and the data route answers 502, where
+  without a notification both would have kept the old data.
+- The route cannot tell an old file from a new one. If the data host still
+  serves the old file when the notification arrives, the old file is kept for
+  5 minutes. The LAUNCH pipeline is to notify only once its publish has
+  finished.
+
 ## Updates from the LAUNCH team
 
-- **Data:** automatic, as above.
+- **Data:** automatic, as above: within 5 minutes, or on the next request
+  when the pipeline sends a notification.
 - **Interface text:** new `messages/` files, built and translated by the
   LAUNCH pipeline. `messages/manifest.json` records which build they come
   from.
