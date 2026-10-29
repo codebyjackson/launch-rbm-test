@@ -10,8 +10,9 @@ import { mapInput } from "@/lib/map";
 import { mapCountries } from "@/lib/map-countries";
 import { ExampleDashboard } from "./ExampleDashboard";
 
-// Re-check the dataset every 10 minutes (lib/data.ts REVALIDATE).
-export const revalidate = 600;
+// Re-check the dataset every 5 minutes: lib/data.ts REVALIDATE, written out
+// because Next.js reads this value from the source.
+export const revalidate = 300;
 
 // Where this example app serves the dashboard's files, from public/. RBM
 // serves them where it likes and passes its own addresses.

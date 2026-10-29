@@ -46,6 +46,7 @@ feedback shows as not connected.
 | `styles/launch-dashboard.css` | The dashboard's styles. Import it once, for example in your layout. Every rule is scoped under `.launch-dashboard`, so it does not touch your page. (`styles/feedback.css` is imported by the feedback form itself.) |
 | `public/launch-map/` | The map's shapes (`world-shapes.json`) and MapLibre's worker (`maplibre-gl-worker.mjs`, served as JavaScript). |
 | `public/launch-icons/`, `public/assets/` | The WHO emblem and the Unitaid logo. |
+| `app/api/unitaid/data/route.ts` | The data route, `GET /api/unitaid/data` (see "Data route"). Copy it to the same path in your `app/`. |
 
 Imports use the `@/` alias for this repository's root (`tsconfig.json`
 `paths`). Map `@/` to wherever you put these folders, or adjust the imports.
@@ -71,7 +72,7 @@ import { mapInput } from "@/lib/map";
 import { mapCountries } from "@/lib/map-countries";
 import { provideMessages } from "@/lib/messages";
 
-export const revalidate = 600; // check for new data every 10 minutes
+export const revalidate = 300; // check for new data every 5 minutes (lib/data.ts REVALIDATE)
 
 export default async function LaunchPage({ params }: { params: Promise<{ locale: "en" | "fr" | "pt" }> }) {
   const { locale } = await params;
@@ -139,17 +140,59 @@ metadata.
 language from the published dataset:
 
 ```
-https://codebyjackson.github.io/launch-data-test/v1/dashboard.en.json
-https://codebyjackson.github.io/launch-data-test/v1/dashboard.fr.json
-https://codebyjackson.github.io/launch-data-test/v1/dashboard.pt.json
+https://quantum-sage-technologies.github.io/unitaid-launch-data/v1/dashboard.en.json
+https://quantum-sage-technologies.github.io/unitaid-launch-data/v1/dashboard.fr.json
+https://quantum-sage-technologies.github.io/unitaid-launch-data/v1/dashboard.pt.json
 ```
 
-It reads it on your server and checks for a new version every 10 minutes, so
+It reads it on your server and checks for a new version every 5 minutes, so
 an approved data change reaches the page with nobody involved, and visitors'
 browsers never contact the data host. If the host cannot be reached, Next.js
 keeps serving the last page it built. `LAUNCH_DATA_URL` changes the address
 (`{locale}` becomes the language). The format is described in the data
 repository's README and in `v1/schema.lang.json` there.
+
+**The data repository has moved** (found 29 Oct 2026): it is now
+`Quantum-Sage-Technologies/unitaid-launch-data`, and was
+`codebyjackson/launch-data-test`. GitHub Pages does not redirect: the old
+address (`https://codebyjackson.github.io/launch-data-test/…`) answers 404. If
+you set `LAUNCH_DATA_URL` to it, change it or remove it (the default above is
+the new address).
+
+## Data route
+
+`GET /api/unitaid/data?dataset=<name>` (`app/api/unitaid/data/route.ts`), the
+data route of your module spec (2a). It reads the dataset on your server
+through `getDashboard()` and returns it as JSON: the browser never contacts
+the data host.
+
+| | |
+|---|---|
+| `dataset` | `en`, `fr` or `pt`, the dashboard's languages (`lib/locales.ts`), exactly so (`pt-BR` is the page's language tag, not a dataset name). |
+| **200** | The dataset in that language: what `getDashboard()` returns, the shape the `Dashboard` takes (`Localized` in `lib/dataset.ts`: `data`, `sources`, `treatmentPolicy`, `dataset`). |
+| **400** | `dataset` missing or not one of the three: `{"error": "dataset is required"}` or `{"error": "unknown dataset"}`, each with `"datasets": ["en", "fr", "pt"]`. |
+| **502** | The source cannot be used: `{"error": "source unavailable", "kind": "unavailable"}` when it cannot be reached, answers an HTTP error or is not JSON; `"kind": "schema"` when it is in a format this version does not read (the page shows "being updated" then). The reason, with the source's address, goes to your server log (`[LAUNCH] data route: …`), not to the browser. |
+
+**Cache: 5 minutes, on your server** (`REVALIDATE` in `lib/data.ts`). The
+route itself runs on every request; the fetch inside it is kept in Next.js's
+server-side data cache, which the page shares, so the route and the page cost
+the data host at most one request per language every 5 minutes. After 5
+minutes the next request still gets the cached copy at once while Next.js
+fetches a new one behind it. Two consequences:
+
+- Once a language has been read, a data host that is down does not turn into
+  a 502: the route goes on answering 200 with the last good copy, as the page
+  keeps its last good page, and tries the host again on each later request.
+  A 502 means the host is down and this server has no good copy of that
+  file at all: `LAUNCH_DATA_URL` names an address it has never read, or
+  `.next/cache` was emptied.
+- The cache is kept on disk (`.next/cache`), so a restart of the same build
+  keeps it, and `next build` stores a copy of each file it reads.
+
+The responses carry no `Cache-Control` header: nothing asks a browser or a CDN
+to keep them. The example page does not call the route. It calls
+`getDashboard()` directly, as your page can: same data, same cache, no extra
+network hop, and `next build` has no running server to call.
 
 ## Updates from the LAUNCH team
 

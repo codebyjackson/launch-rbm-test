@@ -27,7 +27,8 @@ This file is updated in the same commit as each change it describes.
 3. **TypeScript 6.0.3, not 7.0.2.** Next.js 16.4's setup check asks for
    `typescript@^6.0.0`; 7.0 is the native rewrite.
 4. **Data from the published `dashboard.json`, read on the server every 10
-   minutes** (`lib/data.ts`; one file per language since 28 Oct, decision 54). This is the API RBM asked for (27 Oct): a data
+   minutes** (`lib/data.ts`; one file per language since 28 Oct, decision 54;
+   every 5 minutes since 29 Oct, decision 58). This is the API RBM asked for (27 Oct): a data
    change reaches the page with nobody involved, and visitors' browsers never
    contact the data host. Rejected: reading a copy beside the pages
    (`data/dashboard.json`, launch-development-test PR #127, from the Hosting Guide
@@ -35,8 +36,8 @@ This file is updated in the same commit as each change it describes.
    teams have since agreed that was a misunderstanding.
 5. **`getDashboard()` throws; it never returns a failure.** When a background
    refresh throws, Next.js keeps serving the last page it built. Returning a
-   failure instead would replace a good page with an error for 10 minutes each
-   time the data host blinks. The one exception is an unknown `schema_version`:
+   failure instead would replace a good page with an error for 10 minutes (5
+   since decision 58) each time the data host blinks. The one exception is an unknown `schema_version`:
    the page says "being updated", as the static pages do, because that does not
    pass by itself.
 6. **`localize()` returns the static pages' four globals, under camelCase
@@ -676,8 +677,86 @@ This file is updated in the same commit as each change it describes.
     in Brazilian (the proof that the port matches the pages would then rest
     on the port's own output); keeping European dates and numbers with
     Brazilian words.
+58. **The data route, `GET /api/unitaid/data?dataset=<name>`, and a
+    5-minute cache** (29 Oct, RBM/UNOPS module spec 2a: "reads the external
+    source, keeps a short server-side cache (default 5 minutes) and returns
+    the data as JSON"; 200, 400 unknown name, 502 source unavailable).
+    `app/api/unitaid/data/route.ts` is a thin wrapper over `getDashboard()`;
+    the example page still calls `getDashboard()` itself. Rejected: the page
+    fetching its own route (an extra network hop, and `next build` has no
+    server running to answer it).
+    - **Dataset names are the dashboard's languages**, `LOCALES`: `en`, `fr`,
+      `pt`, exactly (`pt-BR`, `es`, `EN` and an empty name are 400). An
+      assumption: the spec does not list names. Asked of RBM, below.
+    - **The 200 body is what `getDashboard()` returns** (`Localized`), not
+      the published file as it is. It is the shape the components take, so a
+      page that reads the route hands it to `Dashboard` unchanged and gets
+      what the golden tests prove; and the route must read the file anyway
+      to answer 502 for a schema it does not know. Rejected: the published
+      file as is (its format is the data repository's documented one, the
+      one argument for it, but every reader would then have to run
+      `datasetFrom()` itself, and the route would pass on a file it had not
+      checked).
+    - **502 for both `DatasetError` kinds**, body `{"error": "source
+      unavailable", "kind": "unavailable" | "schema"}`: the kind lets a page
+      say "being updated" for a schema, as ours does. The reason, with the
+      source's address, goes to the server log only (`[LAUNCH] data route:
+      …`): `LAUNCH_DATA_URL` may name a host the public should not see. Any
+      other error is not caught (Next.js answers 500): a fault in this code
+      is not the source's. Found while checking that: below.
+    - **5 minutes:** `REVALIDATE` 300 (was 600) and the page's `revalidate`
+      300, which Next.js reads from the source, so it is written out;
+      `tests/data-route.test.ts` checks the two agree. The bundled Next.js
+      16.4.3 docs (`01-getting-started/15-route-handlers.md`,
+      `02-guides/caching-without-cache-components.md`, `04-functions/fetch.md`):
+      a route handler's GET is not cached by default, but a `fetch` with
+      `next.revalidate` is kept in the server's persistent data cache, keyed
+      by address and options, so the route and the page share one copy.
+      Measured on `next start` against a local host that counts requests
+      (`LAUNCH_DATA_URL=http://127.0.0.1:3130/dashboard.{locale}.json`):
+      `en` three times and `fr` twice cost 1 request each; the page's
+      background regeneration, once its 300 s were up, took `en` from that
+      copy (0 requests, and the local host's marker on the page); with the
+      host answering 500, the cached `en` stayed 200 with 0 requests and the
+      never-read `pt` was 502 each time (1 request each: a failure is not
+      cached); past 300 s with the host still down, `en` stayed 200 with the
+      old copy and each request tried the host once behind it (3 requests
+      for 3 calls, none of them logged); host back, 1 request, then 0. A
+      restart of the same build kept the cache (`.next/cache/fetch-cache`,
+      on disk; `next build` writes one entry per language, revalidate 300):
+      with the host down, `en` 200 with 0 requests, `fr` (stale) 200, `pt`
+      502. A new server on the old address (404) or a closed port: 502 for
+      all three, and the page still served from its build. So a 502 needs
+      both a host that is down and a server that never held that file. The
+      build's manifest gives `/en`, `/fr`, `/pt` 300 s, and the page answers
+      `Cache-Control: s-maxage=300`; the route sends no `Cache-Control`.
+    - **No setting for the 5 minutes.** Rejected `LAUNCH_DATA_REVALIDATE`:
+      the page's `revalidate` must stay a literal, so the page's interval and
+      the setting could differ without anyone noticing; a 0 or a typo would
+      quietly switch off the cache the spec asks for, so it would need
+      parsing and a floor; and nobody has asked for another value. Asked of
+      RBM, below.
+    - **The data repository has moved** (found 29 Oct): now
+      `Quantum-Sage-Technologies/unitaid-launch-data`. The old Pages address
+      answers 404 for all five files, with no redirect; the new one 200
+      (`dashboard.json`, the three language files, `schema.lang.json`).
+      `lib/data.ts`, `.env.example` (now the `{locale}` form, as
+      `lib/data.ts`; it still named the combined file) and `README.md`
+      changed; history below keeps the old name.
 
 ## Deferred, and found on the way
+
+- **29 Oct, found with the data route (decision 58):**
+  - A file that says `schema_version: 1` but has no `data`, or no
+    `data.sources`, throws a `TypeError` in `lib/dataset.ts` `shape()`, not
+    a `DatasetError` (checked: "Cannot read properties of undefined"). The
+    route answers 500, not 502, and the page shows the error page, not
+    "being updated". The fix belongs in `shape()` (check, then throw
+    `DatasetError("schema")`) and changes what the page shows; not done.
+  - When a cached copy is past its 5 minutes and the host fails, Next.js's
+    background fetch fails silently: nothing reaches the server log, and
+    the route and page keep serving the old copy. An outage is visible only
+    for a language with no copy (the route's 502 is logged).
 
 - **28 Oct: the static pages are gone (decision 56), so the paragraph below
   is history.** Merging `main` into this branch now gives modify/delete
@@ -699,7 +778,8 @@ This file is updated in the same commit as each change it describes.
   message files exist (step 2). Done: the frame's `Banner`, in the page's
   language (decision 50).
 - Next.js caches fetched responses of up to 2 MB. `dashboard.json` is 267 KB
-  today; past 2 MB, every refresh would fetch it again.
+  today; past 2 MB, every refresh would fetch it again. The language files
+  the page fetches are 122 to 133 KB (29 Oct).
 - `tests/fixtures/dashboard.json` is the published file of 27 Oct 2026
   (pipeline commit `2d30ff3`). Refresh it when the data or schema changes in a
   way the tests should see.
@@ -1365,6 +1445,18 @@ ours to undo.
   150 ms between the two Escapes (sent at once, the second was sometimes lost:
   2 of 5 runs, a different language each time); then 87 of 87 three times.
   The published data is still European Portuguese until "Publish now" runs.
+- **29 Oct 2026, the data route** (branch `feat/data-route`, from
+  `feat/react-port` `408ed48`; decision 58): `app/api/unitaid/data/route.ts`
+  (new), `lib/data.ts`, `app/[locale]/page.tsx`, `tests/data-route.test.ts`
+  (new, 17 tests), `.env.example`, `README.md` ("Data route", the new
+  address), this file. vitest 305 of 305 in 16 files (288 before); `tsc
+  --noEmit` clean; `next build` passes against the new address (`/en`,
+  `/fr`, `/pt` pre-built, revalidate 300; the route dynamic); smoke test
+  `SMOKE_LOCALES=en,fr,pt` 87 of 87 on the first run. curl on `next start`:
+  `?dataset=en`, `fr`, `pt` 200 (77,741, 88,540, 85,251 bytes); `xx`,
+  `pt-BR`, `es` and no `dataset` 400. Each new test was seen failing when
+  the code it covers was broken on purpose (502 → 503, the name check
+  removed, the page's 300 → 600). No NUL bytes. Not pushed.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the
@@ -1372,3 +1464,7 @@ ours to undo.
 - **Questions for RBM, added:** which library is behind `i18n.ts` (placeholder
   form `{name}` or `{{name}}`); and, if their own Next.js is on 16.x, that it
   is 16.4.1 or later (decision 2).
+- **Questions for RBM, from the data route (decision 58):** are the dataset
+  names `en`, `fr`, `pt` what the module should take (the spec names none;
+  `pt-BR` is refused)? Should the 5 minutes be a setting, or is the default
+  enough?
