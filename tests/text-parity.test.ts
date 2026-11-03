@@ -48,10 +48,6 @@ const CHANGED: Record<Locale, { [areaPath: string]: [today: string, shipped: str
   // pathwayText.nodeDelayed: the pathway's per-step delayed count, for screen
   // readers; singular, which is wrong for two or more (for the translation
   // reviewer). Not rendered while DISPLAY.showLate is off.
-  // mapText.mixTitle: the map overview's heading, reworded on the page on
-  // 3 Nov 2026; the message has no translation yet, so the files ship the
-  // English until the translate bot runs (messages/manifest.json
-  // "untranslated"). Delete both entries then.
   // Portuguese, ten messages with a {placeholder} whose words differ from
   // the Brazilian page's: the page joins a translated fragment and the
   // value ("Os registros por país …: ASPY", "{name} Está em fase …", a
@@ -65,11 +61,9 @@ const CHANGED: Record<Locale, { [areaPath: string]: [today: string, shipped: str
   // ef0bd8c, so their entries went.)
   fr: {
     "pathwayText.nodeDelayed": [", {n} delayed", ", {n} retardé"],
-    "mapText.mixTitle": ["Étapes d’accès · {name}", "Access stages · {name}"],
   },
   pt: {
     "pathwayText.nodeDelayed": [", {n} delayed", ", {n} atrasado"],
-    "mapText.mixTitle": ["Etapas de acesso · {name}", "Access stages · {name}"],
     "frameText.footer.verifiedFor": ["Os registros por país foram verificados para:", "Os registros de país foram verificados para:"],
     "frameText.footer.notVerifiedFor": [
       "As etapas de verificação de cada país ainda não foram realizadas para:",

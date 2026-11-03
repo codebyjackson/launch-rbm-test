@@ -891,9 +891,12 @@ This file is updated in the same commit as each change it describes.
       `.det-snote`.
     - **Messages** from launch-development-test `feat/rbm-messages-tracker`
       `1c1da8c` (its decision 15), copied with `copy-rbm-messages.js`,
-      `--allow-stale`: `manifest.json` lists `map.panel.stageMixTitle` as
-      English in fr and pt ("Access stages · {medicine}") until the translate
-      bot runs after that branch is merged. 318 messages (313 before).
+      first with `--allow-stale` (`map.panel.stageMixTitle` had no
+      translation); then recopied from `aabc497`, where the page's own
+      reviewed translation was filed under the message's English (fr
+      "Étapes d’accès · {medicine}", pt "Etapas de acesso · {medicine}"),
+      so nothing ships in English (`untranslated` empty). 318 messages (313
+      before).
     - Rejected: keeping the checkboxes beside the views (the page has none);
       a `level` argument to `listTip` (the tooltip no longer depends on the
       fill); a second copy of `countryStages` in `lib/map.ts`.
@@ -943,8 +946,7 @@ This file is updated in the same commit as each change it describes.
       message build's decision 11), and the Brazilian retranslation of 28 Oct
       gave them different words. Hidden until now: both sides were handed the
       European words. The tables keep the page's words; `text-parity`'s
-      `CHANGED` lists the ten (and `mapText.mixTitle` in fr and pt, English
-      until the bot). Which wording is right is for the Portuguese reviewer;
+      `CHANGED` lists the ten. Which wording is right is for the Portuguese reviewer;
       the port shows the message files'. Two of them are visible on 10 Nov
       (`disclaimer.countriesVerified`, `countriesNotVerified`), the step
       panel's label and the pathway's screen-reader label too.
