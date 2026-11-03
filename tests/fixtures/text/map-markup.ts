@@ -1,5 +1,5 @@
 // The map section's text that today's pages carry in their static markup
-// (#mapsec in {en,fr,pt}/index.html at launch-rbm-test ef0bd8c), not in their
+// (#mapsec in {en,fr,pt}/index.html at launch-rbm-test 2f3d72c), not in their
 // script. tests/golden-map/translate.ts builds the French and Portuguese
 // MapText from the script's strings alone, so it leaves these in English,
 // while the pages show them translated (the golden test compares only what

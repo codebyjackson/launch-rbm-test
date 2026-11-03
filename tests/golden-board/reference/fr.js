@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-board.test.ts and tests/markup-board.test.ts:
 // the static page's own board code, frozen. Source: launch-rbm-test commit
-// ef0bd8c: first assets/journey-icons/icons-solid.js whole, then from fr/index.html, the
+// 2f3d72c: first assets/journey-icons/icons-solid.js whole, then from fr/index.html, the
 // <script type="text/x-launch-app"> block, every top-level declaration the
 // tests call and every one those read, and the statements that build the
 // board, copied verbatim with the comments above them, in page order; each

@@ -1,6 +1,6 @@
 // The golden test for lib/board.ts: the board's pure rules against the static
 // pages' own code, frozen in tests/golden-board/reference/{en,fr,pt}.js by
-// tests/golden-board/extract.mjs (launch-rbm-test ef0bd8c).
+// tests/golden-board/extract.mjs (launch-rbm-test 2f3d72c).
 //
 // Where the page kept a rule inside its markup (the timeline's layout inside
 // journeyTime, the procurement card's rules inside the row loop), the old

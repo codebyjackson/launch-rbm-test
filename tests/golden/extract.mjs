@@ -18,7 +18,7 @@ import * as acorn from "acorn";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const OUT = fileURLToPath(new URL("./reference/", import.meta.url));
-const COMMIT = "ef0bd8c";
+const COMMIT = "2f3d72c";
 const LOCALES = ["en", "fr", "pt"];
 
 // The functions the golden test calls, and every top-level name they read.

@@ -1752,6 +1752,24 @@ ours to undo.
   one, with 20 register-confirmed countries for DHA–PPQ and 14 for ASPY, is
   not published): when it is, refresh them and re-run; every comparison
   feeds both sides the same file, so only the counts change.
+  **Then, the same evening: pins on the real pages.** PR #34 here merged the
+  pages built from launch-development-test `e3c7832` (after #135, #136,
+  #139) with the data published as launch-data-test `3a88ec8`, as `main`
+  `2f3d72c`. Every pin moved from `ef0bd8c` to `2f3d72c` (extractors,
+  harnesses, `build-map-assets.mjs`, the references' headers); the
+  re-extracted references differ from `ef0bd8c`'s only in the commit named
+  in their header line, so the real pages are the ones the port was checked
+  against. `tests/fixtures/dashboard{,.en,.fr,.pt}.json` are now the files
+  published as `3a88ec8` (DHA–PPQ 20 / 11 / 5, ASPY 14 / 9 / 6). Messages
+  from launch-development-test `main` `e3c7832` (PR #139; `map.panel.
+  stageMixTitle` translated from the page's own reviewed words, so the
+  text-parity entry for it went). vitest 357 of 357 in 17 files; `tsc
+  --noEmit` clean. Checked in Chrome at 1440 and 390 px against a local copy
+  of the new data (`next dev`, `LAUNCH_DATA_URL`): every map view's counts
+  and note, the tooltips and country pages (Ghana, Nigeria), Reset, the
+  Country access cards, the Market / Country Access columns, the timelines
+  (ASPY since 2013 and 2018; DHA–PPQ 2010), French; no page errors. Not run:
+  a real iPhone or Safari. The scratch branch is no longer needed.
   Later the same day: six planted bugs, each caught (`countryStages` not
   reading guidelines sources: golden-pathway and markup-pathway, 36 tests
   fail; `startedYear` placing the current gate: golden-board and

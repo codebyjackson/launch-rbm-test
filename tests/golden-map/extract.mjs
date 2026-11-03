@@ -26,7 +26,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "../..");
 const OUT = join(HERE, "reference");
 const LANGS = ["en", "fr", "pt"];
-const COMMIT = "ef0bd8c";
+const COMMIT = "2f3d72c";
 const SOURCE = `launch-rbm-test commit ${COMMIT}`;
 
 // The top-level names the map block reads, besides browser globals. The

@@ -55,10 +55,10 @@ const CHANGED: Record<Locale, { [areaPath: string]: [today: string, shipped: str
   // translation, filed under its own English since 28 Oct (the message
   // build's decision 11), and the Brazilian retranslation of that day gave
   // the two different words. Seen only once the tests compared the
-  // Brazilian pages (ef0bd8c); until then they handed both sides the
+  // Brazilian pages (2f3d72c); until then they handed both sides the
   // European words. For the translation reviewer.
   // (The seven words of 28 Oct, translated by PR #129, are on the pages at
-  // ef0bd8c, so their entries went.)
+  // 2f3d72c, so their entries went.)
   fr: {
     "pathwayText.nodeDelayed": [", {n} delayed", ", {n} retardé"],
   },
@@ -163,8 +163,8 @@ for (const locale of LOCALES) {
     });
 
     it("the map's static-markup text is today's page's", () => {
-      // the page as frozen at ef0bd8c (built from launch-development-test b0f8675), from git
-      const page = execFileSync("git", ["show", `ef0bd8c:${locale}/index.html`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+      // the page as frozen at 2f3d72c (built from launch-development-test b0f8675), from git
+      const page = execFileSync("git", ["show", `2f3d72c:${locale}/index.html`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
       expect(readMapMarkup(page)).toStrictEqual(MAP_MARKUP[locale]);
       // the reader picks the fields it names: in English they are the old table's
       if (locale === "en") {
