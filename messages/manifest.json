@@ -1,6 +1,6 @@
 {
   "_note": "Written by scripts/copy-rbm-messages.js in launch-development-test with en.json, fr.json and pt.json. The next copy compares those files with \"files\" to tell a hand edit from its own last copy. Do not edit.",
-  "built_from": "aabc49753de88ce813085704a49438e46b9f6e05",
+  "built_from": "e3c7832756c6b988547e5c3d65afa22e2164f5c5",
   "clean": true,
   "allow_stale": false,
   "untranslated": {
@@ -8,8 +8,8 @@
     "pt": []
   },
   "files": {
-    "en.json": "c7242fdaffd45b9c8dcb4454938b6188b1a9079ea58878ecdfe27ea9ab9bf33e",
-    "fr.json": "a739762485ebd1513622f633b7ce173d02595b742ec4738622ce439bb0099612",
-    "pt.json": "db4909babe322f62f21a89ae57fbf6ecf62e73c155b47ec2456bacbb75bdd785"
+    "en.json": "d61b1cdf22c78cbdb8a46d17a80373239d92514570c8a3bc90982ae471bd1e91",
+    "fr.json": "591ae34ae1d1666f92ab8fb9f49476cd7fefdc0a6b4b2dabf3cced15a93012d2",
+    "pt.json": "af63a20698f846e8f4f73cf3634188e0125b12874b3743c5cbd6201de509a974"
   }
 }
