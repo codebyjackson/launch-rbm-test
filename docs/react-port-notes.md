@@ -975,7 +975,12 @@ This file is updated in the same commit as each change it describes.
     header the service trusts only with the token.
   - **The 10 s timeout against the service's worst case** (above). Watch the
     service's logs once it runs on Supabase.
-  - **French and Portuguese** for the page wait for the translate bot.
+  - ~~**French and Portuguese** for the page wait for the translate bot.~~
+    Done 3 Nov. launch-development-test PR #137 merged, the bot translated the
+    12 texts (`1b5ae75`), and the messages were copied from there with nothing
+    left in English. The Portuguese title reads stiffly ("Cancelar inscrição
+    para receber atualizações do painel de controle LAUNCH?"); a reviewer may
+    want to reword it in `i18n/translations.json`.
   - **Does RBM's server allow outbound HTTPS** to the forms service?
     (Question 4 of the 3 Nov reply to RBM.) Without it, every form answers
     502.

@@ -1,41 +1,15 @@
 {
   "_note": "Written by scripts/copy-rbm-messages.js in launch-development-test with en.json, fr.json and pt.json. The next copy compares those files with \"files\" to tell a hand edit from its own last copy. Do not edit.",
-  "built_from": "cc3c69af7519c7c660149d638f5b0944d6e6f2f0",
+  "built_from": "1b5ae75ad7dd4c6fb894643a49d7f07c6f26e72b",
   "clean": true,
-  "allow_stale": true,
+  "allow_stale": false,
   "untranslated": {
-    "fr": [
-      "unsubscribe.title",
-      "unsubscribe.intro",
-      "unsubscribe.button",
-      "unsubscribe.sending",
-      "unsubscribe.doneTitle",
-      "unsubscribe.doneText",
-      "unsubscribe.doneAgain",
-      "unsubscribe.badLinkTitle",
-      "unsubscribe.badLinkText",
-      "unsubscribe.failedTitle",
-      "unsubscribe.failedText",
-      "unsubscribe.back"
-    ],
-    "pt": [
-      "unsubscribe.title",
-      "unsubscribe.intro",
-      "unsubscribe.button",
-      "unsubscribe.sending",
-      "unsubscribe.doneTitle",
-      "unsubscribe.doneText",
-      "unsubscribe.doneAgain",
-      "unsubscribe.badLinkTitle",
-      "unsubscribe.badLinkText",
-      "unsubscribe.failedTitle",
-      "unsubscribe.failedText",
-      "unsubscribe.back"
-    ]
+    "fr": [],
+    "pt": []
   },
   "files": {
     "en.json": "446d92f3d896d30eed12553b061027456ace3280b073bde5855e173c0e312a95",
-    "fr.json": "a8011d700368aca461f1b008dc8d2b7825aaa4b987d94c50e2f12f53751002c8",
-    "pt.json": "7175d98b59291ad2b84f137f2b576acb887357ce53bf164263ae3802918a237c"
+    "fr.json": "989d9ab60edb5c96a640368fe95f62932b705ea2969db7f3e570c24436488f73",
+    "pt.json": "79bc6545dca86da814939f403b60eee37a34647bc0d105bd86f5573cd90c67bb"
   }
 }
