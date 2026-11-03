@@ -12,7 +12,7 @@
 // useTipControls() to the areas that show hints. Showing a hint re-renders
 // only the Tip, never the area that asked, so the map can move it on every
 // mouse move.
-import { useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type Ref, type RefObject } from "react";
+import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import type { Product } from "@/lib/dataset";
 import { peekLineFor, type StageContext } from "@/lib/stages";
 import type { PathwayText } from "./text";
@@ -41,7 +41,7 @@ interface TipState {
  * The hint itself. Before anything is shown it is today's empty
  * <div id="tip" role="tooltip">, which the CSS keeps hidden.
  */
-export function Tip({ ref }: { ref?: Ref<TipControls> }) {
+export const Tip = forwardRef<TipControls>(function Tip(_props, ref) {
   const box = useRef<HTMLDivElement>(null);
   const [s, setS] = useState<TipState>({ content: null, anchor: null, shown: false, n: 0 });
 
@@ -93,13 +93,13 @@ export function Tip({ ref }: { ref?: Ref<TipControls> }) {
       {s.content}
     </div>
   );
-}
+});
 
 /**
  * The ref to give <Tip>, and controls that are safe to hand to any area: they
  * never change, and do nothing until the Tip is mounted.
  */
-export function useTipControls(): [RefObject<TipControls | null>, TipControls] {
+export function useTipControls(): [RefObject<TipControls>, TipControls] {
   const ref = useRef<TipControls>(null);
   const controls = useMemo<TipControls>(
     () => ({

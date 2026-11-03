@@ -1093,6 +1093,59 @@ This file is updated in the same commit as each change it describes.
         copied the new calls before the send had made them, so the test was
         wrong, not the code.
 
+62. **RBM's versions: Next.js 15.5.28, React 18.3.1, TypeScript 5.9.3,
+    Vitest 4.1.12, Node 20** (3 Nov; local branch `feat/rbm-versions`).
+    RBM confirmed (Antonio, 3 Nov) that the Global Malaria Dashboard runs
+    the sandbox's versions, Next 15.5, React 18.3 and Node 20, with an
+    upgrade "later this year", and approved maplibre-gl 6.14.0 and Vitest
+    ^4.1.12 for the module (rbm-module-unitaid PR #2, `6ca0e99`). The
+    versions are the ones that repository's `package-lock.json` installs,
+    pinned exactly, as before. The branch is `feat/tracker-feedback`
+    (`a0b66d6`) with `feat/forms-relay` (`c03823c`) merged in. Both had a
+    decision 60, so the forms' became 61. The messages are
+    `feat/tracker-feedback`'s, built from launch-development-test `e3c7832`,
+    which already holds the unsubscribe texts (the manifest's hashes match).
+    Every change is forced by the older versions:
+    - **`forwardRef`.** React 18 gives a function component a `ref` only
+      through `forwardRef`; React 19 passes it as a prop. `Tip`, `StatTip`
+      and `PathwayStrip` are wrapped. Left as props, React 18 would drop the
+      refs and the hints would never show (inferred, not run).
+    - **`RefObject<T>`.** React 18's `RefObject<T>` already allows `null`;
+      React 19's does not, hence the `RefObject<T | null>` written for it.
+      28 annotations in 7 files lose the `| null`: 24 of the 25 type errors.
+    - **`revalidateTag(tag)`.** Next.js 15 takes one argument and expires at
+      once: it runs the same code as `unstable_expireTag`
+      (`next/dist/server/web/spec-extension/revalidate.js`). Next 16 needs
+      `{ expire: 0 }` for that. Changed in `lib/data.ts`, and in two
+      expectations in `tests/notifications.test.ts`, which encoded Next 16's
+      call, not the behaviour. The 25th type error.
+    - **`tsconfig.json`:** `next build` sets `jsx` to `preserve` (Next 15
+      requires it; 16 used `react-jsx`).
+    - **Unchanged:** `after()` (Next 15.1 and later), `params` as a Promise
+      (15 and later), maplibre-gl 6.14.0, `server-only`.
+    - **Rejected:** staying on Next 16 and React 19 until RBM upgrades (the
+      module is built inside RBM's host, which runs 15.5 and 18.3); a ref
+      type that compiles on React 18 and 19 alike (a local
+      `{ current: T | null }`). It works, but it is not what React 18 code
+      looks like, and RBM's later upgrade can run React's own type codemod
+      (`types-react-codemod`), which turns `RefObject<T>` back into
+      `RefObject<T | null>`.
+    - **Checked, 3 Nov.** Before any change, on the combined branch at the
+      old versions (Node 22.12): `tsc --noEmit` clean, vitest 394 of 394. With
+      only the versions changed (Node 20.20.2): vitest 394 of 394, `tsc` 25
+      errors. After the fixes, on Node 20.20.2: `tsc` clean; vitest 394 of
+      394 in 19 files; `next build` passes, `/en`, `/fr`, `/pt` pre-built,
+      revalidating every 5 minutes; the smoke test (`SMOKE_LOCALES=en,fr,pt`
+      against `next start` on Node 20, the script itself on Node 22 for its
+      WebSocket) 87 of 87, the hints on hover and focus included, no
+      hydration warnings, no console errors, the map drawn.
+    - **`npm audit`:** 1 moderate (`next`) and 1 high (`postcss`), both
+      the PostCSS 8.4.31 that Next 15.5.28 carries: four advisories, XSS
+      in its stringify output and `.map` files read through
+      `sourceMappingURL`. RBM's own repository has the same copy under
+      `next`. The only fix npm offers is Next 16.4.4. PostCSS here reads
+      only `styles/*.css`, ours, so no reader's input reaches it.
+
 ## Deferred, and found on the way
 
 - **3 Nov, the forms' relays (decision 61).**
@@ -1956,6 +2009,14 @@ ours to undo.
   pt) and with dummy values (Subscribe present, Send connected; neither value
   in `.next/static` or the built pages). There is no lint script. The
   browser run, against the forms service on localhost, is a separate check.
+- **3 Nov 2026, RBM's versions** (decision 62). Local branch
+  `feat/rbm-versions` (worktree `launch-rbm-test-rbm-versions`):
+  `feat/tracker-feedback` with `feat/forms-relay` merged in, uncommitted,
+  not pushed. `tsc` clean, vitest 394 of 394, `next build` passes, smoke 87
+  of 87 in en, fr and pt, all on Node 20. Not done: the move into
+  rbm-module-unitaid (its folders, `UNITAID_` names, ESLint, Biome, the
+  contract check, the offline build with bundled data); a real iPhone or
+  Safari.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the

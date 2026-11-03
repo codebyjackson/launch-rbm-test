@@ -79,7 +79,7 @@ export function Footer({
   countryChecks: string;
   glossary: [term: string, definition: string][];
   /** the disclaimer element, so DashboardFrame can make it glow when the banner's link is followed */
-  disclaimerRef?: RefObject<HTMLDivElement | null>;
+  disclaimerRef?: RefObject<HTMLDivElement>;
 }) {
   const ownDisc = useRef<HTMLDivElement>(null);
   const disc = disclaimerRef ?? ownDisc;

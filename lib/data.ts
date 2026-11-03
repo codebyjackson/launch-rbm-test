@@ -59,8 +59,9 @@ export function getDashboard(locale: Locale): Promise<Localized> {
  * After a publish: reads the language's file from the host, past the cache,
  * and only when it can be used expires the cached copy and the pages built
  * from it, so the next request for either reads the file again. Expired, not
- * merely marked stale ({ expire: 0 }): with a stale window the next visitor
- * would still get the old copy. A file that cannot be used leaves the cache as
+ * merely marked stale: Next.js 15's revalidateTag expires at once (Next.js 16
+ * needs { expire: 0 } for that); with a stale window the next visitor would
+ * still get the old copy. A file that cannot be used leaves the cache as
  * it is, so the dashboard keeps its last good copy.
  *
  * Then, once the route has answered, the file is read into the cache again.
@@ -73,7 +74,7 @@ export function getDashboard(locale: Locale): Promise<Localized> {
  */
 export async function refreshDashboard(locale: Locale): Promise<void> {
   await load(locale, { cache: "no-store" });
-  revalidateTag(dataTag(locale), { expire: 0 });
+  revalidateTag(dataTag(locale));
   after(() =>
     getDashboard(locale).catch((e: Error) => {
       // the next request reads the file itself

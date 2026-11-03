@@ -12,7 +12,7 @@
 // tests/markup-pathway.test.ts compares the result with that markup in all
 // three languages. Its layout (side by side or stacked, the pair lifted onto
 // the other icons' line) is measured by <Pathway>, which renders this.
-import { Fragment, type Ref } from "react";
+import { Fragment, forwardRef } from "react";
 import type { Product, StageColumn } from "@/lib/dataset";
 import { PATHWAY_DISPLAY, lateAt, phaseColumns, stepNo, type PathwayDisplay } from "@/lib/pathway";
 import { phaseOf, yrsText, type StageContext } from "@/lib/stages";
@@ -32,19 +32,12 @@ export interface PathwayStripProps {
   /** a step's button was chosen */
   onToggle?: (i: number) => void;
   whoEmblemSrc?: string;
-  ref?: Ref<HTMLDivElement>;
 }
 
-export function PathwayStrip({
-  ctx,
-  products,
-  text,
-  display = PATHWAY_DISPLAY,
-  openStep = null,
-  onToggle,
-  whoEmblemSrc,
+export const PathwayStrip = forwardRef<HTMLDivElement, PathwayStripProps>(function PathwayStrip(
+  { ctx, products, text, display = PATHWAY_DISPLAY, openStep = null, onToggle, whoEmblemSrc },
   ref,
-}: PathwayStripProps) {
+) {
   const phases = pageText(ctx.locale).phases;
 
   const node = (i: number, stacked: boolean) => {
@@ -146,4 +139,4 @@ export function PathwayStrip({
       ))}
     </div>
   );
-}
+});

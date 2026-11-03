@@ -181,7 +181,7 @@ export function MapSection({ input, text, shapesUrl, workerUrl, tip }: MapSectio
 }
 
 export interface MapSectionViewProps {
-  rootRef?: RefObject<HTMLElement | null>;
+  rootRef?: RefObject<HTMLElement>;
   ctx: MapContext;
   st: MapState;
   q: string;

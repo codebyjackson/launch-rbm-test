@@ -17,7 +17,7 @@ import { fitTiers, forkGeometry, forkLift, type ForkGeometry, type JourneyLayout
  * estimate shows rather than a fit of the old layout. Without ResizeObserver
  * it fits only when the fonts arrive, as the page did.
  */
-export function useTimelineFit(ref: RefObject<HTMLDivElement | null>, layout: JourneyLayout): TierFit | null {
+export function useTimelineFit(ref: RefObject<HTMLDivElement>, layout: JourneyLayout): TierFit | null {
   const [fit, setFit] = useState<{ layout: JourneyLayout; fit: TierFit } | null>(null);
   const lastWidth = useRef(0);
 
@@ -75,7 +75,7 @@ export function useTimelineFit(ref: RefObject<HTMLDivElement | null>, layout: Jo
  * state; a pair not laid out keeps the strokes it had.
  */
 export function useStageForks(
-  ref: RefObject<HTMLDivElement | null>,
+  ref: RefObject<HTMLDivElement>,
   active: boolean,
   again: unknown,
 ): (ForkGeometry | null)[] {

@@ -23,18 +23,18 @@ import { fill } from "@/lib/strings";
 import type { FeedbackText } from "./text";
 
 interface DialogRefs {
-  dialog: RefObject<HTMLDialogElement | null>;
-  form: RefObject<HTMLFormElement | null>;
-  title: RefObject<HTMLHeadingElement | null>;
-  alert: RefObject<HTMLParagraphElement | null>;
-  type: RefObject<HTMLSelectElement | null>;
-  product: RefObject<HTMLSelectElement | null>;
-  message: RefObject<HTMLTextAreaElement | null>;
-  name: RefObject<HTMLInputElement | null>;
-  email: RefObject<HTMLInputElement | null>;
-  organisation: RefObject<HTMLInputElement | null>;
-  done: RefObject<HTMLDivElement | null>;
-  again: RefObject<HTMLButtonElement | null>;
+  dialog: RefObject<HTMLDialogElement>;
+  form: RefObject<HTMLFormElement>;
+  title: RefObject<HTMLHeadingElement>;
+  alert: RefObject<HTMLParagraphElement>;
+  type: RefObject<HTMLSelectElement>;
+  product: RefObject<HTMLSelectElement>;
+  message: RefObject<HTMLTextAreaElement>;
+  name: RefObject<HTMLInputElement>;
+  email: RefObject<HTMLInputElement>;
+  organisation: RefObject<HTMLInputElement>;
+  done: RefObject<HTMLDivElement>;
+  again: RefObject<HTMLButtonElement>;
 }
 
 /** What the dialog shows besides its fixed text. */
@@ -373,7 +373,7 @@ export function FeedbackForm({
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (busyNow.current) return;
-    const v = (r: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null>) => r.current?.value ?? "";
+    const v = (r: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => r.current?.value ?? "";
     const prepared = prepareFeedback(
       {
         type: v(refs.type),

@@ -34,14 +34,14 @@ export function subscribeMessage(
 }
 
 interface PanelRefs {
-  button: RefObject<HTMLButtonElement | null>;
-  panel: RefObject<HTMLElement | null>;
-  title: RefObject<HTMLHeadingElement | null>;
-  form: RefObject<HTMLFormElement | null>;
-  firstName: RefObject<HTMLInputElement | null>;
-  lastName: RefObject<HTMLInputElement | null>;
-  email: RefObject<HTMLInputElement | null>;
-  organisation: RefObject<HTMLInputElement | null>;
+  button: RefObject<HTMLButtonElement>;
+  panel: RefObject<HTMLElement>;
+  title: RefObject<HTMLHeadingElement>;
+  form: RefObject<HTMLFormElement>;
+  firstName: RefObject<HTMLInputElement>;
+  lastName: RefObject<HTMLInputElement>;
+  email: RefObject<HTMLInputElement>;
+  organisation: RefObject<HTMLInputElement>;
 }
 
 /**
@@ -222,7 +222,7 @@ export function Subscribe({
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (busyNow.current) return;
-    const value = (r: RefObject<HTMLInputElement | null>) => r.current?.value ?? "";
+    const value = (r: RefObject<HTMLInputElement>) => r.current?.value ?? "";
     const check = checkSubscribe({
       firstName: value(refs.firstName),
       lastName: value(refs.lastName),

@@ -89,7 +89,7 @@ describe("notifications: 202, accepted and refreshed", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(dataUrl("en"), { cache: "no-store" });
     expect(revalidateTag).toHaveBeenCalledTimes(1);
-    expect(revalidateTag).toHaveBeenCalledWith("launch-data-en", { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith("launch-data-en");
   });
 
   it("then, once it has answered, reads the file into the cache again, through getDashboard()", async () => {
@@ -113,7 +113,7 @@ describe("notifications: 202, accepted and refreshed", () => {
     it(`refreshes only the language named (${dataset})`, async () => {
       const res = await POST(post({ ...GOOD, data: { dataset } }));
       expect(res.status).toBe(202);
-      expect(revalidateTag).toHaveBeenCalledExactlyOnceWith(`launch-data-${dataset}`, { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledExactlyOnceWith(`launch-data-${dataset}`);
     });
   }
 

@@ -11,6 +11,7 @@
 // .info inside it works as before. An .info button carries its text in
 // data-tip.
 import {
+  forwardRef,
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
@@ -18,7 +19,6 @@ import {
   useRef,
   useState,
   type DOMAttributes,
-  type Ref,
   type RefObject,
 } from "react";
 
@@ -36,7 +36,7 @@ interface StatTipState {
 }
 
 /** The hint itself: today's <div class="stat-tip" role="tooltip" hidden>. */
-export function StatTip({ ref }: { ref?: Ref<StatTipControls> }) {
+export const StatTip = forwardRef<StatTipControls>(function StatTip(_props, ref) {
   const box = useRef<HTMLDivElement>(null);
   const [s, setS] = useState<StatTipState>({ text: "", rect: null, shown: false, n: 0 });
 
@@ -83,10 +83,10 @@ export function StatTip({ ref }: { ref?: Ref<StatTipControls> }) {
       {s.text}
     </div>
   );
-}
+});
 
 /** The ref to give <StatTip>, and controls that never change. */
-export function useStatTipControls(): [RefObject<StatTipControls | null>, StatTipControls] {
+export function useStatTipControls(): [RefObject<StatTipControls>, StatTipControls] {
   const ref = useRef<StatTipControls>(null);
   const controls = useMemo<StatTipControls>(
     () => ({ show: (b) => ref.current?.show(b), hide: () => ref.current?.hide() }),
