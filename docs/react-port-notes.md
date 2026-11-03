@@ -1750,6 +1750,22 @@ ours to undo.
   one, with 20 register-confirmed countries for DHA–PPQ and 14 for ASPY, is
   not published): when it is, refresh them and re-run; every comparison
   feeds both sides the same file, so only the counts change.
+  Later the same day: six planted bugs, each caught (`countryStages` not
+  reading guidelines sources: golden-pathway and markup-pathway, 36 tests
+  fail; `startedYear` placing the current gate: golden-board and
+  markup-board, 39; Country Access "Not yet reached" without its `none`
+  tone: markup-board, 21; the keyboard-list tooltip following the view, the
+  country page's pill shown at No data, the legend hiding No data:
+  golden-map, 3 each, one per language). `next build` against the new
+  dataset, built locally and not published (served at
+  `LAUNCH_DATA_URL=http://127.0.0.1:3125/dashboard.{locale}.json`): passes,
+  `/en`, `/fr`, `/pt` pre-built; `/en` opens on ASPY's Registered view, 14
+  countries, the Country access cards read 14 and 20 confirmed in national
+  registers, "since 2013" and "since 2018" on ASPY's timeline, three radio
+  buttons, the new disclaimer sentence; `/fr` and `/pt` show "Access stages
+  · ASPY" in English (above). Pages served, not opened in a browser. Data
+  text the Brazilian pages do not control: the preview dataset's pt still
+  writes "Vietname" in two findings.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the
