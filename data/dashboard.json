@@ -1,23 +1,23 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-28T16:27:03.257Z",
-  "approved_at": "2026-10-28T16:27:03.257Z",
+  "generated_at": "2026-11-03T13:00:15.907Z",
+  "approved_at": "2026-11-03T13:00:15.908Z",
   "approved_by": "codebyjackson",
   "approval": {
     "trigger": "manual",
     "issue": null,
     "pr": null,
-    "reason": "Portuguese is now Brazilian (pt-BR), as RBM's site"
+    "reason": "Partner feedback: map shows one access stage at a time; registrations from 14 more national registers (DHA–PPQ 20, ASPY 14); dated timeline; STOP-AMDR; Market/Country Access; WHO GDG wording"
   },
-  "pipeline_commit": "11681f2c5ed00e0882981964f5a59657610e9504",
-  "content_hash": "e200dc0c1ab440f99bcc88210b3eeb8ff445d87a7fec91e5ba46c7c434c54159",
+  "pipeline_commit": "e3c7832756c6b988547e5c3d65afa22e2164f5c5",
+  "content_hash": "9f9ac9c488e91b50a3cc36e458e9fd50a5bf2bec9126db63d171428525eb99f3",
   "locales": [
     "en",
     "fr",
     "pt"
   ],
   "data_status": "draft",
-  "last_updated": "2026-10-19",
+  "last_updated": "2026-11-03",
   "source_coverage": [
     {
       "id": "bmjgh-rwanda-mft",
@@ -67,6 +67,16 @@
         "pt": "ClinicalTrials.gov: KALUMA ensaio"
       },
       "url": "https://clinicaltrials.gov/study/NCT05842954",
+      "collection": "static"
+    },
+    {
+      "id": "pierre-fabre-eurartesim-2015",
+      "label": {
+        "en": "Sigma-Tau and Pierre Fabre: Eurartesim licence, Jul 2015",
+        "fr": "Sigma-Tau et Pierre Fabre : Licence Eurartesim, juillet 2015",
+        "pt": "Sigma-Tau e Pierre Fabre: Eurartesim licença, julho de 2015"
+      },
+      "url": "https://www.biospace.com/b-sigma-tau-b-of-alfasigma-group-grants-pierre-fabre-exclusive-license-in-32-african-countries-for-its-antimalarial-eurartesim",
       "collection": "static"
     },
     {
@@ -200,6 +210,26 @@
       "collection": "static"
     },
     {
+      "id": "mmv-shinpoong-pyramax-2022",
+      "label": {
+        "en": "MMV and Shin Poong: Pyramax registrations, Nov 2022",
+        "fr": "MMV et Shin Poong : Pyramax inscriptions, novembre 2022",
+        "pt": "MMV e Shin Poong: Pyramax inscrições, novembro de 2022"
+      },
+      "url": "https://www.mmv.org/sites/default/files/content/document/Pyramax%20Press%20release%20EN.pdf",
+      "collection": "static"
+    },
+    {
+      "id": "bmjopen-pyrapreg-2023",
+      "label": {
+        "en": "BMJ Open: PYRAPREG trial protocol, 2023",
+        "fr": "BMJ Open : Protocole de l’essai PYRAPREG, 2023",
+        "pt": "BMJ Open: Protocolo do ensaio clínico PYRAPREG, 2023"
+      },
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10565244/",
+      "collection": "static"
+    },
+    {
       "id": "mmv-pyramax",
       "label": {
         "en": "MMV: Pyramax (ASPY) product page",
@@ -327,6 +357,166 @@
         "pt": "Lista de Medicamentos Essenciais da OMS"
       },
       "url": "https://www.who.int/publications/i/item/WHO-MHP-HPS-EML-2023.02",
+      "collection": "manual"
+    },
+    {
+      "id": "who-handbook-guidelines",
+      "label": {
+        "en": "WHO handbook for guideline development, 2014",
+        "fr": "Manuel de l'OMS pour l'élaboration de lignes directrices, 2014",
+        "pt": "Manual da OMS para o desenvolvimento de diretrizes, 2014"
+      },
+      "url": "https://iris.who.int/server/api/core/bitstreams/809b813f-fcfe-451e-b242-d914d580c111/content",
+      "collection": "static"
+    },
+    {
+      "id": "unitaid-stop-amdr",
+      "label": {
+        "en": "Unitaid: STOP-AMDR project",
+        "fr": "Unitaid : Projet STOP-AMDR",
+        "pt": "Unitaid: Projeto STOP-AMDR"
+      },
+      "url": "https://unitaid.org/project/stop-amdr/",
+      "collection": "static"
+    },
+    {
+      "id": "ppb-kenya",
+      "label": {
+        "en": "Kenya: Pharmacy and Poisons Board register",
+        "fr": "Kenya : Registre du Conseil de la pharmacie et des poisons",
+        "pt": "Quênia: Registro do Conselho de Farmácia e Venenos"
+      },
+      "url": "https://products.pharmacyboardkenya.org/ppb_admin/pages/public_view_retention_products.php",
+      "collection": "manual"
+    },
+    {
+      "id": "efda-ethiopia",
+      "label": {
+        "en": "Ethiopia: EFDA register (eRIS)",
+        "fr": "Ethiopie : registre EFDA (eRIS)",
+        "pt": "Etiópia: registo EFDA (eRIS)"
+      },
+      "url": "https://eris.efda.gov.et/products",
+      "collection": "manual"
+    },
+    {
+      "id": "nmrc-namibia",
+      "label": {
+        "en": "Namibia: NMRC medicines register, Aug 2024",
+        "fr": "Namibie : Registre des médicaments du NMRC, août 2024",
+        "pt": "Namíbia: Registro de medicamentos do NMRC, agosto de 2024"
+      },
+      "url": "https://nmrc.gov.na/documents/4070511/5024444/NAMIBIA+HUMAN+MEDICINES+REGISTER_AUGUST+2024.pdf/59950de0-dc99-73a4-e0b5-4e08465ff3c3?t=1729178490320",
+      "collection": "manual"
+    },
+    {
+      "id": "dpml-cameroon",
+      "label": {
+        "en": "Cameroon: DPML register of approved medicines",
+        "fr": "Cameroun : Registre DPML des médicaments approuvés",
+        "pt": "Camarões: Registro DPML de medicamentos aprovados"
+      },
+      "url": "https://dpml.cm/repertoireDesAmm/index.php",
+      "collection": "manual"
+    },
+    {
+      "id": "arp-senegal",
+      "label": {
+        "en": "Senegal: ARP list of authorised medicines",
+        "fr": "Sénégal : Liste des médicaments autorisés par l'ARP",
+        "pt": "Senegal: Lista ARP de medicamentos autorizados"
+      },
+      "url": "https://arp.sn/bases-de-donnees/medicaments-autorises",
+      "collection": "manual"
+    },
+    {
+      "id": "fasofda-burkina",
+      "label": {
+        "en": "Burkina Faso: Faso FDA product list",
+        "fr": "Burkina Faso : Liste des produits de la FDA",
+        "pt": "Burkina Faso: Lista de produtos da FDA de Faso"
+      },
+      "url": "https://fasofda.bf/fr/appGestion/listeDonnees/Nomenclature%20-%20Produit%20de%20sant%C3%A9/",
+      "collection": "manual"
+    },
+    {
+      "id": "anarme-mozambique",
+      "label": {
+        "en": "Mozambique: ANARME medicines database",
+        "fr": "Mozambique : Base de données des médicaments ANARME",
+        "pt": "Moçambique: Base de dados de medicamentos da ANARME"
+      },
+      "url": "https://anarme.gov.mz/medicamentos-e-vacinas/",
+      "collection": "manual"
+    },
+    {
+      "id": "mca-gambia",
+      "label": {
+        "en": "The Gambia: MCA list of registered products",
+        "fr": "Gambie : Liste des produits enregistrés auprès du MCA",
+        "pt": "Gâmbia: Lista de produtos registrados pela MCA"
+      },
+      "url": "https://www.mca.gm/registered-products/",
+      "collection": "manual"
+    },
+    {
+      "id": "abmed-benin",
+      "label": {
+        "en": "Benin: ABMed list of medicines",
+        "fr": "Bénin : Liste des médicaments de l'ABMed",
+        "pt": "Benin: Lista de medicamentos da ABMed"
+      },
+      "url": "https://abmed.bj/medicaments",
+      "collection": "manual"
+    },
+    {
+      "id": "airp-cotedivoire",
+      "label": {
+        "en": "Côte d'Ivoire: AIRP list of registered medicines",
+        "fr": "Côte d'Ivoire : Liste des médicaments enregistrés de l'AIRP",
+        "pt": "Costa do Marfim: Lista AIRP de medicamentos registrados"
+      },
+      "url": "https://airp.ci/liste-des-medicaments-enregistres",
+      "collection": "manual"
+    },
+    {
+      "id": "acorep-drc",
+      "label": {
+        "en": "DR Congo: ACOREP register of marketing authorisations",
+        "fr": "République démocratique du Congo : Registre ACOREP des autorisations de mise sur le marché",
+        "pt": "República Democrática do Congo: Registro ACORP de autorizações de comercialização"
+      },
+      "url": "https://acorep.gouv.cd/repectoire-amm/",
+      "collection": "manual"
+    },
+    {
+      "id": "thai-fda",
+      "label": {
+        "en": "Thailand: Thai FDA drug product search",
+        "fr": "Thaïlande : Recherche de produits pharmaceutiques de l'Agence thaïlandaise des produits pharmaceutiques (FDA)",
+        "pt": "Tailândia: Busca de medicamentos pela FDA tailandesa"
+      },
+      "url": "https://pertento.fda.moph.go.th/FDA_SEARCH_DRUG/SEARCH_DRUG/FRM_SEARCH_DRUG.aspx",
+      "collection": "manual"
+    },
+    {
+      "id": "bpom-indonesia",
+      "label": {
+        "en": "Indonesia: BPOM product check",
+        "fr": "Indonésie : Contrôle des produits BPOM",
+        "pt": "Indonésia: Verificação de produtos pela BPOM"
+      },
+      "url": "https://cekbpom.pom.go.id/produk-obat",
+      "collection": "manual"
+    },
+    {
+      "id": "fda-myanmar",
+      "label": {
+        "en": "Myanmar: FDA renewal approval list, 2022",
+        "fr": "Myanmar : Liste des renouvellements d'approbation de la FDA, 2022",
+        "pt": "Myanmar: Lista de aprovações de renovação da FDA, 2022"
+      },
+      "url": "https://www.fda.gov.mm/?p=5449",
       "collection": "manual"
     },
     {
@@ -589,14 +779,14 @@
       },
       {
         "what": {
-          "en": "A WHO expert group weighs clinical evidence and decides whether the medicine is included in WHO guidelines for malaria.",
-          "fr": "Un groupe d'experts de l'OMS évalue les données cliniques et décide si le médicament doit être inclus dans les directives de l'OMS relatives au paludisme.",
-          "pt": "Um grupo de especialistas da OMS avalia as evidências clínicas e decide se o medicamento será incluído nas diretrizes da OMS para o tratamento da malária."
+          "en": "WHO's Guideline Development Group (GDG) for malaria reviews the graded evidence (GRADE) on an antimalarial medicine and other criteria, and agrees by consensus on the direction and strength of each recommendation in the WHO Guidelines for malaria.",
+          "fr": "Le Groupe d'élaboration des lignes directrices (GDG) de l'OMS pour le paludisme examine les preuves graduées (GRADE) sur un médicament antipaludique et d'autres critères, et s'accorde par consensus sur la direction et la force de chaque recommandation dans les lignes directrices de l'OMS pour le paludisme.",
+          "pt": "O Grupo de Desenvolvimento de Diretrizes (GDG) da OMS para malária analisa as evidências classificadas (GRADE) sobre um medicamento antimalárico e outros critérios, e chega a um consenso sobre a direção e a força de cada recomendação nas Diretrizes da OMS para malária."
         },
         "who": {
-          "en": "WHO Department of Malaria and Neglected Tropical Diseases (MNT) and its Guidelines Development Group",
-          "fr": "Département du paludisme et des maladies tropicales négligées (MNT) de l'OMS et son Groupe d'élaboration des lignes directrices",
-          "pt": "Departamento de Malária e Doenças Tropicais Negligenciadas (MNT) da OMS e seu Grupo de Desenvolvimento de Diretrizes"
+          "en": "WHO Department of Malaria and Neglected Tropical Diseases (MNT) and its Guideline Development Group (GDG)",
+          "fr": "Département du paludisme et des maladies tropicales négligées (MNT) de l'OMS et son Groupe d'élaboration des lignes directrices (GDG)",
+          "pt": "Departamento de Malária e Doenças Tropicais Negligenciadas (MNT) da OMS e seu Grupo de Desenvolvimento de Diretrizes (GDD)"
         },
         "stall": {
           "en": "The group meets on its own calendar, so the timing is hard to predict.",
@@ -604,16 +794,16 @@
           "pt": "O grupo se reúne de acordo com seu próprio calendário, então é difícil prever o horário."
         },
         "source": {
-          "en": "WHO Guidelines for malaria",
-          "fr": "Directives de l'OMS sur le paludisme",
-          "pt": "Diretrizes da OMS para a malária"
+          "en": "WHO Guidelines for malaria; WHO handbook for guideline development, 2nd ed. (2014), p. 130",
+          "fr": "Directives de l'OMS pour la lutte contre le paludisme ; Manuel de l'OMS pour l'élaboration de directives, 2e éd. (2014), p. 130",
+          "pt": "Diretrizes da OMS para a malária; Manual da OMS para o desenvolvimento de diretrizes, 2ª ed. (2014), p. 130"
         }
       },
       {
         "what": {
-          "en": "A separate WHO check of quality and manufacturing, including factory inspections. Prequalification supports eligibility for purchase under the quality assurance and procurement policies of UN agencies and major funders such as the Global Fund; specific policies and exceptions may differ. Manufacturers are invited to apply through a WHO Expression of Interest (EOI).",
-          "fr": "Un contrôle distinct de la qualité et de la fabrication, mené par l'OMS et comprenant des inspections d'usines, est requis. La préqualification permet de bénéficier des politiques d'assurance qualité et d'approvisionnement des agences des Nations Unies et des principaux bailleurs de fonds, tels que le Fonds mondial ; les politiques et exceptions spécifiques peuvent varier. Les fabricants sont invités à soumettre une manifestation d'intérêt (MI) auprès de l'OMS.",
-          "pt": "Uma verificação independente da OMS sobre a qualidade e a fabricação, incluindo inspeções nas fábricas. A pré-qualificação garante a elegibilidade para compras de acordo com as políticas de garantia de qualidade e aquisição das agências da ONU e dos principais financiadores, como o Fundo Global; políticas e exceções específicas podem variar. Os fabricantes são convidados a se inscrever por meio de uma Manifestação de Interesse (EOI) da OMS."
+          "en": "A separate WHO check of quality and manufacturing, including factory inspections. Prequalification supports eligibility for purchase under the quality assurance and procurement policies of UN agencies and major funders such as the Global Fund; specific policies and exceptions may differ. Manufacturers are invited to apply through a WHO Expression of Interest (EOI). This is the process for medicines; vector control products follow a different route.",
+          "fr": "Un contrôle distinct de la qualité et de la fabrication, incluant des inspections d'usines, est effectué par l'OMS. La préqualification permet de bénéficier des politiques d'assurance qualité et d'approvisionnement des agences des Nations Unies et des principaux bailleurs de fonds, tels que le Fonds mondial ; les politiques et exceptions spécifiques peuvent varier. Les fabricants sont invités à soumettre une manifestation d'intérêt (MI) de l'OMS. Cette procédure s'applique aux médicaments ; les produits de lutte antivectorielle suivent une procédure différente.",
+          "pt": "Uma verificação separada da OMS sobre qualidade e fabricação, incluindo inspeções de fábrica. A pré-qualificação garante a elegibilidade para compra de acordo com as políticas de garantia de qualidade e aquisição de agências da ONU e grandes financiadores, como o Fundo Global; políticas e exceções específicas podem variar. Os fabricantes são convidados a se inscrever por meio de uma Manifestação de Interesse (EOI) da OMS. Este é o processo para medicamentos; produtos para controle de vetores seguem um caminho diferente."
         },
         "who": {
           "en": "WHO Prequalification Team",
@@ -773,9 +963,9 @@
         "pt": "Medicamentos da UE para todos, anteriormente o procedimento do Artigo 58 — Parecer científico da EMA sobre medicamentos de alta prioridade destinados a mercados fora da UE."
       },
       "GDG": {
-        "en": "Guidelines Development Group — the WHO expert group that reviews evidence and formulates treatment recommendations.",
-        "fr": "Groupe d’élaboration des lignes directrices — le groupe d’experts de l’OMS qui examine les données probantes et formule des recommandations de traitement.",
-        "pt": "Grupo de Desenvolvimento de Diretrizes — o grupo de especialistas da OMS que analisa as evidências e formula recomendações de tratamento."
+        "en": "Guideline Development Group — the group WHO convenes to make the recommendations in a WHO guideline, such as the WHO Guidelines for malaria. It reviews the graded evidence (GRADE) and agrees by consensus on the direction and strength of each recommendation (WHO handbook for guideline development, 2nd ed., 2014).",
+        "fr": "Groupe d’élaboration des lignes directrices — Ce groupe réunit l’OMS pour formuler les recommandations contenues dans une ligne directrice de l’OMS, comme les Lignes directrices de l’OMS pour le paludisme. Il examine les données probantes graduées (GRADE) et se met d’accord par consensus sur l’orientation et la force de chaque recommandation (Manuel de l’OMS pour l’élaboration de lignes directrices, 2e édition, 2014).",
+        "pt": "Grupo de Desenvolvimento de Diretrizes — o grupo que a OMS convoca para elaborar as recomendações em uma diretriz da OMS, como as Diretrizes da OMS para a malária. O grupo revisa as evidências classificadas (GRADE) e chega a um consenso sobre a direção e a força de cada recomendação (Manual da OMS para o Desenvolvimento de Diretrizes, 2ª ed., 2014)."
       },
       "PQ": {
         "en": "WHO prequalification — the quality, safety and efficacy assessment whose outcome, a listing on the WHO prequalified-products list, supports eligibility under the quality assurance (QA) and procurement policies of UN agencies and major funders; specific policies and exceptions may differ.",
@@ -819,6 +1009,69 @@
       }
     },
     "changelog": [
+      {
+        "date": "2026-11-03",
+        "product": "ASPY, DHA–PPQ",
+        "plain": {
+          "en": "We checked the official medicine registers of 14 more countries. DHA–PPQ is now confirmed as registered in 20 countries and ASPY in 14. The map also shows Uganda and DR Congo, where the STOP-AMDR project plans to use these medicines.",
+          "fr": "Nous avons consulté les registres officiels des médicaments de 14 pays supplémentaires. Le DHA-PPQ est désormais confirmé comme étant enregistré dans 20 pays et l'ASPY dans 14. La carte indique également l'Ouganda et la République démocratique du Congo, où le projet STOP-AMDR prévoit d'utiliser ces médicaments.",
+          "pt": "Consultamos os registros oficiais de medicamentos de mais 14 países. O DHA-PPQ agora está confirmado como registrado em 20 países e o ASPY em 14. O mapa também mostra Uganda e a República Democrática do Congo, onde o projeto STOP-AMDR planeja utilizar esses medicamentos."
+        }
+      },
+      {
+        "date": "2026-11-03",
+        "product": "ASPY, DHA–PPQ",
+        "plain": {
+          "en": "The research sections for ASPY and DHA–PPQ now mention STOP-AMDR, a Unitaid-funded project in six African countries, and which of those countries have plans to use each medicine. The disclaimer and the procurement note now say more clearly that the figures are the best information available and that Global Fund orders are not all public purchases.",
+          "fr": "Les sections consacrées à la recherche sur l'ASPY et le DHA-PPQ mentionnent désormais STOP-AMDR, un projet financé Unitaid mené dans six pays africains, et précisent lesquels de ces pays prévoient d'utiliser chaque médicament. L'avertissement et la note relative aux achats indiquent plus clairement que les chiffres présentés constituent les meilleures informations disponibles et que les commandes du Fonds mondial ne correspondent pas toutes à des achats publics.",
+          "pt": "As seções de pesquisa para ASPY e DHA-PPQ agora mencionam o STOP-AMDR, um projeto financiado Unitaid em seis países africanos, e quais desses países têm planos de usar cada medicamento. O aviso legal e a nota de aquisição agora esclarecem que os números representam as melhores informações disponíveis e que nem todos os pedidos do Fundo Global são compras públicas."
+        }
+      },
+      {
+        "date": "2026-11-03",
+        "product": "All",
+        "plain": {
+          "en": "The medicines table now has separate Market Access and Country Access columns, so you can see which medicines have reached market access. We describe what WHO's Guideline Development Group does using WHO's own handbook, and say that the prequalification step described is the one for medicines.",
+          "fr": "Le tableau des médicaments comporte désormais des colonnes distinctes « Accès au marché » et « Accès par pays », permettant ainsi de voir quels médicaments ont obtenu l’accès au marché. Nous décrivons le travail du Groupe d’élaboration des lignes directrices de l’OMS en nous appuyant sur le manuel de l’OMS et précisons que l’étape de préqualification décrite concerne les médicaments.",
+          "pt": "A tabela de medicamentos agora possui colunas separadas para Acesso ao Mercado e Acesso ao País, permitindo visualizar quais medicamentos já obtiveram acesso ao mercado. Descrevemos o trabalho do Grupo de Desenvolvimento de Diretrizes da OMS utilizando o próprio manual da OMS e esclarecemos que a etapa de pré-qualificação descrita se aplica a medicamentos."
+        }
+      },
+      {
+        "date": "2026-11-03",
+        "product": "ASPY, DHA–PPQ",
+        "plain": {
+          "en": "The country access map now shows one stage at a time: choose Registered, In national guidelines or In MFT plans. Each view shows every country we have a source for at that stage, so a country can appear in more than one. This means the map and the text now give the same numbers: for example, DHA–PPQ is registered in 6 countries on the map, as the text says.",
+          "fr": "La carte d'accès par pays affiche désormais une étape à la fois : choisissez « Enregistré », « Conformément aux directives nationales » ou « Conformément aux plans MFT. Chaque vue présente tous les pays pour lesquels nous disposons d'une source à cette étape ; un pays peut donc apparaître dans plusieurs vues. Par conséquent, la carte et le texte indiquent désormais les mêmes chiffres : par exemple, DHA–PPQ est enregistré dans 6 pays sur la carte, comme indiqué dans le texte.",
+          "pt": "O mapa de acesso por país agora mostra uma etapa por vez: selecione Registrado, Em diretrizes nacionais ou Em planos MFT. Cada visualização mostra todos os países para os quais temos uma fonte naquela etapa, portanto, um país pode aparecer em mais de uma. Isso significa que o mapa e o texto agora mostram os mesmos números: por exemplo, DHA–PPQ está registrado em 6 países no mapa, como indica o texto."
+        }
+      },
+      {
+        "date": "2026-11-03",
+        "product": "ASPY, DHA–PPQ",
+        "plain": {
+          "en": "The timelines now show when ASPY and DHA–PPQ were first registered in a country (Viet Nam, 2013 and 2010), which was before WHO recommended ASPY and before DHA–PPQ was prequalified. ASPY's procurement since 2018 is now on its timeline too, and both medicines list their MFT pilots.",
+          "fr": "Les chronologies indiquent désormais les dates de premier enregistrement d'ASPY et de DHA-PPQ dans un pays (Vietnam, 2013 et 2010), soit avant la recommandation d'ASPY par l'OMS et avant la préqualification de DHA-PPQ. L'approvisionnement d'ASPY depuis 2018 figure également sur la chronologie, et les deux médicaments indiquent leurs essais pilotes (MFT).",
+          "pt": "As linhas do tempo agora mostram quando o ASPY e o DHA-PPQ foram registrados pela primeira vez em um país (Vietnã, 2013 e 2010), o que ocorreu antes da recomendação da OMS para o ASPY e antes da pré-qualificação do DHA-PPQ. A aquisição do ASPY desde 2018 também está incluída em sua linha do tempo, e ambos os medicamentos listam seus projetos-piloto MFT."
+        }
+      },
+      {
+        "date": "2026-11-03",
+        "product": "ASPY, DHA–PPQ",
+        "plain": {
+          "en": "For ASPY we now mention that its makers report it is registered in 29 countries, and what a 2023 trial paper says about where the tablets and granules are registered, and for DHA–PPQ that Pierre Fabre has had a licence to sell Eurartesim in 32 African countries since 2015. Both are the companies' own statements; the map still shows only countries we could check in an official register or publication.",
+          "fr": "Concernant l'ASPY, nous mentionnons désormais que son fabricant indique qu'il est enregistré dans 29 pays, et ce qu'un document d'essai de 2023 révèle sur les pays d'enregistrement des comprimés et des granulés. Quant au DHA-PPQ, nous précisons que Pierre Fabre dispose d'une licence pour commercialiser Eurartesim dans 32 pays africains depuis 2015. Ces informations proviennent des entreprises elles-mêmes ; la carte ne montre toujours que les pays que nous avons pu vérifier dans un registre ou une publication officielle.",
+          "pt": "Para o ASPY, mencionamos agora que seus fabricantes informam que ele está registrado em 29 países, e o que um estudo de 2023 diz sobre onde os comprimidos e grânulos estão registrados, e para o DHA-PPQ, que a Pierre Fabre possui licença para vender Eurartesim em 32 países africanos desde 2015. Ambas são declarações das próprias empresas; o mapa ainda mostra apenas os países que pudemos verificar em um registro ou publicação oficial."
+        }
+      },
+      {
+        "date": "2026-11-03",
+        "product": "All",
+        "plain": {
+          "en": "We now call the WHO group that recommends a medicine by its official name, the Guideline Development Group (GDG), and explain what it does for malaria medicines.",
+          "fr": "Nous appelons désormais le groupe de l'OMS qui recommande un médicament par son nom officiel, le Groupe d'élaboration des lignes directrices (GDG), et nous expliquons ce qu'il fait pour les médicaments contre le paludisme.",
+          "pt": "Agora nos referimos ao grupo da OMS que recomenda um medicamento pelo seu nome oficial, o Grupo de Desenvolvimento de Diretrizes (GDG), e explicamos o que ele faz em relação aos medicamentos contra a malária."
+        }
+      },
       {
         "date": "2026-10-19",
         "product": "All",
@@ -1983,9 +2236,9 @@
         "phase": "access",
         "currentStage": 5,
         "flag": {
-          "en": "Adoption is the current access barrier — strongly recommended by WHO since 2022 and on the country access map in 13 countries with a reliable source, but national guideline inclusion remains limited",
-          "fr": "L'adoption constitue actuellement le principal obstacle à l'accès : fortement recommandée par l'OMS depuis 2022 et figurant sur la carte d'accès nationale dans 13 pays disposant d'une source fiable, son intégration dans les recommandations nationales demeure toutefois limitée.",
-          "pt": "A adoção é a atual barreira de acesso — fortemente recomendada pela OMS desde 2022 e presente no mapa de acesso nacional em 13 países com fonte confiável, mas a inclusão nas diretrizes nacionais permanece limitada."
+          "en": "Adoption is the current access barrier — strongly recommended by WHO since 2022 and on the country access map in 19 countries with a reliable source, but national guideline inclusion remains limited",
+          "fr": "L'adoption constitue actuellement le principal obstacle à l'accès : fortement recommandée par l'OMS depuis 2022 et figurant sur la carte d'accès nationale dans 19 pays disposant d'une source fiable, son intégration dans les recommandations nationales demeure toutefois limitée.",
+          "pt": "A adoção é a atual barreira de acesso — fortemente recomendada pela OMS desde 2022 e presente no mapa de acesso nacional em 19 países com fonte confiável, mas a inclusão nas diretrizes nacionais permanece limitada."
         },
         "barrier": {
           "en": "National guideline inclusion is limited",
@@ -2112,14 +2365,14 @@
           {
             "status": "prog",
             "note": {
-              "en": "Confirmed in five national registers so far: Tanzania — 2 registrations (TMDA, issued 8 Mar 2022, Registered/Compliant); Nigeria — granules B4-9425 (NAFDAC Greenbook, approved 28 Feb 2024, Active); Rwanda — tablets and granules (Rwanda FDA, 17 Aug 2024, valid); Zambia — tablets ZAMRA-HM-25-239 (11 Jul 2025, Registered/Compliant); Viet Nam — 2 registrations (DAV, first 27 Dec 2013, valid)",
-              "fr": "Confirmé à ce jour dans cinq registres nationaux : Tanzanie — 2 enregistrements (TMDA, délivré le 8 mars 2022, Enregistré/Conforme) ; Nigéria — granulés B4-9425 (NAFDAC Livre vert, approuvé le 28 février 2024, Actif) ; Rwanda — comprimés et granulés (Agence rwandaise des produits alimentaires et médicamenteux, 17 août 2024, valide) ; Zambie — comprimés ZAMRA-HM-25-239 (11 juillet 2025, Enregistré/Conforme) ; Vietnam — 2 enregistrements (DAV, premier 27 décembre 2013, valide).",
-              "pt": "Confirmado em cinco registros nacionais até o momento: Tanzânia — 2 registros (TMDA, emitido em 8 de março de 2022, Registrado/Em conformidade); Nigéria — grânulos B4-9425 (NAFDAC Greenbook, aprovado em 28 de fevereiro de 2024, Ativo); Ruanda — comprimidos e grânulos (FDA de Ruanda, 17 de agosto de 2024, válido); Zâmbia — comprimidos ZAMRA-HM-25-239 (11 de julho de 2025, Registrado/Em conformidade); Vietnã — 2 registros (DAV, primeiro em 27 de dezembro de 2013, válido)"
+              "en": "Confirmed in 14 national registers so far: Benin, Burkina Faso, Cameroon, DR Congo, Ethiopia, Kenya, Mozambique, Myanmar (2022 renewal list), Nigeria, Rwanda, Senegal, Tanzania, Viet Nam and Zambia. Register detail: Tanzania — 2 registrations (TMDA, issued 8 Mar 2022, Registered/Compliant); Nigeria — granules B4-9425 (NAFDAC Greenbook, approved 28 Feb 2024, Active); Rwanda — tablets and granules (Rwanda FDA, 17 Aug 2024, valid); Zambia — tablets ZAMRA-HM-25-239 (11 Jul 2025, Registered/Compliant); Viet Nam — 2 registrations (DAV, first 27 Dec 2013, valid). MMV and Shin Poong reported in November 2022 that Pyramax was registered in 29 countries in Africa and Asia; that count is the manufacturer's own and has not been checked against national registers. The PYRAPREG trial protocol (BMJ Open, 2023) reports the tablets registered in 19 African and 5 Asian countries, and the granules in 15 African countries",
+              "fr": "Confirmé jusqu'à présent dans 14 registres nationaux : Bénin, Burkina Faso, Cameroun, RD Congo, Éthiopie, Kenya, Mozambique, Myanmar (liste de renouvellement 2022), Nigeria, Rwanda, Sénégal, Tanzanie, Viet Nam et Zambie. Détails du registre : Tanzanie — 2 enregistrements (TMDA, délivré le 8 mars 2022, enregistré/conforme) ; Nigeria — granules B4-9425 (NAFDAC Greenbook, approuvé le 28 février 2024, actif) ; Rwanda — comprimés et granulés (Rwanda FDA, 17 août 2024, valide) ; Zambie — comprimés ZAMRA-HM-25-239 (11 juillet 2025, enregistré/conforme) ; Viet Nam — 2 enregistrements (DAV, premier 27 décembre 2013, valide). MMV et Shin Poong ont rapporté en novembre 2022 que Pyramax était enregistré dans 29 pays d'Afrique et d'Asie ; Ce chiffre est fourni par le fabricant et n'a pas été vérifié auprès des registres nationaux. Le protocole de l'essai PYRAPREG (BMJ Open, 2023) indique que les comprimés sont enregistrés dans 19 pays africains et 5 pays asiatiques, et les granulés dans 15 pays africains.",
+              "pt": "Confirmado em 14 registos nacionais até agora: Benim, Burkina Faso, Camarões, RD Congo, Etiópia, Quénia, Moçambique, Mianmar (lista de renovação de 2022), Nigéria, Ruanda, Senegal, Tanzânia, Vietname e Zâmbia. Detalhes do registro: Tanzânia — 2 registros (TMDA, emitido em 8 de março de 2022, registrado/em conformidade); Nigéria — grânulos B4-9425 (NAFDAC Greenbook, aprovado em 28 de fevereiro de 2024, Ativo); Ruanda — comprimidos e grânulos (FDA de Ruanda, 17 de agosto de 2024, válido); Zâmbia — comprimidos ZAMRA-HM-25-239 (11 de julho de 2025, registrado/em conformidade); Vietnã — 2 inscrições (DAV, primeira em 27 de dezembro de 2013, válida). MMV e Shin Poong relataram em novembro de 2022 que Pyramax estava registrado em 29 países da África e da Ásia; esse número é do próprio fabricante e não foi verificado em registros nacionais. O protocolo do ensaio clínico PYRAPREG (BMJ Open, 2023) relata o registro dos comprimidos em 19 países africanos e 5 asiáticos, e dos grânulos em 15 países africanos."
             },
             "date": {
-              "en": "Rolling",
-              "fr": "Roulement",
-              "pt": "Rolante"
+              "en": "Since 2013 (Viet Nam, the earliest registration on the national registers checked); rolling",
+              "fr": "Depuis 2013 (Vietnam, première inscription vérifiée dans les registres nationaux) ; en cours",
+              "pt": "Desde 2013 (Vietnã, o primeiro registro nos cadastros nacionais verificados); rotativo"
             },
             "next": {
               "en": "Verify remaining countries against national registers",
@@ -2131,22 +2384,33 @@
               "fr": "TBC",
               "pt": "TBC"
             },
-            "source": "NAFDAC, TMDA, Rwanda FDA, ZAMRA and DAV registers",
-            "asOf": "2026-10-05",
+            "source": "National registers of 14 countries (see the country access map); MMV and Shin Poong, Nov 2022 (manufacturer-reported); PYRAPREG protocol, BMJ Open 2023",
+            "asOf": "2026-11-03",
             "sources": [
               "nafdac",
               "tmda",
               "rwanda-fda",
               "zamra",
-              "dav"
+              "dav",
+              "abmed-benin",
+              "fasofda-burkina",
+              "dpml-cameroon",
+              "acorep-drc",
+              "efda-ethiopia",
+              "ppb-kenya",
+              "anarme-mozambique",
+              "fda-myanmar",
+              "arp-senegal",
+              "mmv-shinpoong-pyramax-2022",
+              "bmjopen-pyrapreg-2023"
             ]
           },
           {
             "status": "late",
             "note": {
-              "en": "In national guidelines in 7 countries on the country access map, and in MFT plans in 4 more; each country is cited to a WHO publication or a peer-reviewed paper. Ghana added artesunate–pyronaridine as an alternate first-line ACT in 2022, alongside AS-AQ and AL",
-              "fr": "Dans les directives nationales de sept pays figurant sur la carte d'accès aux traitements, et dans les plans de MFT de quatre autres pays, chaque pays cite une publication de l'OMS ou un article évalué par des pairs. Le Ghana a ajouté l'artésunate-pyronaridine comme ACT de première intention alternatif en 2022, aux côtés de l'AS-AQ et de l'AL",
-              "pt": "Nas diretrizes nacionais de 7 países no mapa de acesso por país e nos planos MFT de mais 4, cada país é citado em uma publicação da OMS ou em um artigo revisado por pares. Gana adicionou artesunato-pironaridina como uma alternativa de primeira linha ACT em 2022, juntamente com AS-AQ e AL."
+              "en": "In national guidelines in 9 countries on the country access map, three of them (Nigeria, Burkina Faso and DR Congo) also with MFT plans; in MFT plans in 6 countries in all. Each country is cited to a WHO publication or a peer-reviewed paper. Ghana added artesunate–pyronaridine as an alternate first-line ACT in 2022, alongside AS-AQ and AL",
+              "fr": "Dans les directives nationales de 9 pays figurant sur la carte d'accès aux médicaments, trois d'entre eux (Nigeria, Burkina Faso et République démocratique du Congo) ont également des plans MFT ; 6 pays au total ont des plans MFT. Chaque pays cite une publication de l'OMS ou un article évalué par des pairs. Le Ghana a ajouté l'artésunate-pyronaridine comme traitement de première intention alternatif ACT en 2022, aux côtés de l'AS-AQ et de l'AL",
+              "pt": "Nas diretrizes nacionais de 9 países no mapa de acesso por país, três deles (Nigéria, Burkina Faso e República Democrática do Congo) também possuem planos MFT ; em 6 países no total, os planos MFT estão presentes. Cada país é citado em uma publicação da OMS ou em um artigo revisado por pares. Gana adicionou artesunato-pironaridina como uma ACT de primeira linha alternativa em 2022, juntamente com AS-AQ e AL."
             },
             "date": {
               "en": "Ghana 2022; WHO policy table 2024",
@@ -2250,9 +2514,19 @@
               "pt": "Na lista da OMS de medicamentos pré-qualificados (comprimidos e grânulos), através da via EMA EU-M4all (Artigo 58)."
             },
             {
-              "en": "Registration confirmed in five national registers so far: Nigeria, Rwanda, Tanzania, Viet Nam and Zambia",
-              "fr": "L'inscription a été confirmée à ce jour dans cinq registres nationaux : au Nigéria, au Rwanda, en Tanzanie, au Viêt Nam et en Zambie.",
-              "pt": "O registo foi confirmado até o momento em cinco registos nacionais: Nigéria, Ruanda, Tanzânia, Vietname e Zâmbia."
+              "en": "Registration confirmed in 14 national registers so far: Benin, Burkina Faso, Cameroon, DR Congo, Ethiopia, Kenya, Mozambique, Myanmar (2022 renewal list), Nigeria, Rwanda, Senegal, Tanzania, Viet Nam and Zambia.",
+              "fr": "Inscription confirmée à ce jour dans 14 registres nationaux : Bénin, Burkina Faso, Cameroun, RD Congo, Éthiopie, Kenya, Mozambique, Myanmar (liste de renouvellement 2022), Nigéria, Rwanda, Sénégal, Tanzanie, Viet Nam et Zambie.",
+              "pt": "O registro foi confirmado até o momento em 14 cadastros nacionais: Benin, Burkina Faso, Camarões, República Democrática do Congo, Etiópia, Quênia, Moçambique, Mianmar (lista de renovação de 2022), Nigéria, Ruanda, Senegal, Tanzânia, Vietnã e Zâmbia."
+            },
+            {
+              "en": "MMV and Shin Poong reported registration in 29 countries in Africa and Asia (November 2022). Manufacturer-reported; not checked against national registers.",
+              "fr": "MMV et Shin Poong ont déclaré une enregistrement dans 29 pays d'Afrique et d'Asie (novembre 2022). Information fournie par le fabricant ; non vérifiée auprès des registres nationaux.",
+              "pt": "MMV e Shin Poong relataram registro em 29 países da África e da Ásia (novembro de 2022). Relatado pelo fabricante; não verificado em registros nacionais."
+            },
+            {
+              "en": "The PYRAPREG trial protocol (BMJ Open, 2023) reports the tablets registered in 19 African and 5 Asian countries, and the granules in 15 African countries. Not checked against national registers.",
+              "fr": "Le protocole de l’essai PYRAPREG (BMJ Open, 2023) mentionne l’enregistrement des comprimés dans 19 pays africains et 5 pays asiatiques, et celui des granulés dans 15 pays africains. Ces données n’ont pas été vérifiées auprès des registres nationaux.",
+              "pt": "O protocolo do estudo PYRAPREG (BMJ Open, 2023) relata o registro dos comprimidos em 19 países africanos e 5 asiáticos, e dos grânulos em 15 países africanos. Não foi verificado em registros nacionais."
             },
             {
               "en": "Co-developed by Shin Poong and MMV.",
@@ -2274,19 +2548,19 @@
           ],
           "research": {
             "lead": {
-              "en": "MMV and partners",
-              "fr": "MMV et partenaires",
-              "pt": "MMV e parceiros"
+              "en": "MMV and partners (efficacy studies); Jhpiego, funded by Unitaid (STOP-AMDR)",
+              "fr": "MMV et partenaires (études d'efficacité) ; Jhpiego, financé par Unitaid (STOP-AMDR)",
+              "pt": "MMV e parceiros (estudos de eficácia); Jhpiego, financiado por Unitaid (STOP-AMDR)"
             },
             "geographies": {
-              "en": "Ghana, Vietnam, Burkina Faso and others (efficacy studies)",
-              "fr": "Ghana, Vietnam, Burkina Faso et autres (études d'efficacité)",
-              "pt": "Gana, Vietname, Burkina Faso e outros (estudos de eficácia)"
+              "en": "Efficacy studies: Ghana, Viet Nam, Burkina Faso and others. STOP-AMDR (2025–2029): Burkina Faso, DR Congo, Kenya, Nigeria, Rwanda and Uganda. MFT plans with ASPY in all six: Kenya pilot (2020–22), Burkina Faso pilot (Kaya), Rwanda (2024–25); Nigeria, Uganda and DR Congo planned.",
+              "fr": "Etudes d'efficacité : Ghana, Viet Nam, Burkina Faso et autres. STOP-AMDR (2025-2029) : Burkina Faso, RD Congo, Kenya, Nigeria, Rwanda et Ouganda. MFT plans avec ASPY dans les six : projet pilote au Kenya (2020-2022), projet pilote au Burkina Faso (Kaya), Rwanda (2024-2025) ; Le Nigeria, l’Ouganda et la RD Congo sont prévus.",
+              "pt": "Estudos de eficácia: Gana, Vietname, Burkina Faso e outros. STOP-AMDR (2025–2029): Burkina Faso, RD Congo, Quénia, Nigéria, Ruanda e Uganda. MFT planos com ASPY em todos os seis: piloto do Quénia (2020–22), piloto do Burkina Faso (Kaya), Ruanda (2024–25); Nigéria, Uganda e RD Congo planeados."
             },
             "timeline": {
-              "en": "Ongoing",
-              "fr": "En cours",
-              "pt": "Em andamento"
+              "en": "Ongoing; STOP-AMDR 2025–2029",
+              "fr": "En cours; STOP-AMDR 2025-2029",
+              "pt": "Em andamento; STOP-AMDR 2025–2029"
             },
             "question": {
               "en": "MFT deployment models with artesunate–pyronaridine",
@@ -2295,14 +2569,14 @@
             }
           },
           "country": {
-            "registered": 2,
-            "inGuidelines": 7,
-            "inMft": 4,
+            "registered": 14,
+            "inGuidelines": 9,
+            "inMft": 6,
             "forecastDemand": "TBC"
           },
           "countries": {
             "status": "verified",
-            "note": "Every country listed is cited to a national medicines regulator's own register, a WHO publication or a peer-reviewed paper. Each entry's \"sources\" are ids in data/sources.js and \"checked\" is the date they were verified; \"mft\" says whether an MFT plan is a pilot, planned or national. Countries without such a source are left out and show No data. MMV's product map, meeting slides and news reports are not used. Rule agreed 5 Oct 2026; replaces the illustrative subset.",
+            "note": "Every country listed is cited to a national medicines regulator's own register, a WHO publication or a peer-reviewed paper, or, for an MFT plan, the STOP-AMDR project. Each entry's \"sources\" are ids in data/sources.js and \"checked\" is the date they were verified; \"mft\" says whether an MFT plan is a pilot, planned or national. Countries without such a source are left out and show No data. MMV's product map, meeting slides and news reports are not used. Rule agreed 5 Oct 2026; replaces the illustrative subset.",
             "list": [
               {
                 "iso3": "NGA",
@@ -2334,9 +2608,10 @@
                 "mft": "pilot",
                 "sources": [
                   "malariaj-burkina-mft",
-                  "who-wmr-annex-4b"
+                  "who-wmr-annex-4b",
+                  "fasofda-burkina"
                 ],
-                "checked": "2026-10-05",
+                "checked": "2026-11-03",
                 "note": "Kaya district pilot with ASPY, DHA-PPQ and AL; first-line in national policy"
               },
               {
@@ -2344,10 +2619,21 @@
                 "level": "mft",
                 "mft": "pilot",
                 "sources": [
-                  "malariaj-kenya-mft"
+                  "malariaj-kenya-mft",
+                  "ppb-kenya"
                 ],
-                "checked": "2026-10-05",
+                "checked": "2026-11-03",
                 "note": "Homa Bay pilot, June 2020 to June 2022"
+              },
+              {
+                "iso3": "UGA",
+                "level": "mft",
+                "mft": "planned",
+                "sources": [
+                  "unitaid-stop-amdr"
+                ],
+                "checked": "2026-11-03",
+                "note": "STOP-AMDR country"
               },
               {
                 "iso3": "GHA",
@@ -2370,19 +2656,24 @@
               },
               {
                 "iso3": "COD",
-                "level": "guidelines",
+                "level": "mft",
+                "mft": "planned",
                 "sources": [
-                  "who-wmr-annex-4b"
+                  "unitaid-stop-amdr",
+                  "who-wmr-annex-4b",
+                  "acorep-drc"
                 ],
-                "checked": "2026-10-05"
+                "checked": "2026-11-03",
+                "note": "STOP-AMDR country"
               },
               {
                 "iso3": "CMR",
                 "level": "guidelines",
                 "sources": [
-                  "who-wmr-annex-4b"
+                  "who-wmr-annex-4b",
+                  "dpml-cameroon"
                 ],
-                "checked": "2026-10-05"
+                "checked": "2026-11-03"
               },
               {
                 "iso3": "THA",
@@ -2425,6 +2716,48 @@
                   "zamra"
                 ],
                 "checked": "2026-10-05"
+              },
+              {
+                "iso3": "ETH",
+                "level": "registered",
+                "sources": [
+                  "efda-ethiopia"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "SEN",
+                "level": "registered",
+                "sources": [
+                  "arp-senegal"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "MOZ",
+                "level": "registered",
+                "sources": [
+                  "anarme-mozambique"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "BEN",
+                "level": "registered",
+                "sources": [
+                  "abmed-benin"
+                ],
+                "checked": "2026-11-03",
+                "note": "Granules; the tablets' registration expired Jul 2026"
+              },
+              {
+                "iso3": "MMR",
+                "level": "registered",
+                "sources": [
+                  "fda-myanmar"
+                ],
+                "checked": "2026-11-03",
+                "note": "On the 2022 renewal list; current status not shown"
               }
             ]
           },
@@ -2662,14 +2995,14 @@
               },
               "status": "prog",
               "label": {
-                "en": "5 countries register-confirmed",
-                "fr": "5 pays enregistrés",
-                "pt": "5 países com registro confirmado"
+                "en": "14 countries register-confirmed",
+                "fr": "14 pays enregistrés",
+                "pt": "14 países com registro confirmado"
               },
               "date": {
-                "en": "Rolling (VNM 2013, TZA 2022, NGA 2024, RWA 2024, ZMB 2025)",
-                "fr": "Roulant (VNM 2013, TZA 2022, NGA 2024, RWA 2024, ZMB 2025)",
-                "pt": "Rolamento (VNM 2013, TZA 2022, NGA 2024, RWA 2024, ZMB 2025)"
+                "en": "Rolling; earliest on the registers checked: Viet Nam 2013, Cameroon and Benin 2016",
+                "fr": "En continu ; les plus anciens registres consultés sont : Vietnam 2013, Cameroun et Bénin 2016",
+                "pt": "Em andamento; os mais antigos nos registros verificados são: Vietnã 2013, Camarões e Benin 2016."
               },
               "next": {
                 "en": "Verify remaining countries against national registers",
@@ -2681,13 +3014,22 @@
                 "fr": "À confirmer",
                 "pt": "A confirmar"
               },
-              "source": "NAFDAC, TMDA, Rwanda FDA, ZAMRA and DAV registers (5 Oct 2026)",
+              "source": "National registers of 14 countries (5 Oct and 3 Nov 2026)",
               "sources": [
                 "nafdac",
                 "tmda",
                 "rwanda-fda",
                 "zamra",
-                "dav"
+                "dav",
+                "abmed-benin",
+                "fasofda-burkina",
+                "dpml-cameroon",
+                "acorep-drc",
+                "efda-ethiopia",
+                "ppb-kenya",
+                "anarme-mozambique",
+                "fda-myanmar",
+                "arp-senegal"
               ]
             },
             {
@@ -2698,9 +3040,9 @@
               },
               "status": "late",
               "label": {
-                "en": "7 countries, plus 4 with MFT plans",
-                "fr": "7 pays, plus 4 avec des forfaits MFT",
-                "pt": "7 países, mais 4 com planos MFT"
+                "en": "9 countries; MFT plans in 6",
+                "fr": "9 pays ; MFT plans dans 6",
+                "pt": "9 países; MFT planos em 6"
               },
               "date": {
                 "en": "Ghana 2022; WHO policy table 2024",
@@ -2725,6 +3067,42 @@
                 "bmjgh-rwanda-mft",
                 "malariaj-burkina-mft",
                 "malariaj-kenya-mft"
+              ]
+            },
+            {
+              "milestone": {
+                "en": "MFT pilots and plans",
+                "fr": "MFT pilotes et plans",
+                "pt": "MFT pilotos e planos"
+              },
+              "status": "prog",
+              "label": {
+                "en": "Kenya pilot 2020–22 · Burkina Faso pilot (Kaya) · Rwanda 2024–25 · Nigeria, Uganda and DR Congo planned",
+                "fr": "Projet pilote au Kenya 2020-2022 · Projet pilote au Burkina Faso (Kaya) · Rwanda 2024-2025 · Nigéria, Ouganda et RD du Congo prévus",
+                "pt": "Piloto do Quênia 2020–22 · Piloto de Burkina Faso (Kaya) · Ruanda 2024–25 · Nigéria, Uganda e RD Congo planejados"
+              },
+              "date": {
+                "en": "From Jun 2020 (Kenya, Homa Bay)",
+                "fr": "À partir de juin 2020 (Kenya, Homa Bay)",
+                "pt": "De junho de 2020 (Quênia, Baía de Homa)"
+              },
+              "next": {
+                "en": "MFT strategy decisions",
+                "fr": "MFT décisions stratégiques",
+                "pt": "MFT decisões de estratégia"
+              },
+              "anticipated": {
+                "en": "TBC",
+                "fr": "À confirmer",
+                "pt": "A confirmar"
+              },
+              "source": "Peer-reviewed papers (Kenya, Burkina Faso, Rwanda); WHO MFT implementation guide (Rwanda, Nigeria); STOP-AMDR (Uganda, DR Congo)",
+              "sources": [
+                "malariaj-kenya-mft",
+                "malariaj-burkina-mft",
+                "bmjgh-rwanda-mft",
+                "who-mft-guide",
+                "unitaid-stop-amdr"
               ]
             },
             {
@@ -2904,14 +3282,14 @@
           {
             "status": "done",
             "note": {
-              "en": "Confirmed in six national registers so far: Nigeria, Rwanda, Tanzania, Viet Nam, Zambia and Zimbabwe. Register detail: Tanzania — 10 presentations across four manufacturers (Guilin D-ARTEPP incl. paediatric dispersible, KBN-Zhejiang Duo-Cotecxin, Ajanta Ridmal), all Registered/Compliant; Nigeria — 47 presentations, of which 25 are active and 22 have lapsed (registrations not being maintained, itself an underuse signal)",
-              "fr": "Confirmé dans six registres nationaux à ce jour : Nigéria, Rwanda, Tanzanie, Vietnam, Zambie et Zimbabwe. Détails des registres : Tanzanie — 10 présentations de quatre fabricants (Guilin D-ARTEPP, y compris la version pédiatrique dispersible, KBN-Zhejiang Duo-Cotecxin, Ajanta Ridmal), toutes enregistrées et conformes ; Nigéria — 47 présentations, dont 25 sont actives et 22 ont expiré (les enregistrements n’étant pas maintenus, ce qui constitue en soi un signe de sous-utilisation).",
-              "pt": "Confirmado em seis registros nacionais até o momento: Nigéria, Ruanda, Tanzânia, Vietnã, Zâmbia e Zimbábue. Detalhes do registro: Tanzânia — 10 apresentações de quatro fabricantes (Guilin D-ARTEPP, incluindo a versão pediátrica dispersível; KBN-Zhejiang Duo-Cotecxin; Ajanta Ridmal), todas registradas/em conformidade; Nigéria — 47 apresentações, das quais 25 estão ativas e 22 expiraram (registros não estão sendo mantidos, o que por si só indica subutilização)."
+              "en": "Confirmed in 20 national registers so far: Benin, Burkina Faso, Cameroon, Côte d'Ivoire, DR Congo, Ethiopia, Indonesia, Kenya, Mozambique, Myanmar (2022 renewal list), Namibia, Nigeria, Rwanda, Senegal, Tanzania, Thailand, The Gambia, Viet Nam, Zambia and Zimbabwe. Register detail: Tanzania — 10 presentations across four manufacturers (Guilin D-ARTEPP incl. paediatric dispersible, KBN-Zhejiang Duo-Cotecxin, Ajanta Ridmal), all Registered/Compliant; Nigeria — 47 presentations, of which 25 are active and 22 have lapsed (registrations not being maintained, itself an underuse signal). Since July 2015 Eurartesim has been entrusted exclusively to Pierre Fabre in 32 African countries (Sigma-Tau, now Alfasigma); that is a commercial licence, not a registration, so those countries are not counted here",
+              "fr": "Confirmé dans 20 registres nationaux à ce jour : Bénin, Burkina Faso, Cameroun, Côte d’Ivoire, République démocratique du Congo, Éthiopie, Indonésie, Kenya, Mozambique, Myanmar (liste de renouvellement 2022), Namibie, Nigéria, Rwanda, Sénégal, Tanzanie, Thaïlande, Gambie, Viêt Nam, Zambie et Zimbabwe. Détails des registres : Tanzanie — 10 présentations de quatre fabricants (Guilin D-ARTEPP, y compris la version pédiatrique dispersible, KBN-Zhejiang Duo-Cotecxin, Ajanta Ridmal), toutes enregistrées/conformes ; Nigéria — 47 présentations, dont 25 sont actives et 22 ont expiré (les enregistrements n’étant pas maintenus, ce qui est en soi un signe de sous-utilisation). Depuis juillet 2015, la marque Eurartesim est détenue exclusivement par Pierre Fabre dans 32 pays africains (Sigma-Tau, maintenant Alfasigma) ; il s’agit d’une licence commerciale et non d’un enregistrement, ces pays ne sont donc pas comptabilisés ici.",
+              "pt": "Confirmado em 20 registros nacionais até o momento: Benin, Burkina Faso, Camarões, Costa do Marfim, República Democrática do Congo, Etiópia, Indonésia, Quênia, Moçambique, Mianmar (lista de renovação de 2022), Namíbia, Nigéria, Ruanda, Senegal, Tanzânia, Tailândia, Gâmbia, Vietnã, Zâmbia e Zimbábue. Detalhes do registro: Tanzânia — 10 apresentações em quatro fabricantes (Guilin D-ARTEPP, incluindo dispersível pediátrico; KBN-Zhejiang Duo-Cotecxin; Ajanta Ridmal), todas registradas/em conformidade; Nigéria — 47 apresentações, das quais 25 estão ativas e 22 expiraram (registros não mantidos, o que por si só indica subutilização). Desde julho de 2015, o Eurartesim foi confiado exclusivamente à Pierre Fabre em 32 países africanos (Sigma-Tau, agora Alfasigma); trata-se de uma licença comercial, não de um registro, portanto esses países não estão incluídos aqui."
             },
             "date": {
-              "en": "Rolling",
-              "fr": "Roulement",
-              "pt": "Rolante"
+              "en": "2010 (Viet Nam, the earliest registration on the national registers checked); rolling",
+              "fr": "2010 (Vietnam, première inscription vérifiée dans les registres nationaux) ; inscription continue",
+              "pt": "2010 (Vietnã, o registro mais antigo nos registros nacionais verificados); rotativo"
             },
             "next": {
               "en": "Verify remaining countries against national registers",
@@ -2923,23 +3301,38 @@
               "fr": "TBC",
               "pt": "TBC"
             },
-            "source": "NAFDAC, Rwanda FDA, TMDA, DAV, ZAMRA and MCAZ registers (see the country access map); NAFDAC Greenbook + TMDA IMIS2 extracts 31 Aug 2026",
-            "asOf": "2026-10-05",
+            "source": "NAFDAC, Rwanda FDA, TMDA, DAV, ZAMRA and MCAZ registers (see the country access map); NAFDAC Greenbook + TMDA IMIS2 extracts 31 Aug 2026; Sigma-Tau and Pierre Fabre, 2 Jul 2015",
+            "asOf": "2026-11-03",
             "sources": [
               "nafdac",
               "rwanda-fda",
               "tmda",
               "dav",
               "zamra",
-              "mcaz"
+              "mcaz",
+              "abmed-benin",
+              "fasofda-burkina",
+              "dpml-cameroon",
+              "airp-cotedivoire",
+              "acorep-drc",
+              "efda-ethiopia",
+              "bpom-indonesia",
+              "ppb-kenya",
+              "anarme-mozambique",
+              "fda-myanmar",
+              "nmrc-namibia",
+              "arp-senegal",
+              "thai-fda",
+              "mca-gambia",
+              "pierre-fabre-eurartesim-2015"
             ]
           },
           {
             "status": "prog",
             "note": {
-              "en": "In national guidelines in 9 countries on the country access map, and in MFT plans in 4 more; each country is cited to a WHO publication or a peer-reviewed paper",
-              "fr": "Dans les directives nationales de 9 pays figurant sur la carte d'accès par pays, et dans les plans de MFT de 4 autres pays, chaque pays cite une publication de l'OMS ou un article évalué par des pairs.",
-              "pt": "Nas diretrizes nacionais de 9 países no mapa de acesso por país e nos planos MFT de mais 4; cada país é citado em uma publicação da OMS ou em um artigo revisado por pares."
+              "en": "In national guidelines in 11 countries on the country access map, two of them (Nigeria and Burkina Faso) also with MFT plans; in MFT plans in 5 countries in all. Each country is cited to a WHO publication or a peer-reviewed paper",
+              "fr": "Dans les directives nationales de 11 pays figurant sur la carte d'accès aux pays, deux d'entre eux (le Nigéria et le Burkina Faso) ont également des plans MFT ; 5 pays au total ont des plans MFT. Chaque pays est cité en référence à une publication de l'OMS ou à un article évalué par des pairs.",
+              "pt": "Nas diretrizes nacionais de 11 países no mapa de acesso por país, dois deles (Nigéria e Burkina Faso) também apresentam planos MFT; em 5 países, no total, há planos MFT. Cada país é citado em uma publicação da OMS ou em um artigo revisado por pares."
             },
             "date": {
               "en": "WHO policy table 2024",
@@ -3047,6 +3440,16 @@
               "en": "Nine WHO-prequalified presentations from three companies: Alfasigma (2), Guilin (6, including 3 dispersible) and Beijing Holley (1).",
               "fr": "Neuf présentations préqualifiées par l'OMS de trois sociétés : Alfasigma (2), Guilin (6, dont 3 dispersibles) et Beijing Holley (1).",
               "pt": "Nove apresentações pré-qualificadas pela OMS de três empresas: Alfasigma (2), Guilin (6, incluindo 3 dispersíveis) e Beijing Holley (1)."
+            },
+            {
+              "en": "Registration confirmed in 20 national registers so far: Benin, Burkina Faso, Cameroon, Côte d'Ivoire, DR Congo, Ethiopia, Indonesia, Kenya, Mozambique, Myanmar (2022 renewal list), Namibia, Nigeria, Rwanda, Senegal, Tanzania, Thailand, The Gambia, Viet Nam, Zambia and Zimbabwe.",
+              "fr": "Inscription confirmée à ce jour dans 20 registres nationaux : Bénin, Burkina Faso, Cameroun, Côte d'Ivoire, République démocratique du Congo, Éthiopie, Indonésie, Kenya, Mozambique, Myanmar (liste de renouvellement 2022), Namibie, Nigéria, Rwanda, Sénégal, Tanzanie, Thaïlande, Gambie, Viet Nam, Zambie et Zimbabwe.",
+              "pt": "O registro foi confirmado até o momento em 20 cadastros nacionais: Benin, Burkina Faso, Camarões, Costa do Marfim, República Democrática do Congo, Etiópia, Indonésia, Quênia, Moçambique, Mianmar (lista de renovação de 2022), Namíbia, Nigéria, Ruanda, Senegal, Tanzânia, Tailândia, Gâmbia, Vietnã, Zâmbia e Zimbábue."
+            },
+            {
+              "en": "Since July 2015 Eurartesim has been entrusted exclusively to Pierre Fabre in 32 African countries (Sigma-Tau, now Alfasigma). This is a commercial licence, not a registration.",
+              "fr": "Depuis juillet 2015, la marque Eurartesim est distribuée en exclusivité par Pierre Fabre dans 32 pays africains (Sigma-Tau, devenue Alfasigma). Il s'agit d'une licence commerciale, et non d'un enregistrement.",
+              "pt": "Desde julho de 2015, a marca Eurartesim foi confiada exclusivamente a Pierre Fabre em 32 países africanos (Sigma-Tau, agora Alfasigma). Trata-se de uma licença comercial, não de um registro."
             }
           ],
           "adoption": [
@@ -3063,19 +3466,19 @@
           ],
           "research": {
             "lead": {
-              "en": "Multiple academic consortia",
-              "fr": "Plusieurs consortiums universitaires",
-              "pt": "Consórcios acadêmicos múltiplos"
+              "en": "Multiple academic consortia (efficacy and MFT studies); Jhpiego, funded by Unitaid (STOP-AMDR)",
+              "fr": "Plusieurs consortiums universitaires (études d'efficacité et MFT) ; Jhpiego, financé par Unitaid (STOP-AMDR)",
+              "pt": "Consórcios acadêmicos múltiplos (estudos de eficácia e MFT); Jhpiego, financiado por Unitaid (STOP-AMDR)"
             },
             "geographies": {
-              "en": "Ghana, Mozambique, SE Asia (efficacy and MFT studies)",
-              "fr": "Ghana, Mozambique, Asie du Sud-Est (études d'efficacité et de thérapie MFT)",
-              "pt": "Gana, Moçambique, Sudeste Asiático (estudos de eficácia e MFT)"
+              "en": "Efficacy and MFT studies: Ghana, Mozambique, SE Asia. STOP-AMDR (2025–2029): Burkina Faso, DR Congo, Kenya, Nigeria, Rwanda and Uganda. MFT plans with DHA–PPQ in all but DR Congo: Kenya pilot (2020–22), Burkina Faso pilot (Kaya), Rwanda (2024–25); Nigeria and Uganda planned.",
+              "fr": "Études d'efficacité et MFT : Ghana, Mozambique, Asie du Sud-Est. STOP-AMDR (2025-2029) : Burkina Faso, RD Congo, Kenya, Nigeria, Rwanda et Ouganda. MFT plans avec DHA-PPQ dans tous les pays sauf en RD Congo : projet pilote au Kenya (2020-22), projet pilote au Burkina Faso (Kaya), Rwanda (2024-2025) ; Le Nigeria et l'Ouganda sont prévus.",
+              "pt": "Estudos de eficácia e MFT: Gana, Moçambique, Sudeste Asiático. STOP-AMDR (2025–2029): Burkina Faso, RD Congo, Quénia, Nigéria, Ruanda e Uganda. MFT planos com DHA–PPQ em todos os países, exceto na RD Congo: piloto no Quénia (2020–22), piloto no Burkina Faso (Kaya), Ruanda (2024–25); Nigéria e Uganda planejadas."
             },
             "timeline": {
-              "en": "Ongoing",
-              "fr": "En cours",
-              "pt": "Em andamento"
+              "en": "Ongoing; STOP-AMDR 2025–2029",
+              "fr": "En cours; STOP-AMDR 2025-2029",
+              "pt": "Em andamento; STOP-AMDR 2025–2029"
             },
             "question": {
               "en": "MFT deployment (simultaneous, cycling or rotation) and resistance impact",
@@ -3084,14 +3487,14 @@
             }
           },
           "country": {
-            "registered": 2,
-            "inGuidelines": 9,
-            "inMft": 4,
+            "registered": 20,
+            "inGuidelines": 11,
+            "inMft": 5,
             "forecastDemand": "TBC"
           },
           "countries": {
             "status": "verified",
-            "note": "Every country listed is cited to a national medicines regulator's own register, a WHO publication or a peer-reviewed paper. Each entry's \"sources\" are ids in data/sources.js and \"checked\" is the date they were verified; \"mft\" says whether an MFT plan is a pilot, planned or national. Countries without such a source are left out and show No data. MMV's product map, meeting slides and news reports are not used. Rule agreed 5 Oct 2026; replaces the illustrative subset.",
+            "note": "Every country listed is cited to a national medicines regulator's own register, a WHO publication or a peer-reviewed paper, or, for an MFT plan, the STOP-AMDR project. Each entry's \"sources\" are ids in data/sources.js and \"checked\" is the date they were verified; \"mft\" says whether an MFT plan is a pilot, planned or national. Countries without such a source are left out and show No data. MMV's product map, meeting slides and news reports are not used. Rule agreed 5 Oct 2026; replaces the illustrative subset.",
             "list": [
               {
                 "iso3": "NGA",
@@ -3123,9 +3526,10 @@
                 "mft": "pilot",
                 "sources": [
                   "malariaj-burkina-mft",
-                  "who-wmr-annex-4b"
+                  "who-wmr-annex-4b",
+                  "fasofda-burkina"
                 ],
-                "checked": "2026-10-05",
+                "checked": "2026-11-03",
                 "note": "Kaya district pilot with ASPY, DHA-PPQ and AL; first-line in national policy"
               },
               {
@@ -3133,10 +3537,21 @@
                 "level": "mft",
                 "mft": "pilot",
                 "sources": [
-                  "malariaj-kenya-mft"
+                  "malariaj-kenya-mft",
+                  "ppb-kenya"
                 ],
-                "checked": "2026-10-05",
+                "checked": "2026-11-03",
                 "note": "Homa Bay pilot, June 2020 to June 2022"
+              },
+              {
+                "iso3": "UGA",
+                "level": "mft",
+                "mft": "planned",
+                "sources": [
+                  "unitaid-stop-amdr"
+                ],
+                "checked": "2026-11-03",
+                "note": "STOP-AMDR country"
               },
               {
                 "iso3": "TZA",
@@ -3161,17 +3576,19 @@
                 "iso3": "THA",
                 "level": "guidelines",
                 "sources": [
-                  "who-wmr-annex-4b"
+                  "who-wmr-annex-4b",
+                  "thai-fda"
                 ],
-                "checked": "2026-10-05"
+                "checked": "2026-11-03"
               },
               {
                 "iso3": "IDN",
                 "level": "guidelines",
                 "sources": [
-                  "who-wmr-annex-4b"
+                  "who-wmr-annex-4b",
+                  "bpom-indonesia"
                 ],
-                "checked": "2026-10-05"
+                "checked": "2026-11-03"
               },
               {
                 "iso3": "GHA",
@@ -3195,9 +3612,10 @@
                 "iso3": "CMR",
                 "level": "guidelines",
                 "sources": [
-                  "who-wmr-annex-4b"
+                  "who-wmr-annex-4b",
+                  "dpml-cameroon"
                 ],
-                "checked": "2026-10-05"
+                "checked": "2026-11-03"
               },
               {
                 "iso3": "GAB",
@@ -3231,6 +3649,80 @@
                   "mcaz"
                 ],
                 "checked": "2026-10-05"
+              },
+              {
+                "iso3": "ETH",
+                "level": "registered",
+                "sources": [
+                  "efda-ethiopia"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "NAM",
+                "level": "registered",
+                "sources": [
+                  "nmrc-namibia"
+                ],
+                "checked": "2026-11-03",
+                "note": "Register of August 2024"
+              },
+              {
+                "iso3": "SEN",
+                "level": "registered",
+                "sources": [
+                  "arp-senegal"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "MOZ",
+                "level": "registered",
+                "sources": [
+                  "anarme-mozambique"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "GMB",
+                "level": "registered",
+                "sources": [
+                  "mca-gambia"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "BEN",
+                "level": "registered",
+                "sources": [
+                  "abmed-benin"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "CIV",
+                "level": "registered",
+                "sources": [
+                  "airp-cotedivoire"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "COD",
+                "level": "registered",
+                "sources": [
+                  "acorep-drc"
+                ],
+                "checked": "2026-11-03"
+              },
+              {
+                "iso3": "MMR",
+                "level": "registered",
+                "sources": [
+                  "fda-myanmar"
+                ],
+                "checked": "2026-11-03",
+                "note": "On the 2022 renewal list; current status not shown"
               }
             ]
           },
@@ -3586,6 +4078,57 @@
             },
             {
               "milestone": {
+                "en": "Country registrations",
+                "fr": "Inscriptions du pays",
+                "pt": "Registros por país"
+              },
+              "status": "done",
+              "label": {
+                "en": "20 countries register-confirmed",
+                "fr": "20 pays enregistrés",
+                "pt": "20 países com registro confirmado"
+              },
+              "date": {
+                "en": "Earliest on the registers checked: Viet Nam 2010, Cameroon and Côte d'Ivoire 2011",
+                "fr": "Les plus anciens registres consultés sont : Vietnam (2010), Cameroun et Côte d’Ivoire (2011).",
+                "pt": "Os primeiros registros consultados foram: Vietnã em 2010, Camarões e Costa do Marfim em 2011."
+              },
+              "next": {
+                "en": "Verify remaining countries against national registers",
+                "fr": "Vérifier les pays restants par rapport aux registres nationaux.",
+                "pt": "Verificar os países restantes em relação aos registros nacionais."
+              },
+              "anticipated": {
+                "en": "TBC",
+                "fr": "À confirmer",
+                "pt": "A confirmar"
+              },
+              "source": "National registers of 20 countries (5 Oct and 3 Nov 2026)",
+              "sources": [
+                "dav",
+                "nafdac",
+                "tmda",
+                "rwanda-fda",
+                "zamra",
+                "mcaz",
+                "abmed-benin",
+                "fasofda-burkina",
+                "dpml-cameroon",
+                "airp-cotedivoire",
+                "acorep-drc",
+                "efda-ethiopia",
+                "bpom-indonesia",
+                "ppb-kenya",
+                "anarme-mozambique",
+                "fda-myanmar",
+                "nmrc-namibia",
+                "arp-senegal",
+                "thai-fda",
+                "mca-gambia"
+              ]
+            },
+            {
+              "milestone": {
                 "en": "Register detail: Tanzania and Nigeria",
                 "fr": "Détails d'inscription : Tanzanie et Nigéria",
                 "pt": "Detalhes do registro: Tanzânia e Nigéria"
@@ -3625,9 +4168,9 @@
               },
               "status": "prog",
               "label": {
-                "en": "9 countries, plus 4 with MFT plans",
-                "fr": "9 pays, plus 4 avec des forfaits MFT",
-                "pt": "9 países, mais 4 com planos MFT"
+                "en": "11 countries; MFT plans in 5",
+                "fr": "11 pays ; MFT plans dans 5",
+                "pt": "11 países; MFT planos em 5"
               },
               "date": {
                 "en": "WHO policy table 2024",
@@ -3652,6 +4195,42 @@
                 "bmjgh-rwanda-mft",
                 "malariaj-burkina-mft",
                 "malariaj-kenya-mft"
+              ]
+            },
+            {
+              "milestone": {
+                "en": "MFT pilots and plans",
+                "fr": "MFT pilotes et plans",
+                "pt": "MFT pilotos e planos"
+              },
+              "status": "prog",
+              "label": {
+                "en": "Kenya pilot 2020–22 · Burkina Faso pilot (Kaya) · Rwanda 2024–25 · Nigeria and Uganda planned",
+                "fr": "Projet pilote au Kenya 2020-2022 · Projet pilote au Burkina Faso (Kaya) · Rwanda 2024-2025 · Nigéria et Ouganda prévus",
+                "pt": "Piloto do Quênia 2020–22 · Piloto de Burkina Faso (Kaya) · Ruanda 2024–25 · Nigéria e Uganda planejados"
+              },
+              "date": {
+                "en": "From Jun 2020 (Kenya, Homa Bay)",
+                "fr": "À partir de juin 2020 (Kenya, Homa Bay)",
+                "pt": "De junho de 2020 (Quênia, Baía de Homa)"
+              },
+              "next": {
+                "en": "MFT strategy decisions",
+                "fr": "MFT décisions stratégiques",
+                "pt": "MFT decisões de estratégia"
+              },
+              "anticipated": {
+                "en": "TBC",
+                "fr": "À confirmer",
+                "pt": "A confirmar"
+              },
+              "source": "Peer-reviewed papers (Kenya, Burkina Faso, Rwanda); WHO MFT implementation guide (Rwanda, Nigeria); STOP-AMDR (Uganda)",
+              "sources": [
+                "malariaj-kenya-mft",
+                "malariaj-burkina-mft",
+                "bmjgh-rwanda-mft",
+                "who-mft-guide",
+                "unitaid-stop-amdr"
               ]
             },
             {
@@ -4692,6 +5271,43 @@
         "collection": "static"
       },
       {
+        "id": "pierre-fabre-eurartesim-2015",
+        "title": {
+          "en": "Sigma-Tau of Alfasigma Group grants Pierre Fabre exclusive license in 32 African countries for its antimalarial Eurartesim",
+          "fr": "Sigma-Tau of Alfasigma Group grants Pierre Fabre exclusive license in 32 African countries for its antimalarial Eurartesim",
+          "pt": "Sigma-Tau of Alfasigma Group grants Pierre Fabre exclusive license in 32 African countries for its antimalarial Eurartesim"
+        },
+        "label": {
+          "en": "Sigma-Tau and Pierre Fabre: Eurartesim licence, Jul 2015",
+          "fr": "Sigma-Tau et Pierre Fabre : Licence Eurartesim, juillet 2015",
+          "pt": "Sigma-Tau e Pierre Fabre: Eurartesim licença, julho de 2015"
+        },
+        "org": "Sigma-Tau (Alfasigma Group); Pierre Fabre",
+        "category": "Manufacturer",
+        "group": "document",
+        "url": "https://www.biospace.com/b-sigma-tau-b-of-alfasigma-group-grants-pierre-fabre-exclusive-license-in-32-african-countries-for-its-antimalarial-eurartesim",
+        "alsoSee": [
+          {
+            "label": {
+              "en": "The same release on Business Wire",
+              "fr": "Le même communiqué est publié sur Business Wire.",
+              "pt": "O mesmo comunicado foi divulgado pela Business Wire."
+            },
+            "url": "https://www.businesswire.com/news/home/20150702005100/en/"
+          }
+        ],
+        "year": "2015",
+        "products": [
+          "dhappq"
+        ],
+        "plain": {
+          "en": "The 2015 deal that gave Pierre Fabre the exclusive rights to Eurartesim in 32 African countries.",
+          "fr": "L'accord de 2015 qui a donné à Pierre Fabre les droits exclusifs sur Eurartesim dans 32 pays africains.",
+          "pt": "O acordo de 2015 que concedeu à Pierre Fabre os direitos exclusivos de Eurartesim em 32 países africanos."
+        },
+        "collection": "static"
+      },
+      {
         "id": "ema-eurartesim",
         "title": {
           "en": "Eurartesim: EPAR",
@@ -5053,6 +5669,70 @@
           "en": "MMV's joint announcement with Novartis of GanLum's Phase III results.",
           "fr": "l'annonce conjointe de MMV avec Novartis des résultats de la phase III de GanLum.",
           "pt": "Anúncio conjunto de MMV com Novartis dos resultados da Fase III de GanLum."
+        },
+        "collection": "static"
+      },
+      {
+        "id": "mmv-shinpoong-pyramax-2022",
+        "title": {
+          "en": "MMV and Shin Poong press release on Pyramax in the revised WHO Guidelines for malaria (November 2022)",
+          "fr": "MMV and Shin Poong press release on Pyramax in the revised WHO Guidelines for malaria (November 2022)",
+          "pt": "MMV and Shin Poong press release on Pyramax in the revised WHO Guidelines for malaria (November 2022)"
+        },
+        "label": {
+          "en": "MMV and Shin Poong: Pyramax registrations, Nov 2022",
+          "fr": "MMV et Shin Poong : Pyramax inscriptions, novembre 2022",
+          "pt": "MMV e Shin Poong: Pyramax inscrições, novembro de 2022"
+        },
+        "org": "Medicines for Malaria Venture; Shin Poong Pharmaceutical",
+        "category": "Manufacturer",
+        "group": "document",
+        "url": "https://www.mmv.org/sites/default/files/content/document/Pyramax%20Press%20release%20EN.pdf",
+        "year": "2022",
+        "products": [
+          "pyramax"
+        ],
+        "plain": {
+          "en": "The developers announcing Pyramax in WHO's malaria guidelines, with the number of countries where they say it is registered.",
+          "fr": "Les développeurs annoncent Pyramax dans les directives de l'OMS sur le paludisme, avec le nombre de pays où ils disent qu'il est enregistré.",
+          "pt": "Os desenvolvedores anunciaram Pyramax nas diretrizes da OMS sobre malária, com o número de países onde dizem que está registrado."
+        },
+        "collection": "static"
+      },
+      {
+        "id": "bmjopen-pyrapreg-2023",
+        "title": {
+          "en": "Efficacy and safety of pyronaridine-artesunate (PYRAMAX) for the treatment of P. falciparum uncomplicated malaria in African pregnant women (PYRAPREG): study protocol for a phase 3, non-inferiority, randomised open-label clinical trial",
+          "fr": "Efficacy and safety of pyronaridine-artesunate (PYRAMAX) for the treatment of P. falciparum uncomplicated malaria in African pregnant women (PYRAPREG): study protocol for a phase 3, non-inferiority, randomised open-label clinical trial",
+          "pt": "Efficacy and safety of pyronaridine-artesunate (PYRAMAX) for the treatment of P. falciparum uncomplicated malaria in African pregnant women (PYRAPREG): study protocol for a phase 3, non-inferiority, randomised open-label clinical trial"
+        },
+        "label": {
+          "en": "BMJ Open: PYRAPREG trial protocol, 2023",
+          "fr": "BMJ Open : Protocole de l’essai PYRAPREG, 2023",
+          "pt": "BMJ Open: Protocolo do ensaio clínico PYRAPREG, 2023"
+        },
+        "org": "BMJ Open",
+        "category": "Clinical evidence",
+        "group": "document",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10565244/",
+        "alsoSee": [
+          {
+            "label": {
+              "en": "The article on BMJ Open",
+              "fr": "L'article sur BMJ Open",
+              "pt": "O artigo está disponível no BMJ Open."
+            },
+            "url": "https://bmjopen.bmj.com/content/13/10/e065295"
+          }
+        ],
+        "year": "2023",
+        "products": [
+          "pyramax"
+        ],
+        "plain": {
+          "en": "The published plan of a trial of Pyramax in pregnant women in five African countries, which says where the medicine was registered.",
+          "fr": "Le plan publié d'un essai de Pyramax chez des femmes enceintes dans cinq pays africains, qui indique où le médicament a été enregistré.",
+          "pt": "O plano publicado de um ensaio clínico de Pyramax em mulheres grávidas em cinco países africanos indica onde o medicamento foi registrado."
         },
         "collection": "static"
       },
@@ -5438,6 +6118,466 @@
           "en": "WHO's list of the medicines every health system should be able to supply.",
           "fr": "Liste de l'OMS des médicaments que tout système de santé devrait être en mesure de fournir.",
           "pt": "Lista da OMS dos medicamentos que todo sistema de saúde deveria ser capaz de fornecer."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "who-handbook-guidelines",
+        "title": {
+          "en": "WHO handbook for guideline development, 2nd edition",
+          "fr": "WHO handbook for guideline development, 2nd edition",
+          "pt": "WHO handbook for guideline development, 2nd edition"
+        },
+        "label": {
+          "en": "WHO handbook for guideline development, 2014",
+          "fr": "Manuel de l'OMS pour l'élaboration de lignes directrices, 2014",
+          "pt": "Manual da OMS para o desenvolvimento de diretrizes, 2014"
+        },
+        "org": "World Health Organization",
+        "category": "Policy / guidelines",
+        "group": "document",
+        "url": "https://iris.who.int/server/api/core/bitstreams/809b813f-fcfe-451e-b242-d914d580c111/content",
+        "year": "2014",
+        "products": [
+          "all"
+        ],
+        "plain": {
+          "en": "WHO's rulebook for writing its guidelines, including how a Guideline Development Group agrees on a recommendation.",
+          "fr": "Le règlement de l'OMS concernant la rédaction de ses directives, y compris la manière dont un groupe d'élaboration de directives parvient à un accord sur une recommandation.",
+          "pt": "Manual de regras da OMS para a elaboração de suas diretrizes, incluindo como um Grupo de Desenvolvimento de Diretrizes chega a um consenso sobre uma recomendação."
+        },
+        "collection": "static"
+      },
+      {
+        "id": "unitaid-stop-amdr",
+        "title": {
+          "en": "Outpacing antimalarial drug resistance (STOP-AMDR)",
+          "fr": "Outpacing antimalarial drug resistance (STOP-AMDR)",
+          "pt": "Outpacing antimalarial drug resistance (STOP-AMDR)"
+        },
+        "label": {
+          "en": "Unitaid: STOP-AMDR project",
+          "fr": "Unitaid : Projet STOP-AMDR",
+          "pt": "Unitaid: Projeto STOP-AMDR"
+        },
+        "org": "Unitaid; Jhpiego",
+        "category": "MFT strategy",
+        "group": "document",
+        "url": "https://unitaid.org/project/stop-amdr/",
+        "alsoSee": [
+          {
+            "label": {
+              "en": "Unitaid's launch news, 19 Aug 2025",
+              "fr": "Annonces de lancement de Unitaid, 19 août 2025",
+              "pt": "Notícias de lançamento do Unitaid, 19 de agosto de 2025"
+            },
+            "url": "https://unitaid.org/news-blog/unitaid-and-jhpiego-launch-us26-5-million-initiative-to-curb-rising-antimalarial-drug-resistance-in-africa/"
+          },
+          {
+            "label": {
+              "en": "Jhpiego's project page",
+              "fr": "page de projet de Jhpiego",
+              "pt": "Página do projeto Jhpiego"
+            },
+            "url": "https://jhpiego.org/areas-of-expertise/stop-amdr/"
+          }
+        ],
+        "year": "2025",
+        "products": [
+          "pyramax",
+          "dhappq"
+        ],
+        "plain": {
+          "en": "Unitaid's grant to Jhpiego to help six African countries use several first-line malaria treatments.",
+          "fr": "La subvention de Unitaid à Jhpiego pour aider six pays africains à utiliser plusieurs traitements de première intention contre le paludisme.",
+          "pt": "A doação da Unitaid à Jhpiego ajudará seis países africanos a utilizarem diversos tratamentos de primeira linha contra a malária."
+        },
+        "collection": "static"
+      },
+      {
+        "id": "ppb-kenya",
+        "title": {
+          "en": "Public View of Registered Products",
+          "fr": "Public View of Registered Products",
+          "pt": "Public View of Registered Products"
+        },
+        "label": {
+          "en": "Kenya: Pharmacy and Poisons Board register",
+          "fr": "Kenya : Registre du Conseil de la pharmacie et des poisons",
+          "pt": "Quênia: Registro do Conselho de Farmácia e Venenos"
+        },
+        "org": "Pharmacy and Poisons Board (Kenya)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://products.pharmacyboardkenya.org/ppb_admin/pages/public_view_retention_products.php",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "The national register of medicines approved in Kenya.",
+          "fr": "Le registre national des médicaments approuvés au Kenya.",
+          "pt": "Registro nacional de medicamentos aprovados no Quênia."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "efda-ethiopia",
+        "title": {
+          "en": "eRIS: All Registered Products",
+          "fr": "eRIS: All Registered Products",
+          "pt": "eRIS: All Registered Products"
+        },
+        "label": {
+          "en": "Ethiopia: EFDA register (eRIS)",
+          "fr": "Ethiopie : registre EFDA (eRIS)",
+          "pt": "Etiópia: registo EFDA (eRIS)"
+        },
+        "org": "Ethiopian Food and Drug Authority",
+        "category": "National register",
+        "group": "data",
+        "url": "https://eris.efda.gov.et/products",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "The national register of medicines approved in Ethiopia.",
+          "fr": "Le registre national des médicaments approuvés en Éthiopie.",
+          "pt": "Registro nacional de medicamentos aprovados na Etiópia."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "nmrc-namibia",
+        "title": {
+          "en": "Namibia Human Medicines Register, August 2024",
+          "fr": "Namibia Human Medicines Register, August 2024",
+          "pt": "Namibia Human Medicines Register, August 2024"
+        },
+        "label": {
+          "en": "Namibia: NMRC medicines register, Aug 2024",
+          "fr": "Namibie : Registre des médicaments du NMRC, août 2024",
+          "pt": "Namíbia: Registro de medicamentos do NMRC, agosto de 2024"
+        },
+        "org": "Namibia Medicines Regulatory Council",
+        "category": "National register",
+        "group": "data",
+        "url": "https://nmrc.gov.na/documents/4070511/5024444/NAMIBIA+HUMAN+MEDICINES+REGISTER_AUGUST+2024.pdf/59950de0-dc99-73a4-e0b5-4e08465ff3c3?t=1729178490320",
+        "year": "Continuous",
+        "products": [
+          "dhappq"
+        ],
+        "plain": {
+          "en": "Namibia's register of approved medicines, August 2024 edition.",
+          "fr": "Registre namibien des médicaments approuvés, édition d'août 2024.",
+          "pt": "Registro de medicamentos aprovados da Namíbia, edição de agosto de 2024."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "dpml-cameroon",
+        "title": {
+          "en": "Répertoire des médicaments homologués",
+          "fr": "Répertoire des médicaments homologués",
+          "pt": "Répertoire des médicaments homologués"
+        },
+        "label": {
+          "en": "Cameroon: DPML register of approved medicines",
+          "fr": "Cameroun : Registre DPML des médicaments approuvés",
+          "pt": "Camarões: Registro DPML de medicamentos aprovados"
+        },
+        "org": "Ministry of Public Health (Cameroon), DPML",
+        "category": "National register",
+        "group": "data",
+        "url": "https://dpml.cm/repertoireDesAmm/index.php",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "Cameroon's list of medicines with a marketing authorisation.",
+          "fr": "Liste des médicaments du Cameroun bénéficiant d'une autorisation de mise sur le marché.",
+          "pt": "Lista de medicamentos com autorização de comercialização em Camarões."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "arp-senegal",
+        "title": {
+          "en": "Médicaments titulaires d'une AMM",
+          "fr": "Médicaments titulaires d'une AMM",
+          "pt": "Médicaments titulaires d'une AMM"
+        },
+        "label": {
+          "en": "Senegal: ARP list of authorised medicines",
+          "fr": "Sénégal : Liste des médicaments autorisés par l'ARP",
+          "pt": "Senegal: Lista ARP de medicamentos autorizados"
+        },
+        "org": "Agence Sénégalaise de Réglementation Pharmaceutique",
+        "category": "National register",
+        "group": "data",
+        "url": "https://arp.sn/bases-de-donnees/medicaments-autorises",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "Senegal's list of medicines with a marketing authorisation.",
+          "fr": "Liste des médicaments du Sénégal bénéficiant d'une autorisation de mise sur le marché.",
+          "pt": "Lista de medicamentos com autorização de comercialização no Senegal."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "fasofda-burkina",
+        "title": {
+          "en": "Nomenclature des produits de santé",
+          "fr": "Nomenclature des produits de santé",
+          "pt": "Nomenclature des produits de santé"
+        },
+        "label": {
+          "en": "Burkina Faso: Faso FDA product list",
+          "fr": "Burkina Faso : Liste des produits de la FDA",
+          "pt": "Burkina Faso: Lista de produtos da FDA de Faso"
+        },
+        "org": "Faso FDA (Burkina Faso)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://fasofda.bf/fr/appGestion/listeDonnees/Nomenclature%20-%20Produit%20de%20sant%C3%A9/",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "Burkina Faso's list of authorised health products.",
+          "fr": "Liste des produits de santé autorisés au Burkina Faso.",
+          "pt": "Lista de produtos de saúde autorizados em Burkina Faso."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "anarme-mozambique",
+        "title": {
+          "en": "Medicamentos e Vacinas",
+          "fr": "Medicamentos e Vacinas",
+          "pt": "Medicamentos e Vacinas"
+        },
+        "label": {
+          "en": "Mozambique: ANARME medicines database",
+          "fr": "Mozambique : Base de données des médicaments ANARME",
+          "pt": "Moçambique: Base de dados de medicamentos da ANARME"
+        },
+        "org": "Autoridade Nacional Reguladora de Medicamentos (Mozambique)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://anarme.gov.mz/medicamentos-e-vacinas/",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "Mozambique's database of authorised medicines and vaccines.",
+          "fr": "Base de données du Mozambique sur les médicaments et vaccins autorisés.",
+          "pt": "Base de dados de medicamentos e vacinas autorizados em Moçambique."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "mca-gambia",
+        "title": {
+          "en": "List of Registered Products",
+          "fr": "List of Registered Products",
+          "pt": "List of Registered Products"
+        },
+        "label": {
+          "en": "The Gambia: MCA list of registered products",
+          "fr": "Gambie : Liste des produits enregistrés auprès du MCA",
+          "pt": "Gâmbia: Lista de produtos registrados pela MCA"
+        },
+        "org": "Medicines Control Agency (The Gambia)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://www.mca.gm/registered-products/",
+        "year": "Continuous",
+        "products": [
+          "dhappq"
+        ],
+        "plain": {
+          "en": "The Gambia's list of registered medicines.",
+          "fr": "Liste des médicaments enregistrés en Gambie.",
+          "pt": "Lista de medicamentos registrados na Gâmbia."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "abmed-benin",
+        "title": {
+          "en": "Liste des médicaments",
+          "fr": "Liste des médicaments",
+          "pt": "Liste des médicaments"
+        },
+        "label": {
+          "en": "Benin: ABMed list of medicines",
+          "fr": "Bénin : Liste des médicaments de l'ABMed",
+          "pt": "Benin: Lista de medicamentos da ABMed"
+        },
+        "org": "Agence Béninoise du Médicament",
+        "category": "National register",
+        "group": "data",
+        "url": "https://abmed.bj/medicaments",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "Benin's list of medicines with a marketing authorisation.",
+          "fr": "Liste des médicaments du Bénin bénéficiant d'une autorisation de mise sur le marché.",
+          "pt": "Lista de medicamentos com autorização de comercialização no Benim."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "airp-cotedivoire",
+        "title": {
+          "en": "Liste des médicaments enregistrés",
+          "fr": "Liste des médicaments enregistrés",
+          "pt": "Liste des médicaments enregistrés"
+        },
+        "label": {
+          "en": "Côte d'Ivoire: AIRP list of registered medicines",
+          "fr": "Côte d'Ivoire : Liste des médicaments enregistrés de l'AIRP",
+          "pt": "Costa do Marfim: Lista AIRP de medicamentos registrados"
+        },
+        "org": "Autorité Ivoirienne de Régulation Pharmaceutique",
+        "category": "National register",
+        "group": "data",
+        "url": "https://airp.ci/liste-des-medicaments-enregistres",
+        "year": "Continuous",
+        "products": [
+          "dhappq"
+        ],
+        "plain": {
+          "en": "Côte d'Ivoire's list of registered medicines.",
+          "fr": "Liste des médicaments enregistrés en Côte d'Ivoire.",
+          "pt": "Lista de medicamentos registrados na Costa do Marfim."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "acorep-drc",
+        "title": {
+          "en": "Répertoire des autorisations de mise sur le marché",
+          "fr": "Répertoire des autorisations de mise sur le marché",
+          "pt": "Répertoire des autorisations de mise sur le marché"
+        },
+        "label": {
+          "en": "DR Congo: ACOREP register of marketing authorisations",
+          "fr": "République démocratique du Congo : Registre ACOREP des autorisations de mise sur le marché",
+          "pt": "República Democrática do Congo: Registro ACORP de autorizações de comercialização"
+        },
+        "org": "Autorité Congolaise de Réglementation Pharmaceutique",
+        "category": "National register",
+        "group": "data",
+        "url": "https://acorep.gouv.cd/repectoire-amm/",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "DR Congo's register of medicines with a marketing authorisation.",
+          "fr": "Registre des médicaments de la RDC ayant une autorisation de mise sur le marché.",
+          "pt": "Registro de medicamentos com autorização de comercialização na República Democrática do Congo."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "thai-fda",
+        "title": {
+          "en": "Drug product search",
+          "fr": "Drug product search",
+          "pt": "Drug product search"
+        },
+        "label": {
+          "en": "Thailand: Thai FDA drug product search",
+          "fr": "Thaïlande : Recherche de produits pharmaceutiques de l'Agence thaïlandaise des produits pharmaceutiques (FDA)",
+          "pt": "Tailândia: Busca de medicamentos pela FDA tailandesa"
+        },
+        "org": "Food and Drug Administration (Thailand)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://pertento.fda.moph.go.th/FDA_SEARCH_DRUG/SEARCH_DRUG/FRM_SEARCH_DRUG.aspx",
+        "year": "Continuous",
+        "products": [
+          "dhappq"
+        ],
+        "plain": {
+          "en": "Thailand's register of approved medicines.",
+          "fr": "Registre thaïlandais des médicaments approuvés.",
+          "pt": "Registro de medicamentos aprovados da Tailândia."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "bpom-indonesia",
+        "title": {
+          "en": "Cek BPOM: obat",
+          "fr": "Cek BPOM: obat",
+          "pt": "Cek BPOM: obat"
+        },
+        "label": {
+          "en": "Indonesia: BPOM product check",
+          "fr": "Indonésie : Contrôle des produits BPOM",
+          "pt": "Indonésia: Verificação de produtos pela BPOM"
+        },
+        "org": "Badan Pengawas Obat dan Makanan (Indonesia)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://cekbpom.pom.go.id/produk-obat",
+        "year": "Continuous",
+        "products": [
+          "dhappq"
+        ],
+        "plain": {
+          "en": "Indonesia's register of approved medicines.",
+          "fr": "Registre indonésien des médicaments approuvés.",
+          "pt": "Registro de medicamentos aprovados na Indonésia."
+        },
+        "collection": "manual"
+      },
+      {
+        "id": "fda-myanmar",
+        "title": {
+          "en": "Drug registration renewal approval list 1/2022",
+          "fr": "Drug registration renewal approval list 1/2022",
+          "pt": "Drug registration renewal approval list 1/2022"
+        },
+        "label": {
+          "en": "Myanmar: FDA renewal approval list, 2022",
+          "fr": "Myanmar : Liste des renouvellements d'approbation de la FDA, 2022",
+          "pt": "Myanmar: Lista de aprovações de renovação da FDA, 2022"
+        },
+        "org": "Food and Drug Administration (Myanmar)",
+        "category": "National register",
+        "group": "data",
+        "url": "https://www.fda.gov.mm/?p=5449",
+        "year": "Continuous",
+        "products": [
+          "dhappq",
+          "pyramax"
+        ],
+        "plain": {
+          "en": "Myanmar's 2022 list of medicine registrations renewed.",
+          "fr": "La liste des médicaments autorisés au Myanmar pour 2022 a été renouvelée.",
+          "pt": "A lista de registros de medicamentos de Myanmar para 2022 foi renovada."
         },
         "collection": "manual"
       },
