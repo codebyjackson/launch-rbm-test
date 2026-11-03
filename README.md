@@ -32,9 +32,9 @@ npm run typecheck
 npm run build
 ```
 
-`NEXT_PUBLIC_LAUNCH_FORMS_URL` (set at build time) is the address of the
-Subscribe and Send feedback forms. Without it, Subscribe is hidden and Send
-feedback shows as not connected.
+`UNITAID_FORMS_URL` and `UNITAID_FORMS_TOKEN` turn on the Subscribe and Send
+feedback forms (see "Forms routes"). Without them, Subscribe is hidden and
+Send feedback shows as not connected.
 
 ## What to copy into your app
 
@@ -48,6 +48,8 @@ feedback shows as not connected.
 | `public/launch-icons/`, `public/assets/` | The WHO emblem and the Unitaid logo. |
 | `app/api/unitaid/data/route.ts` | The data route, `GET /api/unitaid/data` (see "Data route"). Copy it to the same path in your `app/`. |
 | `app/api/unitaid/notifications/route.ts` | The notifications route, `POST /api/unitaid/notifications` (see "Notifications route"). Copy it to the same path in your `app/`. |
+| `app/api/unitaid/subscribe/`, `feedback/`, `unsubscribe/` | The three forms routes (see "Forms routes"). Copy them to the same paths in your `app/`. |
+| `app/[locale]/unsubscribe/page.tsx` | The "Unsubscribe?" page that the link in the welcome email opens (see "Forms routes"). In your app, at `/[locale]/unitaid/unsubscribe`. |
 
 Imports use the `@/` alias for this repository's root (`tsconfig.json`
 `paths`). Map `@/` to wherever you put these folders, or adjust the imports.
@@ -69,6 +71,7 @@ import { Dashboard } from "@/components/Dashboard";
 import { frameText } from "@/components/frame/text";
 import { frameView } from "@/components/frame/view";
 import { getDashboard } from "@/lib/data";
+import { formsEnabled } from "@/lib/env";
 import { mapInput } from "@/lib/map";
 import { mapCountries } from "@/lib/map-countries";
 import { provideMessages } from "@/lib/messages";
@@ -88,7 +91,7 @@ export default async function LaunchPage({ params }: { params: Promise<{ locale:
       sources={ds.sources.sources}
       frameView={frameView(ds, locale, frameText(locale))}
       mapInput={mapInput(ds, mapCountries(locale), locale)}
-      formsUrl={process.env.NEXT_PUBLIC_LAUNCH_FORMS_URL}
+      formsEnabled={formsEnabled()}
       assets={{
         logo: "/assets/unitaid-logo.svg",
         whoEmblem: "/launch-icons/who-emblem.svg",
@@ -271,6 +274,80 @@ for the data host only if it arrives before that re-read has finished.
   serves the old file when the notification arrives, the old file is kept for
   5 minutes. The LAUNCH pipeline is to notify only once its publish has
   finished.
+
+## Forms routes
+
+Subscribe for updates and Send feedback post to this site, never to another
+one: `POST /api/unitaid/subscribe` and `POST /api/unitaid/feedback`
+(`app/api/unitaid/*/route.ts`, `lib/forms.ts`). Each is a relay. It takes the
+form from the visitor's browser, passes it on, server to server, to the LAUNCH
+forms service with your site's token, and returns the service's answer as it
+is. The visitor's cookies, address and other headers are not passed on. The
+service holds the email key and sends the emails; your server holds only the
+service's address and the token.
+
+**Settings**, on your server only (`.env.local`, which git ignores, or your
+host's environment); the LAUNCH team gives you both values, the token by a
+private channel:
+
+| Setting | What it is |
+|---|---|
+| `UNITAID_FORMS_URL` | The forms service's address, such as `https://<project>.supabase.co/functions/v1`. https only. |
+| `UNITAID_FORMS_TOKEN` | Your site's token, at least 32 characters. A secret: never commit it. |
+
+With either unset (or the token shorter than 32 characters), Subscribe is
+hidden, Send feedback shows as not connected, and the routes answer 503.
+
+**Set both settings before you build.** The routes read them on every
+request, so they are always current. The page is different: whether the
+forms are on is drawn into the page, which is built ahead and refreshed at
+most every 5 minutes (`revalidate = 300`). So a change to either setting
+reaches the page up to about 5 minutes later, a cached page survives a
+restart, and a build made without them starts with the forms off until the
+first refresh after a visit.
+
+**Your server calls out.** The routes make an HTTPS request to
+`UNITAID_FORMS_URL` for every form sent, so your server must be allowed to
+reach it.
+
+**Responses.** The routes check, in this order:
+
+| Status | When |
+|---|---|
+| **405** | Not a POST: `Allow: POST`, with a JSON reason (GET and HEAD reach the relay, which refuses them). |
+| **503** | The two settings are not set. Nothing is sent. |
+| **415** | Not `Content-Type: application/json`. |
+| **413** | A body over 32 KB (32,768 bytes), by its `Content-Length` or counted while reading. |
+| **400** | A body that is not UTF-8 text. |
+| **502** | The forms service did not answer within 10 seconds, could not be reached, or did not answer with JSON (a redirect included). |
+| *the service's* | Anything else: the service's own status and JSON, unchanged. `200 {"ok": true, "status": "subscribed"}` or `"already"` for Subscribe; `200 {"ok": true, "ref": "LAUNCH-…"}` for Send feedback; `400 {"ok": false, "error": …}` for a form the service refuses. |
+
+Failures are logged with the route and the status only: never the form,
+which carries names and addresses, and never the token.
+
+**The "Unsubscribe?" page.** Every welcome email has an unsubscribe link. It
+opens the forms service, which sends the reader on to this page with the
+link's token: `/{locale}/unsubscribe?t=…` here, `/{locale}/unitaid/unsubscribe`
+in your app (the address the LAUNCH team has registered for your site; tell us
+if yours differs). The page shows one button and does nothing until it is
+pressed, because mail systems open every link in an email to check it. The
+button posts `{ "t": "…" }` to `POST /api/unitaid/unsubscribe`, the third
+relay. The page is never indexed and sends no `Referer`, since its address
+carries the token. Mail apps' own "Unsubscribe" button (the
+`List-Unsubscribe` header) goes to the forms service directly and does not
+use this page.
+
+Two requests for that page, both on your side:
+- **A `Referrer-Policy: no-referrer` response header** for
+  `/{locale}/unitaid/unsubscribe` (your `next.config` `headers()`, or your
+  middleware). The page's own `no-referrer` tag comes after its stylesheet
+  and scripts in the `<head>`, so those first requests still send the
+  address, token included, as `Referer`. They go only to your own server,
+  which already has the token, but a header covers every request from the
+  start.
+- **Leave `/unitaid/unsubscribe` out of your analytics.** Otherwise each
+  visit records the address with its `?t=`. The token allows only one thing,
+  unsubscribing that one address, but it does not belong in a report.
 
 ## Updates from the LAUNCH team
 

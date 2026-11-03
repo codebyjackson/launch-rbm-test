@@ -41,6 +41,20 @@
       "subscribed": "Merci de votre inscription. Vous recevrez un courriel à chaque mise à jour des données du tableau de bord.",
       "alreadySubscribed": "Cette adresse e-mail est déjà abonnée. Vous continuerez à recevoir un e-mail à chaque mise à jour des données du tableau de bord."
     },
+    "unsubscribe": {
+      "title": "Unsubscribe from LAUNCH dashboard updates?",
+      "intro": "You will stop getting emails when the dashboard's data is updated.",
+      "button": "Unsubscribe",
+      "sending": "Unsubscribing…",
+      "doneTitle": "You're unsubscribed",
+      "doneText": "You won't get any more update emails from the LAUNCH dashboard.",
+      "doneAgain": "Changed your mind? You can subscribe again from the dashboard at any time.",
+      "badLinkTitle": "This link doesn't work",
+      "badLinkText": "It may have been copied incompletely. Use the unsubscribe link in your most recent email from us.",
+      "failedTitle": "Sorry, that didn't work",
+      "failedText": "We could not unsubscribe you just now. Please try the link again in a few minutes.",
+      "back": "Back to the dashboard"
+    },
     "pathway": {
       "label": "Le parcours d’accès : huit étapes clés réparties en sept phases. La recommandation de l’OMS et l’inscription de l’OMS sur la liste PQ sont des étapes clés parallèles au sein de la phase 3. Choisissez une phase pour découvrir ce qui s’y passe et où se trouve chaque médicament.",
       "stageButtonLabel": "Étape {n}, {stage}. Indique ce qui se passe ici et où se trouve chaque médicament.",

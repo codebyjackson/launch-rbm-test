@@ -160,7 +160,7 @@ export function Subscribe({
   onOpenChange,
 }: {
   text: SubscribeText;
-  /** where it posts: `${NEXT_PUBLIC_LAUNCH_FORMS_URL}/api/subscribe` (formsEndpoints) */
+  /** where it posts: this site's relay, /api/unitaid/subscribe (formsEndpoints) */
   endpoint: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;

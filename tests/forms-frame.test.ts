@@ -1,5 +1,5 @@
 // The two forms, with fetch stubbed: the exact request each sends, what the
-// reader then sees, and that nothing is sent without a forms address.
+// reader then sees, and that nothing is sent while the forms are off.
 //
 // No DOM is installed, so the forms are tested as their components run them:
 // the logic as functions (lib/frame.ts: checkSubscribe and sendSubscribe;
@@ -7,7 +7,10 @@
 // FeedbackDialog) rendered with the state that logic produced. The page's own
 // handlers are compared with these in tests/golden-frame.test.ts.
 //
-// What the server reads, from launch-development main at 89b2011:
+// Both post to this site's relays (/api/unitaid/…, lib/forms.ts, tested in
+// tests/forms-routes.test.ts), which pass the body on unchanged to the forms
+// service. What the service reads, from launch-development main at 89b2011
+// (api/; its Supabase port in supabase/functions/_shared/ reads the same):
 //   api/subscribe.js  body.firstName, body.lastName, body.organisation, body.email
 //                     (`page` is sent, as by the page, and not read)
 //   api/feedback.js   body.message, body.email, body.type, body.productName,
@@ -29,21 +32,18 @@ import { stubFetch } from "./golden-frame/harness";
 
 const FIXTURE = JSON.parse(readFileSync(new URL("./fixtures/dashboard.json", import.meta.url), "utf8"));
 const t = FRAME_TEXT.en;
-const FORMS = "https://forms.example.org";
-const ends = frame.formsEndpoints(FORMS)!;
+const ends = frame.formsEndpoints(true)!;
 
 const SERVER_EMAIL_RE = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"; // api/_mail.js EMAIL_RE
 const JSON_POST = { method: "POST", headers: { "Content-Type": "application/json" } };
 
-describe("the forms address", () => {
-  it("builds both endpoints from the one setting, without a doubled slash", () => {
-    expect(ends).toEqual({ subscribe: `${FORMS}/api/subscribe`, feedback: `${FORMS}/api/feedback` });
-    expect(frame.formsEndpoints(`${FORMS}//`)).toEqual(ends);
-    expect(frame.formsEndpoints(`  ${FORMS}  `)).toEqual(ends);
+describe("where the forms post", () => {
+  it("posts to this site's own relays, never to another site", () => {
+    expect(ends).toEqual({ subscribe: "/api/unitaid/subscribe", feedback: "/api/unitaid/feedback" });
   });
 
-  it("is off when empty or missing", () => {
-    for (const v of ["", "   ", undefined]) expect(frame.formsEndpoints(v), JSON.stringify(v)).toBe(null);
+  it("is nowhere when the forms are off", () => {
+    expect(frame.formsEndpoints(false)).toBe(null);
   });
 
   it("checks addresses with the server's own test", () => {
@@ -62,7 +62,7 @@ describe("Subscribe for updates", () => {
     await frame.sendSubscribe(checked.details, pageUrl, ends.subscribe, net.fetch);
     expect(net.calls).toEqual([
       {
-        url: "https://forms.example.org/api/subscribe",
+        url: "/api/unitaid/subscribe",
         ...JSON_POST,
         body: JSON.stringify({ firstName: "Ada", lastName: "Lovelace", email: "ada@example.org", organisation: "MoH", page: pageUrl }),
       },
@@ -124,11 +124,11 @@ describe("Subscribe for updates", () => {
     }
   });
 
-  it("is not there at all without a forms address", () => {
+  it("is not there at all while the forms are off", () => {
     const ds = localize(FIXTURE, "en", "https://example.org/v1/dashboard.json");
     const view = frameView(ds, "en", t);
-    for (const formsUrl of ["", undefined]) {
-      const html = renderToStaticMarkup(createElement(DashboardFrame, { text: t, view, formsUrl, logoSrc: "/l.svg" }));
+    for (const formsEnabled of [false, undefined]) {
+      const html = renderToStaticMarkup(createElement(DashboardFrame, { text: t, view, formsEnabled, logoSrc: "/l.svg" }));
       expect(html).not.toContain("sub-open");
       expect(html).not.toContain("subwrap");
     }
@@ -167,7 +167,7 @@ describe("Send feedback", () => {
     await frame.sendFeedback(prepared.payload, prepared.endpoint, net.fetch);
     expect(net.calls).toEqual([
       {
-        url: "https://forms.example.org/api/feedback",
+        url: "/api/unitaid/feedback",
         ...JSON_POST,
         body: JSON.stringify({
           type: "source",
@@ -236,7 +236,7 @@ describe("Send feedback", () => {
     expect(html.match(/class="ri-field is-bad"/g)).toHaveLength(2);
   });
 
-  it("posts nothing without a forms address: Send is blocked and the note says so", async () => {
+  it("posts nothing while the forms are off: Send is blocked and the note says so", async () => {
     const net = stubFetch({ status: 200, body: { ok: true, ref: "never" } });
     const prepared = frame.prepareFeedback(fields, { endpoint: null, products, meta, env });
     expect(prepared).toEqual({ kind: "blocked" });

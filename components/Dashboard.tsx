@@ -67,8 +67,13 @@ export interface DashboardProps {
   frameView: FrameView;
   /** mapInput(dataset, mapCountries(locale), locale), worked out on the server */
   mapInput: MapInput;
-  /** NEXT_PUBLIC_LAUNCH_FORMS_URL; empty or missing: Subscribe hidden, Send feedback not connected */
-  formsUrl?: string;
+  /**
+   * Whether the two forms are on: formsEnabled() (lib/env.ts), worked out on
+   * the server. They post to this site's relays, /api/unitaid/subscribe and
+   * /api/unitaid/feedback. False or missing: Subscribe hidden, Send feedback
+   * not connected.
+   */
+  formsEnabled?: boolean;
   assets: DashboardAssets;
   /**
    * A medicine to open and scroll to, as a link such as #pyramax did: on
@@ -97,7 +102,7 @@ export function Dashboard({
   sources,
   frameView,
   mapInput,
-  formsUrl,
+  formsEnabled,
   assets,
   initialProduct,
   onProductChange,
@@ -159,7 +164,7 @@ export function Dashboard({
   );
 
   return (
-    <DashboardFrame text={ftext} view={frameView} formsUrl={formsUrl} logoSrc={assets.logo} outside={outside}>
+    <DashboardFrame text={ftext} view={frameView} formsEnabled={formsEnabled} logoSrc={assets.logo} outside={outside}>
       <Pathway
         ctx={ctx}
         products={listed}

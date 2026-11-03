@@ -70,7 +70,7 @@ export const FEEDBACK_START: FeedbackState = {
 
 /**
  * The feedback dialog and its floating pill, drawn from plain values.
- * `connected` is false when there is no forms address: Send is then inert
+ * `connected` is false when the forms are off: Send is then inert
  * (aria-disabled, its click blocked) and the note says so in red, as on the
  * static pages built with `--api-url none`.
  */
@@ -268,7 +268,7 @@ export function FeedbackForm({
   dataStatus,
 }: {
   text: FeedbackText;
-  /** `${NEXT_PUBLIC_LAUNCH_FORMS_URL}/api/feedback`, or null: not connected, nothing is ever posted */
+  /** this site's relay, /api/unitaid/feedback, or null: not connected, nothing is ever posted */
   endpoint: string | null;
   products: readonly FeedbackOption[];
   lastUpdated: string | null;

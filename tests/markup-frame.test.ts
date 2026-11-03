@@ -41,7 +41,6 @@ import {
 
 const FIXTURE = JSON.parse(readFileSync(new URL("./fixtures/dashboard.json", import.meta.url), "utf8"));
 const LOGO = "../assets/unitaid-logo.svg"; // what the page's <img> points at
-const FORMS = "https://launch-development-test.vercel.app";
 const noop = () => {};
 
 // React 19 writes a <link rel="preload" as="image"> for every <img> it
@@ -94,14 +93,14 @@ for (const locale of LOCALES) {
         logoSrc: LOGO,
         updated: view.updated,
         csv: view.csv,
-        subscribe: subscribe ? { endpoint: `${FORMS}/api/subscribe`, open: false, onOpenChange: noop } : null,
+        subscribe: subscribe ? { endpoint: "/api/unitaid/subscribe", open: false, onOpenChange: noop } : null,
       });
 
-    it("header, with Subscribe (a forms address is set)", () => {
+    it("header, with Subscribe (the forms are on)", () => {
       expect(render(header(true))).toEqual(normalise(oldHeader()));
     });
 
-    it("header, without Subscribe (no forms address): the two elements are left out", () => {
+    it("header, without Subscribe (the forms are off): the two elements are left out", () => {
       // The static build kept them and hid them with CSS (--api-url none).
       const without = (toks: Tok[]) => {
         const drop = (id: string, ts: Tok[]) => {
@@ -191,7 +190,7 @@ for (const locale of LOCALES) {
     });
 
     for (const connected of [true, false]) {
-      it(`feedback dialog and pill, ${connected ? "connected" : "not connected (no forms address)"}`, () => {
+      it(`feedback dialog and pill, ${connected ? "connected" : "not connected (the forms are off)"}`, () => {
         const products = [...ds.data.products, { ...ds.data.products[0], id: "planned", name: "Planned one", placeholder: true }];
         const w = runOldWidget(locale, {
           products,
@@ -267,7 +266,7 @@ for (const locale of LOCALES) {
           {
             text: t,
             view,
-            formsUrl: FORMS,
+            formsEnabled: true,
             logoSrc: LOGO,
             outside: createElement("div", { id: "tip", role: "tooltip" }),
           },
@@ -295,8 +294,8 @@ for (const locale of LOCALES) {
       expect(normalise(subtree(toks, (tk) => tk.name === "footer"))).toEqual(
         render(createElement(Footer, { text: t.footer, sources: view.sources, countryChecks: view.countryChecks, glossary: view.glossary })),
       );
-      // no forms address: no Subscribe, Send feedback blocked
-      const off = renderToStaticMarkup(createElement(DashboardFrame, { text: t, view, formsUrl: "", logoSrc: LOGO }));
+      // the forms off: no Subscribe, Send feedback blocked
+      const off = renderToStaticMarkup(createElement(DashboardFrame, { text: t, view, formsEnabled: false, logoSrc: LOGO }));
       expect(off).not.toContain('id="sub-open"');
       expect(off).not.toContain('id="subwrap"');
       expect(off).toContain('aria-disabled="true"');

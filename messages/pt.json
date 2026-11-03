@@ -41,6 +41,20 @@
       "subscribed": "Obrigado por se inscrever. Você receberá um e-mail sempre que os dados do painel forem atualizados.",
       "alreadySubscribed": "Este endereço de e-mail já está cadastrado. Você continuará recebendo um e-mail sempre que os dados do painel forem atualizados."
     },
+    "unsubscribe": {
+      "title": "Unsubscribe from LAUNCH dashboard updates?",
+      "intro": "You will stop getting emails when the dashboard's data is updated.",
+      "button": "Unsubscribe",
+      "sending": "Unsubscribing…",
+      "doneTitle": "You're unsubscribed",
+      "doneText": "You won't get any more update emails from the LAUNCH dashboard.",
+      "doneAgain": "Changed your mind? You can subscribe again from the dashboard at any time.",
+      "badLinkTitle": "This link doesn't work",
+      "badLinkText": "It may have been copied incompletely. Use the unsubscribe link in your most recent email from us.",
+      "failedTitle": "Sorry, that didn't work",
+      "failedText": "We could not unsubscribe you just now. Please try the link again in a few minutes.",
+      "back": "Back to the dashboard"
+    },
     "pathway": {
       "label": "O caminho de acesso: oito marcos em sete etapas. A recomendação da OMS e a inclusão na lista PQ da OMS são marcos paralelos dentro da etapa 3. Escolha uma etapa para ver o que acontece nela e onde cada medicamento se encontra.",
       "stageButtonLabel": "Estágio {n}, {stage}. Mostra o que acontece aqui e onde cada medicamento está localizado.",

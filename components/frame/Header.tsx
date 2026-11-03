@@ -5,7 +5,7 @@ import type { HeaderText, SubscribeText } from "./text";
 /**
  * The header: title, "Powered by" Unitaid, the description, the "Last
  * updated" line, Download CSV and Subscribe for updates. Subscribe is left
- * out when there is no forms address (`subscribe` null), as the static build
+ * out when the forms are off (`subscribe` null), as the static build
  * hides it with `--api-url none`.
  */
 export function Header({

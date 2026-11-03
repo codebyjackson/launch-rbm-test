@@ -4,6 +4,7 @@ import { Banner } from "@/components/frame/Banner";
 import { frameText } from "@/components/frame/text";
 import { frameView } from "@/components/frame/view";
 import { getDashboard } from "@/lib/data";
+import { formsEnabled } from "@/lib/env";
 import { DatasetError, type Localized } from "@/lib/dataset";
 import { isLocale } from "@/lib/locales";
 import { mapInput } from "@/lib/map";
@@ -58,7 +59,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       sources={ds.sources.sources}
       frameView={frameView(ds, locale, frameText(locale))}
       mapInput={mapInput(ds, mapCountries(locale), locale)}
-      formsUrl={process.env.NEXT_PUBLIC_LAUNCH_FORMS_URL}
+      formsEnabled={formsEnabled()}
       assets={ASSETS}
     />
   );
