@@ -25,9 +25,14 @@ import { runOldPage, runOldWidget, stubFetch, type FetchCall, type StubEl } from
 // The published file on 27 Oct 2026 (pipeline commit 2d30ff3).
 const FIXTURE = JSON.parse(readFileSync(new URL("./fixtures/dashboard.json", import.meta.url), "utf8"));
 const URL_ = "https://example.org/v1/dashboard.json";
-// The address RBM's static copies post to; the new code is given it as the setting.
+// The address RBM's static copies post to. The new code posts to this site's
+// relays instead (/api/unitaid/…, which pass the body on unchanged), so the
+// requests are compared without their address, and each side's address is
+// checked on its own: the old page's FORMS, the new code's relay.
 const FORMS = "https://launch-development-test.vercel.app";
-const ENDPOINTS = frame.formsEndpoints(FORMS)!;
+const ENDPOINTS = frame.formsEndpoints(true)!;
+const withoutUrl = (calls: FetchCall[]) => calls.map(({ url: _url, ...rest }) => rest);
+const postedTo = (calls: FetchCall[], url: string) => calls.every((c) => c.url === url);
 
 type Fn = (...args: unknown[]) => unknown;
 
@@ -135,7 +140,8 @@ const PAGE_URL = "https://example.org/en/";
 
 /** What a Subscribe submit did, as both sides can report it. */
 interface SubscribeSeen {
-  calls: FetchCall[];
+  /** method, headers and body: the address differs by design (above) */
+  calls: Omit<FetchCall, "url">[];
   msg: { text: string; className: string; hidden: boolean };
   invalid: string[];
   focused: string[];
@@ -328,7 +334,7 @@ for (const locale of LOCALES) {
           await old.el("sub-form").fire("submit");
           const msgEl: StubEl = old.el("sub-msg");
           const oldSeen: SubscribeSeen = {
-            calls: oldNet.calls,
+            calls: withoutUrl(oldNet.calls),
             msg: { text: msgEl.textContent, className: msgEl.className, hidden: msgEl.hidden },
             invalid: Object.values(SUB_FIELDS).filter((id) => old.el(id.slice(1)).getAttribute("aria-invalid") === "true"),
             focused: old.world.focused,
@@ -350,13 +356,15 @@ for (const locale of LOCALES) {
           }
           const invalid = checked.ok ? [] : checked.invalid.map((k) => SUB_FIELDS[k]);
           const newSeen: SubscribeSeen = {
-            calls: newNet.calls,
+            calls: withoutUrl(newNet.calls),
             msg: { text: msg.text, className: msg.tone ? `sub-msg ${msg.tone}` : "sub-msg", hidden: !msg.text },
             invalid,
             focused: invalid.slice(0, 1),
             resets,
           };
           same("subscribe", label, newSeen, oldSeen);
+          expect(postedTo(oldNet.calls, `${FORMS}/api/subscribe`), `${label}: the old page's address`).toBe(true);
+          expect(postedTo(newNet.calls, "/api/unitaid/subscribe"), `${label}: the relay`).toBe(true);
         }
       }
       check();
@@ -414,7 +422,7 @@ for (const locale of LOCALES) {
           await old.q(".ri-form").fire("submit");
           await new Promise((r) => setTimeout(r, 0)); // the widget's promise chain
           const oldSeen = {
-            calls: oldNet.calls,
+            calls: withoutUrl(oldNet.calls),
             errors: { message: old.q("#ri-e-message").textContent, email: old.q("#ri-e-email").textContent },
             done: !old.q("#ri-done").hidden && old.q(".ri-form").hidden === true,
             reference: old.q("#ri-ref").textContent,
@@ -425,7 +433,7 @@ for (const locale of LOCALES) {
           const newNet = stubFetch(rc.reply);
           const prepared = frame.prepareFeedback(fc.fields, { endpoint: ENDPOINTS.feedback, products: options, meta, env });
           const newSeen = {
-            calls: newNet.calls,
+            calls: withoutUrl(newNet.calls),
             errors: feedbackErrorText(prepared.kind === "invalid" ? prepared.errors : { message: "", email: "" }, t.feedback),
             done: false,
             reference: "",
@@ -443,7 +451,11 @@ for (const locale of LOCALES) {
               newSeen.alert = { on: true, text: t.feedback.failed };
             }
           }
+          // the calls list fills as the send runs, so its copy is taken now
+          newSeen.calls = withoutUrl(newNet.calls);
           same("feedback", label, newSeen, oldSeen);
+          expect(postedTo(oldNet.calls, `${FORMS}/api/feedback`), `${label}: the old widget's address`).toBe(true);
+          expect(postedTo(newNet.calls, "/api/unitaid/feedback"), `${label}: the relay`).toBe(true);
         }
       }
       check();

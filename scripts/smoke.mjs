@@ -3,12 +3,15 @@
 // show (hydration, clicks, Escape, hints, deep links, the forms, the map
 // drawing) checked in headless Chrome against a running production build.
 //
-//   NEXT_PUBLIC_LAUNCH_FORMS_URL=https://forms.example.org npx next build
+//   export UNITAID_FORMS_URL=https://forms.example.org/functions/v1
+//   export UNITAID_FORMS_TOKEN=$(openssl rand -hex 32)
+//   npx next build
 //   npx next start -p 3124 &
 //   node scripts/smoke.mjs
 //
-// The forms address is read when the pages are built: without it Subscribe
-// is not rendered and that check fails. Settings (environment):
+// The forms' two settings are read when the pages are built (lib/env.ts):
+// without them Subscribe is not rendered and that check fails. Nothing is
+// sent, so they need not reach a real forms service. Settings (environment):
 //   SMOKE_BASE     the server (http://localhost:3124)
 //   SMOKE_LOCALES  comma-separated (en,fr)
 //   SMOKE_OUT      where screenshots go (a temporary folder)
@@ -428,7 +431,7 @@ async function smoke(cdp, locale) {
     const closed = await t.waitFor(`document.getElementById("subwrap").hidden`, 2000);
     check(locale, "Subscribe opens (and Escape closes it)", open && closed);
   } else {
-    check(locale, "Subscribe opens", false, "no #sub-open: was NEXT_PUBLIC_LAUNCH_FORMS_URL set at next build?");
+    check(locale, "Subscribe opens", false, "no #sub-open: were UNITAID_FORMS_URL and UNITAID_FORMS_TOKEN set at next build?");
   }
 
   // Send feedback: the dialog opens and closes

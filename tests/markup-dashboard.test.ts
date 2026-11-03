@@ -118,7 +118,7 @@ for (const locale of LOCALES) {
           sources: ds.sources.sources,
           frameView: frameView(ds, locale, frameText(locale)),
           mapInput: mapInput(ds, mapCountries(locale), locale),
-          formsUrl: "https://forms.example.org",
+          formsEnabled: true,
           assets: { logo: "/logo.svg", mapShapes: "/shapes.json", mapWorker: "/worker.js" },
         }),
       );

@@ -263,7 +263,9 @@ This file is updated in the same commit as each change it describes.
     widget's buttons, while the rest of the dashboard sits at (0,2,0) and
     up); relying on import order; adding element types to the skin's
     selectors (`dialog.ri-dialog`).
-28. **One setting for both forms, and no default.** `formsEndpoints()` builds
+28. **One setting for both forms, and no default.** *(Replaced on 3 Nov by
+    decision 61: the forms post to this site's relays, and the setting is
+    gone.)* `formsEndpoints()` builds
     `/api/subscribe` and `/api/feedback` from `NEXT_PUBLIC_LAUNCH_FORMS_URL`,
     read by the server page and passed down as a prop. Empty or missing: the
     Subscribe button and panel are not rendered (the static build kept them,
@@ -419,7 +421,7 @@ This file is updated in the same commit as each change it describes.
 42. **One client component, `components/Dashboard.tsx`, takes only what a
     server component can pass** (branch `feat/react-port-dashboard`): the
     locale, `data` and `sources` from `localize()`, `frameView` and `mapInput`
-    worked out on the server, `formsUrl`, and `assets` (logo, WHO emblem,
+    worked out on the server, `formsUrl` (`formsEnabled` since decision 61), and `assets` (logo, WHO emblem,
     map shapes, map worker), plus `initialProduct`/`onProductChange`
     (decision 47). It works out its words from the locale itself. Rejected:
     the server passing the five text objects as props. `lib/stages.ts` reads
@@ -964,7 +966,164 @@ This file is updated in the same commit as each change it describes.
       filter states per location where it had 64), 21 kinds of click
       reached, each view 52 to 62 times.
 
+61. **The forms post to this site's relays, not to the forms service**
+    (3 Nov; Stage 2 of moving the forms' backend off Vercel onto a Supabase
+    function, launch-development-test `supabase/`, its
+    `docs/forms-service-notes.md`). `POST /api/unitaid/subscribe`,
+    `/api/unitaid/feedback` and `/api/unitaid/unsubscribe`
+    (`app/api/unitaid/*/route.ts`, `relay()` in `lib/forms.ts`) pass each
+    form, server to server, to `${UNITAID_FORMS_URL}/api/<path>` with
+    `Authorization: Bearer ${UNITAID_FORMS_TOKEN}`, and hand back the
+    service's status and JSON unchanged. `formsEndpoints(enabled)` now
+    returns those relative paths, and `formsEnabled()` (`lib/env.ts`) turns
+    the forms on, replacing `NEXT_PUBLIC_LAUNCH_FORMS_URL` (decision 28) and
+    the `formsUrl` prop.
+    - **Why.** RBM's module rules (3 Nov) allow no `NEXT_PUBLIC_` setting,
+      let only `lib/env.ts` and `app/api/unitaid/**` read `process.env`, and
+      say the browser calls only `/api/unitaid/…`. And the token must stay on
+      the server, because anything a page holds, its readers can read. A side
+      effect: the browser never crosses sites, so there is no CORS, and the
+      service's address never reaches a reader. Both builds were checked: the
+      dummy token and address appear in no file under `.next/static`, nor in
+      any built page.
+    - **Rejected:** the browser posting to the service, as the static copies
+      do (it breaks RBM's rules, and the address sits in every page); a token
+      in the page (readable by anyone); the mail code on RBM's server (the
+      email key would sit with RBM).
+    - **Numbers.**
+      - **32 KB** (32,768 bytes) body cap: the forms service's own cap. The
+        largest real form, a 2,000-character report with its page details,
+        is a few KB.
+      - **10 s** timeout. Shorter than the service's worst case: a subscribe
+        makes up to six Resend calls (look up, save twice when the
+        organisation is retried, add to the segment, the welcome, the team's
+        note), each allowed 8 s. Each usually takes a fraction of a second.
+        When the relay gives
+        up, the service may still finish, and the reader, told it failed,
+        tries again and reads "already subscribed". A reader waiting half a
+        minute was judged worse.
+      - **32 characters** minimum token, the service's own minimum
+        (`openssl rand -hex 32` gives 64). Shorter counts as not set, so a
+        test value cannot slip into production.
+    - **Not followed: redirects** (`redirect: "manual"`, giving 502).
+      Following one would drop the token on another host, or turn the POST
+      into a GET. A moved service is a setting to fix. Any 3xx, and a
+      browser-style `opaqueredirect` (status 0), is refused **before its
+      body is read**. The first version parsed the body first, so a 307
+      carrying `{"ok": true, …}` reached the browser as a 307 (found by the
+      independent test run, 3 Nov).
+    - **GET is exported only to refuse it.** A method a route does not
+      export gets Next.js's own 405, with no `Allow` header and an empty
+      body. That is `autoImplementMethods`, the same code in 16.4.3
+      (`node_modules`) and 15.5.7 (its npm package, read 3 Nov). Both also
+      serve HEAD with GET when GET exists. So each route's `GET` calls the
+      same relay, which answers 405 with `Allow: POST` and a JSON reason, for
+      GET and HEAD alike. The build still lists all three routes as dynamic
+      (ƒ): the handlers read the request, so nothing is built ahead or
+      cached.
+    - **Relayed: the body only.** Not the reader's cookies, Origin, user
+      agent or IP. The service's planned rate limit therefore cannot tell
+      readers apart yet (below).
+    - **On/off is drawn into the page,** which is built ahead and refreshed
+      at most every 5 minutes (`revalidate = 300`, incremental static
+      regeneration). So:
+      - a change to `UNITAID_FORMS_*` reaches the page up to about 5 minutes
+        later;
+      - a cached page survives a restart;
+      - a build made without the settings starts with the forms off until
+        the first refresh.
+      The relays read the settings on every request, so they are always
+      current. Advice for RBM (README, "Forms routes"): set both before
+      building. Rejected: making the page dynamic, which would give up the
+      cache the data relies on (decision 58); deciding in the browser, which
+      needs a public setting or an extra request.
+    - **The token in the unsubscribe page's address.**
+      - **Referer.** The `no-referrer` meta tag comes after the stylesheet
+        and scripts in the `<head>`. In the independent test run, 10
+        same-origin requests for them carried the address, token included,
+        as `Referer`, all to the server that already had the token. The
+        real fix is a `Referrer-Policy: no-referrer` response header, which
+        needs `next.config` `headers()` or middleware. Both are RBM's
+        protected host files, so it is listed for RBM (README).
+      - **Analytics.** RBM's analytics will record the address with `?t=`.
+        The token allows only unsubscribing that one address; RBM is asked
+        to leave `/unitaid/unsubscribe` out of its analytics (README).
+    - **Logged:** 503, a 502 with its reason, and any non-2xx answer from the
+      service except 400 (the reader's own input), with the path and status
+      only. Never the form or the token; a test checks it.
+    - **The "Unsubscribe?" page, `app/[locale]/unsubscribe`**
+      (`/[locale]/unitaid/unsubscribe` in RBM's module). The service cannot
+      draw it: on Supabase's own address a page is served as plain text. So
+      the link in the welcome email opens the service, which sends the
+      reader here (303) with the link's token.
+      - The page reads `?t=` after hydration, so it stays pre-built
+        (`ExampleDashboard`'s reason), and never posts on load.
+      - Its button posts `{ t }` to the third relay.
+      - States: reading (the server's, button disabled), ready, sending,
+        done, bad link (no token, or a 400), failed (button kept).
+      - When the outcome replaces the button, focus moves to the heading.
+        The status line is `aria-live`.
+      - Metadata: robots noindex, referrer no-referrer.
+      - JavaScript is required; the old Vercel page's button was a plain
+        form. The dashboard needs JavaScript anyway.
+      - Text: 12 messages under `Unitaid.unsubscribe`, marked `uiOnly` in
+        launch-development-test's `i18n/ui.page-forms.json` and copied in by
+        `copy-rbm-messages.js`. French and Portuguese are still English
+        (manifest `allow_stale`, 12 of 12 untranslated) until the translate
+        bot runs.
+      - Styles: `.card` and `.sub-go`, plus nine rules for `.unsub*`, all
+        under `.launch-dashboard`. The paragraph rules are written
+        `.unsub .unsub-msg p` and `.unsub p.unsub-back`: the card's own
+        `.card p` (0,2,1) beat a bare `.unsub-back` (0,2,0), setting the back
+        link flush under the button at 15px instead of 18px below at 13.5px
+        (found by the independent test run).
+    - **Tests:**
+      - `tests/forms-routes.test.ts` (26): the settings; every refusal, with
+        nothing sent; the exact request, without the reader's cookie,
+        Origin, IP or own Authorization; pass-through; 502s; every 3xx with
+        a JSON body or none, and an opaque redirect, refused unread; logs;
+        each route's path; POST and GET exported; GET and HEAD through each
+        route give 405 with `Allow: POST`, configured or not.
+      - `tests/unsubscribe.test.ts` (11): the token, the exact POST, every
+        outcome, every state's markup, the text in each language, the
+        metadata, and a server render that sends nothing.
+      - `golden-frame` now compares the old and new requests without their
+        address, and checks each side's address on its own: the old pages'
+        Vercel address, and the relay. My first version of that change
+        copied the new calls before the send had made them, so the test was
+        wrong, not the code.
+
 ## Deferred, and found on the way
+
+- **3 Nov, the forms' relays (decision 61).**
+  - **RBM's addresses are assumed.** The forms service sends RBM's readers
+    to `/{locale}/unitaid/unsubscribe` on `dashboards.endmalaria.org`, and
+    the test site likewise (its `SITES`). Confirm with RBM. When the module
+    moves, the page goes to `app/[locale]/unitaid/unsubscribe`, and its back
+    link to `/{locale}/unitaid`.
+  - **The reader's IP is not passed on,** so the service cannot limit sign-ups
+    per reader. If a rate limit is built, the relay must send the IP in a
+    header the service trusts only with the token.
+  - **The 10 s timeout against the service's worst case** (above). Watch the
+    service's logs once it runs on Supabase.
+  - ~~**French and Portuguese** for the page wait for the translate bot.~~
+    Done 3 Nov. launch-development-test PR #137 merged, the bot translated the
+    12 texts (`1b5ae75`), and the messages were copied from there with nothing
+    left in English. The Portuguese title reads stiffly ("Cancelar inscrição
+    para receber atualizações do painel de controle LAUNCH?"); a reviewer may
+    want to reword it in `i18n/translations.json`.
+  - **Does RBM's server allow outbound HTTPS** to the forms service?
+    (Question 4 of the 3 Nov reply to RBM.) Without it, every form answers
+    502.
+  - **For RBM, on its own files:** a `Referrer-Policy: no-referrer` header
+    for `/{locale}/unitaid/unsubscribe`, and that path left out of its
+    analytics (decision 61). Neither can be done from inside the module.
+  - **OPTIONS on a relay says `allow: GET, HEAD, OPTIONS, POST`** (Next.js's
+    automatic answer, now that the routes export GET), while GET and HEAD
+    answer 405 `Allow: POST`. Found by the independent tester, 3 Nov. It is
+    harmless, because OPTIONS carries no CORS header and opens nothing to
+    other sites, so it was left. An exported OPTIONS handler would make the
+    two agree.
 
 - **29 Oct, the notifications route (decision 59).**
   - **What the sender must do** (the pipeline,
@@ -1235,8 +1394,10 @@ This file is updated in the same commit as each change it describes.
   the strip. Same inputs, same values, computed twice.
 - The browser check covers `/en` and `/fr`, not `/pt` (`SMOKE_LOCALES=pt`
   runs it), nor narrow screens, switching journey views, the timeline fit,
-  the forks or the forms' sends. It needs `NEXT_PUBLIC_LAUNCH_FORMS_URL` set
-  at `next build`, or the Subscribe check fails by design. (28 Oct: run with
+  the forks or the forms' sends. It needs the forms' two settings
+  (`UNITAID_FORMS_URL`, `UNITAID_FORMS_TOKEN`; before decision 61,
+  `NEXT_PUBLIC_LAUNCH_FORMS_URL`) set at `next build`, or the Subscribe check
+  fails by design. (28 Oct: run with
   `SMOKE_LOCALES=en,fr,pt`, 87 of 87. Narrow screens and `/pt` against
   today's page: the side-by-side check, below.)
 - If 20.4 KB of gzipped text in the browser matters (decision 42): pass the
@@ -1502,7 +1663,7 @@ ours to undo.
   extractor's freshness check.
 - **Page frame: wiring for whoever joins the areas** (`feat/react-port-frame`).
   `DashboardFrame` takes `text` (`FRAME_TEXT[locale]`), `view`
-  (`frameView(dataset, locale, text)`), `formsUrl`, `logoSrc`, `children`
+  (`frameView(dataset, locale, text)`), `formsUrl` (`formsEnabled` since decision 61), `logoSrc`, `children`
   and `outside`. Nothing else is needed from other areas, and the frame
   calls back into none. `tracked()` is now in `lib/frame.ts`; the board and
   map should import it rather than port it again. (Since the Dashboard there
@@ -1545,8 +1706,10 @@ ours to undo.
   them to it, and RBM's own header may sit above or below them. Check on
   staging. The pill's 560px and the panel's 760px breakpoints measure RBM's
   window, as noted for the rest of the CSS.
-- `NEXT_PUBLIC_LAUNCH_FORMS_URL` is read when a page is built: the
-  pre-rendered pages keep the value set at `next build`.
+- ~~`NEXT_PUBLIC_LAUNCH_FORMS_URL` is read when a page is built: the
+  pre-rendered pages keep the value set at `next build`.~~ Gone with decision
+  60. Its successor, `formsEnabled()`, is still read when a page is built,
+  and again at each 5-minute regeneration.
 
 ## Status
 
@@ -1786,6 +1949,13 @@ ours to undo.
   · ASPY" in English (above). Pages served, not opened in a browser. Data
   text the Brazilian pages do not control: the preview dataset's pt still
   writes "Vietname" in two findings.
+- **3 Nov 2026, the forms' relays** (decision 61). Branch `feat/forms-relay`
+  from `feat/data-route` `d322190`, not pushed, uncommitted: 391 tests pass
+  (357 + 34 new); `tsc --noEmit` is clean; `next build` passes with the
+  forms' two settings unset (no Subscribe, Send not connected, in en, fr and
+  pt) and with dummy values (Subscribe present, Send connected; neither value
+  in `.next/static` or the built pages). There is no lint script. The
+  browser run, against the forms service on localhost, is a separate check.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the

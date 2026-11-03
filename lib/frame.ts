@@ -216,14 +216,14 @@ export function glossaryEntries(glossary: unknown): [term: string, definition: s
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 /**
- * Where the two forms post, from NEXT_PUBLIC_LAUNCH_FORMS_URL, or null when
- * it is empty: then Subscribe is hidden and Send feedback is not connected,
- * as `--api-url none` does on the static pages. Trailing slashes are dropped,
- * as the static build did.
+ * Where the two forms post: this site's own relays (app/api/unitaid/,
+ * lib/forms.ts), which pass each form to the forms service with the site's
+ * token. Null when the forms are off (formsEnabled() in lib/env.ts: the
+ * service's address or token is not set): then Subscribe is hidden and Send
+ * feedback is not connected, as `--api-url none` does on the static pages.
  */
-export function formsEndpoints(base: string | undefined): { subscribe: string; feedback: string } | null {
-  const origin = (base || "").trim().replace(/\/+$/, "");
-  return origin ? { subscribe: origin + "/api/subscribe", feedback: origin + "/api/feedback" } : null;
+export function formsEndpoints(enabled: boolean): { subscribe: string; feedback: string } | null {
+  return enabled ? { subscribe: "/api/unitaid/subscribe", feedback: "/api/unitaid/feedback" } : null;
 }
 
 // Both endpoints answer { ok: true, ... }; anything else, including a reply
@@ -401,7 +401,7 @@ export function feedbackPayload(
 
 export type FeedbackPrepared =
   | { kind: "invalid"; errors: FeedbackErrors }
-  /** no forms address: Send is blocked and nothing is posted */
+  /** the forms are off: Send is blocked and nothing is posted */
   | { kind: "blocked" }
   | { kind: "ready"; endpoint: string; payload: FeedbackPayload };
 

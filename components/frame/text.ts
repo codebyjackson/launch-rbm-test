@@ -83,7 +83,7 @@ export interface FooterText {
 /**
  * The feedback widget's COPY, with the page's own overrides (intro,
  * messagePlaceholder) already applied. Three texts differ when the form is
- * connected (a forms address is set): note, doneTitle, doneMessage.
+ * connected (the forms are on, lib/env.ts formsEnabled): note, doneTitle, doneMessage.
  */
 export interface FeedbackText {
   pill: string;

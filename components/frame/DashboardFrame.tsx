@@ -27,7 +27,7 @@ import type { FrameView } from "./view";
 export function DashboardFrame({
   text,
   view,
-  formsUrl,
+  formsEnabled = false,
   logoSrc,
   children,
   outside,
@@ -36,8 +36,8 @@ export function DashboardFrame({
   text: FrameText;
   /** frameView(dataset, locale, text), worked out on the server */
   view: FrameView;
-  /** NEXT_PUBLIC_LAUNCH_FORMS_URL; empty or missing: Subscribe hidden, Send feedback not connected */
-  formsUrl?: string;
+  /** formsEnabled() (lib/env.ts), worked out on the server; false or missing: Subscribe hidden, Send feedback not connected */
+  formsEnabled?: boolean;
   /** where the host serves assets/unitaid-logo.svg */
   logoSrc: string;
   children?: ReactNode;
@@ -46,7 +46,7 @@ export function DashboardFrame({
   const [subOpen, setSubOpen] = useState(false);
   const onSubOpenChange = useCallback((open: boolean) => setSubOpen(open), []);
   const disclaimer = useRef<HTMLDivElement>(null);
-  const forms = formsEndpoints(formsUrl);
+  const forms = formsEndpoints(formsEnabled);
 
   return (
     <div className={subOpen ? "launch-dashboard sub-open" : "launch-dashboard"}>
