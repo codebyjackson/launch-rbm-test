@@ -265,7 +265,7 @@
         "procurement": "Achats publics (Fonds mondial)",
         "preLaunchOverview": "{medicine} est en phase de pré-lancement, il n’y a donc pas encore de statut ou de politique au niveau national.",
         "preLaunchCountry": "{medicine} est en phase de pré-lancement, il n’y a donc pas encore de statut ni de politique concernant certains pays.",
-        "stageMixTitle": "Access stages · {medicine}",
+        "stageMixTitle": "Étapes d’accès · {medicine}",
         "stageMixCount": "{total} pays ont une étape d’accès",
         "moreThanOneStage": "Un pays peut être comptabilisé à plusieurs étapes.",
         "tickLeft": "Cochez un groupe à gauche pour voir ses pays.",

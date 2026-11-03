@@ -265,7 +265,7 @@
         "procurement": "Compras por meio de canais públicos (Fundo Global)",
         "preLaunchOverview": "{medicine} é uma versão pré-lançamento, portanto ainda não há status ou política em nível de país.",
         "preLaunchCountry": "{medicine} é uma versão pré-lançamento, portanto ainda não possui status ou política de país.",
-        "stageMixTitle": "Access stages · {medicine}",
+        "stageMixTitle": "Etapas de acesso · {medicine}",
         "stageMixCount": "de {total} países têm uma fase de acesso",
         "moreThanOneStage": "Um país pode ser contabilizado em mais de um nível.",
         "tickLeft": "Selecione um grupo à esquerda para ver os países a ele associados.",
