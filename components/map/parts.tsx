@@ -4,12 +4,12 @@
 // bar, and the shape of the callbacks the section passes down.
 import {
   LINE_PATTERN,
-  STAGE_ROWS,
   groupColor,
   stageBar,
   stageVar,
   type DetailTab,
   type GroupId,
+  type Level,
   type Region,
   type ShapeName,
   type Stage,
@@ -22,9 +22,9 @@ import type { MapText } from "./text";
 /** What the components can ask the section to do. */
 export interface MapActions {
   product(id: string): void;
-  stage(key: StageKey, on: boolean): void;
+  /** an access-stage radio button: the stage in view */
+  view(key: Level): void;
   group(id: GroupId, on: boolean): void;
-  all(on: boolean): void;
   reset(): void;
   region(region: Region | ""): void;
   country(iso3: string): void;
@@ -41,13 +41,13 @@ export type TipAt = { x: number; y: number } | { el: HTMLElement };
 /** The tooltip, shown and hidden without re-rendering the section. */
 export interface MapTips {
   showMap(iso3: string, at: TipAt): void;
-  showList(shape: ShapeName, level: Stage | null, at: TipAt): void;
+  showList(shape: ShapeName, at: TipAt): void;
   hide(): void;
 }
 
 /** Does nothing: for rendering without a browser (tests). */
 export const NO_ACTIONS: MapActions = {
-  product() {}, stage() {}, group() {}, all() {}, reset() {}, region() {}, country() {},
+  product() {}, view() {}, group() {}, reset() {}, region() {}, country() {},
   tab() {}, select() {}, back() {}, step() {}, search() {},
 };
 export const NO_TIPS: MapTips = { showMap() {}, showList() {}, hide() {} };
@@ -75,11 +75,11 @@ export function LineSwatch({ id, len = 28, token }: { id: GroupId; len?: number;
   );
 }
 
-/** Countries per stage as one bar (old: stageBar). */
-export function StageBar({ counts, total, text }: { counts: StageCounts; total: number; text: MapText }) {
+/** Countries per stage as one bar, for the stages `keys` names: the one in view and No data (old: stageBar). */
+export function StageBar({ counts, total, keys, text }: { counts: StageCounts; total: number; keys: readonly StageKey[]; text: MapText }) {
   return (
-    <div className="det-bar" role="img" aria-label={STAGE_ROWS.map((k) => `${text.stage[k]} ${counts[k]}`).join(", ")}>
-      {stageBar(counts, total).map((s) => (
+    <div className="det-bar" role="img" aria-label={keys.map((k) => `${text.stage[k]} ${counts[k]}`).join(", ")}>
+      {stageBar(counts, total, keys).map((s) => (
         <i key={s.key} style={{ width: `${s.width}%`, background: stageVar(s.key) }} />
       ))}
     </div>
@@ -87,10 +87,10 @@ export function StageBar({ counts, total, text }: { counts: StageCounts; total: 
 }
 
 /** The bar's key, with counts (old: stageLegend). */
-export function StageLegend({ counts, text }: { counts: StageCounts; text: MapText }) {
+export function StageLegend({ counts, keys, text }: { counts: StageCounts; keys: readonly StageKey[]; text: MapText }) {
   return (
     <div className="det-lg">
-      {STAGE_ROWS.map((k) => (
+      {keys.map((k) => (
         <span key={k}>
           <i className={`mapsw ${k}`} />
           {k === "guidelines" ? text.inGuidelines : text.stage[k]} <b>{counts[k]}</b>

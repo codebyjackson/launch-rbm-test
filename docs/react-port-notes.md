@@ -832,6 +832,71 @@ This file is updated in the same commit as each change it describes.
     - Logged: 202, 502 with the reason, 503, a failed re-read. Not logged:
       401, 413, 400 (strangers could fill the log; the sender gets the
       problems in the answer).
+60. **The page changes of 3 Nov 2026 (partner feedback), ported** (branch
+    `feat/tracker-feedback`, from `feat/data-route` `d322190`). The page side
+    is launch-development-test `main` `b0f8675` (`git diff c34d72c b0f8675 --
+    index.html`, explained in its `docs/jackson/dale-jan-tracker.md` §3 to
+    §8), built into the static pages of scratch commit `ef0bd8c` here (local
+    branch `scratch/pages-dale-jan`, not pushed), which the tests now read.
+    The page is the truth; each part below follows its code line for line.
+    - **The map shows one access stage at a time** (`lib/map.ts`,
+      `components/map/`). `MapState.stageOff` (checkboxes that faded a stage)
+      became `view` (radio buttons; `VIEW_DEFAULT` "registered", which Reset
+      returns to; `setView`). `countryStages()` (`lib/pathway.ts`, one copy
+      for the map and the Country access card, decision 48's rule) says which
+      stages each listed country has a source for: its level, or a cited
+      source whose category is National register (registered) or Policy /
+      guidelines (guidelines). So `MapSource` carries `category`, and
+      `mapContext()` keeps `stageSets` per medicine instead of `levels`. What
+      follows the view: the fill (`featureLevels`, `viewLevels`, old
+      `paintView`'s `byIso`), `stageOf` (old `mftStage`), the legend (the
+      stage in view and No data, the other rows `hidden`; old `stageCounts`),
+      the note under the heading (`MapText.viewNote`, old `VIEW_NOTE`), the
+      finder's Stage column, the map hover, the region bar and its key (the
+      view and No data only, `inView`), and the country page's pill and
+      "Other countries at the same stage" (only when the country is at the
+      stage in view). What does not: the keyboard-list tooltip and the
+      country page's track tick each stage on its own (`listTip` no longer
+      takes a level); the Filters' counts (`viewCounts`, a country in every
+      stage it has a source for); the overview, now "Access stages · …" with
+      one thin bar per stage and "A country can count at more than one
+      stage." Gone: the select-all box and its `indeterminate`, the No data
+      filter row, `setAll`, `setStage`, `fillOpacity` (the map no longer sets
+      `fill-opacity`), `matches` (Find a country lists every country in
+      scope; Previous/Next steps through every tracked country, the old quirk
+      for an untracked page kept), `legendCounts` (which counted untracked
+      entries; the legend now counts tracked countries only, as the page).
+    - **Timeline: `startedYear()`** (`lib/board.ts`). A started stage (in
+      progress or delayed, not the current one) whose date reads "Since
+      YYYY" (`sinceYearOf`) sits on the axis at that year, labelled "since
+      YYYY" (`TimelineItem.from`, `BoardText.startedSince`), and no longer
+      under "Ongoing · no date". Its year also widens the axis.
+    - **Medicines table** (`components/board/`): the Status column is Market
+      Access and the Access column Country Access, one figure each
+      (`marketCell`, `countryCell`, `accessFig`; Country Access reads "Not
+      yet reached" before Market Access is). The status light left the row;
+      `lateInfo` stays, unused, as on the page. The phase name over a figure
+      shows on phones only (two CSS rules). `BoardText.colStatus`/`colAccess`
+      are `colMarket`/`colCountry`.
+    - **Country access card** (`CountryAccessKv`, `countryAccessCounts`):
+      Countries on the map, then Confirmed in national registers / In
+      national guidelines / In MFT plans counted per stage, then "A country
+      can count at more than one stage." (`PathwayText.moreThanOneStage`).
+      The furthest-level split and the conditional register row are gone.
+      The stage 4–5 panels keep `levelCounts` (the page did not change them).
+    - **Words**: the disclaimer's first paragraph and the procurement note
+      come reworded from the message files; nothing in the code.
+    - **CSS** (`styles/launch-dashboard.css`, by hand, fenced): `.srow .acc
+      small` (hidden, shown under 680px), `.det-srow`, `.det-bar.thin`,
+      `.det-snote`.
+    - **Messages** from launch-development-test `feat/rbm-messages-tracker`
+      `1c1da8c` (its decision 15), copied with `copy-rbm-messages.js`,
+      `--allow-stale`: `manifest.json` lists `map.panel.stageMixTitle` as
+      English in fr and pt ("Access stages · {medicine}") until the translate
+      bot runs after that branch is merged. 318 messages (313 before).
+    - Rejected: keeping the checkboxes beside the views (the page has none);
+      a `level` argument to `listTip` (the tooltip no longer depends on the
+      fill); a second copy of `countryStages` in `lib/map.ts`.
 
 ## Deferred, and found on the way
 

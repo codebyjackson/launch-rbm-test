@@ -4,7 +4,7 @@
 // run this and the static pages' own code on exactly the same input.
 //
 // A port of the `if (window.LAUNCH_MAP && ...)` block of the static pages'
-// app script (launch-rbm-test 7c1bf11). Each function names the one it
+// app script (launch-rbm-test ef0bd8c). Each function names the one it
 // replaces ("old: mftScope"). Where the old code wrote HTML, the function here
 // returns the same content as data, and components/map/ renders it. No words
 // are chosen here, only keys (a stage, a group, a region) that the components
@@ -14,7 +14,7 @@
 // lists those places.
 import type { Localized } from "./dataset";
 import type { Locale } from "./locales";
-import { tracked } from "./pathway";
+import { countryStages, tracked, type StageSet } from "./pathway";
 
 // ---- the fixed vocabulary ----------------------------------------------------
 
@@ -22,9 +22,15 @@ import { tracked } from "./pathway";
 export const LEVELS = ["registered", "guidelines", "mft"] as const;
 export type Level = (typeof LEVELS)[number];
 
-/** The access-stage rows of the filters and legends (old: STAGE_ROWS). */
+/** The access-stage rows of the legends (old: STAGE_ROWS). */
 export const STAGE_ROWS = ["registered", "guidelines", "mft", "none"] as const;
 export type StageKey = (typeof STAGE_ROWS)[number];
+
+/**
+ * The access stage the map opens on, and Reset returns to (old: VIEW_DEFAULT).
+ * The map shows one stage at a time (partner feedback, 3 Nov 2026).
+ */
+export const VIEW_DEFAULT: Level = "registered";
 
 /**
  * A country's stage as the data gives it: one of STAGE_ROWS for valid data.
@@ -136,11 +142,13 @@ export interface TreatmentPolicy {
   >;
 }
 
-/** A source a country's stage cites: its name in the Sources list and its link. */
+/** A source a country's stage cites: its name in the Sources list, its link, its category. */
 export interface MapSource {
   id: string;
   label: string;
   url: string | null;
+  /** "National register", "Policy / guidelines", ...: which views it puts a country in (countryStages) */
+  category: string;
 }
 
 /** One shape on the basemap. A country can have more than one (AUS has two). */
@@ -237,6 +245,7 @@ export function mapInput(ds: Localized, countries: MapCountries, locale: Locale)
       id: s.id,
       label: str(s.label || s.title),
       url: s.url ? String(s.url) : null,
+      category: str(s.category),
     })),
     countries,
     dateLocale: DATE_LOCALE[locale],
@@ -257,19 +266,19 @@ export interface MapContext {
   /** iso3 → name, the last shape with that iso3 naming it (old: GEO_COUNTRY_NAME). */
   readonly shapeName: ReadonlyMap<string, string>;
   readonly sources: ReadonlyMap<string, MapSource>;
-  /** Each medicine's countries, iso3 → stage, the last entry winning (old: byIso, mftByIso). */
-  readonly levels: ReadonlyMap<string, Readonly<Record<string, Stage>>>;
+  /**
+   * Each medicine's countries, iso3 → the stages it has a source for, the
+   * last entry winning (old: stageSets, which selectMap set from
+   * countryStages for the medicine shown).
+   */
+  readonly stageSets: ReadonlyMap<string, Readonly<Record<string, StageSet>>>;
 }
 
 export function mapContext(input: MapInput): MapContext {
   const shapeName = new Map<string, string>();
   for (const s of input.countries.shapes) shapeName.set(s.iso3, s.name);
-  const levels = new Map<string, Record<string, Stage>>();
-  for (const p of input.products) {
-    const byIso: Record<string, Stage> = {};
-    (p.countries ? p.countries.list : []).forEach((e) => { byIso[e.iso3] = e.level; });
-    levels.set(p.id, byIso);
-  }
+  const stageSets = new Map<string, Record<string, StageSet>>();
+  for (const p of input.products) stageSets.set(p.id, countryStages(p.countries ? p.countries.list : [], input.sources));
   return {
     products: input.products,
     stages: input.stages,
@@ -280,7 +289,7 @@ export function mapContext(input: MapInput): MapContext {
     drawnName: new Map(input.countries.drawn.map((c) => [c.iso3, c.name])),
     shapeName,
     sources: new Map(input.sources.map((s) => [s.id, s])),
-    levels,
+    stageSets,
   };
 }
 
@@ -296,8 +305,8 @@ export interface MapState {
   country: string;
   /** The country whose page the Detail rail shows (old: mftSel). */
   selected: string | null;
-  /** Access stages unticked in Filters (old: stageOff). */
-  stageOff: readonly StageKey[];
+  /** The access stage the map shows, one at a time (old: mapView). */
+  view: Level;
   /** Recommended-use groups ticked in Filters (old: mftTick). */
   ticked: readonly GroupId[];
   /** The Detail rail's tab (old: detTab). */
@@ -308,7 +317,7 @@ export interface MapState {
 
 /**
  * The map as it opens: the first medicine with country data (old: the map's
- * load handler), every filter on, both groups ticked, no location.
+ * load handler), the Registered view, both groups ticked, no location.
  */
 export function initialState(ctx: MapContext): MapState {
   const p = ctx.products.find((x) => x.countries) || ctx.products[0];
@@ -317,7 +326,7 @@ export function initialState(ctx: MapContext): MapState {
     region: "",
     country: "",
     selected: null,
-    stageOff: [],
+    view: VIEW_DEFAULT,
     ticked: [...GROUPS],
     tab: "overview",
     cameFrom: "overview",
@@ -359,9 +368,14 @@ export function setCountry(ctx: MapContext, st: MapState, country: string): MapS
   return closeOutOfScope(ctx, next);
 }
 
-/** An access-stage checkbox in Filters. */
-export function setStage(st: MapState, key: StageKey, on: boolean): MapState {
-  return { ...st, stageOff: on ? without(st.stageOff, key) : withOne(st.stageOff, key) };
+/**
+ * An access-stage radio button in Filters: the stage in view (partner
+ * feedback, 3 Nov 2026; they were checkboxes that faded the countries at a
+ * stage, each country shaded at its furthest stage only). An open country
+ * page stays open.
+ */
+export function setView(st: MapState, view: Level): MapState {
+  return { ...st, view };
 }
 
 /** A recommended-use checkbox in Filters. */
@@ -369,20 +383,9 @@ export function setGroup(st: MapState, id: GroupId, on: boolean): MapState {
   return { ...st, ticked: on ? withOne(st.ticked, id) : without(st.ticked, id) };
 }
 
-/** The "Show on map" box: everything on, or everything off. */
-export function setAll(ctx: MapContext, st: MapState, on: boolean): MapState {
-  if (on) {
-    const av = availableGroups(ctx, st.productId);
-    let ticked = [...st.ticked];
-    for (const g of GROUPS) if (av[g]) ticked = withOne(ticked, g);
-    return { ...st, stageOff: [], ticked };
-  }
-  return { ...st, stageOff: [...STAGE_ROWS], ticked: [] };
-}
-
-/** Filters' Reset, and the "Reset filters" button in an empty country list. Also closes a country page. */
+/** Filters' Reset, and the "Reset filters" button in an empty country list: the Registered view, both groups. Also closes a country page. */
 export function resetFilters(st: MapState): MapState {
-  return { ...st, stageOff: [], ticked: [...GROUPS], selected: null };
+  return { ...st, view: VIEW_DEFAULT, ticked: [...GROUPS], selected: null };
 }
 
 /** A Detail tab. Closes a country page opened from the map or a list. */
@@ -401,18 +404,17 @@ export function closeCountry(st: MapState): MapState {
 }
 
 /**
- * A country page's Previous / Next: through the countries the filters list
- * when this one is among them, else through every tracked country. Wraps.
+ * A country page's Previous / Next: through every tracked country, by name.
+ * Wraps. (The old code stepped through the countries the filters listed when
+ * this one was among them; the filters list every country since 3 Nov 2026.)
  *
  * Kept from the old code: a page opened by the Location filter on a country
- * the map does not track (France, say) is not in either list, so Next goes
- * to the first country and Previous to the second-to-last, not the last.
+ * the map does not track (France, say) is not in the list, so Next goes to
+ * the first country and Previous to the second-to-last, not the last.
  */
 export function stepCountry(ctx: MapContext, st: MapState, dir: 1 | -1): MapState {
   const cur = st.selected || st.country;
-  const all = drawnIsos(ctx);
-  const pool = all.filter((i) => matches(ctx, st, i));
-  const ids = pool.includes(cur) ? pool : all;
+  const ids = drawnIsos(ctx);
   return { ...st, selected: ids[(ids.indexOf(cur) + dir + ids.length) % ids.length] };
 }
 
@@ -453,9 +455,27 @@ export function scope(ctx: MapContext, st: MapState): string[] {
   return ctx.drawn.filter((iso3) => !isoList || isoList.includes(iso3));
 }
 
-/** A country's access stage for the medicine shown (old: mftStage(iso3).lvl). */
-export function stageOf(ctx: MapContext, productId: string, iso3: string): Stage {
-  const lvl = ctx.drawnName.has(iso3) ? (ctx.levels.get(productId)?.[iso3] || null) : null;
+/** The stages each country of a medicine's list has a source for (old: stageSets). */
+export const stageSetsOf = (ctx: MapContext, productId: string): Readonly<Record<string, StageSet>> => ctx.stageSets.get(productId) || {};
+
+/**
+ * The countries the view shades: iso3 → the stage in view, for every country
+ * of the medicine's list with a source for it, tracked or not (old:
+ * paintView's byIso, kept as mftByIso).
+ */
+export function viewLevels(ctx: MapContext, st: Pick<MapState, "productId" | "view">): Record<string, Level> {
+  const sets = stageSetsOf(ctx, st.productId);
+  const byIso: Record<string, Level> = {};
+  for (const iso3 of Object.keys(sets)) if (sets[iso3][st.view]) byIso[iso3] = st.view;
+  return byIso;
+}
+
+/**
+ * A country's access stage on the map: the stage in view where it has a
+ * source for it, else "none" (old: mftStage(iso3).lvl).
+ */
+export function stageOf(ctx: MapContext, st: Pick<MapState, "productId" | "view">, iso3: string): Stage {
+  const lvl = ctx.drawnName.has(iso3) && stageSetsOf(ctx, st.productId)[iso3]?.[st.view] ? st.view : null;
   return lvl || "none";
 }
 
@@ -521,35 +541,40 @@ export function policyOn(ctx: MapContext, st: MapState): boolean {
 
 export type StageCounts = Record<StageKey, number>;
 
-// old: `l in counts`, counts holding the three levels
-const isLevel = (l: unknown): l is Level => (LEVELS as readonly unknown[]).includes(l);
-
-/** Tracked countries per access stage (old: stageCounts). */
-export function stageCounts(ctx: MapContext, productId: string): StageCounts {
+/**
+ * Tracked countries on the map for the view: the stage in view and "No
+ * data", the other two 0 (old: stageCounts). The access legend's numbers.
+ */
+export function stageCounts(ctx: MapContext, st: Pick<MapState, "productId" | "view">): StageCounts {
   const c = { registered: 0, guidelines: 0, mft: 0, none: 0 };
-  const byIso = ctx.levels.get(productId) || {};
-  for (const iso3 of ctx.drawn) {
-    const l = byIso[iso3];
-    if (isLevel(l)) c[l]++;
-  }
+  const byIso = viewLevels(ctx, st);
+  for (const iso3 of ctx.drawn) if (byIso[iso3]) c[byIso[iso3]]++;
   c.none = ctx.drawn.length - (c.registered + c.guidelines + c.mft);
   return c;
 }
 
 /**
- * Is a country listed under the left Filters: its access stage is ticked,
- * or it is in a ticked recommended-use group (old: mftMatches)?
+ * How many tracked countries each view shades (old: viewCounts). A country
+ * counts in every stage it has a source for, so these add up to more than
+ * the countries.
  */
-export function matches(ctx: MapContext, st: MapState, iso3: string): boolean {
-  return (
-    !(st.stageOff as readonly string[]).includes(stageOf(ctx, st.productId, iso3)) ||
-    groupsOf(ctx, st.productId, iso3).some((g) => st.ticked.includes(g))
-  );
+export function viewCounts(ctx: MapContext, productId: string): Record<Level, number> {
+  const c = { registered: 0, guidelines: 0, mft: 0 };
+  const sets = stageSetsOf(ctx, productId);
+  for (const iso3 of ctx.drawn) {
+    const s = sets[iso3];
+    if (s) for (const k of LEVELS) if (s[k]) c[k]++;
+  }
+  return c;
 }
 
-/** The countries the Find a country list starts from (old: mftListed). */
+/**
+ * The countries the Find a country list starts from: every country in
+ * scope; its Stage column follows the view (old: mftListed). While the
+ * stages were checkboxes, unticking one also took its countries out.
+ */
 export function listed(ctx: MapContext, st: MapState): string[] {
-  return scope(ctx, st).filter((i) => matches(ctx, st, i));
+  return scope(ctx, st);
 }
 
 /** "12 of 94" beside the Countries tab and the finder (old: countLabel). */
@@ -559,20 +584,6 @@ export function listedCount(ctx: MapContext, st: MapState): { listed: number; to
 
 // ---- the medicine tabs and the map ----------------------------------------------
 
-/**
- * The access legend's counts (old: selectMap). From every entry of the
- * medicine's list, tracked or not, while "No data" is the tracked countries
- * less those: an untracked country in the list would be counted and push
- * "No data" down. The validator warns about untracked countries.
- */
-export function legendCounts(ctx: MapContext, productId: string): { counts: StageCounts; noneZero: boolean } {
-  const c = { registered: 0, guidelines: 0, mft: 0, none: 0 };
-  for (const l of Object.values(ctx.levels.get(productId) || {})) if (isLevel(l)) c[l]++;
-  const withData = c.registered + c.guidelines + c.mft;
-  c.none = ctx.drawn.length - withData;
-  return { counts: c, noneZero: withData === ctx.drawn.length };
-}
-
 /** The message over the map when a medicine has no country data (old: selectMap's #map-empty). */
 export function emptyNotice(ctx: MapContext, productId: string): { kind: "pipeline" | "nodata"; name: string } | null {
   const p = productOf(ctx, productId);
@@ -580,9 +591,12 @@ export function emptyNotice(ctx: MapContext, productId: string): { kind: "pipeli
   return { kind: p.class === "pipeline" ? "pipeline" : "nodata", name: p.name };
 }
 
-/** The fill each shape is painted with, iso3 → stage or null; only tracked countries carry one (old: applyCountryLevels). */
-export function featureLevels(ctx: MapContext, productId: string): Record<string, Stage | null> {
-  const byIso = ctx.levels.get(productId) || {};
+/**
+ * The fill each shape is painted with, iso3 → the stage in view or null;
+ * only tracked countries carry one (old: applyCountryLevels, from paintView).
+ */
+export function featureLevels(ctx: MapContext, st: Pick<MapState, "productId" | "view">): Record<string, Stage | null> {
+  const byIso = viewLevels(ctx, st);
   const out: Record<string, Stage | null> = {};
   for (const s of ctx.shapes) out[s.iso3] = ctx.drawnName.has(s.iso3) ? byIso[s.iso3] || null : null;
   return out;
@@ -659,18 +673,6 @@ export function fillColor(c: MapColors): Expr {
     ["==", ["feature-state", "level"], "guidelines"], c.guidelines,
     ["==", ["feature-state", "level"], "mft"], c.mft,
     c.nodata,
-  ];
-}
-
-/** An unticked access stage fades its countries to 0.15 (old: paintStageFilter). */
-export function fillOpacity(st: MapState): Expr {
-  const o = (k: StageKey) => (st.stageOff.includes(k) ? 0.15 : 1);
-  return [
-    "case",
-    ["==", ["feature-state", "level"], "registered"], o("registered"),
-    ["==", ["feature-state", "level"], "guidelines"], o("guidelines"),
-    ["==", ["feature-state", "level"], "mft"], o("mft"),
-    o("none"),
   ];
 }
 
@@ -852,24 +854,28 @@ export function tipPolicyLine(ctx: MapContext, st: MapState, iso3: string): { pr
   return { product: productOf(ctx, st.productId)?.name || "", groups: groupsOf(ctx, st.productId, iso3) };
 }
 
-/** Hovering a tracked country on the map; null for an untracked one (old: the map's mousemove handler). */
+/** Hovering a tracked country on the map: its stage in view; null for an untracked one (old: the map's mousemove handler). */
 export function mapTip(ctx: MapContext, st: MapState, iso3: string) {
   if (!ctx.drawnName.has(iso3)) return null;
-  return { name: policyName(ctx, iso3), stage: stageOf(ctx, st.productId, iso3), policy: tipPolicyLine(ctx, st, iso3) };
+  return { name: policyName(ctx, iso3), stage: stageOf(ctx, st, iso3), policy: tipPolicyLine(ctx, st, iso3) };
 }
 
 /**
  * A button of the keyboard country list, hovered or focused (old:
- * countryTip). The stages are listed and ticked up to the one reached.
- * Unlike the map's tooltip it names the shape (Tanzania, not WHO's
- * "United Republic of Tanzania (mainland)"), as the old page did.
+ * countryTip). The stages are listed, each ticked on its own where the
+ * country has a source for it, whatever the view: it no longer reads
+ * "registered" into a country only because it is further along (Ghana is
+ * in ASPY's guidelines; no register confirms it). "No data" alone for a
+ * country the map does not track or the list does not name. Unlike the
+ * map's tooltip it names the shape (Tanzania, not WHO's "United Republic of
+ * Tanzania (mainland)"), as the old page did.
  */
-export function listTip(ctx: MapContext, st: MapState, shape: ShapeName, level: Stage | null) {
-  const rank = (LEVELS as readonly string[]).indexOf(level || "");
+export function listTip(ctx: MapContext, st: MapState, shape: ShapeName) {
+  const has = ctx.drawnName.has(shape.iso3) ? stageSetsOf(ctx, st.productId)[shape.iso3] : undefined;
   const p = productOf(ctx, st.productId);
   return {
     name: shape.name,
-    rows: rank < 0 ? null : LEVELS.map((k, i) => ({ key: k, on: i <= rank })),
+    rows: !has ? null : LEVELS.map((k) => ({ key: k, on: has[k] })),
     policy: tipPolicyLine(ctx, st, shape.iso3),
     // old: mapProduct and mapStatus, set by selectMap; no line without a name
     product: p && p.name ? { name: p.name, status: p.countries ? p.countries.status || "" : "" } : null,
@@ -878,19 +884,19 @@ export function listTip(ctx: MapContext, st: MapState, shape: ShapeName, level: 
 
 // ---- Filters and legend ----------------------------------------------------------------
 
-/** The Filters table, its badge and its hint (old: renderFilters). */
+/**
+ * The Filters table, its badge and its hint (old: renderFilters): the access
+ * stages as radio buttons, one in view, each with the countries it shades;
+ * the recommended-use groups as checkboxes. The badge counts unticked groups.
+ */
 export function filterTable(ctx: MapContext, st: MapState) {
-  const sc = stageCounts(ctx, st.productId);
+  const vc = viewCounts(ctx, st.productId);
   const av = availableGroups(ctx, st.productId);
   const byCat = groupCountries(ctx, st);
   const mine = ctx.policy ? GROUPS.filter((g) => av[g]) : [];
-  const nOn = STAGE_ROWS.filter((k) => !st.stageOff.includes(k)).length + mine.filter((g) => st.ticked.includes(g)).length;
-  const nAll = STAGE_ROWS.length + mine.length;
   const any = Object.keys(av).length > 0;
   return {
-    allChecked: nOn === nAll,
-    indeterminate: nOn > 0 && nOn < nAll,
-    stages: STAGE_ROWS.map((key) => ({ key, checked: !st.stageOff.includes(key), count: sc[key] })),
+    stages: LEVELS.map((key) => ({ key, checked: key === st.view, count: vc[key] })),
     groups: ctx.policy
       ? GROUPS.map((id) => {
           const off = !av[id];
@@ -898,7 +904,7 @@ export function filterTable(ctx: MapContext, st: MapState) {
         })
       : null,
     /** the number in the Filters heading's badge; 0 hides it */
-    active: st.stageOff.length + mine.filter((g) => !st.ticked.includes(g)).length,
+    active: mine.filter((g) => !st.ticked.includes(g)).length,
     hint: {
       hidden: !ctx.policy || (policyOn(ctx, st) && any),
       kind: (any ? "tickHint" : "noPolicy") as "tickHint" | "noPolicy",
@@ -908,15 +914,24 @@ export function filterTable(ctx: MapContext, st: MapState) {
 }
 
 /**
- * The legends under the map (old: mftLegend): access stages whose box is
- * unticked are dimmed; the recommended-use table always shows both groups,
- * dimmed when unticked or empty. `policy` is null without a policy.
+ * The legends under the map (old: paintView and mftLegend): the access table
+ * shows the stage in view and "No data", counted from the same list the map
+ * is painted from so the two can never disagree; the recommended-use table
+ * always shows both groups, dimmed when unticked or empty. `policy` is null
+ * without a policy.
  */
 export function mapLegend(ctx: MapContext, st: MapState) {
   const av = availableGroups(ctx, st.productId);
   const byCat = groupCountries(ctx, st);
+  const c = stageCounts(ctx, st);
+  const drawn = ctx.drawn.length - c.none;
   return {
-    dimStages: STAGE_ROWS.filter((k) => st.stageOff.includes(k)),
+    stages: STAGE_ROWS.map((key) => ({
+      key,
+      hidden: key !== st.view && key !== "none",
+      count: c[key],
+      zero: key === "none" ? drawn === ctx.drawn.length : key !== st.view || !drawn,
+    })),
     policy: ctx.policy
       ? {
           product: productOf(ctx, st.productId)?.name || "",
@@ -928,9 +943,12 @@ export function mapLegend(ctx: MapContext, st: MapState) {
 
 // ---- Detail rail ---------------------------------------------------------------------
 
-/** One bar segment per non-empty stage, its width a percentage (old: stageBar). */
-export function stageBar(c: StageCounts, total: number): { key: StageKey; width: number }[] {
-  return STAGE_ROWS.filter((k) => c[k]).map((key) => ({ key, width: (c[key] / total) * 100 }));
+/** The stage in view and "No data", in STAGE_ROWS order: the only two a view's counts hold (old: inView). */
+export const inView = (view: Level): StageKey[] => STAGE_ROWS.filter((k) => k === view || k === "none");
+
+/** One bar segment per non-empty stage of `keys`, its width a percentage (old: stageBar). */
+export function stageBar(c: StageCounts, total: number, keys: readonly StageKey[]): { key: StageKey; width: number }[] {
+  return keys.filter((k) => c[k]).map((key) => ({ key, width: (c[key] / total) * 100 }));
 }
 
 // The donut's ring: radius, stroke width, circumference.
@@ -1012,8 +1030,11 @@ export function overview(ctx: MapContext, st: MapState) {
     flag: SHOW_BARRIERS && p.flag ? p.flag : null,
   };
   if (!p.countries) return { facts, mix: null, policy: null };
-  const c = stageCounts(ctx, st.productId);
-  const withStage = c.registered + c.guidelines + c.mft;
+  // One bar per stage: a country counts in every stage it has a source for,
+  // so the stages are not parts of one whole.
+  const vc = viewCounts(ctx, st.productId);
+  const sets = stageSetsOf(ctx, st.productId);
+  const withStage = ctx.drawn.filter((i) => sets[i] && LEVELS.some((k) => sets[i][k])).length;
   type Policy =
     | { kind: "none" }
     | { kind: "tickLeft" }
@@ -1028,7 +1049,7 @@ export function overview(ctx: MapContext, st: MapState) {
       undrawn: undrawnInPolicy(ctx, st),
       source: policySource(ctx),
     };
-  return { facts, mix: { withStage, total: n, counts: c, bar: stageBar(c, n) }, policy };
+  return { facts, mix: { withStage, total: n, rows: LEVELS.map((key) => ({ key, count: vc[key], width: (vc[key] / n) * 100 })) }, policy };
 }
 
 /**
@@ -1049,7 +1070,7 @@ export function finder(ctx: MapContext, st: MapState, q: string) {
     rows: list.map((iso3) => ({
       iso3,
       name: policyName(ctx, iso3),
-      stage: stageOf(ctx, st.productId, iso3),
+      stage: stageOf(ctx, st, iso3),
       groups: GROUPS.filter((g) => st.ticked.includes(g) && groupsOf(ctx, st.productId, iso3).includes(g)),
     })),
   };
@@ -1071,7 +1092,8 @@ export function countryPage(ctx: MapContext, st: MapState, iso3: string) {
     product: p ? p.name : "",
   };
   if (!hasCountries(ctx, st.productId)) return { ...head, access: null };
-  const stage = stageOf(ctx, st.productId, iso3);
+  const stage = stageOf(ctx, st, iso3);
+  const has: Partial<StageSet> = stageSetsOf(ctx, st.productId)[iso3] || {};
   const g = policyGroups(ctx, st.productId, iso3);
   const gl = groupsOf(ctx, st.productId, iso3);
   const tp = ctx.policy && ctx.policy.countries[iso3];
@@ -1079,29 +1101,36 @@ export function countryPage(ctx: MapContext, st: MapState, iso3: string) {
     tp && tp.parts
       ? Object.keys(tp.parts).map((name) => ({ name, lists: ((tp.parts![name].products || {})[st.productId] || []).length > 0 }))
       : [];
-  // where it stands among the tracked countries of its WHO region
+  // where it stands among the tracked countries of its WHO region, in the view
   const ids = ctx.drawn.filter((x) => WHO_REGION[x] === regionCode);
-  let regionMix: { count: number; counts: StageCounts; bar: ReturnType<typeof stageBar>; pos: number } | null = null;
+  let regionMix: { count: number; counts: StageCounts; keys: StageKey[]; bar: ReturnType<typeof stageBar>; pos: number } | null = null;
   if (ids.length > 1) {
     const rc: Record<string, number> = { registered: 0, guidelines: 0, mft: 0, none: 0 };
-    for (const x of ids) rc[stageOf(ctx, st.productId, x)]++;
+    for (const x of ids) rc[stageOf(ctx, st, x)]++;
     let before = 0;
     for (const k of STAGE_ROWS) {
       if (k === stage) break;
       before += rc[k];
     }
     const counts = rc as StageCounts;
-    regionMix = { count: ids.length, counts, bar: stageBar(counts, ids.length), pos: ((before + rc[stage] / 2) / ids.length) * 100 };
+    const keys = inView(st.view);
+    regionMix = { count: ids.length, counts, keys, bar: stageBar(counts, ids.length, keys), pos: ((before + rc[stage] / 2) / ids.length) * 100 };
   }
-  const peers = drawnIsos(ctx)
-    .filter((x) => x !== iso3 && stageOf(ctx, st.productId, x) === stage)
-    .map((x) => ({ iso3: x, name: policyName(ctx, x) }));
+  // The pill and "Other countries at the same stage" name the stage on the
+  // map, so they show only when this country is at it.
+  const peers =
+    stage === "none"
+      ? []
+      : drawnIsos(ctx)
+          .filter((x) => x !== iso3 && stageOf(ctx, st, x) === stage)
+          .map((x) => ({ iso3: x, name: policyName(ctx, x) }));
   return {
     ...head,
     access: {
+      /** the stage in view, or "none" */
       stage,
-      /** how many of the three track segments are filled */
-      track: (LEVELS as readonly string[]).indexOf(stage) + 1,
+      /** the three track segments, each lit where a source supports its stage, whatever the view */
+      track: LEVELS.map((k) => !!has[k]),
       sources: countrySources(ctx, st.productId, iso3),
       groups: gl,
       /** every drawn group, marked when the policy lists the medicine for it; shown only when one is */

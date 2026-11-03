@@ -2,7 +2,7 @@
 // order, how a journey is laid out on its time axis, the fork drawn for a
 // parallel pair, the procurement card's two rules, and where glossary terms
 // go. Ported from
-// the main script of launch-rbm-test 7c1bf11 (en/index.html), keeping the old
+// the main script of launch-rbm-test ef0bd8c (en/index.html), keeping the old
 // names; tests/golden-board.test.ts checks each against the original in all
 // three languages, and tests/markup-board.test.ts checks the markup built
 // from them.
@@ -12,7 +12,7 @@
 // the arithmetic is here, so the arithmetic can be compared on its own.
 import type { Procurement, Product, Status } from "./dataset";
 import { colIndexOf } from "./pathway";
-import { sinceFrom, stageYear, statusShown, type StageContext } from "./stages";
+import { sinceFrom, sinceYearOf, stageYear, statusShown, type StageContext } from "./stages";
 
 /**
  * The board's own display switches, as set for the 10 Nov 2026 release. Like
@@ -69,6 +69,8 @@ export interface TimelineItem {
   x: number;
   /** the current gate, drawn at today */
   cur: boolean;
+  /** a started gate placed at the year its "Since YYYY" date gives (startedYear), else null */
+  from: number | null;
   tier: number;
   /** px, before fitting (fitTiers) */
   top: number;
@@ -92,7 +94,7 @@ export interface JourneyLayout {
   height: number;
   /** done, but no year in the date */
   noYear: number[];
-  /** started, not current, not dated */
+  /** started, not current, with no year to place it at */
   ongoing: number[];
   notStarted: number[];
   /** whether `ongoing` may be headed with a status word ("Ongoing") */
@@ -100,16 +102,31 @@ export interface JourneyLayout {
 }
 
 /**
+ * The year a started gate (in progress or delayed, not the current one) has
+ * been going since, when its date reads "Since YYYY" (sinceYearOf), so the
+ * steps between WHO PQ and today show on the timeline (partner feedback,
+ * 3 Nov 2026): ASPY's registration since 2013, before WHO recommended it in
+ * 2022, and its Global Fund procurement since 2018. Else null.
+ */
+export function startedYear(p: Product, i: number): number | null {
+  const st = p.stages[i];
+  return i !== p.currentStage && (st.status === "prog" || st.status === "late") ? sinceYearOf(st) : null;
+}
+
+/**
  * journeyTime's layout. Dated gates sit at their real year on one axis that
  * starts at the first milestone (no empty years); the current gate sits at
- * today, with a bar back to the year it has waited since. Gates too close to
- * the one before move down a tier. Gates with no year are listed beside the
- * axis instead of being given an invented date.
+ * today, with a bar back to the year it has waited since. A started gate
+ * with a "Since YYYY" date sits at that year. Gates too close to the one
+ * before move down a tier. Gates with no year are listed beside the axis
+ * instead of being given an invented date.
  */
 export function journeyLayout(p: Product, ctx: StageContext): JourneyLayout {
   const from = sinceFrom(p, ctx);
   const since = from ? from.year : null;
-  const ys = p.stages.map((st) => stageYear(st)).filter((y): y is number => y != null);
+  const ys = p.stages
+    .map((st, i) => (stageYear(st) != null ? stageYear(st) : startedYear(p, i)))
+    .filter((y): y is number => y != null);
   if (since != null) ys.push(since);
   let lo = ys.length ? Math.min(...ys) : ctx.asOfYear - 1;
   const hi = ctx.asOfYear;
@@ -123,12 +140,13 @@ export function journeyLayout(p: Product, ctx: StageContext): JourneyLayout {
     if (t - lo >= step * 0.6 && hi - t >= 1.5) tickYears.push(t);
   }
 
-  const placed: { i: number; x: number; cur: boolean }[] = [];
+  const placed: { i: number; x: number; cur: boolean; from: number | null }[] = [];
   p.stages.forEach((st, i) => {
-    if (i === p.currentStage) placed.push({ i, x: x(hi), cur: true });
+    if (i === p.currentStage) placed.push({ i, x: x(hi), cur: true, from: null });
     else {
-      const y = stageYear(st);
-      if (y != null) placed.push({ i, x: x(y), cur: false });
+      const y = stageYear(st), s = startedYear(p, i);
+      if (y != null) placed.push({ i, x: x(y), cur: false, from: null });
+      else if (s != null) placed.push({ i, x: x(s), cur: false, from: s });
     }
   });
   placed.sort((a, b) => a.x - b.x || a.i - b.i);
@@ -146,7 +164,7 @@ export function journeyLayout(p: Product, ctx: StageContext): JourneyLayout {
   p.stages.forEach((st, j) => {
     if (j === p.currentStage) return;
     if (st.status === "done" && stageYear(st) == null) noYear.push(j);
-    else if (st.status === "prog" || st.status === "late") ongoing.push(j);
+    else if ((st.status === "prog" || st.status === "late") && startedYear(p, j) == null) ongoing.push(j);
     else if (st.status === "idle") notStarted.push(j);
   });
 

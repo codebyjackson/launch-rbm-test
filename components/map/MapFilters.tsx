@@ -1,12 +1,12 @@
 "use client";
 
-// The left rail's Filters: access stages and the two recommended-use groups,
-// with a count of countries each (old: renderFilters and its handlers).
+// The left rail's Filters: the access stage in view (radio buttons, one at a
+// time) and the two recommended-use groups (checkboxes), with a count of
+// countries each (old: renderFilters and its handlers).
 //
 // The old page rebuilt this table on every change and then put focus back
-// on the box just clicked. React keeps the same elements, so focus stays
+// on the control just clicked. React keeps the same elements, so focus stays
 // where it was without help.
-import { useEffect, useRef } from "react";
 import { filterTable, type MapContext, type MapState, type TokenReader } from "@/lib/map";
 import { LineSwatch, type MapActions } from "./parts";
 import { fill, type MapText } from "./text";
@@ -21,11 +21,6 @@ interface Props {
 
 export function MapFilters({ ctx, st, text, token, actions }: Props) {
   const ft = filterTable(ctx, st);
-  // `indeterminate` is a property only, with no attribute to render
-  const all = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (all.current) all.current.indeterminate = ft.indeterminate;
-  });
   return (
     <div className="dock-section" id="filters">
       <div className="flt-head">
@@ -44,17 +39,7 @@ export function MapFilters({ ctx, st, text, token, actions }: Props) {
           <thead>
             <tr>
               <th colSpan={2}>
-                <label className="flt-all">
-                  <input
-                    ref={all}
-                    type="checkbox"
-                    id="flt-all"
-                    checked={ft.allChecked}
-                    // a click on a mixed box ticks everything, as in the browser
-                    onChange={() => actions.all(!ft.allChecked)}
-                  />{" "}
-                  {text.show}
-                </label>
+                <span className="flt-all">{text.show}</span>
               </th>
               <th className="n">{text.count}</th>
             </tr>
@@ -67,11 +52,14 @@ export function MapFilters({ ctx, st, text, token, actions }: Props) {
               <tr key={s.key}>
                 <td className="cbx">
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="flt-view"
                     id={`flt-s-${s.key}`}
-                    data-stage={s.key}
+                    data-view={s.key}
                     checked={s.checked}
-                    onChange={(e) => actions.stage(s.key, e.currentTarget.checked)}
+                    onChange={(e) => {
+                      if (e.currentTarget.checked) actions.view(s.key);
+                    }}
                   />
                 </td>
                 <td>

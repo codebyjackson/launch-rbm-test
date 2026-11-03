@@ -5,7 +5,10 @@
  *   1. the page's own CSS: the <style> block of index.html;
  *   2. the Unitaid look RBM's copies wear on top: the CSS in
  *      scripts/rbm-skin.js (applySkin).
- * Both from launch-development main at 89b2011, 27 Oct 2026.
+ * Both from launch-development main at 89b2011, 27 Oct 2026. The page's
+ * CSS changes of 3 Nov 2026 (launch-development main b0f8675: the phase name
+ * over a table figure on phones only, and the map overview's per-stage bars,
+ * .det-srow, .det-bar.thin, .det-snote) were added by hand, in place.
  *
  * Changed from those sources, and nothing else:
  *   - every selector is scoped under .launch-dashboard, the one element the
@@ -402,6 +405,7 @@
   .launch-dashboard .acc b { font-weight: 700; color: var(--ink); }
   .launch-dashboard .acc b.ok { color: var(--good-text); }
   .launch-dashboard .acc .none { color: var(--ink-3); }
+  .launch-dashboard .srow .acc small { display: none; }
   .launch-dashboard .srow.hd .c-path { display: flex; flex-direction: row; align-items: center; gap: 5px; }
   .launch-dashboard .srow.hd .info { text-transform: none; }
   .launch-dashboard .ysp { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; line-height: 1.4; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
@@ -484,6 +488,7 @@
     .launch-dashboard .srow .c-mini { grid-column: 2 / -1; grid-row: 2; margin-block: 0; }
     .launch-dashboard .srow .c-bar { grid-column: 2 / -1; grid-row: 3; }
     .launch-dashboard .srow .c-stage { display: none; }
+    .launch-dashboard .srow .acc small { display: block; }
     .launch-dashboard .l1 { padding-inline: 10px; }
   }
   /* Narrow tablets (9 Oct 2026): the fixed minimums above add up to about
@@ -1135,6 +1140,10 @@
   .launch-dashboard .det-bar i { display: block; min-width: 0; }
   .launch-dashboard .det-lg { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 7px; font-size: 12px; color: var(--ink-2); }
   .launch-dashboard .det-lg span { display: inline-flex; align-items: center; gap: 5px; } .launch-dashboard .det-lg b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .det-srow { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 3px; font-size: 12px; color: var(--ink-2); }
+  .launch-dashboard .det-srow span { display: inline-flex; align-items: center; gap: 5px; } .launch-dashboard .det-srow b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .launch-dashboard .det-bar.thin { height: 9px; }
+  .launch-dashboard .det-snote { margin-top: 8px; }
   .launch-dashboard .det-pill { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
   .launch-dashboard .det-pill.registered { background: var(--map-registered); color: #0B2A30; }
   .launch-dashboard .det-pill.guidelines { background: var(--map-guidelines); color: #fff; }

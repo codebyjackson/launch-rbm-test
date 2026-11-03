@@ -19,9 +19,10 @@ export interface BoardText {
   colMedicine: string;
   colJourney: string;
   colStage: string;
-  colStatus: string;
-  /** before the i that explains Market and Country Access */
-  colAccess: string;
+  /** the column that was Status until 3 Nov 2026 (partner feedback) */
+  colMarket: string;
+  /** before the i that explains Market and Country Access; was "Access" */
+  colCountry: string;
   /** shown only with BoardDisplay.showBarriers */
   colBarrier: string;
 
@@ -60,6 +61,8 @@ export interface BoardText {
   today: string;
   /** under the current gate; {years} is yrsText's */
   since: string;
+  /** under a started gate placed at the year its date gives: "since {year}" */
+  startedSince: string;
   /** an undated step's status, lower case */
   chipLate: string;
   chipOngoing: string;
@@ -152,8 +155,8 @@ export function boardText(locale: Locale): BoardText {
     colMedicine: m.board.columns.medicine,
     colJourney: m.board.columns.journey,
     colStage: m.board.columns.currentStage,
-    colStatus: m.board.columns.status,
-    colAccess: m.board.columns.access,
+    colMarket: m.board.columns.marketAccess,
+    colCountry: m.board.columns.access,
     colBarrier: m.board.columns.mainBarrier,
     lateDef: m.board.delayedDefinition,
     lateTip: m.board.delayedHint,
@@ -171,6 +174,7 @@ export function boardText(locale: Locale): BoardText {
     markLabel: rename(m.product.stageMarkerLabel, { status: "peek" }),
     today: tl.today,
     since: rename(tl.since, { milestone: "label", duration: "years" }),
+    startedSince: tl.sinceYear,
     chipLate: tl.delayed,
     chipOngoing: tl.ongoing,
     none: tl.none,

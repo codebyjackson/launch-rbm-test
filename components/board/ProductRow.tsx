@@ -11,7 +11,7 @@ import type { Product } from "@/lib/dataset";
 import { firstClause } from "@/lib/format";
 import { accessLine, statusShown } from "@/lib/stages";
 import { fill } from "@/lib/strings";
-import { accessCell, accessInfo, lateInfo } from "./access";
+import { accessInfo, countryCell, marketCell } from "./access";
 import { productDetail } from "./detail";
 import { glossTree } from "./gloss";
 import { useStageForks, useTimelineFit } from "./hooks";
@@ -138,21 +138,9 @@ export function ProductRow({ p, s, open, openSeq, highlightCol, cell, glossRe, h
           <span className="stg">{ctx.stages[p.currentStage]}</span>
           {board.showStageNote && note ? <span className="note">{note}</span> : null}
         </span>
-        {statusShown(p, cur.status, ctx.display) ? (
-          <span className="c-stat">
-            <span className={`light ${cur.status}`}>
-              <i></i>
-              {s.t.status[cur.status]}
-              {cur.status === "late" ? lateInfo(s) : null}
-            </span>
-          </span>
-        ) : (
-          <span className="c-stat none" aria-hidden="true">
-            —
-          </span>
-        )}
+        <span className="cell c-stat">{marketCell(p, s)}</span>
         <span className="cell c-path">
-          {accessCell(p, s)}
+          {countryCell(p, s)}
           {yardBadge(p, s)}
         </span>
         {board.showBarriers ? <div className={`c-bar${barrier ? "" : " none"}`}>{barrier || text.noBarrier}</div> : null}

@@ -279,9 +279,9 @@ export function Board(props: BoardProps) {
         <span>{text.colMedicine}</span>
         <span className="c-mini">{text.colJourney}</span>
         <span className="c-stage">{text.colStage}</span>
-        <span className="c-stat">{text.colStatus}</span>
+        <span className="c-stat">{text.colMarket}</span>
         <span className="c-path">
-          {text.colAccess + " "}
+          {text.colCountry + " "}
           {accessInfo(s)}
         </span>
         {boardDisplay.showBarriers ? <span className="c-bar">{text.colBarrier}</span> : null}

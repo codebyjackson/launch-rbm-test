@@ -167,7 +167,22 @@ function Overview({ ctx, st, text, token }: { ctx: MapContext; st: MapState; tex
               {mix.withStage}
               <span className="det-small">{fill(text.mixOf, { n: mix.total })}</span>
             </div>
-            <StageBar counts={mix.counts} total={mix.total} text={text} />
+            {/* one bar per stage: a country counts in every stage it has a source for */}
+            {mix.rows.map((r) => (
+              <Fragment key={r.key}>
+                <div className="det-srow">
+                  <span>
+                    <i className={`mapsw ${r.key}`} />
+                    {r.key === "guidelines" ? text.inGuidelines : text.stage[r.key]}
+                  </span>
+                  <b>{r.count}</b>
+                </div>
+                <div className="det-bar thin" role="img" aria-label={`${text.stage[r.key]} ${r.count}`}>
+                  <i style={{ width: `${r.width}%`, background: stageVar(r.key) }} />
+                </div>
+              </Fragment>
+            ))}
+            <p className="det-small det-snote">{text.mixNote}</p>
           </div>
           <div className="det-card">
             <h4>
@@ -280,11 +295,12 @@ function CountryPage({ page, text, token, actions, run }: { page: Page; text: Ma
           <div className="det-card">
             <div className="det-top">
               <b>{page.product}</b>
-              <span className={`det-pill ${a.stage}`}>{stageLabel(text, a.stage)}</span>
+              {a.stage !== "none" && <span className={`det-pill ${a.stage}`}>{stageLabel(text, a.stage)}</span>}
             </div>
+            {/* each stage lit on its own, in its own colour, where a source supports it */}
             <div className="det-trk">
-              {[1, 2, 3].map((n) => (
-                <i key={n} style={a.track >= n ? { background: stageVar(LEVELS[a.track - 1]) } : undefined} />
+              {LEVELS.map((k, n) => (
+                <i key={k} style={a.track[n] ? { background: stageVar(k) } : undefined} />
               ))}
             </div>
             <div className="det-trkl">
@@ -345,10 +361,10 @@ function CountryPage({ page, text, token, actions, run }: { page: Page; text: Ma
             <div className="det-card">
               <h4>{fill(text.among, { country: page.name, n: a.regionMix.count, region, name: page.product })}</h4>
               <div className="det-mkr">
-                <StageBar counts={a.regionMix.counts} total={a.regionMix.count} text={text} />
+                <StageBar counts={a.regionMix.counts} total={a.regionMix.count} keys={a.regionMix.keys} text={text} />
                 <span className="pin" style={{ left: `${a.regionMix.pos}%` }} />
               </div>
-              <StageLegend counts={a.regionMix.counts} text={text} />
+              <StageLegend counts={a.regionMix.counts} keys={a.regionMix.keys} text={text} />
             </div>
           )}
           {a.peers.length > 0 && (

@@ -1,7 +1,7 @@
 // The pathway strip's and the step panels' rules, as pure functions: which
 // medicines are listed, a step's number and column, how many medicines are
 // delayed at it, how long the current gate has waited, and the counts the
-// panels show. Ported from the main script of launch-rbm-test 7c1bf11
+// panels show. Ported from the main script of launch-rbm-test ef0bd8c
 // (en/index.html), keeping the old names where the page had a function.
 //
 // tests/golden-pathway.test.ts checks every function the page had on its own
@@ -156,28 +156,72 @@ export function countryList(detail: ProductDetail): CountryEntry[] | null {
   return s && Array.isArray(s.list) ? s.list : null;
 }
 
+/** The access stages one country of a medicine's list has a source for, each on its own. */
+export interface StageSet {
+  registered: boolean;
+  guidelines: boolean;
+  mft: boolean;
+}
+
+/** The parts of a country entry countryStages() reads (lib/map.ts has its own CountryEntry type). */
+export interface StagedEntry {
+  iso3: string;
+  level: string;
+  sources?: readonly string[];
+}
+
+/**
+ * Which access stages each country on a medicine's list has a source for.
+ * Each stage stands on its own (partner feedback, 3 Nov 2026): the map
+ * used to shade a country by the furthest stage only, so DHA–PPQ's map read
+ * 2 registered beside "confirmed in six national registers".
+ *   registered: the entry is at "registered", or cites a national register;
+ *   guidelines: the entry is at "guidelines", or cites a policy/guidelines
+ *               source (the WHO national drug policy table lists Nigeria and
+ *               Burkina Faso, which are at "mft");
+ *   mft:        the entry is at "mft".
+ * A source's category is compared in slug form, as on the page. By iso3, the
+ * last entry for a country winning. The map's three views, its tooltips and
+ * the Country access card all read this.
+ */
+export function countryStages(
+  list: readonly StagedEntry[],
+  sources: readonly { id: string; category?: string | null }[],
+): { [iso3: string]: StageSet } {
+  // a plain object keyed by id, as on the page
+  const cat: { [id: string]: string } = {};
+  for (const s of sources) cat[s.id] = String(s.category || "").toLowerCase().replace(/\s+/g, "-");
+  const cites = (e: StagedEntry, c: string) => (e.sources || []).some((id) => cat[id] === c);
+  const out: { [iso3: string]: StageSet } = {};
+  for (const e of list) {
+    out[e.iso3] = {
+      registered: e.level === "registered" || cites(e, "national-register"),
+      guidelines: e.level === "guidelines" || cites(e, "policy-/-guidelines"),
+      mft: e.level === "mft",
+    };
+  }
+  return out;
+}
+
 /** The Country access card's figures, all from the one list the map is painted from. */
 export interface CountryAccessCounts {
-  /** countries on the map */
+  /** countries on the map: the list's entries */
   onMap: number;
-  levels: LevelCounts;
-  /**
-   * how many entries a national register among their sources confirms; null
-   * when there are no sources at all to judge by, and the row is left out
-   */
-  confirmed: number | null;
+  /** countries with a source for each stage, as the map's three views count them */
+  stages: LevelCounts;
 }
 
 /**
  * Where a medicine has a country list, every count comes from it, so the
- * card, the map legend and the stage 4–5 panels cannot disagree (partner
- * feedback, 15 Oct 2026). A source's category is compared in slug form
- * ("national-register"), as on the page.
+ * card, the map and the stage 4–5 panels cannot disagree (partner feedback,
+ * 15 Oct 2026): countries on the map, then how many have a source for each
+ * stage (countryStages), the same numbers the map's three views show. A
+ * country can count at more than one stage.
  */
 export function countryAccessCounts(list: readonly CountryEntry[], sources: readonly Source[]): CountryAccessCounts {
-  // a plain object keyed by id, as on the page; Object.keys counts the ids
-  const cat: { [id: string]: string } = {};
-  for (const s of sources) cat[s.id] = String(s.category || "").toLowerCase().replace(/\s+/g, "-");
-  const reg = list.filter((e) => (e.sources || []).some((id) => cat[id] === "national-register")).length;
-  return { onMap: list.length, levels: levelCounts(list), confirmed: Object.keys(cat).length ? reg : null };
+  const c: LevelCounts = { registered: 0, guidelines: 0, mft: 0 };
+  for (const st of Object.values(countryStages(list, sources))) {
+    for (const k of ["registered", "guidelines", "mft"] as const) if (st[k]) c[k]++;
+  }
+  return { onMap: list.length, stages: c };
 }

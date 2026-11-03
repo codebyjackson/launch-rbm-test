@@ -122,7 +122,9 @@ export function journeyTime(
             </div>
           ) : null,
         ]
-      : <div className="syear">{stageYear(st)}</div>;
+      : it.from != null
+        ? <div className="syear">{fill(text.startedSince, { year: it.from })}</div>
+        : <div className="syear">{stageYear(st)}</div>;
     return [
       <i key={`s${it.i}`} className="stem" data-tier={it.tier} style={{ left: `${it.x}%`, height: `${top - 32}px` }}></i>,
       <i key={`p${it.i}`} className={`pt${it.cur ? " " + st.status : ""}`} style={{ left: `${it.x}%` }}></i>,

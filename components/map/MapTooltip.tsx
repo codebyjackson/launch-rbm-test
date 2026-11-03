@@ -33,7 +33,7 @@ export function MapTipBody({ tip, text }: { tip: NonNullable<ReturnType<typeof m
   );
 }
 
-/** A button of the keyboard country list, hovered or focused: every stage, ticked up to the one reached. */
+/** A button of the keyboard country list, hovered or focused: every stage, each ticked where a source supports it. */
 export function ListTipBody({ tip, text }: { tip: ReturnType<typeof listTip>; text: MapText }) {
   return (
     <>

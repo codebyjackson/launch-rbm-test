@@ -1,16 +1,15 @@
 "use client";
 
-// The legends under the map: access stages with counts, the recommended-use
-// groups, and where to find drug-resistance data (old: the static legend
-// markup, selectMap's counts and mftLegend).
-import { STAGE_ROWS, legendCounts, mapLegend, type MapContext, type MapState, type TokenReader } from "@/lib/map";
+// The legends under the map: the access stage in view and No data, with
+// counts, the recommended-use groups, and where to find drug-resistance data
+// (old: the static legend markup, paintView's counts and mftLegend).
+import { mapLegend, type MapContext, type MapState, type TokenReader } from "@/lib/map";
 import { LineSwatch } from "./parts";
 import type { MapText } from "./text";
 
 const THREATS_MAP = "https://apps.who.int/malaria/maps/threats/";
 
 export function MapLegend({ ctx, st, text, token }: { ctx: MapContext; st: MapState; text: MapText; token: TokenReader }) {
-  const { counts, noneZero } = legendCounts(ctx, st.productId);
   const lg = mapLegend(ctx, st);
   return (
     <div className="map-legend-bar">
@@ -26,22 +25,19 @@ export function MapLegend({ ctx, st, text, token }: { ctx: MapContext; st: MapSt
                 </tr>
               </thead>
               <tbody>
-                {STAGE_ROWS.map((k) => {
-                  const zero = k === "none" ? noneZero : !counts[k];
-                  return (
-                    <tr key={k} data-lvl={k} className={lg.dimStages.includes(k) ? "dim" : undefined}>
-                      <td className="sw">
-                        <span className={`mapsw ${k}`} />
-                      </td>
-                      <td>{text.legendRows[k]}</td>
-                      <td className="n">
-                        <span className={zero ? "ct zero" : "ct"} id={`mapct-${k}`}>
-                          {counts[k]}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {lg.stages.map((r) => (
+                  <tr key={r.key} data-lvl={r.key} hidden={r.hidden}>
+                    <td className="sw">
+                      <span className={`mapsw ${r.key}`} />
+                    </td>
+                    <td>{text.legendRows[r.key]}</td>
+                    <td className="n">
+                      <span className={r.zero ? "ct zero" : "ct"} id={`mapct-${r.key}`}>
+                        {r.count}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

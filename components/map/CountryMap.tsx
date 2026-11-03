@@ -18,7 +18,6 @@ import {
   emptyNotice,
   featureLevels,
   fillColor,
-  fillOpacity,
   locationFilter,
   mapOptions,
   panFor,
@@ -179,20 +178,20 @@ export function CountryMap({ ctx, st, text, token, shapesUrl, workerUrl, actions
     m.setPaintProperty("country-fill", "fill-color", fillColor(c) as ExpressionSpecification);
   }, [ready, token]);
 
-  // Each shape's stage for the medicine (old: applyCountryLevels).
+  // Each shape's stage in view for the medicine (old: applyCountryLevels, from paintView).
+  const { productId, view } = st;
   useEffect(() => {
     const m = map.current;
     if (!ready || !m) return;
-    const lv = featureLevels(ctx, st.productId);
+    const lv = featureLevels(ctx, { productId, view });
     for (const s of ctx.shapes) m.setFeatureState({ source: "world", id: s.iso3 }, { level: lv[s.iso3] });
-  }, [ready, ctx, st.productId]);
+  }, [ready, ctx, productId, view]);
 
-  // Faded stages, the open country's outline and the policy borders
-  // (old: paintStageFilter, paintSelection, mftPaint).
+  // The open country's outline and the policy borders (old: paintSelection,
+  // mftPaint). Nothing fades any more: the view chooses what is shaded.
   useEffect(() => {
     const m = map.current;
     if (!ready || !m) return;
-    m.setPaintProperty("country-fill", "fill-opacity", fillOpacity(st) as ExpressionSpecification);
     if (m.getLayer("sel-line")) {
       const f = selectionFilter(st) as FilterSpecification;
       m.setFilter("sel-halo", f);
@@ -225,7 +224,7 @@ export function CountryMap({ ctx, st, text, token, shapesUrl, workerUrl, actions
     // a filter tick must not move the camera
   }, [ready, ctx, region, country]);
 
-  const levels = featureLevels(ctx, st.productId);
+  const levels = featureLevels(ctx, st);
   const empty = emptyNotice(ctx, st.productId);
   const zr = zoomReadout(zoom);
   return (
@@ -252,9 +251,9 @@ export function CountryMap({ ctx, st, text, token, shapesUrl, workerUrl, actions
                 data-iso3={s.iso3}
                 data-name={s.name}
                 data-lvl={lvl || ""}
-                onMouseEnter={(e) => tips.showList(s, lvl, { x: e.clientX, y: e.clientY })}
-                onMouseMove={(e) => tips.showList(s, lvl, { x: e.clientX, y: e.clientY })}
-                onFocus={(e) => tips.showList(s, lvl, { el: e.currentTarget })}
+                onMouseEnter={(e) => tips.showList(s, { x: e.clientX, y: e.clientY })}
+                onMouseMove={(e) => tips.showList(s, { x: e.clientX, y: e.clientY })}
+                onFocus={(e) => tips.showList(s, { el: e.currentTarget })}
                 onMouseLeave={tips.hide}
                 onBlur={tips.hide}
                 onClick={() => actions.select(s.iso3)}

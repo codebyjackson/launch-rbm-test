@@ -11,12 +11,13 @@
 // Texts are plain strings so a server component can pass them to these
 // client components. "{name}"-style slots are filled by fill().
 import type { Locale } from "@/lib/locales";
-import type { GroupId, MapLibreText, Region, StageKey } from "@/lib/map";
+import type { GroupId, Level, MapLibreText, Region, StageKey } from "@/lib/map";
 import { around, rename, type UiText, uiText } from "@/lib/ui-text";
 
 export interface MapText {
   heading: string;
-  note: string;
+  /** the line under the heading, for the stage in view (old: VIEW_NOTE) */
+  viewNote: Record<Level, string>;
   /** rail headings */
   medicine: string;
   filters: string;
@@ -83,6 +84,8 @@ export interface MapText {
   overviewPre: string; // {name}
   mixTitle: string; // {name}
   mixOf: string; // {n}
+  /** under the overview's per-stage bars */
+  mixNote: string;
   overviewNoPolicy: string; // {name}
   undrawn: string; // {list}
 
@@ -135,7 +138,8 @@ export function mapText(locale: Locale): MapText {
   const [, of] = around(map.finder.count, "shown");
   t = {
     heading: map.title,
-    note: map.note,
+    // map.note is the Registered view's line, the one the map opens on
+    viewNote: { registered: map.note, guidelines: map.noteGuidelines, mft: map.noteMft },
     medicine: map.tabs.heading,
     filters: f.heading,
     location: f.location,
@@ -218,6 +222,7 @@ export function mapText(locale: Locale): MapText {
     mixTitle: rename(p.stageMixTitle, { medicine: "name" }),
     // follows the count, in its own element
     mixOf: ` ${rename(p.stageMixCount, { total: "n" })}`,
+    mixNote: p.moreThanOneStage,
     overviewNoPolicy: rename(map.noPolicy, { medicine: "name" }),
     undrawn: rename(p.notDrawn, { countries: "list" }),
 

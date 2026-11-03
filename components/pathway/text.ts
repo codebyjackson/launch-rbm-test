@@ -72,6 +72,8 @@ export interface PathwayText {
   // ---- the Country access card's rows ----
   onMap: string;
   confirmed: string;
+  /** under the per-stage rows: "A country can count at more than one stage." */
+  moreThanOneStage: string;
 
   // ---- a stage marker's hover hint (#tip) ----
   clickForDetail: string;
@@ -128,6 +130,7 @@ export function pathwayText(locale: Locale): PathwayText {
     surveyStatus: m.product.stagePanel.surveyStatus,
     onMap: m.product.cards.countriesOnMap,
     confirmed: m.product.cards.confirmedInRegisters,
+    moreThanOneStage: m.product.cards.moreThanOneStage,
     clickForDetail: m.tooltip.clickForDetail,
   };
   built.set(m, t);

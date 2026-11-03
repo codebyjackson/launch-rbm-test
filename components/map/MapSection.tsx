@@ -25,11 +25,10 @@ import {
   resetFilters,
   selectCountry,
   selectProduct,
-  setAll,
   setCountry,
   setGroup,
   setRegion,
-  setStage,
+  setView,
   stepCountry,
   withDefaults,
   type MapContext,
@@ -86,9 +85,8 @@ export function MapSection({ input, text, shapesUrl, workerUrl, tip }: MapSectio
   const actions = useMemo<MapActions>(
     () => ({
       product: (id) => update((s) => selectProduct(s, id)),
-      stage: (k, on) => update((s) => setStage(s, k, on), true),
+      view: (k) => update((s) => setView(s, k), true),
       group: (g, on) => update((s) => setGroup(s, g, on), true),
-      all: (on) => update((s) => setAll(ctx, s, on), true),
       reset: () => update(resetFilters, true),
       region: (r) => update((s) => setRegion(ctx, s, r)),
       country: (c) => update((s) => setCountry(ctx, s, c)),
@@ -116,7 +114,7 @@ export function MapSection({ input, text, shapesUrl, workerUrl, tip }: MapSectio
         if (t) show(<MapTipBody tip={t} text={text} />, at);
         else tip.hide();
       },
-      showList: (shape, level, at) => show(<ListTipBody tip={listTip(ctx, now.current, shape, level)} text={text} />, at),
+      showList: (shape, at) => show(<ListTipBody tip={listTip(ctx, now.current, shape)} text={text} />, at),
       hide: () => tip.hide(),
     };
   }, [ctx, text, tip]);
@@ -200,8 +198,9 @@ export function MapSectionView({ rootRef, ctx, st, q, seq, text, token, shapesUr
   return (
     <section className="viz" id="mapsec" ref={rootRef}>
       <h2>{text.heading}</h2>
+      {/* what the view in Filters shows (old: VIEW_NOTE, written by paintView) */}
       <p className="viznote" id="mapnote">
-        {text.note}
+        {text.viewNote[st.view]}
       </p>
       <div className="map-dock">
         <aside className="map-dock-rail map-dock-left">
