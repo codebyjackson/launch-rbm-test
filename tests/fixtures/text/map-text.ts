@@ -6,7 +6,11 @@ import type { MapText } from "@/components/map/text";
 
 export const mapTextEn: MapText = {
   heading: "Country access map",
-  note: "Each country is shaded by the furthest stage it has reached.",
+  viewNote: {
+    registered: "Countries where a national medicines register confirms the medicine is registered. Choose another access stage under Filters; a country can appear at more than one stage.",
+    guidelines: "Countries whose national treatment guidelines or policy include the medicine, cited to a WHO publication or a peer-reviewed paper. A country can appear at more than one stage.",
+    mft: "Countries with a multiple first-line therapy (MFT) plan that uses the medicine: a pilot, a planned pilot or a national rollout. A country can appear at more than one stage.",
+  },
   medicine: "Medicine",
   filters: "Filters",
   location: "Location",
@@ -86,8 +90,9 @@ export const mapTextEn: MapText = {
   currentStage: "Current stage",
   procurement: "Public-channel procurement (Global Fund)",
   overviewPre: "{name} is pre-launch, so there is no country-level status or policy yet.",
-  mixTitle: "Access stage mix · {name}",
+  mixTitle: "Access stages · {name}",
   mixOf: " of {n} countries have an access stage",
+  mixNote: "A country can count at more than one stage.",
   overviewNoPolicy: "No national treatment policy lists {name} yet.",
   undrawn: "Also in policy but not drawn on this map: {list}.",
 

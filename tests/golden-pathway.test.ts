@@ -1,6 +1,6 @@
 // The golden test for lib/pathway.ts: each function the page had on its own,
 // against the page's original, frozen in tests/golden-pathway/reference/ by
-// tests/golden-pathway/extract.mjs (launch-rbm-test 7c1bf11). Same method as
+// tests/golden-pathway/extract.mjs (launch-rbm-test ef0bd8c). Same method as
 // tests/golden.test.ts: the reference runs in node:vm with the globals from
 // localize(), old and new are called on the same inputs, and every result
 // must be deeply and strictly equal, or both must throw the same error.
@@ -71,6 +71,34 @@ for (const locale of LOCALES) {
         ds.data.stages.forEach((_, i) => {
           same("lateAt", String(i), pathway.lateAt(i, listed, ctx), f("lateAt")(i));
         });
+
+        // countryStages: every medicine's list against the real sources, then
+        // edge cases (no sources, unknown or prototype ids, a category with
+        // odd spacing and case, a level outside the three, a repeated iso3)
+        // with the page's LAUNCH_SOURCES swapped for the same list
+        const sources = ds.sources.sources;
+        for (const p of listed) {
+          const list = p.detail && p.detail.countries ? p.detail.countries.list : null;
+          if (list) same("countryStages", p.id, pathway.countryStages(list, sources), f("countryStages")(list));
+        }
+        const odd = [
+          { id: "reg", category: "National  Register" },
+          { id: "pol", category: "policy / guidelines" },
+          { id: "none" },
+        ];
+        const oddList = [
+          { iso3: "AAA", level: "mft", sources: ["reg", "pol"] },
+          { iso3: "BBB", level: "registered", sources: ["constructor", "no-such-source"] },
+          { iso3: "CCC", level: "toString" },
+          { iso3: "DDD", level: "guidelines", sources: [] },
+          { iso3: "AAA", level: "guidelines", sources: ["none"] },
+        ];
+        const keep = old.window.LAUNCH_SOURCES;
+        for (const src of [[], odd]) {
+          old.window.LAUNCH_SOURCES = { sources: structuredClone(src) };
+          same("countryStages", `edge cases, ${src.length} sources`, pathway.countryStages(oddList, src), f("countryStages")(oddList));
+        }
+        old.window.LAUNCH_SOURCES = keep;
 
         listed.forEach((p, n) => {
           for (let i = -1; i <= ds.data.stages.length; i++) {

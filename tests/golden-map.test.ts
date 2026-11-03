@@ -8,7 +8,8 @@
 // (tests/golden-map/old-page.ts). Then:
 //
 //   A. every medicine x every Location choice the pickers allow x every
-//      combination of the Filters' boxes: the counts, lists and map layers;
+//      access stage in view x every combination of the recommended-use
+//      boxes: the counts, lists and map layers;
 //   B. random click sequences, the same clicks on both: after each one the
 //      state, every part of the section the old code wrote (as markup
 //      trees), the map's layers and camera, and now and then every tooltip.
@@ -31,6 +32,7 @@ import type { Locale } from "@/lib/locales";
 import {
   DEFAULT_TOKENS,
   GROUPS,
+  LEVELS,
   POLICY_LAYERS,
   REGIONS,
   STAGE_ROWS,
@@ -43,7 +45,6 @@ import {
   drawnIsos,
   featureLevels,
   fillColor,
-  fillOpacity,
   filterTable,
   finder,
   groupCountries,
@@ -66,15 +67,15 @@ import {
   selectCountry,
   selectProduct,
   selectionFilter,
-  setAll,
   setCountry,
   setGroup,
   setRegion,
-  setStage,
+  setView,
   stageCounts,
   stageOf,
   stepCountry,
   undrawnInPolicy,
+  viewCounts,
   withDefaults,
   type MapContext,
   type MapState,
@@ -153,12 +154,12 @@ const toOld = (st: MapState): OldState => ({
   mftProductId: st.productId,
   detTab: st.tab,
   cameFrom: st.cameFrom,
-  stageOff: sorted(st.stageOff),
+  mapView: st.view,
   mftTick: sorted(st.ticked),
 });
 const oldState = (o: OldPage): OldState => {
   const s = o.state();
-  return { locRegion: s.locRegion, locCountry: s.locCountry, mftSel: s.mftSel, mftProductId: s.mftProductId, detTab: s.detTab, cameFrom: s.cameFrom, stageOff: sorted(s.stageOff), mftTick: sorted(s.mftTick) };
+  return { locRegion: s.locRegion, locCountry: s.locCountry, mftSel: s.mftSel, mftProductId: s.mftProductId, detTab: s.detTab, cameFrom: s.cameFrom, mapView: s.mapView, mftTick: sorted(s.mftTick) };
 };
 
 /** Every Location choice the two pickers allow (a country without a WHO region keeps "All regions"). */
@@ -211,7 +212,8 @@ function compareView(side: Side, st: MapState, q: string, t: Tally, at: string, 
   t.eq(tabs, newTabs, `${at}: medicine tabs`);
   // Filters
   t.eq(oldHtml(old.el("flt-table")), html(need(tree, "flt-table").children), `${at}: #flt-table`);
-  t.eq(old.el("flt-all").indeterminate, filterTable(ctx, st).indeterminate, `${at}: #flt-all indeterminate`);
+  // the line under the heading, for the view (paintView writes it)
+  t.eq(String(old.el("mapnote").textContent), textOf(need(tree, "mapnote").children), `${at}: #mapnote`);
   const act = need(tree, "flt-act"), hint = need(tree, "mft-hint");
   t.eq({ hidden: old.el("flt-act").hidden, text: String(old.el("flt-act").textContent) }, { hidden: isHidden(act), text: textOf(act.children) }, `${at}: #flt-act`);
   t.eq({ hidden: old.el("mft-hint").hidden, text: String(old.el("mft-hint").textContent) }, { hidden: isHidden(hint), text: textOf(hint.children) }, `${at}: #mft-hint`);
@@ -221,9 +223,9 @@ function compareView(side: Side, st: MapState, q: string, t: Tally, at: string, 
     const chosen = findAll(sel.children, (e) => e.tag === "option" && "selected" in e.attrs)[0];
     t.eq({ options: oldHtml(old.el(id)), value: old.el(id).value }, { options: html(sel.children), value: chosen ? chosen.attrs.value : "" }, `${at}: #${id}`);
   }
-  // legend: dimmed rows, counts, the recommended-use table
+  // legend: the rows shown (the stage in view and No data), counts, the recommended-use table
   const rows = findAll(tree, (e) => e.tag === "tr" && "data-lvl" in e.attrs);
-  t.eq(old.legendRows.map((r) => r.classes.has("dim")), rows.map((r) => (r.attrs.class || "").split(" ").includes("dim")), `${at}: legend rows dimmed`);
+  t.eq(old.legendRows.map((r) => ({ hidden: r.hidden, dim: r.classes.has("dim") })), rows.map((r) => ({ hidden: isHidden(r), dim: (r.attrs.class || "").split(" ").includes("dim") })), `${at}: legend rows shown`);
   for (const k of STAGE_ROWS) {
     const ct = need(tree, `mapct-${k}`);
     t.eq({ text: String(old.el(`mapct-${k}`).textContent), zero: old.el(`mapct-${k}`).classes.has("zero") }, { text: textOf(ct.children), zero: (ct.attrs.class || "").split(" ").includes("zero") }, `${at}: #mapct-${k}`);
@@ -251,10 +253,11 @@ function compareView(side: Side, st: MapState, q: string, t: Tally, at: string, 
 function compareMap(side: Side, st: MapState, t: Tally, at: string): void {
   const { old, ctx } = side;
   const m = old.map;
-  const lv = featureLevels(ctx, st.productId);
+  const lv = featureLevels(ctx, st);
   t.eq(ctx.shapes.map((s) => m.featureState[s.iso3] ?? null), ctx.shapes.map((s) => lv[s.iso3]), `${at}: fill levels`);
   t.eq(m.paint["country-fill"]["fill-color"], fillColor(readMapColors(token)), `${at}: fill colours`);
-  t.eq(m.paint["country-fill"]["fill-opacity"], fillOpacity(st), `${at}: fill opacity`);
+  // nothing fades a stage any more, so neither side sets the opacity (CountryMap neither)
+  t.eq(m.paint["country-fill"]["fill-opacity"], undefined, `${at}: fill opacity left unset`);
   t.eq([m.filter["sel-halo"], m.filter["sel-line"]], [selectionFilter(st), selectionFilter(st)], `${at}: selection outline`);
   t.eq([m.filter["country-fill"], m.filter["country-line"]], [locationFilter(ctx, st), locationFilter(ctx, st)], `${at}: location filter`);
   if (ctx.policy) {
@@ -268,12 +271,11 @@ function compareMap(side: Side, st: MapState, t: Tally, at: string): void {
 function compareTips(side: Side, st: MapState, t: Tally, at: string): void {
   const { old, ctx, text } = side;
   const tip = old.el("tip");
-  const lv = featureLevels(ctx, st.productId);
   const buttons = old.el("map-country-list").querySelectorAll("button");
   buttons.forEach((b, i) => {
     b.dispatch("focus", {});
     const s = ctx.shapes[i];
-    const mine = renderToStaticMarkup(createElement(ListTipBody, { tip: listTip(ctx, st, s, lv[s.iso3]), text }));
+    const mine = renderToStaticMarkup(createElement(ListTipBody, { tip: listTip(ctx, st, s), text }));
     t.eq(oldHtml(tip), html(parseHtml(mine)), `${at}: list tooltip ${s.iso3}`);
   });
   for (const s of ctx.shapes) {
@@ -326,15 +328,14 @@ function choices(side: Side, st: MapState, r: ReturnType<typeof random>): Step[]
   const p = r.pick(ctx.products);
   out.push({ name: `tab ${p.id}`, old: (o) => o.el("maptabs").querySelectorAll(".tab").find((b) => b.dataset.id === p.id)!.click(), next: (s) => selectProduct(s, p.id) });
   const ft = filterTable(ctx, st);
-  const sk = r.pick(STAGE_ROWS), on = st.stageOff.includes(sk);
-  out.push({ name: `stage ${sk} ${on}`, old: (o) => o.el("filters").dispatch("change", target({ stage: sk }, {}, { checked: on, id: `flt-s-${sk}` })), next: (s) => setStage(s, sk, on) });
+  // a radio button: its change event comes only when it becomes checked
+  const v = r.pick(LEVELS);
+  out.push({ name: `view ${v}`, old: (o) => o.el("filters").dispatch("change", target({ view: v }, {}, { checked: true, id: `flt-s-${v}` })), next: (s) => setView(s, v) });
   const gs = (ft.groups || []).filter((g) => !g.off);
   if (gs.length) {
     const g = r.pick(gs), gon = !g.checked;
     out.push({ name: `group ${g.id} ${gon}`, old: (o) => o.el("filters").dispatch("change", target({ group: g.id }, {}, { checked: gon, id: `flt-g-${g.id}` })), next: (s) => setGroup(s, g.id, gon) });
   }
-  const all = !ft.allChecked;
-  out.push({ name: `all ${all}`, old: (o) => o.el("filters").dispatch("change", target({}, {}, { checked: all, id: "flt-all" })), next: (s) => setAll(ctx, s, all) });
   out.push({ name: "reset", old: (o) => o.el("flt-reset").click(), next: resetFilters });
   const reg = r.pick(["", ...REGIONS].filter((x) => x !== st.region)) as Region | "";
   out.push({ name: `region ${reg}`, moved: true, old: (o) => { o.el("loc-region").value = reg; o.el("loc-region").dispatch("change", {}); }, next: (s) => setRegion(ctx, s, reg) });
@@ -421,18 +422,26 @@ describe("golden: the map section against the static pages' own code", () => {
         t.eq(parseHtml(old.el("loc-country").innerHTML).slice(1).map((n) => [(n as HElement).attrs.value, textOf((n as HElement).children)]), opts, `country picker for ${r || "all regions"}`);
       }
       const locs = locations(ctx);
-      const offs = subsets(STAGE_ROWS), ticks = subsets(GROUPS);
+      const ticks = subsets(GROUPS);
       for (const p of ctx.products) {
         const base: MapState = { ...initialState(ctx), productId: p.id };
         old.setState(toOld(base));
-        t.eq(old.fn.stageCounts(), (({ none, ...c }) => ({ ...c, none }))(stageCounts(ctx, p.id)), `stageCounts ${p.id}`);
         t.eq(old.fn.mftAvail(), availableGroups(ctx, p.id), `mftAvail ${p.id}`);
         t.eq(old.fn.drawnIsos(), drawnIsos(ctx), `drawnIsos ${p.id}`);
-        for (const s of ctx.shapes) {
-          const o = old.fn.mftStage(s.iso3);
-          t.eq(o.lvl, stageOf(ctx, p.id, s.iso3), `mftStage ${p.id} ${s.iso3}`);
-          t.eq(old.fn.mftName(s.iso3), policyName(ctx, s.iso3), `mftName ${s.iso3}`);
+        t.eq(old.fn.viewCounts(), viewCounts(ctx, p.id), `viewCounts ${p.id}`);
+        for (const view of LEVELS) {
+          const sv: MapState = { ...base, view };
+          old.setState(toOld(sv));
+          t.eq(old.fn.stageCounts(), (({ none, ...c }) => ({ ...c, none }))(stageCounts(ctx, sv)), `stageCounts ${p.id} ${view}`);
+          const lv = featureLevels(ctx, sv);
+          t.eq(ctx.shapes.map((s) => old.map.featureState[s.iso3] ?? null), ctx.shapes.map((s) => lv[s.iso3]), `fill levels ${p.id} ${view}`);
+          for (const s of ctx.shapes) {
+            const o = old.fn.mftStage(s.iso3);
+            t.eq(o.lvl, stageOf(ctx, sv, s.iso3), `mftStage ${p.id} ${view} ${s.iso3}`);
+          }
         }
+        old.setState(toOld(base));
+        for (const s of ctx.shapes) t.eq(old.fn.mftName(s.iso3), policyName(ctx, s.iso3), `mftName ${s.iso3}`);
         for (const loc of locs) {
           const st0: MapState = { ...base, ...loc };
           old.setState(toOld(st0));
@@ -444,14 +453,12 @@ describe("golden: the map section against the static pages' own code", () => {
           t.eq([old.map.filter["country-fill"], old.map.filter["country-line"]], [locationFilter(ctx, st0), locationFilter(ctx, st0)], `location filter ${loc.region}/${loc.country}`);
           const fit = cameraFit(ctx, st0, SHAPES);
           t.eq(old.map.fits, fit ? [[fit.bounds, fit.maxZoom === undefined ? { padding: fit.padding } : { padding: fit.padding, maxZoom: fit.maxZoom }]] : [], `camera ${loc.region}/${loc.country}`);
-          for (const off of offs) {
+          for (const view of LEVELS) {
             for (const tick of ticks) {
-              const st: MapState = { ...st0, stageOff: off, ticked: tick };
+              const st: MapState = { ...st0, view, ticked: tick };
               old.setState(toOld(st));
-              t.eq(old.fn.mftListed(), listed(ctx, st), `listed ${p.id} ${loc.region}/${loc.country} off=${off} tick=${tick}`);
-              t.eq(old.state().mftOn, policyOn(ctx, st), `policy on ${p.id} off=${off} tick=${tick}`);
-              old.fn.paintStageFilter();
-              t.eq(old.map.paint["country-fill"]["fill-opacity"], fillOpacity(st), `fill opacity off=${off}`);
+              t.eq(old.fn.mftListed(), listed(ctx, st), `listed ${p.id} ${loc.region}/${loc.country} view=${view} tick=${tick}`);
+              t.eq(old.state().mftOn, policyOn(ctx, st), `policy on ${p.id} view=${view} tick=${tick}`);
               if (ctx.policy) {
                 old.fn.mftPaint();
                 const pl = policyLayers(ctx, st);

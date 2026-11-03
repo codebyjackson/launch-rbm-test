@@ -1,5 +1,5 @@
 // The map section's text that today's pages carry in their static markup
-// (#mapsec in {en,fr,pt}/index.html at launch-rbm-test 7c1bf11), not in their
+// (#mapsec in {en,fr,pt}/index.html at launch-rbm-test ef0bd8c), not in their
 // script. tests/golden-map/translate.ts builds the French and Portuguese
 // MapText from the script's strings alone, so it leaves these in English,
 // while the pages show them translated (the golden test compares only what
@@ -13,7 +13,7 @@ import type { Locale } from "@/lib/locales";
 
 export type MapMarkupText = Pick<
   MapText,
-  | "heading" | "note" | "medicine" | "tabsLabel" | "filters" | "reset" | "filtersLabel" | "location"
+  | "heading" | "medicine" | "tabsLabel" | "filters" | "reset" | "filtersLabel" | "location"
   | "region" | "regionLabel" | "country" | "countryLabel" | "mapHint" | "legend" | "legendStage"
   | "legendCount" | "legendRows" | "resBefore" | "resLink" | "resAfter" | "detail"
 >;
@@ -36,7 +36,6 @@ export function readMapMarkup(page: string): MapMarkupText {
   const row = (lvl: string) => one(new RegExp(`data-lvl="${lvl}"><td class="sw">.*?</td><td>(.*?)</td>`), `${lvl} row`);
   return {
     heading: one(/<h2>(.*?)<\/h2>/, "heading"),
-    note: one(/id="mapnote">(.*?)<\/p>/, "note"),
     medicine: one(/<h3>(.*?)<\/h3>\s*<div class="tabs"/, "medicine heading"),
     tabsLabel: one(/id="maptabs"[^>]*aria-label="([^"]*)"/, "tabs label"),
     filters: one(/<h3>(.*?) <span class="flt-act"/, "filters heading"),
@@ -62,7 +61,6 @@ export function readMapMarkup(page: string): MapMarkupText {
 export const MAP_MARKUP: Record<Locale, MapMarkupText> = {
   en: {
     heading: "Country access map",
-    note: "Each country is shaded by the furthest stage it has reached.",
     medicine: "Medicine",
     tabsLabel: "Select medicine for map",
     filters: "Filters",
@@ -85,7 +83,6 @@ export const MAP_MARKUP: Record<Locale, MapMarkupText> = {
   },
   fr: {
     heading: "Carte d'accès au pays",
-    note: "Chaque pays est coloré en fonction du stade le plus avancé qu'il a atteint.",
     medicine: "Médecine",
     tabsLabel: "Sélectionnez le médicament pour la carte",
     filters: "Filtres",
@@ -115,8 +112,7 @@ export const MAP_MARKUP: Record<Locale, MapMarkupText> = {
   },
   pt: {
     heading: "Mapa de acesso ao país",
-    note: "Cada país está sombreado de acordo com o estádio mais avançado que atingiu.",
-    medicine: "Medicina",
+    medicine: "Medicamento",
     tabsLabel: "Selecione o medicamento para o mapa",
     filters: "Filtros",
     reset: "Reiniciar",
@@ -127,13 +123,13 @@ export const MAP_MARKUP: Record<Locale, MapMarkupText> = {
     country: "País ou região",
     countryLabel: "Filtrar mapa por país",
     mapHint:
-      "Arraste para mover o mapa · Ctrl + scroll ou clique duas vezes para ampliar · As teclas de seta movem o mapa quando este está focado",
-    legend: "Legenda",
+      "Arraste para mover o mapa · Ctrl + rolagem ou clique duas vezes para ampliar · As teclas de seta movem o mapa quando ele estiver em foco",
+    legend: "Lenda",
     legendStage: "Etapa de acesso",
     legendCount: "Número de países",
-    legendRows: { registered: "Registrado", guidelines: "Em orientações nacionais", mft: "Em planos MFT", none: "Sem dados" },
+    legendRows: { registered: "Registrado", guidelines: "Em diretrizes nacionais", mft: "Em planos MFT", none: "Sem dados" },
     resBefore:
-      "Os resultados de resistência aos medicamentos não são apresentados neste mapa. Para os explorar, consulte o ",
+      "Os resultados de resistência a medicamentos não são mostrados neste mapa. Para explorá-los, consulte o ",
     resLink: "Mapa de Ameaças da Malária da OMS",
     resAfter: ".",
     detail: "Detalhe",

@@ -897,6 +897,70 @@ This file is updated in the same commit as each change it describes.
     - Rejected: keeping the checkboxes beside the views (the page has none);
       a `level` argument to `listTip` (the tooltip no longer depends on the
       fill); a second copy of `countryStages` in `lib/map.ts`.
+    - **Tests: every pin moved to `ef0bd8c`** (the five extractors,
+      `text-parity`'s map markup check, `scripts/build-map-assets.mjs`, the
+      comments); no part kept at `7c1bf11`, since the extractors' `--check`
+      compares one commit. Extractor lists: golden-board `accessCell` →
+      `accessFig`, `marketCell`, `countryCell`, plus `countryStages` and
+      `startedYear`; golden-pathway `countryStages`; golden-map `VIEW_NOTE`
+      and `countryStages`, and its hook reads and sets `mapView` (calling
+      `paintView` as the radio button's handler does) instead of `stageOff`,
+      and exposes `viewCounts` and `paintView` instead of
+      `paintStageFilter`. golden-map's sweep is now every medicine × every
+      Location choice × every view × every combination of the two
+      recommended-use boxes (was × the 16 stage-box combinations), with the
+      fill levels, `stageCounts` and `mftStage` per view; the click sequences
+      pick a view instead of a stage box or the select-all box; each view
+      also compares `#mapnote`, the legend rows' `hidden` (was `dim`), and
+      that neither side sets `fill-opacity`. New comparisons: `startedYear`
+      for every stage of every variant, a board variant with three started
+      gates ("Since 2009", "Depuis 2017", "desde 2021", one before every
+      dated gate), the timeline items' `from` read back from the old markup,
+      and `countryStages` on every medicine's list plus edge cases (no
+      sources, prototype ids, a category with odd spacing and case, a level
+      outside the three, a repeated iso3).
+    - **Portuguese: the European pin is gone.** The pages at `ef0bd8c` are
+      Brazilian (`<html lang="pt-BR">`, from launch-development-test
+      `11681f2` onwards), as the port, so `tests/setup/european-portuguese.ts`
+      and `tests/fixtures/messages/pt-PT.json` are deleted and the old code
+      reads its own page's tag again (each harness throws if it is not
+      `PAGE_LANG`). The frozen text tables (`tests/fixtures/text/`) now hold
+      the `ef0bd8c` pages' words: Portuguese throughout, English and French
+      where the page changed (the five reworded texts, the new ones, and the
+      seven words of 28 Oct, which those pages translate, so their `CHANGED`
+      entries went); `MAP_MARKUP` was read from the pages. The values were
+      taken from the message files and then proved against the pages by the
+      area tests, which is what decision 57 could not do while the pages
+      were European. That proof found **ten Portuguese messages with a
+      {placeholder} that differ from the Brazilian page** (none in French):
+      `pathway.stageButtonLabel`, `stepPanel.label`,
+      `product.stagePanel.surveyStatus`, `yardstick.sinceNotRoutine`,
+      `yardstick.notePublished`, `yardstick.noteEstimate`, `map.preLaunch`,
+      `map.noCountryData`, `disclaimer.countriesVerified`,
+      `disclaimer.countriesNotVerified`. The page joins translated fragments
+      ("Estágio {n}: …", "{name} Está em fase …"), the message files carry
+      each message's own translation (filed under its own English since the
+      message build's decision 11), and the Brazilian retranslation of 28 Oct
+      gave them different words. Hidden until now: both sides were handed the
+      European words. The tables keep the page's words; `text-parity`'s
+      `CHANGED` lists the ten (and `mapText.mixTitle` in fr and pt, English
+      until the bot). Which wording is right is for the Portuguese reviewer;
+      the port shows the message files'. Two of them are visible on 10 Nov
+      (`disclaimer.countriesVerified`, `countriesNotVerified`), the step
+      panel's label and the pathway's screen-reader label too.
+    - **The basemap's Portuguese names** (`lib/map-countries.json`) were
+      still European (from `7c1bf11`): rebuilt from `ef0bd8c` by
+      `scripts/build-map-assets.mjs`, 50 of 235 names change ("Vietnã",
+      "Quênia", "Benin"); shapes, tracked countries and the worker
+      unchanged.
+    - **Found:** the Brazilian page writes the map's "Legend" heading
+      "Lenda" (a legend as a myth), now in `MAP_MARKUP`; the message files
+      have the same word. For the reviewer.
+    - Results: `tsc --noEmit` clean; vitest 17 files, 357 of 357 (357
+      before; the new comparisons sit inside existing tests). golden-map
+      209,381 comparisons (en 69,806, fr 69,757, pt 69,818; the sweep has 12
+      filter states per location where it had 64), 21 kinds of click
+      reached, each view 52 to 62 times.
 
 ## Deferred, and found on the way
 
@@ -1671,6 +1735,21 @@ ours to undo.
   202, then `/en` `MISS`, then `HIT`. Smoke test `SMOKE_LOCALES=en,fr,pt`
   on that build: the first run hung after 73 checks, none failed (below);
   then 87 of 87 twice. No NUL bytes. Not pushed.
+- **3 Nov 2026, the page changes of 3 Nov** (branch `feat/tracker-feedback`,
+  from `feat/data-route` `d322190`; decision 60), two commits: the code and
+  messages (`143ece9`), then the tests, fixtures, map names and READMEs.
+  vitest 357 of 357 in 17 files; `tsc --noEmit` clean. Not pushed, and
+  **cannot be pushed as it is**: every golden and markup test reads
+  `ef0bd8c`, which exists only in this checkout (`scratch/pages-dale-jan`).
+  Before the branch leaves this machine, the pages built from
+  launch-development-test `b0f8675` (or later) must reach a pushed commit
+  here (the usual pages PR to `main`), and the pins move to that commit
+  (`--check` then confirms the references are unchanged). Not run:
+  `next build`, the smoke test, a browser check of the radio views.
+  `tests/fixtures/dashboard*.json` are still the 27–28 Oct dataset (the new
+  one, with 20 register-confirmed countries for DHA–PPQ and 14 for ASPY, is
+  not published): when it is, refresh them and re-run; every comparison
+  feeds both sides the same file, so only the counts change.
 - **Next:** ~~the README for RBM (step 6)~~ written 28 Oct at the owner's
   request (decision 56; it says to load Source Sans 3). A check on a real
   iPhone and in Safari. Publish the language files, then build against the

@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-board.test.ts and tests/markup-board.test.ts:
 // the static page's own board code, frozen. Source: launch-rbm-test commit
-// 7c1bf11: first assets/journey-icons/icons-solid.js whole, then from pt/index.html, the
+// ef0bd8c: first assets/journey-icons/icons-solid.js whole, then from pt/index.html, the
 // <script type="text/x-launch-app"> block, every top-level declaration the
 // tests call and every one those read, and the statements that build the
 // board, copied verbatim with the comments above them, in page order; each
@@ -12,7 +12,7 @@
 // It reads window.LAUNCH_DATA and window.LAUNCH_SOURCES, the page's <html
 // lang> as document.documentElement.lang, and the names the tests supply in
 // place of the page's DOM: board, el, timelineFit, document, NodeFilter.
-// html-lang: pt-PT
+// html-lang: pt-BR
 
 // @@ assets/journey-icons/icons-solid.js
 // LAUNCH journey icons — this page's local set, for the illustrated journey
@@ -139,16 +139,16 @@
   };
 })();
 
-// @@ pt/index.html:1779
+// @@ pt/index.html:1785
   const DATA = window.LAUNCH_DATA;
 
-// @@ pt/index.html:1780
+// @@ pt/index.html:1786
   const STAGES = DATA.stages;
 
-// @@ pt/index.html:1781
+// @@ pt/index.html:1787
   const PRODUCTS = DATA.products;
 
-// @@ pt/index.html:1789
+// @@ pt/index.html:1795
   // stageColumns groups stage indices into display columns; a column with
   // more than one index (currently [2, 3] — WHO recommendation and WHO PQ
   // listing) is a parallel pair with no defined order between its members,
@@ -157,10 +157,10 @@
   // reduces to the old one-stage-per-column behaviour.
   const STAGE_COLUMNS = DATA.stageColumns || STAGES.map((_, i) => ({ stages: [i] }));
 
-// @@ pt/index.html:1790
+// @@ pt/index.html:1796
   const colIndexOf = i => STAGE_COLUMNS.findIndex(c => c.stages.includes(i));
 
-// @@ pt/index.html:1796
+// @@ pt/index.html:1802
   // Is the column *before* stage i's column fully cleared? For an ungrouped
   // stage this is exactly "is stage i-1 done". For a stage that shares a
   // column with another, it looks past its groupmate to the column before
@@ -171,23 +171,26 @@
     return STAGE_COLUMNS[ci - 1].stages.every(j => p.stages[j].status === "done");
   };
 
-// @@ pt/index.html:1801
+// @@ pt/index.html:1807
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
 
-// @@ pt/index.html:1802
-  const LABEL = { done: "Concluir", prog: "Em curso", late: "Atrasado", idle: "Não iniciado" };
+// @@ pt/index.html:1808
+  const LABEL = { done: "Completo", prog: "Em andamento", late: "Atrasado", idle: "Não iniciado" };
 
-// @@ pt/index.html:1807
+// @@ pt/index.html:1813
   // What "Delayed" means, shown from the i beside it in the medicines table.
   // It said "not moving as fast as expected", which named no expectation; a
   // partner asked what Delayed refers to (19 Oct 2026). It is the hand-set
   // `late` status (docs/data-analyst-guide.md), not a measured comparison.
-  const LATE_DEF = "O estado atual do medicamento estagnou ou está a avançar de forma excecionalmente lenta, na avaliação de LAUNCH com base em evidência pública. A principal barreira explica o motivo. Não existe um prazo definido para a sua avaliação.";
+  const LATE_DEF = "O estágio atual do medicamento estagnou ou está avançando de forma excepcionalmente lenta, na avaliação de LAUNCH com base em evidências públicas. A principal barreira explica o motivo. Não há um prazo definido para sua avaliação.";
 
-// @@ pt/index.html:1808
+// @@ pt/index.html:1817
+  // Not shown since 3 Nov 2026: the medicines table's Status column, which
+  // carried it, became Market Access (partner feedback). Kept for when the
+  // status words return.
   const lateInfo = () => `<button type="button" class="info" data-tip="${esc(LABEL.late + ": " + LATE_DEF)}" aria-label="${esc(LABEL.late + ": " + LATE_DEF)}">i</button>`;
 
-// @@ pt/index.html:1820
+// @@ pt/index.html:1829
   // The 10 Nov 2026 release (partner feedback sheet, 20 Oct 2026) shows where
   // each medicine is without calling any step delayed or in progress, and
   // without product-specific barrier text, until RBM and Unitaid agree
@@ -195,22 +198,22 @@
   // deleted: the data keeps every status and barrier, and true brings each
   // back. The symbols on the journey (› and !) and their colours stay,
   // without a legend — a trade-off the partners accepted for v1.
-  // ALAQ keeps "Em curso": its pathway has one stage so far, and its
+  // ALAQ keeps "Em andamento": its pathway has one stage so far, and its
   // content was approved as it is (owner, 20 Oct 2026). GanLum is left as it
   // is until the partners' review the week after (its only "in progress" is
   // a milestone, so this shows only in the CSV).
   const SHOW_PROGRESS = false;
 
-// @@ pt/index.html:1821
+// @@ pt/index.html:1830
   const PROGRESS_KEPT = { alaq: true, ganlum: true };
 
-// @@ pt/index.html:1825
+// @@ pt/index.html:1834
   // Off, it also drops the medicines table's Main barrier column for all four
   // medicines (owner's choice, 20 Oct 2026), rather than leave ALAQ's and
   // GanLum's "No publicly documented barrier identified" beside two empty cells.
   const SHOW_BARRIERS = false;
 
-// @@ pt/index.html:1831
+// @@ pt/index.html:1840
   // The grey line under the stage name in the medicines table's
   // "Estágio atual" cell: the first clause of the stage's date or note
   // ("Ghana 2022", "Since 2008"). Hidden for every medicine at the owner's
@@ -218,7 +221,7 @@
   // date still shows on the journey and in the stage panel. true brings it back.
   const SHOW_STAGE_NOTE = false;
 
-// @@ pt/index.html:1838
+// @@ pt/index.html:1847
   // With "Delayed" hidden, its red still said it: the red diamond in the
   // Journey column, the red ring and "!" on the timeline, and the red bars,
   // chips and edges. So a delayed stage or milestone takes the in-progress
@@ -227,14 +230,14 @@
   // true brings the red back.
   const SHOW_LATE = false;
 
-// @@ pt/index.html:1839
+// @@ pt/index.html:1848
   if (!SHOW_LATE) PRODUCTS.forEach(p => [...p.stages, ...((p.detail && p.detail.milestones) || [])].forEach(s => { if (s.status === "late") s.status = "prog"; }));
 
-// @@ pt/index.html:1841
+// @@ pt/index.html:1850
   // Is this status's word shown for this medicine? Complete and Not started always are.
   const statusShown = (p, status) => SHOW_PROGRESS || (status !== "prog" && status !== "late") || !!PROGRESS_KEPT[p.id];
 
-// @@ pt/index.html:1849
+// @@ pt/index.html:1858
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
   // so the glyph inherits its marker's status colour and the page theme.
@@ -244,7 +247,7 @@
   // file fails to load, so the markers never come up empty.
   const JI = window.LaunchJourneyIconsSolid || window.LaunchJourneyIcons;
 
-// @@ pt/index.html:1861
+// @@ pt/index.html:1870
   // The two WHO gates carry the WHO emblem instead of a LAUNCH glyph. It is an
   // <img> rather than a sprite <use> because it is the one icon on the page that
   // must keep its own colour: the sprite wraps every symbol in
@@ -256,21 +259,21 @@
   // emblems side by side read as a duplicate rather than as two gates.
   const WHO_STAGES = { 2: true };            // WHO recommendation
 
-// @@ pt/index.html:1862
+// @@ pt/index.html:1871
   const stageIconImg = (i, cls) => WHO_STAGES[i]
     ? `<img class="${cls} whoemb" src="../assets/who-emblem.svg" alt="" width="205" height="181">`
     : (JI ? JI.use(i, cls) : "");
 
-// @@ pt/index.html:1869
+// @@ pt/index.html:1878
   // Dates follow the page's language: the French and Portuguese copies carry
   // <html lang="fr"> / "pt-PT", so their dates read "2 oct. 2026" / "2/10/2026".
   // English keeps en-GB ("2 Oct 2026").
   const PAGE_LANG = document.documentElement.lang || "en";
 
-// @@ pt/index.html:1870
+// @@ pt/index.html:1879
   const DATE_LANG = /^en\b/i.test(PAGE_LANG) ? "en-GB" : PAGE_LANG;
 
-// @@ pt/index.html:1900
+// @@ pt/index.html:1909
   // The status suffix that used to follow the date ("Draft — figures not yet
   // verified" etc.) was removed by request, 30 Sep 2026: the row shows the date
   // only. The banner and the Prototype pill that carried the draft caveat
@@ -284,10 +287,10 @@
   const tracked = PRODUCTS.filter(p => !p.placeholder)
     .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
 
-// @@ pt/index.html:1942
+// @@ pt/index.html:1951
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
 
-// @@ pt/index.html:1949
+// @@ pt/index.html:1958
   // Citations (15 Oct feedback, 19 Oct 2026). A claim's "sources" are ids in
   // data/sources.js: each is shown where the claim is, by its name in the
   // Sources list (so it is translated with that list) and linked to the
@@ -296,7 +299,7 @@
   // from the dataset before this runs but after this file is parsed.
   let SRC_BY_ID = null;
 
-// @@ pt/index.html:1950
+// @@ pt/index.html:1959
   function citeLinks(ids) {
     if (!SRC_BY_ID) {
       SRC_BY_ID = {};
@@ -307,31 +310,31 @@
       : esc(s.label || s.title)).join(" · ");
   }
 
-// @@ pt/index.html:1959
+// @@ pt/index.html:1968
   function citeHtml(ids, text) { return citeLinks(ids) || esc(text || ""); }
 
-// @@ pt/index.html:1967
+// @@ pt/index.html:1976
   // "2026-08-23" → "23 Aug 2026", the form "Última atualização" uses.
   function shortDate(iso) {
     const d = new Date(iso + "T00:00:00");
     return isNaN(d) ? iso : d.toLocaleDateString(DATE_LANG, { day: "numeric", month: "short", year: "numeric" });
   }
 
-// @@ pt/index.html:1975
+// @@ pt/index.html:1984
   // Large figures in data text read as 940K or 11.5M, and millions of dollars
   // as US$14.5M rather than US$14.5m (2 Oct 2026). Only where they are shown:
   // the data, and so the CSV export, keep the exact figures. en-US, because
   // Chrome's en-GB writes a lowercase "940k" beside "11.5M".
   const COMPACT = new Intl.NumberFormat("en-US", { notation: "compact", maximumSignificantDigits: 3 });
 
-// @@ pt/index.html:1976
+// @@ pt/index.html:1985
   function fmtFig(s) {
     return String(s == null ? "" : s)
       .replace(/\b\d{1,3}(?:,\d{3})+\b/g, m => COMPACT.format(+m.replace(/,/g, "")))
       .replace(/(US\$\d+(?:\.\d+)?)m\b/g, "$1M");
   }
 
-// @@ pt/index.html:2001
+// @@ pt/index.html:2010
   // The strip is the only element on the page that owns all eight gates, so it
   // is the entry point for the systemic question: who is stuck at this gate?
   // The single fact a marker is worth showing on hover. The hover is a peek —
@@ -352,7 +355,7 @@
     return String(text || "").split(";")[0].trim();
   }
 
-// @@ pt/index.html:2005
+// @@ pt/index.html:2014
   // shown false (statusShown above): the line keeps its date and drops the word.
   function peekLine(status, date, nextDate, shown = true) {
     const when = firstClause(date);
@@ -364,11 +367,11 @@
     return LABEL[status] + (when ? " · " + when : expected);
   }
 
-// @@ pt/index.html:2015
+// @@ pt/index.html:2024
   // One medicine's peekLine: the word goes where its status is hidden.
   const peekLineFor = p => (status, date, nextDate) => peekLine(status, date, nextDate, statusShown(p, status));
 
-// @@ pt/index.html:2024
+// @@ pt/index.html:2033
   // ---- years between gates on the track -------------------------------------
   // Stage `date` is free text written for a reader ("2012 (label update 2025)",
   // "2015–2023; requal. 20 Jan 2025", "Rolling"), so the year is read out of it
@@ -384,23 +387,23 @@
     return y >= 1990 && y <= 2100 ? y : null;
   }
 
-// @@ pt/index.html:2036
+// @@ pt/index.html:2045
   // ---- journey table: summary-row pieces and the time-scaled journey -----------
   // The summary row reads the same stage data the pathway rail does; nothing
   // here is stored separately. "As-of" year is the dataset's own date, not the
   // visitor's clock, so "today" never reads later than the data was checked.
   const ASOF_YEAR = parseInt(DATA.meta.lastUpdated.slice(0, 4), 10);
 
-// @@ pt/index.html:2037
+// @@ pt/index.html:2046
   const yrsText = n => n + (n === 1 ? " ano" : " anos");
 
-// @@ pt/index.html:2039
+// @@ pt/index.html:2048
   function firstYear(p) {
     const ys = p.stages.map(stageYear).filter(y => y != null);
     return ys.length ? Math.min(...ys) : null;
   }
 
-// @@ pt/index.html:2054
+// @@ pt/index.html:2063
   // ---- access milestones: market access, then country access ----------------
   // The table used to give one figure, "On pathway": years since the first
   // dated milestone, with no end. A partner asked where that pathway ends and
@@ -419,13 +422,13 @@
     return { year: ys.length ? Math.max(...ys) : null };
   }
 
-// @@ pt/index.html:2060
-  const reachedText = y => (y != null ? `Alcançado em ${y}` : "Atingido, ano não registado");
+// @@ pt/index.html:2069
+  const reachedText = y => (y != null ? `Alcançado em ${y}` : "Alcançado, ano não registrado");
 
-// @@ pt/index.html:2061
-  const soFarText = n => (n > 0 ? `${yrsText(n)} até ao momento` : "Menos de 1 ano até agora");
+// @@ pt/index.html:2070
+  const soFarText = n => (n > 0 ? `${yrsText(n)} até agora` : "Menos de 1 ano até agora");
 
-// @@ pt/index.html:2064
+// @@ pt/index.html:2073
   // [phase name, figure, tone] for each phase shown. Country Access appears
   // only once Market Access is reached, because it counts from there.
   function accessParts(p) {
@@ -438,23 +441,38 @@
     return [[PHASES[0].name, reachedText(m.year), "ok"], [PHASES[1].name, ...country]];
   }
 
-// @@ pt/index.html:2074
+// @@ pt/index.html:2083
   // What the two figures mean, from the i beside them.
-  const ACCESS_DEF = "O acesso ao mercado é conseguido quando um medicamento é recomendado pela OMS e pré-qualificado por esta. O acesso no país estende-se a partir desse momento até que o registo nacional, a adoção de políticas, a aquisição em volumes significativos e a distribuição no país estejam concluídos.";
+  const ACCESS_DEF = "O acesso ao mercado é alcançado quando um medicamento é recomendado pela OMS e pré-qualificado por ela. O acesso no país se estende a partir desse momento até que o registro nacional, a adoção de políticas, a aquisição em volumes significativos e a distribuição no país estejam concluídos.";
 
-// @@ pt/index.html:2075
+// @@ pt/index.html:2084
   const accessInfo = () => `<button type="button" class="info" data-tip="${esc(ACCESS_DEF)}" aria-label="${esc(ACCESS_DEF)}">i</button>`;
 
-// @@ pt/index.html:2077
-  // the medicines table: each phase name above its figure
-  const accessCell = p => `<span class="acc">` + accessParts(p).map(([name, t, tone]) => `<small>${esc(name)}</small>` +
-    (tone === "none" ? `<span class="none">${esc(t)}</span>` : `<b${tone ? ` class="${tone}"` : ""}>${esc(t)}</b>`)).join("") + `</span>`;
+// @@ pt/index.html:2092
+  // The medicines table gives each phase its own column (partner feedback,
+  // 21 Oct 2026, tracker row "Market, Country & Population Access
+  // Headings"): the Status column became Market Access and the Access column
+  // Country Access, so the table shows at a glance that ASPY and DHA–PPQ
+  // reached market access. A stage's status still shows on each medicine's
+  // journey and timeline. The phase name above a figure shows only where the
+  // header row is hidden (phones).
+  const accessFig = (name, t, tone) => `<span class="acc"><small>${esc(name)}</small>` +
+    (tone === "none" ? `<span class="none">${esc(t)}</span>` : `<b${tone ? ` class="${tone}"` : ""}>${esc(t)}</b>`) + `</span>`;
 
-// @@ pt/index.html:2080
+// @@ pt/index.html:2094
+  const marketCell = p => accessFig(...accessParts(p)[0]);
+
+// @@ pt/index.html:2095
+  const countryCell = p => {
+    const c = accessParts(p)[1];
+    return c ? accessFig(...c) : accessFig(PHASES[1].name, "Ainda não alcançado", "none");
+  };
+
+// @@ pt/index.html:2100
   // the open row, in one line: "Market Access: Reached in 2022 · Country Access: 4 years so far"
   const accessLine = p => accessParts(p).map(([name, t]) => `${esc(name)}: ${esc(t)}`).join(" · ");
 
-// @@ pt/index.html:2088
+// @@ pt/index.html:2108
   // The year the current gate has been waiting since. Uses the same journey
   // milestones the gate panel's "Pendente desde" line reads, so the two agree;
   // when a product has no journey (GanLum, ALAQ) it falls back to the latest
@@ -476,13 +494,13 @@
     return null;
   }
 
-// @@ pt/index.html:2101
+// @@ pt/index.html:2121
   function sinceFor(p) {
     const s = sinceFrom(p);
     return s ? s.year : null;
   }
 
-// @@ pt/index.html:2117
+// @@ pt/index.html:2137
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
   // read it: the badge under "On pathway", the box at the top of an open row,
@@ -496,33 +514,33 @@
   // docs/jackson/yardstick.md for the choices behind each.
   const YARD = DATA.yardstick || null;
 
-// @@ pt/index.html:2122
+// @@ pt/index.html:2142
   // The comparison with each medicine's own dates (the years-late badge, the
   // box at the top of an open row, and the Time taken view with its Variance
   // column) is hidden at the partners' request (feedback email, 15 Oct 2026)
   // until the benchmark method is agreed. true brings all three back.
   const YARD_COMPARE = false;
 
-// @@ pt/index.html:2129
+// @@ pt/index.html:2149
   // How far a step ran past its expected time, as a plain signed number.
   const varianceText = n => "+" + yrsText(n);
 
-// @@ pt/index.html:2133
+// @@ pt/index.html:2153
   // Market Access is every stage before country registration; Country
   // Access starts at it (stage 4) and runs to in-country delivery. It was
   // Country / Population Access until 9 Oct 2026 (renamed by the owner).
   const ACCESS_SPLIT = 4;
 
-// @@ pt/index.html:2134
+// @@ pt/index.html:2154
   const PHASES = [
     { name: "Acesso ao mercado" },
     { name: "Acesso ao país" }
   ];
 
-// @@ pt/index.html:2138
+// @@ pt/index.html:2158
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
 
-// @@ pt/index.html:2141
+// @@ pt/index.html:2161
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
   // "Desde 2018"), so the word is matched in all three page languages.
   function sinceYearOf(st) {
@@ -530,7 +548,7 @@
     return m ? +m[1] : null;
   }
 
-// @@ pt/index.html:2145
+// @@ pt/index.html:2165
   function yardstick(p) {
     if (!YARD || !YARD_COMPARE) return null;
     const start = firstYear(p);
@@ -565,20 +583,20 @@
     return { approved: true, start, steps, whole, biggest };
   }
 
-// @@ pt/index.html:2179
+// @@ pt/index.html:2199
   // One plain label per step: text, tone (bad / good / none), still going.
   function yardResult(s) {
     if (s.kind === "idle") return { t: LABEL.idle, tone: "none" };
-    if (s.kind === "nodate") return { t: "Feito, sem data registada", tone: "none" };
-    if (s.kind === "nostart") return { t: "Em curso, sem data de início definida.", tone: "none" };
+    if (s.kind === "nodate") return { t: "Feito, sem data registrada", tone: "none" };
+    if (s.kind === "nostart") return { t: "Em andamento, sem data de início definida.", tone: "none" };
     if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
     return s.kind === "going" ? { t: "Até agora, tudo dentro do esperado.", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
 
-// @@ pt/index.html:2186
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até agora</i>` : ""}</span>`;
+// @@ pt/index.html:2206
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até aqui</i>` : ""}</span>`;
 
-// @@ pt/index.html:2191
+// @@ pt/index.html:2211
   // Which steps use a published timeline and which LAUNCH's own estimate is
   // read from each step's "basis" (12 Oct 2026), not typed here, so the note
   // cannot disagree with the data. Each label is a whole literal and the list
@@ -586,12 +604,12 @@
   const yardNote = () => {
     const by = b => YARD.expected.map((e, i) => (e && e.basis === b ? STAGES[i] : null)).filter(Boolean).join(", ");
     const line = (label, list) => (list ? `<span>${label} ${esc(list)}.</span> ` : "");
-    const pub = line("Horários previstos com base num cronograma publicado:", by("published"));
-    const est = line("Tempos previstos a partir das estimativas de trabalho de LAUNCH, ainda a acordar:", by("estimate"));
+    const pub = line("Horários previstos a partir de um cronograma publicado:", by("published"));
+    const est = line("Tempos previstos a partir das estimativas de trabalho de LAUNCH, ainda a serem acordados:", by("estimate"));
     return `<p class="ysnote">${pub}${est}</p>`;
   };
 
-// @@ pt/index.html:2199
+// @@ pt/index.html:2219
   // under the access milestones in the medicines table (was "On pathway")
   function yardBadge(p) {
     const y = yardstick(p);
@@ -600,7 +618,7 @@
     return yardPill(yardResult(y.whole), true);
   }
 
-// @@ pt/index.html:2206
+// @@ pt/index.html:2226
   // the box at the top of an open row: expected, actual so far and the variance
   function yardBox(p) {
     const y = yardstick(p);
@@ -608,24 +626,24 @@
     const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
     return `<div class="ysbox">
       <div class="ysfigs">
-        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso de rotina por ${due}</span></div>
-        <div><small>${going ? "Até ao momento, está tudo bem." : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não é de uso rotineiro" : ""}</span></div>
-        <div class="ysdiff"><small>Variância</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até agora" : "do esperado"}</span></div>
+        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso rotineiro por ${due}</span></div>
+        <div><small>${going ? "Até o momento, está tudo bem." : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não é de uso rotineiro" : ""}</span></div>
+        <div class="ysdiff"><small>Variância</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até aqui" : "do esperado"}</span></div>
       </div>
-      <p>Prevê-se que entre em uso de rotina em ${due}, ${y.whole.exp} anos após o seu primeiro marco em ${y.start}.${going && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
-      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até agora</i>` : ""}</p>` : ""}
+      <p>Espera-se que entre em uso rotineiro em ${due}, ${y.whole.exp} anos após seu primeiro marco em ${y.start}.${going && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até aqui</i>` : ""}</p>` : ""}
     </div>`;
   }
 
-// @@ pt/index.html:2221
+// @@ pt/index.html:2241
   // the "Tempo gasto" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
-    if (!y.approved) return `<div class="ysempty"><b>Ainda não foi aprovado.</b> Começamos a comparar assim que o medicamento tem uma aprovação regulamentar com data de expiração.</div>`;
+    if (!y.approved) return `<div class="ysempty"><b>Ainda não foi aprovado.</b> Começamos a comparar assim que o medicamento possui uma aprovação regulatória com data de expiração.</div>`;
     // "—", not "n/a": text with no two letters in a row is never collected for
     // translation, so "n/a" stayed English on /fr, /pt and /es.
-    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>até agora</i>` : "");
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>até aqui</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -636,41 +654,63 @@
       return h + row(esc(STAGES[s.i]), s);
     }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Fase</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variância</th></tr></thead>
+      <thead><tr><th scope="col">Estágio</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variância</th></tr></thead>
       <tbody>${body}</tbody>
-      <tfoot>${row("Toda a viagem", y.whole, true)}</tfoot>
+      <tfoot>${row("Toda a jornada", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
   }
 
-// @@ pt/index.html:2260
+// @@ pt/index.html:2285
+  // Which access stages a country on a medicine's list has a source for. Each
+  // stage stands on its own (partner feedback, 3 Nov 2026):
+  // the map used to shade a country by the furthest stage only, so DHA–PPQ's
+  // map read 2 registered beside "confirmed in six national registers".
+  //   registered: the entry is at "registered", or cites a national register;
+  //   guidelines: the entry is at "guidelines", or cites a policy/guidelines
+  //               source (the WHO national drug policy table lists Nigeria and
+  //               Burkina Faso, which are at "mft");
+  //   mft:        the entry is at "mft".
+  // A category is compared in slug form so the literal is not collected for
+  // translation (the sources' categories stay English on every page).
+  // scripts/validate-data.js counts detail.country the same way.
+  function countryStages(list) {
+    const cat = {};
+    ((window.LAUNCH_SOURCES || {}).sources || []).forEach(s => { cat[s.id] = String(s.category || "").toLowerCase().replace(/\s+/g, "-"); });
+    const cites = (e, c) => (e.sources || []).some(id => cat[id] === c);
+    const out = {};
+    list.forEach(e => {
+      out[e.iso3] = {
+        registered: e.level === "registered" || cites(e, "national-register"),
+        guidelines: e.level === "guidelines" || cites(e, "policy-/-guidelines"),
+        mft: e.level === "mft"
+      };
+    });
+    return out;
+  }
+
+// @@ pt/index.html:2304
   // The Country access card. Where a medicine has a country list (the one the
   // map is painted from), every count comes from it, so the card, the map
   // legend and the stage 4-5 cells cannot disagree (partner feedback, 15 Oct
-  // 2026): countries on the map, split by the furthest stage each has reached,
-  // and how many of them a national medicines register confirms. A category is
-  // compared in slug form so the literal is not collected for translation (the
-  // sources' categories stay English on every page).
+  // 2026): countries on the map, then how many have a source for each stage,
+  // the same numbers the map's three views show.
   function countryAccessKv(d) {
     const list = d.countries && Array.isArray(d.countries.list) ? d.countries.list : null;
     if (!list) return `
               <div class="kv"><span>Registrado</span><span>${esc(d.country.registered)}</span></div>
-              <div class="kv"><span>Em orientações nacionais</span><span>${esc(d.country.inGuidelines)}</span></div>
+              <div class="kv"><span>Em diretrizes nacionais</span><span>${esc(d.country.inGuidelines)}</span></div>
               <div class="kv"><span>Em planos MFT</span><span>${esc(d.country.inMft)}</span></div>`;
     const c = { registered: 0, guidelines: 0, mft: 0 };
-    list.forEach(e => { if (e.level in c) c[e.level]++; });
-    const cat = {};
-    ((window.LAUNCH_SOURCES || {}).sources || []).forEach(s => { cat[s.id] = String(s.category || "").toLowerCase().replace(/\s+/g, "-"); });
-    const reg = list.filter(e => (e.sources || []).some(id => cat[id] === "national-register")).length;
+    Object.values(countryStages(list)).forEach(s => Object.keys(c).forEach(k => { if (s[k]) c[k]++; }));
     return `
               <div class="kv"><span>Países no mapa</span><span>${list.length}</span></div>
+              <div class="kv sub"><span>Confirmado em registros nacionais</span><span>${c.registered}</span></div>
+              <div class="kv sub"><span>Em diretrizes nacionais</span><span>${c.guidelines}</span></div>
               <div class="kv sub"><span>Em planos MFT</span><span>${c.mft}</span></div>
-              <div class="kv sub"><span>Em orientações nacionais</span><span>${c.guidelines}</span></div>
-              <div class="kv sub"><span>Registrado</span><span>${c.registered}</span></div>` +
-      (Object.keys(cat).length ? `
-              <div class="kv"><span>Confirmado nos registos nacionais</span><span>${reg}</span></div>` : "");
+              <p style="margin:4px 0 2px 14px;font-size:13px;color:var(--ink-3)">Um país pode ser contabilizado em mais de um nível.</p>`;
   }
 
-// @@ pt/index.html:2279
+// @@ pt/index.html:2319
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
     const dot = i => `<i class="md ${p.stages[i].status}" title="${esc(STAGES[i])}${statusShown(p, p.stages[i].status) ? ": " + LABEL[p.stages[i].status] : ""}"></i>`;
@@ -680,14 +720,14 @@
         `</span>`).join('<i class="ln"></i>') + `</div>`;
   }
 
-// @@ pt/index.html:2288
+// @@ pt/index.html:2328
   // Light the selected step's column in every row, or clear it (null).
   function highlightStep(i) {
     const c = i == null ? -1 : STAGE_COLUMNS.findIndex(col => col.stages.includes(i));
     board.querySelectorAll(".jcell").forEach(cell => cell.classList.toggle("on", +cell.dataset.c === c));
   }
 
-// @@ pt/index.html:2292
+// @@ pt/index.html:2332
   function stageMarkHtml(p, i) {
     const st = p.stages[i];
     // Shadows peekLine for this medicine. The aria-label below is translated as
@@ -701,14 +741,25 @@
       data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>`;
   }
 
-// @@ pt/index.html:2309
+// @@ pt/index.html:2354
   // The default journey view. Dated gates sit at their real year on one axis
   // that starts at the first milestone (no empty years); the current gate sits
   // at today, with a bar back to the year it has been waiting since. Gates with
   // no year are listed on the right instead of being given an invented date.
+  // A started gate (in progress or delayed, not the current one) whose date
+  // reads "Since YYYY" sits at that year with "since YYYY" under it, so the
+  // steps between WHO PQ and today show (partner feedback,
+  // 3 Nov 2026): ASPY's registration since 2013, before WHO recommended it in
+  // 2022, and its Global Fund procurement since 2018.
+  const startedYear = (p, i) => {
+    const st = p.stages[i];
+    return i !== p.currentStage && (st.status === "prog" || st.status === "late") ? sinceYearOf(st) : null;
+  };
+
+// @@ pt/index.html:2358
   function journeyTime(p) {
     const from = sinceFrom(p), since = from ? from.year : null;
-    const ys = p.stages.map(stageYear).filter(y => y != null);
+    const ys = p.stages.map((st, i) => (stageYear(st) != null ? stageYear(st) : startedYear(p, i))).filter(y => y != null);
     if (since != null) ys.push(since);
     let lo = ys.length ? Math.min(...ys) : ASOF_YEAR - 1;
     const hi = ASOF_YEAR;
@@ -722,7 +773,11 @@
     const items = [];
     p.stages.forEach((st, i) => {
       if (i === p.currentStage) items.push({ i, x: x(hi), cur: true });
-      else { const y = stageYear(st); if (y != null) items.push({ i, x: x(y) }); }
+      else {
+        const y = stageYear(st), s = startedYear(p, i);
+        if (y != null) items.push({ i, x: x(y) });
+        else if (s != null) items.push({ i, x: x(s), from: s });
+      }
     });
     items.sort((a, b) => a.x - b.x || a.i - b.i);
     const last = [];
@@ -744,6 +799,7 @@
       const sub = it.cur
         ? (statusShown(p, st.status) ? `<div class="snow ${st.status}">${LABEL[st.status]}</div>` : "") +
           (since != null && since < hi ? `<div class="ssince">desde ${esc(from.label)} (${since}) · ${yrsText(hi - since)}</div>` : "")
+        : it.from != null ? `<div class="syear">desde ${it.from}</div>`
         : `<div class="syear">${stageYear(st)}</div>`;
       h += `<i class="stem" data-tier="${it.tier}" style="left:${it.x}%;height:${top - 32}px"></i>` +
         `<i class="pt${it.cur ? " " + st.status : ""}" style="left:${it.x}%"></i>` +
@@ -757,7 +813,7 @@
     const chip = (j, withStatus) => {
       const st = p.stages[j];
       return `<span class="uchip"><span class="ui m-${st.status}">${stageIconImg(j, "")}</span><span>${esc(STAGES[j])}</span>` +
-        (withStatus ? ` · <span class="st ${st.status}">${st.status === "late" ? "atrasado" : "em curso"}</span>` : "") + `</span>`;
+        (withStatus ? ` · <span class="st ${st.status}">${st.status === "late" ? "atrasado" : "em andamento"}</span>` : "") + `</span>`;
     };
     const group = (title, list, withStatus) =>
       `<div class="ugrp"><div class="h">${title}</div>` +
@@ -766,7 +822,7 @@
     p.stages.forEach((st, j) => {
       if (j === p.currentStage) return;
       if (st.status === "done" && stageYear(st) == null) noYear.push(j);
-      else if (st.status === "prog" || st.status === "late") ongoing.push(j);
+      else if ((st.status === "prog" || st.status === "late") && startedYear(p, j) == null) ongoing.push(j);
       else if (st.status === "idle") notStarted.push(j);
     });
     // Not-started gates are a row of dimmed icons, not a stack of labelled chips:
@@ -782,11 +838,11 @@
     // already holds).
     const ongoingShown = ongoing.every(j => statusShown(p, p.stages[j].status));
     return `<div class="tsp"><div class="cscroll"><div class="tsa" style="height:${height}px">${h}</div></div>` +
-      `<div class="tsz">${noYear.length ? group("Atingido · ano não registado", noYear) : ""}` +
-      `${ongoingShown ? group("Em curso · sem data", ongoing, true) : group("Ainda não tem data.", ongoing)}${notStartedHtml}</div></div>`;
+      `<div class="tsz">${noYear.length ? group("Alcançado · ano não registrado", noYear) : ""}` +
+      `${ongoingShown ? group("Em andamento · sem data", ongoing, true) : group("Ainda não tem data.", ongoing)}${notStartedHtml}</div></div>`;
   }
 
-// @@ pt/index.html:2397
+// @@ pt/index.html:2451
   // The fixed tier spacing above (TH) and last-block allowance (126px) are
   // estimates for English, but a block's height depends on how its label and
   // "since" line wrap, which differs by language (20 Oct 2026). ASPY's SRA
@@ -809,19 +865,19 @@
     tsa.style.height = Math.max(base, top + 6) + "px";
   }
 
-// @@ pt/index.html:2420
+// @@ pt/index.html:2474
   // (only where "Delayed" is shown — see SHOW_PROGRESS)
   const lateAt = i => tracked.filter(p => p.stages[i].status === "late" && statusShown(p, "late")).length;
 
-// @@ pt/index.html:2456
+// @@ pt/index.html:2510
   board.insertAdjacentHTML("afterbegin",
-    `<div class="srow hd" role="presentation"><span></span><span>Medicina</span><span class="c-mini">Jornada</span>` +
-    `<span class="c-stage">Estágio atual</span><span class="c-stat">Estatuto</span><span class="c-path">Acesso ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barreira principal</span>` : ""}</div>`);
+    `<div class="srow hd" role="presentation"><span></span><span>Medicamento</span><span class="c-mini">Jornada</span>` +
+    `<span class="c-stage">Estágio atual</span><span class="c-stat">Acesso ao mercado</span><span class="c-path">Acesso ao país ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barreira principal</span>` : ""}</div>`);
 
-// @@ pt/index.html:2459
+// @@ pt/index.html:2513
   if (!SHOW_BARRIERS) board.classList.add("nobar");
 
-// @@ pt/index.html:2482
+// @@ pt/index.html:2536
   tracked.forEach(p => {
     const years = p.stages.map(stageYear);
     const peekLine = peekLineFor(p);   // as in stageMarkHtml: keeps the aria-label's text
@@ -879,16 +935,16 @@
     const NUMF = new Intl.NumberFormat(DATE_LANG);
     const byPres = d.volume && Array.isArray(d.volume.byPresentation) && d.volume.byPresentation.length ? `
         <div class="cscroll"><table class="ystable proc-table">
-          <thead><tr><th scope="col">Presentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Cursos de tratamento (est.)</th></tr></thead>
-          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Cursos de tratamento (est.)</span>${b.courses == null ? "<i>not estimated</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
+          <thead><tr><th scope="col">Apresentação</th><th scope="col">Transações</th><th scope="col">Pacotes</th><th scope="col">Cursos de tratamento (est.)</th></tr></thead>
+          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transações</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Pacotes</span>${NUMF.format(b.packs)}</td><td><span class="pk">Cursos de tratamento (est.)</span>${b.courses == null ? "<i>não estimado</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
         </table></div>
         ${d.volume.coursesRule ? `<p class="proc-rule">${esc(d.volume.coursesRule)}</p>` : ""}` : "";
     const volumeCard = d.volume ? `
       <div class="card${byPres ? " card-wide" : ""}">
-        <h3>Contratação através de canais públicos</h3>
+        <h3>Contratação por meio de canais públicos</h3>
         <div class="big">${esc(fmtFig(d.volume.total))}</div>
         <div class="sub">${esc(fmtFig(d.volume.period))}</div>
-        ${gfOnly ? `<p class="proc-scope">100% das transações do conjunto de dados apresentado são do Fundo Global PQR; este valor não representa o total das compras globais do produto.</p>` : `
+        ${gfOnly ? `<p class="proc-scope">Todas as transações apresentadas são pedidos financiados pelo Fundo Global, provenientes de seu banco de dados PQR. Pedidos pagos por outros doadores, governos nacionais ou compradores privados não estão incluídos; portanto, este valor não representa o total de aquisições globais do produto.</p>` : `
         <div class="split" aria-hidden="true">
           ${d.volume.split.map((s, i) => `<div style="width:${s.pct}%;background:${shades[i % shades.length]}" title="${esc(s.channel)} ${s.pct}%"></div>`).join("")}
         </div>
@@ -899,7 +955,7 @@
         ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Fonte: ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
       </div>` : `
       <div class="card">
-        <h3>Contratação através de canais públicos</h3>
+        <h3>Contratação por meio de canais públicos</h3>
         <div class="big">—</div>
         <div class="sub">${esc(d.volumeNote || "Dados ainda não disponíveis")}</div>
       </div>`;
@@ -908,12 +964,12 @@
       <section class="product" id="${esc(p.id)}">
         <div class="srow">
           <button class="exp" type="button" aria-expanded="false" aria-controls="${esc(p.id)}-l1"
-            aria-label="Mostrar viagem para ${esc(p.name)}">▾</button>
+            aria-label="Mostrar jornada para ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
           <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${SHOW_STAGE_NOTE && firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
-          ${statusShown(p, p.stages[p.currentStage].status) ? `<span class="c-stat"><span class="light ${p.stages[p.currentStage].status}"><i></i>${LABEL[p.stages[p.currentStage].status]}${p.stages[p.currentStage].status === "late" ? lateInfo() : ""}</span></span>` : `<span class="c-stat none" aria-hidden="true">—</span>`}
-          <span class="cell c-path">${accessCell(p)}${yardBadge(p)}</span>
+          <span class="cell c-stat">${marketCell(p)}</span>
+          <span class="cell c-path">${countryCell(p)}${yardBadge(p)}</span>
           ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Nenhuma barreira publicamente documentada foi identificada."}</div>` : ""}
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
@@ -921,7 +977,7 @@
             <div class="l1h">
               <div class="l1id"><span>${esc(p.manufacturer)}</span><span class="chip ${p.class === "pipeline" ? "pipeline" : ""}">${esc(p.classLabel)}</span></div>
               <div class="l1ctl"><span class="l1t">${accessLine(p)} ${accessInfo()}</span>
-                <div class="swg" role="group" aria-label="Visão da viagem">
+                <div class="swg" role="group" aria-label="Visão da jornada">
                   <button type="button" data-v="time" aria-pressed="true">Cronograma real</button>
                   <button type="button" data-v="path" aria-pressed="false">Ordem do caminho</button>
                   ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Tempo gasto</button>` : ""}
@@ -953,7 +1009,7 @@
             <div class="card">
               <h3>Acesso ao país</h3>
               ${countryAccessKv(d)}
-              <div class="kv"><span>Previsão da procura</span><span>${esc(d.country.forecastDemand)}</span></div>
+              <div class="kv"><span>Previsão da demanda</span><span>${esc(d.country.forecastDemand)}</span></div>
             </div>
             <div class="card">
               <h3>Pesquisa operacional</h3>
@@ -967,7 +1023,7 @@
           </div>
           <div class="mtable-box">
             <table class="mtable">
-              <thead><tr><th>Marco</th><th>Estatuto</th><th>Data de conclusão/entrega</th><th>Próximo passo esperado</th><th>Antecipado</th></tr></thead>
+              <thead><tr><th>Marco</th><th>Status</th><th>Data de conclusão/entrega</th><th>Próximo passo esperado</th><th>Antecipado</th></tr></thead>
               <tbody>
                 ${d.milestones.map(m => `
                   <tr>
@@ -989,7 +1045,7 @@
     if (timelineFit) node.querySelectorAll(".tsa").forEach(t => timelineFit.observe(t));
   });
 
-// @@ pt/index.html:2662
+// @@ pt/index.html:2716
   // ---- fork alignment ------------------------------------------------------
   // A parallel pair (.stagegroup) is symmetric about its caption band, so its
   // spine sits far lower in its own box than an ungrouped marker's centre does
@@ -1023,7 +1079,7 @@
     });
   }
 
-// @@ pt/index.html:2693
+// @@ pt/index.html:2747
   // ---- fork strokes --------------------------------------------------------
   // One path per side into the .forkline overlay: arm, rounded corner, spine,
   // corner, arm, drawn from where the two markers actually ended up. Two
@@ -1035,10 +1091,10 @@
   // one unattached. validate-data.js permits such a column; no dataset has one.
   const FORK_R = 10;          // corner radius, on the stroke's centreline
 
-// @@ pt/index.html:2694
+// @@ pt/index.html:2748
   const FORK_NODE = 4.5;      // radius of the node sitting on the junction
 
-// @@ pt/index.html:2695
+// @@ pt/index.html:2749
   function drawStageForks() {
     document.querySelectorAll(".stagegroup").forEach(group => {
       const svg = group.querySelector(".forkline");
@@ -1072,7 +1128,7 @@
     });
   }
 
-// @@ pt/index.html:2784
+// @@ pt/index.html:2838
   // placeholder rows (e.g. prevention tools not yet approved for tracking)
   PRODUCTS.filter(p => p.placeholder).forEach(p => {
     board.appendChild(el(`
@@ -1087,7 +1143,7 @@
     `));
   });
 
-// @@ pt/index.html:2870
+// @@ pt/index.html:2924
   // ---------------------------------------------------------------------------
   // Gate drill-down. gatePanelHTML is a pure renderer: (product, stageIndex) in,
   // markup out, no knowledge of where it is mounted — so the cell tier, the gate
@@ -1101,7 +1157,7 @@
   // one — and we name the milestone we counted from.
   const nowYear = parseInt(DATA.meta.lastUpdated.slice(0, 4), 10);
 
-// @@ pt/index.html:2871
+// @@ pt/index.html:2925
   function stalledSince(p, i) {
     if (i !== p.currentStage) return null;
     const j = p.detail.journey;
@@ -1114,7 +1170,7 @@
     return { yrs, label: last.label, year: last.year, pending: j[j.length - 1].label };
   }
 
-// @@ pt/index.html:2883
+// @@ pt/index.html:2937
   function gatePanelHTML(p, i) {
     const st = p.stages[i];
     const el2 = stalledSince(p, i);
@@ -1130,7 +1186,7 @@
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
     const reqs = (i === 5 && Array.isArray(p.detail.adoption) && p.detail.adoption.length)
-      ? `<div class="gp-kv"><dt>Quais as necessidades da adoção?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
+      ? `<div class="gp-kv"><dt>Quais são as necessidades da adoção?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
 
     let countries = "";
     if ((i === 4 || i === 5) && p.detail.countries && Array.isArray(p.detail.countries.list)) {
@@ -1138,7 +1194,7 @@
       p.detail.countries.list.forEach(e => { if (e.level in c) c[e.level]++; });
       countries = `<div class="gp-countries">` +
         `<span class="key"><span class="mapsw registered"></span>Registrado <span class="n">${c.registered}</span></span>` +
-        `<span class="key"><span class="mapsw guidelines"></span>Em orientações nacionais <span class="n">${c.guidelines}</span></span>` +
+        `<span class="key"><span class="mapsw guidelines"></span>Em diretrizes nacionais <span class="n">${c.guidelines}</span></span>` +
         `<span class="key"><span class="mapsw mft"></span>Em planos MFT <span class="n">${c.mft}</span></span>` +
         `</div>`;
     }
@@ -1148,14 +1204,14 @@
       st.asOf ? "verificado " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
-        ? (p.detail.countries.status === "illustrative" ? "O inquérito nacional é ilustrativo." : "pesquisa de país " + esc(p.detail.countries.status)) : ""
+        ? (p.detail.countries.status === "illustrative" ? "O levantamento nacional é ilustrativo." : "pesquisa de país " + esc(p.detail.countries.status)) : ""
     ].filter(Boolean).join(" · ");
 
     return `
       <div class="gp-head">
         <span class="gp-stage">${esc(STAGES[i])}</span>
         ${shown ? `<span class="gp-pill ${st.status}">${LABEL[st.status]}</span>` : ""}
-        <button class="gp-close" type="button" data-close="cell">Perto</button>
+        <button class="gp-close" type="button" data-close="cell">Fechar</button>
       </div>
       ${st.note ? `<p class="gp-note">${esc(st.note)}</p>` : ""}
       ${isCur && SHOW_BARRIERS && p.flag ? `<div class="gp-why">${esc(p.flag)}</div>` : ""}
@@ -1164,14 +1220,14 @@
       ${prov ? `<div class="gp-prov">${prov}</div>` : ""}`;
   }
 
-// @@ pt/index.html:3087
+// @@ pt/index.html:3141
   // glossary: definitions panel + inline dotted-underline terms
   const GLOSS = DATA.glossary || {};
 
-// @@ pt/index.html:3088
+// @@ pt/index.html:3142
   const terms = Object.keys(GLOSS).sort((a, b) => b.length - a.length);
 
-// @@ pt/index.html:3089
+// @@ pt/index.html:3143
   if (terms.length) {
     document.getElementById("glossary").hidden = false;
     document.getElementById("glossary-list").innerHTML = Object.keys(GLOSS).sort().map(t =>

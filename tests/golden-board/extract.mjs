@@ -19,7 +19,7 @@ import * as acorn from "acorn";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const OUT = fileURLToPath(new URL("./reference/", import.meta.url));
-const COMMIT = "7c1bf11";
+const COMMIT = "ef0bd8c";
 const LOCALES = ["en", "fr", "pt"];
 const ICONS = "assets/journey-icons/icons-solid.js";
 
@@ -31,11 +31,11 @@ const NAMES = [
   "SHOW_LATE", "statusShown", "JI", "WHO_STAGES", "stageIconImg", "PAGE_LANG", "DATE_LANG", "tracked",
   "esc", "SRC_BY_ID", "citeLinks", "citeHtml", "shortDate", "COMPACT", "fmtFig",
   "firstClause", "peekLine", "peekLineFor", "stageYear", "ASOF_YEAR", "yrsText", "firstYear",
-  "phaseReached", "reachedText", "soFarText", "accessParts", "ACCESS_DEF", "accessInfo", "accessCell",
+  "phaseReached", "reachedText", "soFarText", "accessParts", "ACCESS_DEF", "accessInfo", "accessFig", "marketCell", "countryCell",
   "accessLine", "sinceFrom", "sinceFor", "YARD", "YARD_COMPARE", "varianceText", "ACCESS_SPLIT",
   "PHASES", "phaseOf", "sinceYearOf", "yardstick", "yardResult", "yardPill", "yardNote", "yardBadge",
-  "yardBox", "yardTable", "countryAccessKv", "miniJourney", "highlightStep", "stageMarkHtml",
-  "journeyTime", "fitTimeline", "lateAt", "alignStageForks", "FORK_R", "FORK_NODE", "drawStageForks",
+  "yardBox", "yardTable", "countryStages", "countryAccessKv", "miniJourney", "highlightStep", "stageMarkHtml",
+  "startedYear", "journeyTime", "fitTimeline", "lateAt", "alignStageForks", "FORK_R", "FORK_NODE", "drawStageForks",
   "nowYear", "stalledSince", "gatePanelHTML", "GLOSS", "terms",
 ];
 

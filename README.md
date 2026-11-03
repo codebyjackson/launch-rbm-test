@@ -117,7 +117,7 @@ files, with the same keys in all three:
 | `Sidebar.unitaid`, `Sidebar.unitaid_tooltip` | The module's menu entry and its tooltip. |
 | `Unitaid.title` | The page's title. |
 | `Unitaid.metadata` | `title`, `description` and `keywords` for the page's `<head>`. Your name stays in English in the title, and the keywords are the same English list in every language, as in your sample. |
-| `Unitaid.*` (everything else) | The dashboard's 313 messages, by component area (`header`, `subscribe`, `board`, `map`, …). |
+| `Unitaid.*` (everything else) | The dashboard's 318 messages, by component area (`header`, `subscribe`, `board`, `map`, …). |
 
 Merge them into your own message files: under `Unitaid` our messages cannot
 collide with yours. Then pass `Unitaid` to the dashboard as `text`, and call
@@ -126,7 +126,8 @@ collide with yours. Then pass `Unitaid` to the dashboard as `text`, and call
 metadata.
 
 - Placeholders are `{name}`, which next-intl reads as they are. next-intl
-  3.15.2 read all 319 keys in all three files exactly as written.
+  3.15.2 read all 319 keys in all three files exactly as written (28 Oct 2026;
+  324 since 3 Nov, not re-read with next-intl).
 - Each message you pass is used when it is text with the same `{placeholders}`
   as ours. Anything missing or broken shows our own copy (the files in
   `messages/`), so the dashboard never shows a blank or a raw key.
@@ -286,4 +287,5 @@ for the data host only if it arrives before that re-read has finished.
 `docs/react-port-notes.md` records every decision behind the port, with the
 tests that prove the components show what the earlier static pages showed.
 Those pages left this branch on 28 Oct 2026; the tests read them from git
-(commit `7c1bf11`).
+(commit `ef0bd8c`, a local scratch commit with the pages built on 3 Nov 2026;
+`7c1bf11` until then).

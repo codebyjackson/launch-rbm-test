@@ -4,8 +4,8 @@
 // From each of en/, fr/ and pt/index.html it takes the app script (the
 // <script type="text/x-launch-app"> block) and keeps, verbatim and in order:
 // the map section (`if (window.LAUNCH_MAP && ...) { ... }`) and the
-// top-level declarations it reads (esc, tracked, LEVEL_LABEL, the tooltip,
-// shortDate, fmtFig, ...). Everything else on the page is dropped. One thing
+// top-level declarations it reads (esc, tracked, LEVEL_LABEL, VIEW_NOTE,
+// countryStages, the tooltip, shortDate, fmtFig, ...). Everything else on the page is dropped. One thing
 // is added, at the end of the map block and marked as such: a hook that lets
 // the test read and set the block's private state.
 //
@@ -26,7 +26,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "../..");
 const OUT = join(HERE, "reference");
 const LANGS = ["en", "fr", "pt"];
-const COMMIT = "7c1bf11";
+const COMMIT = "ef0bd8c";
 const SOURCE = `launch-rbm-test commit ${COMMIT}`;
 
 // The top-level names the map block reads, besides browser globals. The
@@ -34,6 +34,7 @@ const SOURCE = `launch-rbm-test commit ${COMMIT}`;
 const WANT = [
   "DATA", "STAGES", "PRODUCTS", "SHOW_BARRIERS", "PAGE_LANG", "DATE_LANG", "tracked",
   "esc", "shortDate", "COMPACT", "fmtFig", "tip", "showTipAt", "showTipAtPoint", "hideTip", "LEVEL_LABEL",
+  "VIEW_NOTE", "countryStages",
 ];
 
 // The hook. Getters and setters for the block's `let` state, and the
@@ -43,20 +44,21 @@ const HOOK = `
     globalThis.__oldMap = {
       map, countryListEls,
       state: () => ({ locRegion, locCountry, mftOn, mftSel, mftProductId, detTab, cameFrom, mapProduct, mapStatus,
-        stageOff: [...stageOff], mftTick: [...mftTick] }),
+        mapView, mftTick: [...mftTick] }),
       // as the page's own handlers leave it: selectMap for the medicine, then
-      // the rest, then mftSync for mftOn
+      // the view (paintView, as the radio button's handler), then the rest,
+      // then mftSync for mftOn
       setState: (s) => {
         if (s.mftProductId !== mftProductId) selectMap(s.mftProductId);
+        if (s.mapView !== mapView) { mapView = s.mapView; paintView(); }
         locRegion = s.locRegion; locCountry = s.locCountry; mftSel = s.mftSel;
         detTab = s.detTab; cameFrom = s.cameFrom;
-        stageOff.clear(); s.stageOff.forEach((k) => stageOff.add(k));
         mftTick.clear(); s.mftTick.forEach((k) => mftTick.add(k));
         mftSync();
       },
       fn: { regionCountries, mftScope, mftStage, mftName, mftCounts, mftUndrawn, mftAvail, mftSync, stageCounts,
-        mftMatches, mftListed, drawnIsos, bboxOfFeatures, fillCountryList, applyLocationFilter, mftPaint,
-        paintStageFilter, paintSelection, mftRender },
+        viewCounts, mftMatches, mftListed, drawnIsos, bboxOfFeatures, fillCountryList, applyLocationFilter, mftPaint,
+        paintView, paintSelection, mftRender },
     };
 `;
 

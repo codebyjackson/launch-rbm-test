@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-pathway.test.ts and tests/markup-pathway.test.ts:
 // the static page's own pathway code, frozen. Source: launch-rbm-test commit
-// 7c1bf11, pt/index.html, the <script type="text/x-launch-app"> block.
+// ef0bd8c, pt/index.html, the <script type="text/x-launch-app"> block.
 // Every top-level declaration the tests call, and every one those read,
 // copied verbatim with the comments above it, in page order, with the two
 // statements that declare nothing (the SHOW_LATE rewrite and the one that
@@ -12,26 +12,26 @@
 // window.LaunchJourneyIconsSolid (reference/icons-solid.js), the page's
 // <html lang>, document.getElementById for #board, #pathway and #gatewrap,
 // and showTipAt, all of which the tests supply:
-// html-lang: pt-PT
+// html-lang: pt-BR
 //
 // The three elements as the page's HTML has them before the script runs:
-// static-markup: <div class="pathway" id="pathway" role="group" aria-label="O caminho de acesso: oito marcos em sete etapas. A recomendação da OMS e a inclusão na lista PQ da OMS são marcos paralelos dentro do passo 3. Escolha um passo para ver o que acontece nele e onde se encontra cada medicamento." hidden></div>
+// static-markup: <div class="pathway" id="pathway" role="group" aria-label="O caminho de acesso: oito marcos em sete etapas. A recomendação da OMS e a inclusão na lista PQ da OMS são marcos paralelos dentro da etapa 3. Escolha uma etapa para ver o que acontece nela e onde cada medicamento se encontra." hidden></div>
 // static-markup: <div class="gatewrap" id="gatewrap" hidden></div>
 // static-markup: <div id="tip" role="tooltip"></div>
 
-// @@ pt/index.html:1765
+// @@ pt/index.html:1771
   const board = document.getElementById("board");
 
-// @@ pt/index.html:1779
+// @@ pt/index.html:1785
   const DATA = window.LAUNCH_DATA;
 
-// @@ pt/index.html:1780
+// @@ pt/index.html:1786
   const STAGES = DATA.stages;
 
-// @@ pt/index.html:1781
+// @@ pt/index.html:1787
   const PRODUCTS = DATA.products;
 
-// @@ pt/index.html:1789
+// @@ pt/index.html:1795
   // stageColumns groups stage indices into display columns; a column with
   // more than one index (currently [2, 3] — WHO recommendation and WHO PQ
   // listing) is a parallel pair with no defined order between its members,
@@ -40,13 +40,13 @@
   // reduces to the old one-stage-per-column behaviour.
   const STAGE_COLUMNS = DATA.stageColumns || STAGES.map((_, i) => ({ stages: [i] }));
 
-// @@ pt/index.html:1790
+// @@ pt/index.html:1796
   const colIndexOf = i => STAGE_COLUMNS.findIndex(c => c.stages.includes(i));
 
-// @@ pt/index.html:1802
-  const LABEL = { done: "Concluir", prog: "Em curso", late: "Atrasado", idle: "Não iniciado" };
+// @@ pt/index.html:1808
+  const LABEL = { done: "Completo", prog: "Em andamento", late: "Atrasado", idle: "Não iniciado" };
 
-// @@ pt/index.html:1820
+// @@ pt/index.html:1829
   // The 10 Nov 2026 release (partner feedback sheet, 20 Oct 2026) shows where
   // each medicine is without calling any step delayed or in progress, and
   // without product-specific barrier text, until RBM and Unitaid agree
@@ -54,22 +54,22 @@
   // deleted: the data keeps every status and barrier, and true brings each
   // back. The symbols on the journey (› and !) and their colours stay,
   // without a legend — a trade-off the partners accepted for v1.
-  // ALAQ keeps "Em curso": its pathway has one stage so far, and its
+  // ALAQ keeps "Em andamento": its pathway has one stage so far, and its
   // content was approved as it is (owner, 20 Oct 2026). GanLum is left as it
   // is until the partners' review the week after (its only "in progress" is
   // a milestone, so this shows only in the CSV).
   const SHOW_PROGRESS = false;
 
-// @@ pt/index.html:1821
+// @@ pt/index.html:1830
   const PROGRESS_KEPT = { alaq: true, ganlum: true };
 
-// @@ pt/index.html:1825
+// @@ pt/index.html:1834
   // Off, it also drops the medicines table's Main barrier column for all four
   // medicines (owner's choice, 20 Oct 2026), rather than leave ALAQ's and
   // GanLum's "No publicly documented barrier identified" beside two empty cells.
   const SHOW_BARRIERS = false;
 
-// @@ pt/index.html:1838
+// @@ pt/index.html:1847
   // With "Delayed" hidden, its red still said it: the red diamond in the
   // Journey column, the red ring and "!" on the timeline, and the red bars,
   // chips and edges. So a delayed stage or milestone takes the in-progress
@@ -78,14 +78,14 @@
   // true brings the red back.
   const SHOW_LATE = false;
 
-// @@ pt/index.html:1839
+// @@ pt/index.html:1848
   if (!SHOW_LATE) PRODUCTS.forEach(p => [...p.stages, ...((p.detail && p.detail.milestones) || [])].forEach(s => { if (s.status === "late") s.status = "prog"; }));
 
-// @@ pt/index.html:1841
+// @@ pt/index.html:1850
   // Is this status's word shown for this medicine? Complete and Not started always are.
   const statusShown = (p, status) => SHOW_PROGRESS || (status !== "prog" && status !== "late") || !!PROGRESS_KEPT[p.id];
 
-// @@ pt/index.html:1849
+// @@ pt/index.html:1858
   // Illustrated stage glyphs (assets/journey-icons/icons.js), one per stage in
   // stage order. Injected once as a sprite; each marker references it by <use>,
   // so the glyph inherits its marker's status colour and the page theme.
@@ -95,7 +95,7 @@
   // file fails to load, so the markers never come up empty.
   const JI = window.LaunchJourneyIconsSolid || window.LaunchJourneyIcons;
 
-// @@ pt/index.html:1861
+// @@ pt/index.html:1870
   // The two WHO gates carry the WHO emblem instead of a LAUNCH glyph. It is an
   // <img> rather than a sprite <use> because it is the one icon on the page that
   // must keep its own colour: the sprite wraps every symbol in
@@ -107,21 +107,21 @@
   // emblems side by side read as a duplicate rather than as two gates.
   const WHO_STAGES = { 2: true };            // WHO recommendation
 
-// @@ pt/index.html:1862
+// @@ pt/index.html:1871
   const stageIconImg = (i, cls) => WHO_STAGES[i]
     ? `<img class="${cls} whoemb" src="../assets/who-emblem.svg" alt="" width="205" height="181">`
     : (JI ? JI.use(i, cls) : "");
 
-// @@ pt/index.html:1869
+// @@ pt/index.html:1878
   // Dates follow the page's language: the French and Portuguese copies carry
   // <html lang="fr"> / "pt-PT", so their dates read "2 oct. 2026" / "2/10/2026".
   // English keeps en-GB ("2 Oct 2026").
   const PAGE_LANG = document.documentElement.lang || "en";
 
-// @@ pt/index.html:1870
+// @@ pt/index.html:1879
   const DATE_LANG = /^en\b/i.test(PAGE_LANG) ? "en-GB" : PAGE_LANG;
 
-// @@ pt/index.html:1900
+// @@ pt/index.html:1909
   // The status suffix that used to follow the date ("Draft — figures not yet
   // verified" etc.) was removed by request, 30 Sep 2026: the row shows the date
   // only. The banner and the Prototype pill that carried the draft caveat
@@ -135,10 +135,10 @@
   const tracked = PRODUCTS.filter(p => !p.placeholder)
     .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
 
-// @@ pt/index.html:1942
+// @@ pt/index.html:1951
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
 
-// @@ pt/index.html:1949
+// @@ pt/index.html:1958
   // Citations (15 Oct feedback, 19 Oct 2026). A claim's "sources" are ids in
   // data/sources.js: each is shown where the claim is, by its name in the
   // Sources list (so it is translated with that list) and linked to the
@@ -147,7 +147,7 @@
   // from the dataset before this runs but after this file is parsed.
   let SRC_BY_ID = null;
 
-// @@ pt/index.html:1950
+// @@ pt/index.html:1959
   function citeLinks(ids) {
     if (!SRC_BY_ID) {
       SRC_BY_ID = {};
@@ -158,21 +158,21 @@
       : esc(s.label || s.title)).join(" · ");
   }
 
-// @@ pt/index.html:1959
+// @@ pt/index.html:1968
   function citeHtml(ids, text) { return citeLinks(ids) || esc(text || ""); }
 
-// @@ pt/index.html:1967
+// @@ pt/index.html:1976
   // "2026-08-23" → "23 Aug 2026", the form "Última atualização" uses.
   function shortDate(iso) {
     const d = new Date(iso + "T00:00:00");
     return isNaN(d) ? iso : d.toLocaleDateString(DATE_LANG, { day: "numeric", month: "short", year: "numeric" });
   }
 
-// @@ pt/index.html:1983
+// @@ pt/index.html:1992
   // pathway legend strip: the eight stages as illustrated badges
   const pathway = document.getElementById("pathway");
 
-// @@ pt/index.html:2001
+// @@ pt/index.html:2010
   // The strip is the only element on the page that owns all eight gates, so it
   // is the entry point for the systemic question: who is stuck at this gate?
   // The single fact a marker is worth showing on hover. The hover is a peek —
@@ -193,7 +193,7 @@
     return String(text || "").split(";")[0].trim();
   }
 
-// @@ pt/index.html:2005
+// @@ pt/index.html:2014
   // shown false (statusShown above): the line keeps its date and drops the word.
   function peekLine(status, date, nextDate, shown = true) {
     const when = firstClause(date);
@@ -205,10 +205,10 @@
     return LABEL[status] + (when ? " · " + when : expected);
   }
 
-// @@ pt/index.html:2037
+// @@ pt/index.html:2046
   const yrsText = n => n + (n === 1 ? " ano" : " anos");
 
-// @@ pt/index.html:2117
+// @@ pt/index.html:2137
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
   // read it: the badge under "On pathway", the box at the top of an open row,
@@ -222,29 +222,29 @@
   // docs/jackson/yardstick.md for the choices behind each.
   const YARD = DATA.yardstick || null;
 
-// @@ pt/index.html:2127
+// @@ pt/index.html:2147
   // The expected time under each stage on the pathway strip ("2 years
   // expected"), and its words in the stage's screen-reader label. Kept on
   // 15 Oct 2026, hidden for every stage at the owner's request on 20 Oct 2026;
   // the yardstick data is unchanged. true brings it back.
   const SHOW_STAGE_EXPECTED = false;
 
-// @@ pt/index.html:2133
+// @@ pt/index.html:2153
   // Market Access is every stage before country registration; Country
   // Access starts at it (stage 4) and runs to in-country delivery. It was
   // Country / Population Access until 9 Oct 2026 (renamed by the owner).
   const ACCESS_SPLIT = 4;
 
-// @@ pt/index.html:2134
+// @@ pt/index.html:2154
   const PHASES = [
     { name: "Acesso ao mercado" },
     { name: "Acesso ao país" }
   ];
 
-// @@ pt/index.html:2138
+// @@ pt/index.html:2158
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
 
-// @@ pt/index.html:2247
+// @@ pt/index.html:2267
   // under each step icon in the pathway strip: its expected time. The first
   // two steps have none and show nothing: their labels ("Before the clock",
   // "Clock starts here") were removed by request on 15 Oct 2026, pending final
@@ -256,51 +256,73 @@
     return "";
   }
 
-// @@ pt/index.html:2260
+// @@ pt/index.html:2285
+  // Which access stages a country on a medicine's list has a source for. Each
+  // stage stands on its own (partner feedback, 3 Nov 2026):
+  // the map used to shade a country by the furthest stage only, so DHA–PPQ's
+  // map read 2 registered beside "confirmed in six national registers".
+  //   registered: the entry is at "registered", or cites a national register;
+  //   guidelines: the entry is at "guidelines", or cites a policy/guidelines
+  //               source (the WHO national drug policy table lists Nigeria and
+  //               Burkina Faso, which are at "mft");
+  //   mft:        the entry is at "mft".
+  // A category is compared in slug form so the literal is not collected for
+  // translation (the sources' categories stay English on every page).
+  // scripts/validate-data.js counts detail.country the same way.
+  function countryStages(list) {
+    const cat = {};
+    ((window.LAUNCH_SOURCES || {}).sources || []).forEach(s => { cat[s.id] = String(s.category || "").toLowerCase().replace(/\s+/g, "-"); });
+    const cites = (e, c) => (e.sources || []).some(id => cat[id] === c);
+    const out = {};
+    list.forEach(e => {
+      out[e.iso3] = {
+        registered: e.level === "registered" || cites(e, "national-register"),
+        guidelines: e.level === "guidelines" || cites(e, "policy-/-guidelines"),
+        mft: e.level === "mft"
+      };
+    });
+    return out;
+  }
+
+// @@ pt/index.html:2304
   // The Country access card. Where a medicine has a country list (the one the
   // map is painted from), every count comes from it, so the card, the map
   // legend and the stage 4-5 cells cannot disagree (partner feedback, 15 Oct
-  // 2026): countries on the map, split by the furthest stage each has reached,
-  // and how many of them a national medicines register confirms. A category is
-  // compared in slug form so the literal is not collected for translation (the
-  // sources' categories stay English on every page).
+  // 2026): countries on the map, then how many have a source for each stage,
+  // the same numbers the map's three views show.
   function countryAccessKv(d) {
     const list = d.countries && Array.isArray(d.countries.list) ? d.countries.list : null;
     if (!list) return `
               <div class="kv"><span>Registrado</span><span>${esc(d.country.registered)}</span></div>
-              <div class="kv"><span>Em orientações nacionais</span><span>${esc(d.country.inGuidelines)}</span></div>
+              <div class="kv"><span>Em diretrizes nacionais</span><span>${esc(d.country.inGuidelines)}</span></div>
               <div class="kv"><span>Em planos MFT</span><span>${esc(d.country.inMft)}</span></div>`;
     const c = { registered: 0, guidelines: 0, mft: 0 };
-    list.forEach(e => { if (e.level in c) c[e.level]++; });
-    const cat = {};
-    ((window.LAUNCH_SOURCES || {}).sources || []).forEach(s => { cat[s.id] = String(s.category || "").toLowerCase().replace(/\s+/g, "-"); });
-    const reg = list.filter(e => (e.sources || []).some(id => cat[id] === "national-register")).length;
+    Object.values(countryStages(list)).forEach(s => Object.keys(c).forEach(k => { if (s[k]) c[k]++; }));
     return `
               <div class="kv"><span>Países no mapa</span><span>${list.length}</span></div>
+              <div class="kv sub"><span>Confirmado em registros nacionais</span><span>${c.registered}</span></div>
+              <div class="kv sub"><span>Em diretrizes nacionais</span><span>${c.guidelines}</span></div>
               <div class="kv sub"><span>Em planos MFT</span><span>${c.mft}</span></div>
-              <div class="kv sub"><span>Em orientações nacionais</span><span>${c.guidelines}</span></div>
-              <div class="kv sub"><span>Registrado</span><span>${c.registered}</span></div>` +
-      (Object.keys(cat).length ? `
-              <div class="kv"><span>Confirmado nos registos nacionais</span><span>${reg}</span></div>` : "");
+              <p style="margin:4px 0 2px 14px;font-size:13px;color:var(--ink-3)">Um país pode ser contabilizado em mais de um nível.</p>`;
   }
 
-// @@ pt/index.html:2288
+// @@ pt/index.html:2328
   // Light the selected step's column in every row, or clear it (null).
   function highlightStep(i) {
     const c = i == null ? -1 : STAGE_COLUMNS.findIndex(col => col.stages.includes(i));
     board.querySelectorAll(".jcell").forEach(cell => cell.classList.toggle("on", +cell.dataset.c === c));
   }
 
-// @@ pt/index.html:2420
+// @@ pt/index.html:2474
   // (only where "Delayed" is shown — see SHOW_PROGRESS)
   const lateAt = i => tracked.filter(p => p.stages[i].status === "late" && statusShown(p, "late")).length;
 
-// @@ pt/index.html:2423
+// @@ pt/index.html:2477
   // Step number = position of the stage's column, so the two parallel WHO gates
   // both read "3".
   const stepNo = i => STAGE_COLUMNS.findIndex(col => col.stages.includes(i)) + 1;
 
-// @@ pt/index.html:2425
+// @@ pt/index.html:2479
   function pathNodeHtml(i, stacked) {
     const s = STAGES[i];
     const n = lateAt(i);
@@ -314,11 +336,11 @@
     const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
     const exp = SHOW_STAGE_EXPECTED && YARD && YARD.expected[i] ? ", esperado " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}"${phase} aria-label="Estágio ${stepNo(i)}, ${esc(s)}${exp}. Mostra o que acontece aqui e onde está cada medicamento${n ? ", " + n + " delayed" : ""}.">` +
+      data-gate="${i}"${phase} aria-label="Estágio ${stepNo(i)}, ${esc(s)}${exp}. Mostra o que acontece aqui e onde cada medicamento está${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
-// @@ pt/index.html:2442
+// @@ pt/index.html:2496
   function stepColumnHtml(col) {
     if (col.stages.length === 1) return pathNodeHtml(col.stages[0], false);
     const names = col.stages.map(i => STAGES[i]).join(" e ");
@@ -327,7 +349,7 @@
       `</span>`;
   }
 
-// @@ pt/index.html:2450
+// @@ pt/index.html:2504
   // Two white cards, one per group, with the arrow between them in the gap.
   pathway.innerHTML = PHASES.map((ph, k) => {
     const cols = STAGE_COLUMNS.filter(col => phaseOf(col.stages[0]) === k);
@@ -335,7 +357,7 @@
       cols.map(col => stepColumnHtml(col)).join(`<span class="patharrow" aria-hidden="true">→</span>`) + `</div></section>`;
   }).join(`<span class="patharrow phasegap" aria-hidden="true">→</span>`);
 
-// @@ pt/index.html:2870
+// @@ pt/index.html:2924
   // ---------------------------------------------------------------------------
   // Gate drill-down. gatePanelHTML is a pure renderer: (product, stageIndex) in,
   // markup out, no knowledge of where it is mounted — so the cell tier, the gate
@@ -349,7 +371,7 @@
   // one — and we name the milestone we counted from.
   const nowYear = parseInt(DATA.meta.lastUpdated.slice(0, 4), 10);
 
-// @@ pt/index.html:2871
+// @@ pt/index.html:2925
   function stalledSince(p, i) {
     if (i !== p.currentStage) return null;
     const j = p.detail.journey;
@@ -362,7 +384,7 @@
     return { yrs, label: last.label, year: last.year, pending: j[j.length - 1].label };
   }
 
-// @@ pt/index.html:2883
+// @@ pt/index.html:2937
   function gatePanelHTML(p, i) {
     const st = p.stages[i];
     const el2 = stalledSince(p, i);
@@ -378,7 +400,7 @@
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
     const reqs = (i === 5 && Array.isArray(p.detail.adoption) && p.detail.adoption.length)
-      ? `<div class="gp-kv"><dt>Quais as necessidades da adoção?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
+      ? `<div class="gp-kv"><dt>Quais são as necessidades da adoção?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
 
     let countries = "";
     if ((i === 4 || i === 5) && p.detail.countries && Array.isArray(p.detail.countries.list)) {
@@ -386,7 +408,7 @@
       p.detail.countries.list.forEach(e => { if (e.level in c) c[e.level]++; });
       countries = `<div class="gp-countries">` +
         `<span class="key"><span class="mapsw registered"></span>Registrado <span class="n">${c.registered}</span></span>` +
-        `<span class="key"><span class="mapsw guidelines"></span>Em orientações nacionais <span class="n">${c.guidelines}</span></span>` +
+        `<span class="key"><span class="mapsw guidelines"></span>Em diretrizes nacionais <span class="n">${c.guidelines}</span></span>` +
         `<span class="key"><span class="mapsw mft"></span>Em planos MFT <span class="n">${c.mft}</span></span>` +
         `</div>`;
     }
@@ -396,14 +418,14 @@
       st.asOf ? "verificado " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
-        ? (p.detail.countries.status === "illustrative" ? "O inquérito nacional é ilustrativo." : "pesquisa de país " + esc(p.detail.countries.status)) : ""
+        ? (p.detail.countries.status === "illustrative" ? "O levantamento nacional é ilustrativo." : "pesquisa de país " + esc(p.detail.countries.status)) : ""
     ].filter(Boolean).join(" · ");
 
     return `
       <div class="gp-head">
         <span class="gp-stage">${esc(STAGES[i])}</span>
         ${shown ? `<span class="gp-pill ${st.status}">${LABEL[st.status]}</span>` : ""}
-        <button class="gp-close" type="button" data-close="cell">Perto</button>
+        <button class="gp-close" type="button" data-close="cell">Fechar</button>
       </div>
       ${st.note ? `<p class="gp-note">${esc(st.note)}</p>` : ""}
       ${isCur && SHOW_BARRIERS && p.flag ? `<div class="gp-why">${esc(p.flag)}</div>` : ""}
@@ -412,10 +434,10 @@
       ${prov ? `<div class="gp-prov">${prov}</div>` : ""}`;
   }
 
-// @@ pt/index.html:2934
+// @@ pt/index.html:2988
   let openGate = null;   // the .pathnode whose panel is showing
 
-// @@ pt/index.html:2967
+// @@ pt/index.html:3021
   function closeGate() {
     if (!openGate) return;
     const wrap = document.getElementById("gatewrap");
@@ -425,15 +447,15 @@
     highlightStep(null);
   }
 
-// @@ pt/index.html:2980
+// @@ pt/index.html:3034
   // One panel per step: the explanation (DATA.stageInfo, general to the step)
   // and a count of how many medicines are at each status. Where each medicine is
   // belongs to the summary table, which lights up the selected step's column
   // (highlightStep); per-medicine detail is one click on that stage's marker.
   // Without stageInfo the band is simply left out.
-  const STATUS_NOUN = { done: "concluir", prog: "em curso", late: "atrasado", idle: "não iniciado" };
+  const STATUS_NOUN = { done: "completo", prog: "em andamento", late: "atrasado", idle: "não iniciado" };
 
-// @@ pt/index.html:2981
+// @@ pt/index.html:3035
   function openGatePanel(btn) {
     const i = +btn.dataset.gate;
     closeGate();
@@ -450,7 +472,7 @@
         <p>${esc(info.what)}</p>
         <div class="gw-facts">
           <div><h5>Quem decide?</h5><p>${esc(info.who)}</p></div>
-          <div><h5>Porque pode parar</h5><p>${esc(info.stall)}</p></div>
+          <div><h5>Por que pode parar</h5><p>${esc(info.stall)}</p></div>
           <div><h5>Fonte</h5><p>${esc(info.source)}</p></div>
         </div>
       </div>` : "";
@@ -459,15 +481,15 @@
     // says so: they run in parallel, so eight milestones fit in seven stages.
     const col = STAGE_COLUMNS.find(c => c.stages.includes(i));
     const par = col && col.stages.length === 2
-      ? `<p class="gw-par">${esc(`${STAGES[col.stages[0]]} e ${STAGES[col.stages[1]]} são marcos paralelos dentro do estádio ${stepNo(i)}.`)}</p>`
+      ? `<p class="gw-par">${esc(`${STAGES[col.stages[0]]} e ${STAGES[col.stages[1]]} são marcos paralelos dentro do estágio ${stepNo(i)}.`)}</p>`
       : "";
-    wrap.setAttribute("aria-label", "Fase " + stepNo(i) + ": " + STAGES[i]);
+    wrap.setAttribute("aria-label", "Estágio " + stepNo(i) + ": " + STAGES[i]);
     wrap.innerHTML = `
       <div class="gw-head">
         <span class="gw-ico">${stageIconImg(i, "")}</span>
         <div><div class="gw-step">Etapa ${stepNo(i)} de ${STAGE_COLUMNS.length}</div><h3>${esc(STAGES[i])}</h3></div>
         <span class="gw-sum" aria-label="Situação dos medicamentos ${tracked.length} nesta fase">${chips}</span>
-        <button class="gp-close" type="button" data-close="gate">Perto</button>
+        <button class="gp-close" type="button" data-close="gate">Fechar</button>
       </div>
       ${par}${band}`;
     wrap.hidden = false;
@@ -476,7 +498,7 @@
     highlightStep(i);
   }
 
-// @@ pt/index.html:3066
+// @@ pt/index.html:3120
   function showStageTip(dot) {
     const d = dot.dataset;
     const p = tracked.find(x => x.id === d.pid);

@@ -20,10 +20,12 @@ const ICONS = readFileSync(new URL("./reference/icons-solid.js", import.meta.url
 const htmlLang = (l: Locale) => {
   const m = REFERENCE[l].match(/^\/\/ html-lang: (.+)$/m);
   if (!m) throw new Error(`reference/${l}.js has no html-lang line`);
-  // The language the new code declares (lib/frame.ts PAGE_LANG), not the page's
-  // own pt-PT: Portuguese is Brazilian since 28 Oct 2026, and old and new must
-  // format dates and numbers alike for the comparison to test the logic.
-  return PAGE_LANG[l];
+  // The page's own tag. From 28 Oct to 3 Nov 2026 the reference was the
+  // European pt-PT page and this gave the new code's tag instead; the pages
+  // at ef0bd8c are Brazilian, as the new code (lib/frame.ts PAGE_LANG), so
+  // the two must agree, and old and new format dates and numbers alike.
+  if (m[1] !== PAGE_LANG[l]) throw new Error(`the page says <html lang="${m[1]}">, lib/frame.ts PAGE_LANG ${PAGE_LANG[l]}`);
+  return m[1];
 };
 
 /** #pathway, #gatewrap and #tip as the page's HTML has them before its script runs. */
@@ -65,7 +67,7 @@ const fakeElement = (): FakeElement => ({
 const OLD_NAMES = [
   "STAGES", "STAGE_COLUMNS", "LABEL", "SHOW_PROGRESS", "SHOW_BARRIERS", "SHOW_LATE", "SHOW_STAGE_EXPECTED",
   "statusShown", "JI", "stageIconImg", "tracked", "esc", "colIndexOf", "stepNo", "lateAt", "nowYear",
-  "stalledSince", "pathExpHtml", "pathNodeHtml", "stepColumnHtml", "countryAccessKv", "gatePanelHTML",
+  "stalledSince", "pathExpHtml", "pathNodeHtml", "stepColumnHtml", "countryStages", "countryAccessKv", "gatePanelHTML",
   "openGatePanel", "closeGate", "showStageTip",
 ];
 

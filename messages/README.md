@@ -22,4 +22,5 @@ script compares the files with those hashes and refuses to overwrite one that
 was edited here by hand, so an edit made here is caught rather than lost.
 
 Placeholders are `{name}`, which next-intl reads as they are: next-intl 3.15.2
-read all 319 keys in all three files exactly as written (28 Oct 2026).
+read all 319 keys in all three files exactly as written (28 Oct 2026; 324
+since 3 Nov 2026, not re-read).

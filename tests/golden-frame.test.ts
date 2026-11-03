@@ -1,7 +1,7 @@
 // The golden test for the page frame: lib/frame.ts (and the two small
 // outcome-to-words functions in components/frame) against the static pages'
 // own code, frozen in tests/golden-frame/reference/ by
-// tests/golden-frame/extract.mjs (launch-rbm-test 7c1bf11).
+// tests/golden-frame/extract.mjs (launch-rbm-test ef0bd8c).
 //
 // The old code runs in node:vm with only the DOM members it touches stubbed
 // (tests/golden-frame/harness.ts). Where it wrote markup, the new values are

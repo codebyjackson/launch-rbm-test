@@ -19,7 +19,7 @@ import * as acorn from "acorn";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const OUT = fileURLToPath(new URL("./reference/", import.meta.url));
-const COMMIT = "7c1bf11";
+const COMMIT = "ef0bd8c";
 const LOCALES = ["en", "fr", "pt"];
 const ICONS = "assets/journey-icons/icons-solid.js";
 
@@ -32,7 +32,7 @@ const NAMES = [
   "JI", "WHO_STAGES", "stageIconImg", "PAGE_LANG", "DATE_LANG", "tracked",
   "esc", "SRC_BY_ID", "citeLinks", "citeHtml", "shortDate", "pathway", "firstClause", "peekLine",
   "yrsText", "YARD", "SHOW_STAGE_EXPECTED", "ACCESS_SPLIT", "PHASES", "phaseOf", "pathExpHtml",
-  "countryAccessKv", "highlightStep", "lateAt", "stepNo", "pathNodeHtml", "stepColumnHtml",
+  "countryStages", "countryAccessKv", "highlightStep", "lateAt", "stepNo", "pathNodeHtml", "stepColumnHtml",
   "nowYear", "stalledSince", "gatePanelHTML", "openGate", "closeGate", "STATUS_NOUN",
   "openGatePanel", "showStageTip",
 ];

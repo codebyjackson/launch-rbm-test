@@ -30,10 +30,12 @@ export const REFERENCE = Object.fromEntries(
 const htmlLang = (l: Locale) => {
   const m = REFERENCE[l].match(/^\/\/ html-lang: (.+)$/m);
   if (!m) throw new Error(`reference/${l}.js has no html-lang line`);
-  // The language the new code declares (lib/frame.ts PAGE_LANG), not the page's
-  // own pt-PT: Portuguese is Brazilian since 28 Oct 2026, and old and new must
-  // format dates and numbers alike for the comparison to test the logic.
-  return PAGE_LANG[l];
+  // The page's own tag. From 28 Oct to 3 Nov 2026 the reference was the
+  // European pt-PT page and this gave the new code's tag instead; the pages
+  // at ef0bd8c are Brazilian, as the new code (lib/frame.ts PAGE_LANG), so
+  // the two must agree, and old and new format dates and numbers alike.
+  if (m[1] !== PAGE_LANG[l]) throw new Error(`the page says <html lang="${m[1]}">, lib/frame.ts PAGE_LANG ${PAGE_LANG[l]}`);
+  return m[1];
 };
 
 export type Switch = "SHOW_PROGRESS" | "SHOW_LATE" | "YARD_COMPARE" | "SHOW_BARRIERS" | "SHOW_STAGE_NOTE";
@@ -145,6 +147,19 @@ export function variants(products: Product[]): { name: string; p: Product }[] {
     });
     v.currentStage = Math.min(years.length, v.stages.length - 1);
     out.push({ name: `${a.id}, stages dated ${years.join(" ")}`, p: v });
+  }
+  // started gates placed by their "Since YYYY" (startedYear, 3 Nov 2026): one
+  // before every dated gate, which widens the axis, one in each language's
+  // word, and a current gate that says "Since" too, which stays at today
+  {
+    const v = structuredClone(a);
+    const since = ["Since 2009", "Depuis 2017", "desde 2021"];
+    v.stages.forEach((st, j) => {
+      st.status = j === 0 ? "done" : j <= since.length ? "prog" : "idle";
+      st.date = j === 0 ? "2015" : j <= since.length ? since[j - 1] : "";
+    });
+    v.currentStage = since.length;
+    out.push({ name: `${a.id}, started gates since 2009, 2017 and 2021`, p: v });
   }
   const fresh = structuredClone(d);
   fresh.detail.journey = [

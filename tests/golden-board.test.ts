@@ -1,6 +1,6 @@
 // The golden test for lib/board.ts: the board's pure rules against the static
 // pages' own code, frozen in tests/golden-board/reference/{en,fr,pt}.js by
-// tests/golden-board/extract.mjs (launch-rbm-test 7c1bf11).
+// tests/golden-board/extract.mjs (launch-rbm-test ef0bd8c).
 //
 // Where the page kept a rule inside its markup (the timeline's layout inside
 // journeyTime, the procurement card's rules inside the row loop), the old
@@ -68,13 +68,19 @@ function oldLayout(html: string) {
     ticks,
     nowX: pct(now, "left"),
     run: run ? { left: pct(run, "left"), width: pct(run, "width") } : null,
-    items: tsa.querySelectorAll("div.it").map((it) => ({
-      i: +it.querySelector(".smark")!.getAttribute("data-stagei")!,
-      x: pct(it, "left"),
-      cur: it.classList.contains("cur"),
-      tier: +it.getAttribute("data-tier")!,
-      top: pct(it, "top"),
-    })),
+    items: tsa.querySelectorAll("div.it").map((it) => {
+      // a started gate's label is "since 2013" (in the page's language), a dated one's the bare year
+      const sy = it.querySelector(".syear");
+      const label = sy ? textOf(sy).trim() : "";
+      return {
+        i: +it.querySelector(".smark")!.getAttribute("data-stagei")!,
+        x: pct(it, "left"),
+        cur: it.classList.contains("cur"),
+        from: !sy || /^\d{4}$/.test(label) ? null : +label.match(/\d{4}/)![0],
+        tier: +it.getAttribute("data-tier")!,
+        top: pct(it, "top"),
+      };
+    }),
     height: pct(tsa, "height"),
   };
 }
@@ -123,6 +129,7 @@ for (const locale of LOCALES) {
           const at = `${p.id} #${n}`;
           p.stages.forEach((_, i) => {
             same("preBoundaryDone", `${at}, stage ${i}`, board.preBoundaryDone(p, i, ctx), old.fn("preBoundaryDone")(op, i));
+            same("startedYear", `${at}, stage ${i}`, board.startedYear(p, i), old.fn("startedYear")(op, i));
           });
           const L = board.journeyLayout(p, ctx);
           same(

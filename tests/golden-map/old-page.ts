@@ -190,7 +190,8 @@ export interface OldState {
   cameFrom: string;
   mapProduct?: string;
   mapStatus?: string;
-  stageOff: string[];
+  /** the access stage in view (the Filters' radio buttons) */
+  mapView: string;
   mftTick: string[];
 }
 
@@ -204,6 +205,7 @@ export interface OldFns {
   mftAvail(): Record<string, number>;
   mftSync(): void;
   stageCounts(): Record<string, number>;
+  viewCounts(): Record<string, number>;
   mftMatches(iso3: string): boolean;
   mftListed(): string[];
   drawnIsos(): string[];
@@ -211,7 +213,7 @@ export interface OldFns {
   fillCountryList(): void;
   applyLocationFilter(): void;
   mftPaint(): void;
-  paintStageFilter(): void;
+  paintView(): void;
   paintSelection(): void;
   mftRender(): void;
 }
@@ -292,8 +294,8 @@ export function runOldPage(
     return r;
   });
   const documentElement = new FakeEl("html");
-  // the language the new code declares (lib/frame.ts PAGE_LANG), not the pages' own
-  // pt-PT: Portuguese is Brazilian since 28 Oct 2026 (see tests/golden.test.ts)
+  // the language the new code declares (lib/frame.ts PAGE_LANG), which the
+  // other harnesses check equals the pages' own <html lang> (pt-BR since ef0bd8c)
   documentElement.lang = PAGE_LANG[lang];
   const document = {
     documentElement,

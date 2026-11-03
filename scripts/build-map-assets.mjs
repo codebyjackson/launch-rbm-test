@@ -10,7 +10,7 @@
 //
 // Source: {en,fr,pt}/data/world-map-geo.js (window.LAUNCH_MAP_GEO: shapes and
 // names, Natural Earth 50m) and {en,fr,pt}/data/world-map.js (window.LAUNCH_MAP:
-// the tracked countries) as on launch-rbm-test 7c1bf11, read from git: the
+// the tracked countries) as on launch-rbm-test ef0bd8c, read from git: the
 // static pages left this branch on 28 Oct 2026. Those are generated upstream
 // by launch-development-test's scripts/build-map-geo.js and build-map.js; for
 // new shapes or names, regenerate from there.
@@ -28,7 +28,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LANGS = ["en", "fr", "pt"];
-const COMMIT = "7c1bf11";
+const COMMIT = "ef0bd8c";
 
 // The files are `window.NAME = {json};` after two comment lines.
 function readGlobal(file, name) {
@@ -73,7 +73,7 @@ const shapes = {
 };
 const countries = {
   generated:
-    "by scripts/build-map-assets.mjs from {en,fr,pt}/data/world-map-geo.js and world-map.js (launch-rbm-test 7c1bf11). Do not edit by hand.",
+    "by scripts/build-map-assets.mjs from {en,fr,pt}/data/world-map-geo.js and world-map.js (launch-rbm-test ef0bd8c). Do not edit by hand.",
   shapes: en.map((x) => x.properties.iso3),
   drawn: Object.keys(map.en.countries),
   names: Object.fromEntries(LANGS.map((l) => [l, geo[l].features.map((x) => x.properties.name)])),
