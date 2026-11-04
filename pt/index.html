@@ -2014,7 +2014,7 @@
   function peekLine(status, date, nextDate, shown = true) {
     const when = firstClause(date);
     const due = firstClause(nextDate);
-    const expected = due && !/^tbc$/i.test(due) ? " esperado " + due : "";
+    const expected = due && !/^tbc$/i.test(due) ? " · esperado " + due : "";
     if (status === "done") return LABEL.done + (when ? " · " + when : "");
     if (status === "idle") return LABEL.idle + expected;
     if (!shown) return when || expected.replace(/^ · /, "");
@@ -2203,7 +2203,7 @@
     if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
     return s.kind === "going" ? { t: "Dentro do previsto até o momento", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>até o momento</i>` : ""}</span>`;
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até o momento</i>` : ""}</span>`;
   // Which steps use a published timeline and which LAUNCH's own estimate is
   // read from each step's "basis" (12 Oct 2026), not typed here, so the note
   // cannot disagree with the data. Each label is a whole literal and the list
@@ -2234,7 +2234,7 @@
         <div class="ysdiff"><small>Variação</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até o momento" : "em relação ao previsto"}</span></div>
       </div>
       <p>Previsão de uso de rotina até ${due}, ${y.whole.exp} anos após primeiro marco em ${y.start}.${going && ASOF_YEAR >= due ? ` Ainda não em uso de rotina em ${ASOF_YEAR}.` : ""}</p>
-      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>até o momento</i>` : ""}</p>` : ""}
+      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até o momento</i>` : ""}</p>` : ""}
     </div>`;
   }
   // the "Tempo decorrido" view: expected against actual, under the two access groups

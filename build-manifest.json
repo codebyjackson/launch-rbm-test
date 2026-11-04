@@ -1,6 +1,6 @@
 {
   "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. data/dashboard.json is the latest file published to the data repo, replaced after each publish by scripts/copy-rbm-pages.js --data-only. scripts/copy-rbm-pages.js compares every file below with what is here before it copies, and stops if one was changed.",
-  "built_from": "4ad780e08c0eb8232a7b5470a0d256a7ad18f437",
+  "built_from": "a9af77b172cabcd2c92bbd15b221b9b213834adf",
   "clean": true,
   "translations_current": true,
   "data_url": "../data/dashboard.json",
@@ -49,6 +49,6 @@
     "pt/assets/report-issue.js": "3ebae19edd88e70c6c171d55e9d34762bbb9a7f48ee55eec41a2bcf2db42d2a3",
     "pt/data/world-map-geo.js": "4bdeaed78b6707ce58e5c1921caa0f189925412e36c75432df77f596f3daa45a",
     "pt/data/world-map.js": "439a40d826d9143c7fed441e10e535e110d65c785cf427e70c058f86a6867d9e",
-    "pt/index.html": "e33fb9c9611eb0a0b0cf787293a3ff8b9e1b423631a2828cb94014cfe9a1b48e"
+    "pt/index.html": "c170bf917e27f845408e3de84617ec3dd4fad9aa4dfb32b4144b58faa41d677d"
   }
 }
