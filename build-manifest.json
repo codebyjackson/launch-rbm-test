@@ -1,6 +1,6 @@
 {
   "note": "Written by scripts/build-rbm-pages.js in KylerXiv/launch-development-test. These pages are BUILT: change that repository and rebuild, never the files here. data/dashboard.json is the latest file published to the data repo, replaced after each publish by scripts/copy-rbm-pages.js --data-only. scripts/copy-rbm-pages.js compares every file below with what is here before it copies, and stops if one was changed.",
-  "built_from": "e3c7832756c6b988547e5c3d65afa22e2164f5c5",
+  "built_from": "4ad780e08c0eb8232a7b5470a0d256a7ad18f437",
   "clean": true,
   "translations_current": true,
   "data_url": "../data/dashboard.json",
@@ -8,8 +8,8 @@
   "test_build": false,
   "schema": 1,
   "dataset": {
-    "data_repo_commit": "3a88ec89e327f6f9b0ab7b01eda6a751b4eac0a0",
-    "generated_at": "2026-11-03T13:00:15.907Z",
+    "data_repo_commit": "bba195026ca525a259fe82b10b7335c29aa4f0cd",
+    "generated_at": "2026-11-04T16:41:40.025Z",
     "last_updated": "2026-11-03",
     "schema_version": 1
   },
@@ -37,18 +37,18 @@
     "assets/journey-icons/png/journey-strip.png": "f1fdf0fc1497df18a5c4b0862b0d9658733e68873dc9df7e4130c380b9ba8dd5",
     "assets/unitaid-logo.svg": "d630e129c6691075244212964fb2bc625340ae301e833996365dbd8f1e1d4979",
     "assets/who-emblem.svg": "1f635076a3a49d050103db9df46baa7a7b5457eef538655f52807c1b6cd054a2",
-    "data/dashboard.json": "1cd2a7de31175c168cc5f40f1223196cf544496d78af0c4dadd4f8e5b003eab0",
+    "data/dashboard.json": "395a752ff529d776aa96f5374a4ad8eadabfe6109aa49db30d2a832def8dc6a4",
     "en/assets/report-issue.js": "a197b552294f4fd544d6cbbb36b45a4752d7d84f556710b503e66b88d9b27b48",
     "en/data/world-map-geo.js": "65a36ace62a02003b125cb4749e39ed6aa54de6aa57c4cf36bb2d7307b6997d4",
     "en/data/world-map.js": "0857fef8a8709953bb887bf39e3f47007566978fc736731dfc434eb8ae088a02",
     "en/index.html": "994442c559e302f120611f382f4b6be4e28bac731888effb6a72de3e65b96245",
-    "fr/assets/report-issue.js": "437b3881a7fc41b378691380664c9aebc7482d5c9be5edb864d81ebfec6bc810",
+    "fr/assets/report-issue.js": "b702dfd8f2cb65ff6a573252142e4bd411f0d7e2aad9d283e1544ee7263ce1d2",
     "fr/data/world-map-geo.js": "1b423c379af752f61ac8fd0d61de934fbf5a5e8ac1b4737174bfd2115df1c2bf",
     "fr/data/world-map.js": "2825a19db46405dfb51c018ad42022f942be14668105721cd2612a04fc25cb07",
-    "fr/index.html": "036b132be2a0aae6556e925863cd4f783033cda7d564c158da4321a02be4b7e9",
-    "pt/assets/report-issue.js": "7b85128b509954182608c235800626f71a0e6441dcd5a94d7763a6f47f1f55c2",
+    "fr/index.html": "26dfed3dd4d25c0c21632438d88a22bfec37a05f25bf89f34ae42498b88a4e3d",
+    "pt/assets/report-issue.js": "3ebae19edd88e70c6c171d55e9d34762bbb9a7f48ee55eec41a2bcf2db42d2a3",
     "pt/data/world-map-geo.js": "4bdeaed78b6707ce58e5c1921caa0f189925412e36c75432df77f596f3daa45a",
     "pt/data/world-map.js": "439a40d826d9143c7fed441e10e535e110d65c785cf427e70c058f86a6867d9e",
-    "pt/index.html": "2046961a1420ea90b031e279490508214f214087c73ffe7b57a376b322e0c8cb"
+    "pt/index.html": "e33fb9c9611eb0a0b0cf787293a3ff8b9e1b423631a2828cb94014cfe9a1b48e"
   }
 }
