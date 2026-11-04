@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-pathway.test.ts and tests/markup-pathway.test.ts:
 // the static page's own pathway code, frozen. Source: launch-rbm-test commit
-// 2f3d72c, en/index.html, the <script type="text/x-launch-app"> block.
+// 565cec0, en/index.html, the <script type="text/x-launch-app"> block.
 // Every top-level declaration the tests call, and every one those read,
 // copied verbatim with the comments above it, in page order, with the two
 // statements that declare nothing (the SHOW_LATE rewrite and the one that

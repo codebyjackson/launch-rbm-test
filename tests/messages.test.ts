@@ -51,8 +51,10 @@ describe("messages", () => {
     expect(NAMESPACE).toBe("Unitaid");
     for (const file of [enFile, frFile, ptFile]) {
       expect(Object.keys(file)).toEqual(["Sidebar", NAMESPACE]);
-      expect(Object.keys(file.Sidebar)).toEqual(["unitaid", "unitaid_tooltip"]);
-      expect(file.Sidebar.unitaid).toBe(file[NAMESPACE].header.title);
+      // rbm-module-unitaid's contract: Sidebar.<group>_subitem_unitaid[_tooltip]
+      expect(Object.keys(file.Sidebar)).toEqual(["partners_subitem_unitaid", "partners_subitem_unitaid_tooltip"]);
+      expect(file.Sidebar.partners_subitem_unitaid).toBe(file[NAMESPACE].header.title);
+      expect(file.Sidebar.partners_subitem_unitaid_tooltip).toBe(file[NAMESPACE].header.description);
       expect(Object.keys(file[NAMESPACE].metadata)).toEqual(["title", "description", "keywords"]);
     }
   });

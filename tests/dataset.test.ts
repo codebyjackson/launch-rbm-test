@@ -141,7 +141,7 @@ describe("readLanguageFile: one file per language", () => {
   }
 
   it("is in its own language", () => {
-    expect(readLanguageFile(LANG_FIXTURE.fr, "fr", URL_).data.stages[0]).toBe("Recherche et développement et clinique");
+    expect(readLanguageFile(LANG_FIXTURE.fr, "fr", URL_).data.stages[0]).toBe("R&D et essais cliniques");
     expect(readLanguageFile(LANG_FIXTURE.pt, "pt", URL_).data.stages[0]).not.toBe(
       readLanguageFile(LANG_FIXTURE.en, "en", URL_).data.stages[0],
     );

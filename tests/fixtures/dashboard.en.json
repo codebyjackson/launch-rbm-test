@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-03T13:00:15.907Z",
-  "approved_at": "2026-11-03T13:00:15.908Z",
+  "generated_at": "2026-11-04T16:41:40.025Z",
+  "approved_at": "2026-11-04T16:41:40.025Z",
   "approved_by": "codebyjackson",
   "approval": {
     "trigger": "manual",
     "issue": null,
     "pr": null,
-    "reason": "Partner feedback: map shows one access stage at a time; registrations from 14 more national registers (DHA–PPQ 20, ASPY 14); dated timeline; STOP-AMDR; Market/Country Access; WHO GDG wording"
+    "reason": "French and Brazilian Portuguese from the professional translators"
   },
-  "pipeline_commit": "e3c7832756c6b988547e5c3d65afa22e2164f5c5",
+  "pipeline_commit": "4ad780e08c0eb8232a7b5470a0d256a7ad18f437",
   "content_hash": "9f9ac9c488e91b50a3cc36e458e9fd50a5bf2bec9126db63d171428525eb99f3",
   "locale": "en",
   "data_status": "draft",

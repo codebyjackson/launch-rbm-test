@@ -1,0 +1,36 @@
+{
+  "fr": {
+    "common.yearsOne": "{n} an",
+    "common.yearsOther": "{n} ans",
+    "disclaimer.countriesNotVerified": "Les phases atteintes par les pays n’ont pas encore été vérifiées pour : {medicines}.",
+    "disclaimer.countriesVerified": "Les enregistrements nationaux ont été vérifiés pour : {medicines}.",
+    "disclaimer.notComplete": "Les utilisateurs ne doivent pas considérer le tableau de bord LAUNCH comme une source d'information complète et faisant autorité. Il offre un aperçu à un instant T, basé sur des informations publiques et sur des chiffres confirmés par écrit par le fabricant. Chaque chiffre reflète les meilleures données disponibles à la date indiquée ; certaines données peuvent être manquantes pour certains pays, années ou canaux d'achat.",
+    "map.noCountryData": "Aucune donnée nationale à ce jour pour {medicine}.",
+    "map.panel.checkedOn": "Vérifié sur {date}.",
+    "map.panel.inWhoPolicy": "dans les politiques de l’OMS {year}",
+    "map.panel.partDoesNotList": "{part}: n’a pas inscrit {medicine}.",
+    "map.panel.partLists": "{part}: a inscrit {medicine}.",
+    "map.preLaunch": "{medicine} est en prélancement – pas d’accès aux pays à ce jour.",
+    "pathway.stageButtonDelayed": ", {n} delayed",
+    "pathway.stageButtonLabel": "Phase {n}, {stage}. Indique le déroulé de cette phase et où en est chaque médicament.",
+    "product.stagePanel.surveyStatus": "l’enquête nationale est {status}",
+    "stepPanel.label": "Phase {n}: {stage}",
+    "yardstick.noteEstimate": "Délais attendus d’après les estimations de LAUNCH, qui restent à valider : {stages}.",
+    "yardstick.notePublished": "Délais attendus, d’après le calendrier communiqué : {stages}.",
+    "yardstick.sinceNotRoutine": "depuis {year}, pas encore couramment utilisé"
+  },
+  "pt": {
+    "disclaimer.countriesNotVerified": "As etapas de país ainda não foram verificadas para: {medicines}.",
+    "disclaimer.countriesVerified": "Os registros nacionais foram verificados para: {medicines}.",
+    "map.noCountryData": "Ainda não há dados por país para {medicine}.",
+    "map.panel.partDoesNotList": "{part}: não inclui {medicine}.",
+    "map.panel.partLists": "{part}: inclui {medicine}.",
+    "map.preLaunch": "{medicine} pré-lançamento — ainda sem acesso de país.",
+    "pathway.stageButtonDelayed": ", {n} delayed",
+    "pathway.stageButtonLabel": "Etapa {n}, {stage}. Mostra o que acontece nesta etapa e em que ponto se encontra cada medicamento.",
+    "product.stagePanel.surveyStatus": "a pesquisa no país é {status}",
+    "yardstick.noteEstimate": "Tempos previstos com base nas estimativas preliminares do LAUNCH, ainda a serem acordadas: {stages}.",
+    "yardstick.notePublished": "Tempos previstos com base em um cronograma publicado: {stages}.",
+    "yardstick.sinceNotRoutine": "desde {year}, ainda não em uso de rotina"
+  }
+}

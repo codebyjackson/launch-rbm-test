@@ -1,6 +1,6 @@
 // The golden test for lib/pathway.ts: each function the page had on its own,
 // against the page's original, frozen in tests/golden-pathway/reference/ by
-// tests/golden-pathway/extract.mjs (launch-rbm-test 2f3d72c). Same method as
+// tests/golden-pathway/extract.mjs (launch-rbm-test 565cec0). Same method as
 // tests/golden.test.ts: the reference runs in node:vm with the globals from
 // localize(), old and new are called on the same inputs, and every result
 // must be deeply and strictly equal, or both must throw the same error.

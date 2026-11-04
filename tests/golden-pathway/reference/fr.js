@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-pathway.test.ts and tests/markup-pathway.test.ts:
 // the static page's own pathway code, frozen. Source: launch-rbm-test commit
-// 2f3d72c, fr/index.html, the <script type="text/x-launch-app"> block.
+// 565cec0, fr/index.html, the <script type="text/x-launch-app"> block.
 // Every top-level declaration the tests call, and every one those read,
 // copied verbatim with the comments above it, in page order, with the two
 // statements that declare nothing (the SHOW_LATE rewrite and the one that
@@ -15,7 +15,7 @@
 // html-lang: fr
 //
 // The three elements as the page's HTML has them before the script runs:
-// static-markup: <div class="pathway" id="pathway" role="group" aria-label="Le parcours d'accès : huit étapes clés réparties en sept phases. La recommandation de l'OMS et l'inscription de l'OMS sur la liste PQ sont des étapes clés parallèles au sein de la phase 3. Choisissez une phase pour découvrir ce qui s'y passe et où se trouve chaque médicament." hidden></div>
+// static-markup: <div class="pathway" id="pathway" role="group" aria-label="Le parcours d’accès : huit étapes clés réparties sur sept phases. La recommandation de l’OMS et l’inscription sur la liste de préqualification de l’OMS constituent des étapes clés parallèles au sein de la phase 3. Choisissez une phase pour découvrir ce qui s’y passe et où se situe chaque médicament." hidden></div>
 // static-markup: <div class="gatewrap" id="gatewrap" hidden></div>
 // static-markup: <div id="tip" role="tooltip"></div>
 
@@ -44,7 +44,7 @@
   const colIndexOf = i => STAGE_COLUMNS.findIndex(c => c.stages.includes(i));
 
 // @@ fr/index.html:1808
-  const LABEL = { done: "Complet", prog: "En cours", late: "Retardé", idle: "Pas encore commencé" };
+  const LABEL = { done: "Terminé", prog: "En cours", late: "En retard", idle: "Non démarré" };
 
 // @@ fr/index.html:1829
   // The 10 Nov 2026 release (partner feedback sheet, 20 Oct 2026) shows where
@@ -206,13 +206,13 @@
   }
 
 // @@ fr/index.html:2046
-  const yrsText = n => n + (n === 1 ? " année" : " années");
+  const yrsText = n => n + (n === 1 ? " an" : " ans");
 
 // @@ fr/index.html:2137
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
   // read it: the badge under "On pathway", the box at the top of an open row,
-  // and the "Temps passé" view. The clock starts where "On pathway" starts
+  // and the "Délai écoulé" view. The clock starts where "On pathway" starts
   // (firstYear), so the two numbers always agree, and only once the medicine
   // has a dated regulatory approval. A stage's own clock: stages 2 to 4 start
   // with the pathway, policy adoption at the WHO recommendation, procurement
@@ -238,7 +238,7 @@
 // @@ fr/index.html:2154
   const PHASES = [
     { name: "Accès au marché" },
-    { name: "Accès au pays" }
+    { name: "Accès aux pays" }
   ];
 
 // @@ fr/index.html:2158
@@ -293,15 +293,15 @@
   function countryAccessKv(d) {
     const list = d.countries && Array.isArray(d.countries.list) ? d.countries.list : null;
     if (!list) return `
-              <div class="kv"><span>Inscrit</span><span>${esc(d.country.registered)}</span></div>
-              <div class="kv"><span>Conformément aux directives nationales</span><span>${esc(d.country.inGuidelines)}</span></div>
+              <div class="kv"><span>Enregistré</span><span>${esc(d.country.registered)}</span></div>
+              <div class="kv"><span>Dans les directives nationales</span><span>${esc(d.country.inGuidelines)}</span></div>
               <div class="kv"><span>Dans les plans MFT</span><span>${esc(d.country.inMft)}</span></div>`;
     const c = { registered: 0, guidelines: 0, mft: 0 };
     Object.values(countryStages(list)).forEach(s => Object.keys(c).forEach(k => { if (s[k]) c[k]++; }));
     return `
               <div class="kv"><span>Pays sur la carte</span><span>${list.length}</span></div>
               <div class="kv sub"><span>Confirmé dans les registres nationaux</span><span>${c.registered}</span></div>
-              <div class="kv sub"><span>Conformément aux directives nationales</span><span>${c.guidelines}</span></div>
+              <div class="kv sub"><span>Dans les directives nationales</span><span>${c.guidelines}</span></div>
               <div class="kv sub"><span>Dans les plans MFT</span><span>${c.mft}</span></div>
               <p style="margin:4px 0 2px 14px;font-size:13px;color:var(--ink-3)">Un pays peut être comptabilisé à plusieurs étapes.</p>`;
   }
@@ -336,7 +336,7 @@
     const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
     const exp = SHOW_STAGE_EXPECTED && YARD && YARD.expected[i] ? ", attendu " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}"${phase} aria-label="Étape ${stepNo(i)}, ${esc(s)}${exp}. Indique ce qui se passe ici et où se trouve chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
+      data-gate="${i}"${phase} aria-label="Phase ${stepNo(i)}, ${esc(s)}${exp}. Indique le déroulé de cette phase et où en est chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
@@ -344,7 +344,7 @@
   function stepColumnHtml(col) {
     if (col.stages.length === 1) return pathNodeHtml(col.stages[0], false);
     const names = col.stages.map(i => STAGES[i]).join(" et ");
-    return `<span class="pathgroup" data-phase="${phaseOf(col.stages[0])}" role="group" aria-label="${esc(names)} — approbations indépendantes sans ordre défini entre elles">` +
+    return `<span class="pathgroup" data-phase="${phaseOf(col.stages[0])}" role="group" aria-label="${esc(names)} – approbations indépendantes, sans ordre particulier">` +
       col.stages.map(i => pathNodeHtml(i, true)).join(`<span class="pathgroup-note" aria-hidden="true"></span>`) +
       `</span>`;
   }
@@ -395,30 +395,30 @@
     if (st.date) kv.push(["Enregistré", esc(st.date)]);
     if (st.next) kv.push(["Étape suivante", esc(st.next)]);
     if (st.nextDate) kv.push(["Attendu", esc(st.nextDate)]);
-    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} année${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
+    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} an${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
 
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
     const reqs = (i === 5 && Array.isArray(p.detail.adoption) && p.detail.adoption.length)
-      ? `<div class="gp-kv"><dt>Quels sont les besoins en matière d’adoption ?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
+      ? `<div class="gp-kv"><dt>Conditions requises pour l’adoption</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
 
     let countries = "";
     if ((i === 4 || i === 5) && p.detail.countries && Array.isArray(p.detail.countries.list)) {
       const c = { registered: 0, guidelines: 0, mft: 0 };
       p.detail.countries.list.forEach(e => { if (e.level in c) c[e.level]++; });
       countries = `<div class="gp-countries">` +
-        `<span class="key"><span class="mapsw registered"></span>Inscrit <span class="n">${c.registered}</span></span>` +
-        `<span class="key"><span class="mapsw guidelines"></span>Conformément aux directives nationales <span class="n">${c.guidelines}</span></span>` +
+        `<span class="key"><span class="mapsw registered"></span>Enregistré <span class="n">${c.registered}</span></span>` +
+        `<span class="key"><span class="mapsw guidelines"></span>Dans les directives nationales <span class="n">${c.guidelines}</span></span>` +
         `<span class="key"><span class="mapsw mft"></span>Dans les plans MFT <span class="n">${c.mft}</span></span>` +
         `</div>`;
     }
 
     const prov = [
-      (st.source || (st.sources || []).length) ? "Source: " + citeHtml(st.sources, st.source) : "",
+      (st.source || (st.sources || []).length) ? "Source : " + citeHtml(st.sources, st.source) : "",
       st.asOf ? "vérifié " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
-        ? (p.detail.countries.status === "illustrative" ? "L’enquête nationale est illustrative" : "L’enquête nationale est " + esc(p.detail.countries.status)) : ""
+        ? (p.detail.countries.status === "illustrative" ? "l’enquête nationale est à titre illustratif" : "l’enquête nationale est " + esc(p.detail.countries.status)) : ""
     ].filter(Boolean).join(" · ");
 
     return `
@@ -453,7 +453,7 @@
   // belongs to the summary table, which lights up the selected step's column
   // (highlightStep); per-medicine detail is one click on that stage's marker.
   // Without stageInfo the band is simply left out.
-  const STATUS_NOUN = { done: "complet", prog: "en cours", late: "retardé", idle: "pas commencé" };
+  const STATUS_NOUN = { done: "terminé", prog: "en cours", late: "en retard", idle: "non démarré" };
 
 // @@ fr/index.html:3035
   function openGatePanel(btn) {
@@ -468,11 +468,11 @@
       .map(k => `<span class="gp-pill ${k}">${counts[k]} ${STATUS_NOUN[k]}</span>`).join("");
     const band = info ? `
       <div class="gw-band">
-        <h4>Que se passe-t-il ici ?</h4>
+        <h4>Ce qu’il se passe à cette étape</h4>
         <p>${esc(info.what)}</p>
         <div class="gw-facts">
-          <div><h5>Qui décide ?</h5><p>${esc(info.who)}</p></div>
-          <div><h5>Pourquoi cela peut bloquer</h5><p>${esc(info.stall)}</p></div>
+          <div><h5>Décisionnaires</h5><p>${esc(info.who)}</p></div>
+          <div><h5>Freins potentiels</h5><p>${esc(info.stall)}</p></div>
           <div><h5>Source</h5><p>${esc(info.source)}</p></div>
         </div>
       </div>` : "";
@@ -481,14 +481,14 @@
     // says so: they run in parallel, so eight milestones fit in seven stages.
     const col = STAGE_COLUMNS.find(c => c.stages.includes(i));
     const par = col && col.stages.length === 2
-      ? `<p class="gw-par">${esc(`${STAGES[col.stages[0]]} et ${STAGES[col.stages[1]]} sont des étapes parallèles au sein de l’étape ${stepNo(i)}.`)}</p>`
+      ? `<p class="gw-par">${esc(`${STAGES[col.stages[0]]} et ${STAGES[col.stages[1]]} sont des étapes parallèles au sein de la même phase ${stepNo(i)}.`)}</p>`
       : "";
-    wrap.setAttribute("aria-label", "Scène " + stepNo(i) + ": " + STAGES[i]);
+    wrap.setAttribute("aria-label", "Phase " + stepNo(i) + ": " + STAGES[i]);
     wrap.innerHTML = `
       <div class="gw-head">
         <span class="gw-ico">${stageIconImg(i, "")}</span>
-        <div><div class="gw-step">Étape ${stepNo(i)} sur ${STAGE_COLUMNS.length}</div><h3>${esc(STAGES[i])}</h3></div>
-        <span class="gw-sum" aria-label="État des médicaments ${tracked.length} à ce stade">${chips}</span>
+        <div><div class="gw-step">Phase ${stepNo(i)} sur ${STAGE_COLUMNS.length}</div><h3>${esc(STAGES[i])}</h3></div>
+        <span class="gw-sum" aria-label="Progression des ${tracked.length} médicaments dans cette phase">${chips}</span>
         <button class="gp-close" type="button" data-close="gate">Fermer</button>
       </div>
       ${par}${band}`;
@@ -506,5 +506,5 @@
     showTipAt(dot,
       `<b>${esc(d.stage)}</b>` +
       (line ? `<div>${esc(line)}</div>` : "") +
-      `<div class="thint">Cliquez pour plus de détails</div>`);
+      `<div class="thint">Cliquer pour plus de détails</div>`);
   }

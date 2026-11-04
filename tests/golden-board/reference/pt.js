@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-board.test.ts and tests/markup-board.test.ts:
 // the static page's own board code, frozen. Source: launch-rbm-test commit
-// 2f3d72c: first assets/journey-icons/icons-solid.js whole, then from pt/index.html, the
+// 565cec0: first assets/journey-icons/icons-solid.js whole, then from pt/index.html, the
 // <script type="text/x-launch-app"> block, every top-level declaration the
 // tests call and every one those read, and the statements that build the
 // board, copied verbatim with the comments above them, in page order; each
@@ -182,7 +182,7 @@
   // It said "not moving as fast as expected", which named no expectation; a
   // partner asked what Delayed refers to (19 Oct 2026). It is the hand-set
   // `late` status (docs/data-analyst-guide.md), not a measured comparison.
-  const LATE_DEF = "O estágio atual do medicamento estagnou ou está avançando de forma excepcionalmente lenta, na avaliação de LAUNCH com base em evidências públicas. A principal barreira explica o motivo. Não há um prazo definido para sua avaliação.";
+  const LATE_DEF = "A etapa atual do medicamento está estagnada ou avançando de forma excepcionalmente lenta, segundo a avaliação do LAUNCH com base em evidências públicas. A principal barreira indica o motivo. Essa avaliação não é feita com base em um prazo preestabelecido.";
 
 // @@ pt/index.html:1817
   // Not shown since 3 Nov 2026: the medicines table's Status column, which
@@ -215,7 +215,7 @@
 
 // @@ pt/index.html:1840
   // The grey line under the stage name in the medicines table's
-  // "Estágio atual" cell: the first clause of the stage's date or note
+  // "Etapa atual" cell: the first clause of the stage's date or note
   // ("Ghana 2022", "Since 2008"). Hidden for every medicine at the owner's
   // request (20 Oct 2026); the stage name and status word stay, and the full
   // date still shows on the journey and in the stage panel. true brings it back.
@@ -426,7 +426,7 @@
   const reachedText = y => (y != null ? `Alcançado em ${y}` : "Alcançado, ano não registrado");
 
 // @@ pt/index.html:2070
-  const soFarText = n => (n > 0 ? `${yrsText(n)} até agora` : "Menos de 1 ano até agora");
+  const soFarText = n => (n > 0 ? `${yrsText(n)} até o momento` : "Menos de 1 ano até o momento");
 
 // @@ pt/index.html:2073
   // [phase name, figure, tone] for each phase shown. Country Access appears
@@ -443,7 +443,7 @@
 
 // @@ pt/index.html:2083
   // What the two figures mean, from the i beside them.
-  const ACCESS_DEF = "O acesso ao mercado é alcançado quando um medicamento é recomendado pela OMS e pré-qualificado por ela. O acesso no país se estende a partir desse momento até que o registro nacional, a adoção de políticas, a aquisição em volumes significativos e a distribuição no país estejam concluídos.";
+  const ACCESS_DEF = "O acesso ao mercado é alcançado quando um medicamento é recomendado e pré-qualificado pela OMS. O acesso no país começa a partir daí e se estende até que o registro nacional, a adoção nas políticas, as aquisições em volumes significativos e a distribuição no país estejam todos concluídos.";
 
 // @@ pt/index.html:2084
   const accessInfo = () => `<button type="button" class="info" data-tip="${esc(ACCESS_DEF)}" aria-label="${esc(ACCESS_DEF)}">i</button>`;
@@ -504,7 +504,7 @@
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
   // read it: the badge under "On pathway", the box at the top of an open row,
-  // and the "Tempo gasto" view. The clock starts where "On pathway" starts
+  // and the "Tempo decorrido" view. The clock starts where "On pathway" starts
   // (firstYear), so the two numbers always agree, and only once the medicine
   // has a dated regulatory approval. A stage's own clock: stages 2 to 4 start
   // with the pathway, policy adoption at the WHO recommendation, procurement
@@ -533,8 +533,8 @@
 
 // @@ pt/index.html:2154
   const PHASES = [
-    { name: "Acesso ao mercado" },
-    { name: "Acesso ao país" }
+    { name: "Acesso ao Mercado" },
+    { name: "Acesso no País" }
   ];
 
 // @@ pt/index.html:2158
@@ -587,14 +587,14 @@
   // One plain label per step: text, tone (bad / good / none), still going.
   function yardResult(s) {
     if (s.kind === "idle") return { t: LABEL.idle, tone: "none" };
-    if (s.kind === "nodate") return { t: "Feito, sem data registrada", tone: "none" };
-    if (s.kind === "nostart") return { t: "Em andamento, sem data de início definida.", tone: "none" };
+    if (s.kind === "nodate") return { t: "Concluído, data não registrada", tone: "none" };
+    if (s.kind === "nostart") return { t: "Em andamento, sem data de início", tone: "none" };
     if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
-    return s.kind === "going" ? { t: "Até agora, tudo dentro do esperado.", tone: "good" } : { t: yrsText(0), tone: "good" };
+    return s.kind === "going" ? { t: "Dentro do previsto até o momento", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
 
 // @@ pt/index.html:2206
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até aqui</i>` : ""}</span>`;
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· até o momento</i>` : ""}</span>`;
 
 // @@ pt/index.html:2211
   // Which steps use a published timeline and which LAUNCH's own estimate is
@@ -604,8 +604,8 @@
   const yardNote = () => {
     const by = b => YARD.expected.map((e, i) => (e && e.basis === b ? STAGES[i] : null)).filter(Boolean).join(", ");
     const line = (label, list) => (list ? `<span>${label} ${esc(list)}.</span> ` : "");
-    const pub = line("Horários previstos a partir de um cronograma publicado:", by("published"));
-    const est = line("Tempos previstos a partir das estimativas de trabalho de LAUNCH, ainda a serem acordados:", by("estimate"));
+    const pub = line("Tempos previstos com base em um cronograma publicado:", by("published"));
+    const est = line("Tempos previstos com base nas estimativas preliminares do LAUNCH, ainda a serem acordadas:", by("estimate"));
     return `<p class="ysnote">${pub}${est}</p>`;
   };
 
@@ -614,7 +614,7 @@
   function yardBadge(p) {
     const y = yardstick(p);
     if (!y) return "";
-    if (!y.approved) return `<small class="ysb-none">Ainda não aprovado</small>`;
+    if (!y.approved) return `<small class="ysb-none">Não aprovado ainda</small>`;
     return yardPill(yardResult(y.whole), true);
   }
 
@@ -626,24 +626,24 @@
     const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
     return `<div class="ysbox">
       <div class="ysfigs">
-        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso rotineiro por ${due}</span></div>
-        <div><small>${going ? "Até o momento, está tudo bem." : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não é de uso rotineiro" : ""}</span></div>
-        <div class="ysdiff"><small>Variância</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até aqui" : "do esperado"}</span></div>
+        <div><small>Esperado</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>uso de rotina em ${due}</span></div>
+        <div><small>${going ? "Efetivo até o momento" : "Real"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>desde ${y.start}${going && ASOF_YEAR >= due ? ", ainda não em uso de rotina" : ""}</span></div>
+        <div class="ysdiff"><small>Variação</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "até o momento" : "em relação ao previsto"}</span></div>
       </div>
-      <p>Espera-se que entre em uso rotineiro em ${due}, ${y.whole.exp} anos após seu primeiro marco em ${y.start}.${going && ASOF_YEAR >= due ? ` Ainda não é de uso rotineiro em ${ASOF_YEAR}.` : ""}</p>
-      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até aqui</i>` : ""}</p>` : ""}
+      <p>Previsão de uso de rotina até ${due}, ${y.whole.exp} anos após primeiro marco em ${y.start}.${going && ASOF_YEAR >= due ? ` Ainda não em uso de rotina em ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Maior variação: <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· até o momento</i>` : ""}</p>` : ""}
     </div>`;
   }
 
 // @@ pt/index.html:2241
-  // the "Tempo gasto" view: expected against actual, under the two access groups
+  // the "Tempo decorrido" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
-    if (!y.approved) return `<div class="ysempty"><b>Ainda não foi aprovado.</b> Começamos a comparar assim que o medicamento possui uma aprovação regulatória com data de expiração.</div>`;
+    if (!y.approved) return `<div class="ysempty"><b>Não aprovado ainda.</b> Começamos a comparação assim que o medicamento recebe uma aprovação regulatória com data registrada.</div>`;
     // "—", not "n/a": text with no two letters in a row is never collected for
     // translation, so "n/a" stayed English on /fr, /pt and /es.
-    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>até aqui</i>` : "");
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>até o momento</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -654,9 +654,9 @@
       return h + row(esc(STAGES[s.i]), s);
     }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Estágio</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variância</th></tr></thead>
+      <thead><tr><th scope="col">Etapa</th><th scope="col">Esperado</th><th scope="col">Real</th><th scope="col">Variação</th></tr></thead>
       <tbody>${body}</tbody>
-      <tfoot>${row("Toda a jornada", y.whole, true)}</tfoot>
+      <tfoot>${row("Percurso completo", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
   }
 
@@ -699,14 +699,14 @@
     if (!list) return `
               <div class="kv"><span>Registrado</span><span>${esc(d.country.registered)}</span></div>
               <div class="kv"><span>Em diretrizes nacionais</span><span>${esc(d.country.inGuidelines)}</span></div>
-              <div class="kv"><span>Em planos MFT</span><span>${esc(d.country.inMft)}</span></div>`;
+              <div class="kv"><span>Em planos de MFT</span><span>${esc(d.country.inMft)}</span></div>`;
     const c = { registered: 0, guidelines: 0, mft: 0 };
     Object.values(countryStages(list)).forEach(s => Object.keys(c).forEach(k => { if (s[k]) c[k]++; }));
     return `
               <div class="kv"><span>Países no mapa</span><span>${list.length}</span></div>
-              <div class="kv sub"><span>Confirmado em registros nacionais</span><span>${c.registered}</span></div>
+              <div class="kv sub"><span>Confirmado nos registros nacionais</span><span>${c.registered}</span></div>
               <div class="kv sub"><span>Em diretrizes nacionais</span><span>${c.guidelines}</span></div>
-              <div class="kv sub"><span>Em planos MFT</span><span>${c.mft}</span></div>
+              <div class="kv sub"><span>Em planos de MFT</span><span>${c.mft}</span></div>
               <p style="margin:4px 0 2px 14px;font-size:13px;color:var(--ink-3)">Um país pode ser contabilizado em mais de um nível.</p>`;
   }
 
@@ -735,7 +735,7 @@
     const peekLine = peekLineFor(p);
     return `<button class="smark" type="button"
       aria-expanded="false" aria-controls="${esc(p.id)}-gate"
-      aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Abre os detalhes completos."
+      aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Abre a visualização completa do detalhe."
       data-stage="${esc(STAGES[i])}" data-stagei="${i}" data-pid="${esc(p.id)}"
       data-status="${st.status}"
       data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>`;
@@ -839,7 +839,7 @@
     const ongoingShown = ongoing.every(j => statusShown(p, p.stages[j].status));
     return `<div class="tsp"><div class="cscroll"><div class="tsa" style="height:${height}px">${h}</div></div>` +
       `<div class="tsz">${noYear.length ? group("Alcançado · ano não registrado", noYear) : ""}` +
-      `${ongoingShown ? group("Em andamento · sem data", ongoing, true) : group("Ainda não tem data.", ongoing)}${notStartedHtml}</div></div>`;
+      `${ongoingShown ? group("Em andamento · sem data", ongoing, true) : group("Ainda sem data registrada", ongoing)}${notStartedHtml}</div></div>`;
   }
 
 // @@ pt/index.html:2451
@@ -871,8 +871,8 @@
 
 // @@ pt/index.html:2510
   board.insertAdjacentHTML("afterbegin",
-    `<div class="srow hd" role="presentation"><span></span><span>Medicamento</span><span class="c-mini">Jornada</span>` +
-    `<span class="c-stage">Estágio atual</span><span class="c-stat">Acesso ao mercado</span><span class="c-path">Acesso ao país ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barreira principal</span>` : ""}</div>`);
+    `<div class="srow hd" role="presentation"><span></span><span>Medicamento</span><span class="c-mini">Percurso</span>` +
+    `<span class="c-stage">Etapa atual</span><span class="c-stat">Acesso ao Mercado</span><span class="c-path">Acesso no País ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Principal barreira</span>` : ""}</div>`);
 
 // @@ pt/index.html:2513
   if (!SHOW_BARRIERS) board.classList.add("nobar");
@@ -892,7 +892,7 @@
             <div class="bar pre ${preDone ? "done-bar" : ""}"></div>
             <button class="smark" type="button"
               aria-expanded="false" aria-controls="${esc(p.id)}-gate"
-              aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Abre os detalhes completos."
+              aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Abre a visualização completa do detalhe."
               data-stage="${esc(STAGES[i])}" data-stagei="${i}" data-pid="${esc(p.id)}"
               data-status="${st.status}"
               data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>
@@ -935,13 +935,13 @@
     const NUMF = new Intl.NumberFormat(DATE_LANG);
     const byPres = d.volume && Array.isArray(d.volume.byPresentation) && d.volume.byPresentation.length ? `
         <div class="cscroll"><table class="ystable proc-table">
-          <thead><tr><th scope="col">Apresentação</th><th scope="col">Transações</th><th scope="col">Pacotes</th><th scope="col">Cursos de tratamento (est.)</th></tr></thead>
-          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transações</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Pacotes</span>${NUMF.format(b.packs)}</td><td><span class="pk">Cursos de tratamento (est.)</span>${b.courses == null ? "<i>não estimado</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
+          <thead><tr><th scope="col">Apresentação</th><th scope="col">Transações</th><th scope="col">Pacotes</th><th scope="col">Tratamentos completos (est.)</th></tr></thead>
+          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transações</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Pacotes</span>${NUMF.format(b.packs)}</td><td><span class="pk">Tratamentos completos (est.)</span>${b.courses == null ? "<i>não estimado</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
         </table></div>
         ${d.volume.coursesRule ? `<p class="proc-rule">${esc(d.volume.coursesRule)}</p>` : ""}` : "";
     const volumeCard = d.volume ? `
       <div class="card${byPres ? " card-wide" : ""}">
-        <h3>Contratação por meio de canais públicos</h3>
+        <h3>Aquisições por meio de canais públicos</h3>
         <div class="big">${esc(fmtFig(d.volume.total))}</div>
         <div class="sub">${esc(fmtFig(d.volume.period))}</div>
         ${gfOnly ? `<p class="proc-scope">Todas as transações apresentadas são pedidos financiados pelo Fundo Global, provenientes de seu banco de dados PQR. Pedidos pagos por outros doadores, governos nacionais ou compradores privados não estão incluídos; portanto, este valor não representa o total de aquisições globais do produto.</p>` : `
@@ -955,7 +955,7 @@
         ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Fonte: ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
       </div>` : `
       <div class="card">
-        <h3>Contratação por meio de canais públicos</h3>
+        <h3>Aquisições por meio de canais públicos</h3>
         <div class="big">—</div>
         <div class="sub">${esc(d.volumeNote || "Dados ainda não disponíveis")}</div>
       </div>`;
@@ -964,23 +964,23 @@
       <section class="product" id="${esc(p.id)}">
         <div class="srow">
           <button class="exp" type="button" aria-expanded="false" aria-controls="${esc(p.id)}-l1"
-            aria-label="Mostrar jornada para ${esc(p.name)}">▾</button>
+            aria-label="Mostrar o percurso de ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
           <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${SHOW_STAGE_NOTE && firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell c-stat">${marketCell(p)}</span>
           <span class="cell c-path">${countryCell(p)}${yardBadge(p)}</span>
-          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Nenhuma barreira publicamente documentada foi identificada."}</div>` : ""}
+          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Nenhuma barreira publicamente documentada identificada"}</div>` : ""}
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
           <div class="l1in">
             <div class="l1h">
               <div class="l1id"><span>${esc(p.manufacturer)}</span><span class="chip ${p.class === "pipeline" ? "pipeline" : ""}">${esc(p.classLabel)}</span></div>
               <div class="l1ctl"><span class="l1t">${accessLine(p)} ${accessInfo()}</span>
-                <div class="swg" role="group" aria-label="Visão da jornada">
+                <div class="swg" role="group" aria-label="Visualização do percurso">
                   <button type="button" data-v="time" aria-pressed="true">Cronograma real</button>
-                  <button type="button" data-v="path" aria-pressed="false">Ordem do caminho</button>
-                  ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Tempo gasto</button>` : ""}
+                  <button type="button" data-v="path" aria-pressed="false">Ordem do processo</button>
+                  ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Tempo decorrido</button>` : ""}
                 </div></div>
             </div>
             ${yardBox(p)}
@@ -995,7 +995,7 @@
         <div class="detail" id="${esc(p.id)}-detail">
           <div class="cards">
             <div class="card">
-              <h3>Caso de uso alvo</h3>
+              <h3>Uso pretendido</h3>
               <p>${esc(d.useCase)}</p>
             </div>
             <div class="card">
@@ -1003,27 +1003,27 @@
               <ul>${d.access.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
             </div>
             <div class="card">
-              <h3>Requisitos de adoção</h3>
+              <h3>Requisitos para adoção</h3>
               <ul>${d.adoption.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
             </div>
             <div class="card">
-              <h3>Acesso ao país</h3>
+              <h3>Acesso de país</h3>
               ${countryAccessKv(d)}
-              <div class="kv"><span>Previsão da demanda</span><span>${esc(d.country.forecastDemand)}</span></div>
+              <div class="kv"><span>Previsão de demanda</span><span>${esc(d.country.forecastDemand)}</span></div>
             </div>
             <div class="card">
               <h3>Pesquisa operacional</h3>
-              <div class="kv"><span>Liderar</span><span>${esc(d.research.lead)}</span></div>
+              <div class="kv"><span>Responsável</span><span>${esc(d.research.lead)}</span></div>
               <div class="kv"><span>Geografias</span><span>${esc(d.research.geographies)}</span></div>
-              <div class="kv"><span>Linha do tempo</span><span>${esc(d.research.timeline)}</span></div>
+              <div class="kv"><span>Cronologia</span><span>${esc(d.research.timeline)}</span></div>
               <p style="margin-top:6px"><em>${esc(d.research.question)}</em></p>
             </div>
             ${volumeCard}
-            ${p.acknowledgement ? `<div class="card" style="grid-column:1/-1"><h3>Reconhecimento</h3><p>${esc(p.acknowledgement)}</p></div>` : ""}
+            ${p.acknowledgement ? `<div class="card" style="grid-column:1/-1"><h3>Agradecimento</h3><p>${esc(p.acknowledgement)}</p></div>` : ""}
           </div>
           <div class="mtable-box">
             <table class="mtable">
-              <thead><tr><th>Marco</th><th>Status</th><th>Data de conclusão/entrega</th><th>Próximo passo esperado</th><th>Antecipado</th></tr></thead>
+              <thead><tr><th>Marco</th><th>Status</th><th>Data de conclusão / submissão</th><th>Próxima etapa prevista</th><th>Previsto</th></tr></thead>
               <tbody>
                 ${d.milestones.map(m => `
                   <tr>
@@ -1178,15 +1178,15 @@
     const shown = statusShown(p, st.status);
 
     const kv = [];
-    if (st.date) kv.push(["Gravado", esc(st.date)]);
-    if (st.next) kv.push(["Próximo passo", esc(st.next)]);
+    if (st.date) kv.push(["Registrado", esc(st.date)]);
+    if (st.next) kv.push(["Próxima etapa", esc(st.next)]);
     if (st.nextDate) kv.push(["Esperado", esc(st.nextDate)]);
     if (el2 && shown) kv.push(["Pendente desde", `<span class="gp-elapsed">${el2.yrs} ano${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
 
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
     const reqs = (i === 5 && Array.isArray(p.detail.adoption) && p.detail.adoption.length)
-      ? `<div class="gp-kv"><dt>Quais são as necessidades da adoção?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
+      ? `<div class="gp-kv"><dt>O que é necessário para a adoção</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
 
     let countries = "";
     if ((i === 4 || i === 5) && p.detail.countries && Array.isArray(p.detail.countries.list)) {
@@ -1195,7 +1195,7 @@
       countries = `<div class="gp-countries">` +
         `<span class="key"><span class="mapsw registered"></span>Registrado <span class="n">${c.registered}</span></span>` +
         `<span class="key"><span class="mapsw guidelines"></span>Em diretrizes nacionais <span class="n">${c.guidelines}</span></span>` +
-        `<span class="key"><span class="mapsw mft"></span>Em planos MFT <span class="n">${c.mft}</span></span>` +
+        `<span class="key"><span class="mapsw mft"></span>Em planos de MFT <span class="n">${c.mft}</span></span>` +
         `</div>`;
     }
 
@@ -1204,7 +1204,7 @@
       st.asOf ? "verificado " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
-        ? (p.detail.countries.status === "illustrative" ? "O levantamento nacional é ilustrativo." : "pesquisa de país " + esc(p.detail.countries.status)) : ""
+        ? (p.detail.countries.status === "illustrative" ? "a pesquisa no país é ilustrativa" : "a pesquisa no país é " + esc(p.detail.countries.status)) : ""
     ].filter(Boolean).join(" · ");
 
     return `

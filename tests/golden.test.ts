@@ -1,6 +1,6 @@
 // The golden test: lib/format.ts and lib/stages.ts against the static pages'
 // own functions, frozen in tests/golden/reference/{en,fr,pt}.js by
-// tests/golden/extract.mjs (launch-rbm-test 2f3d72c).
+// tests/golden/extract.mjs (launch-rbm-test 565cec0).
 //
 // Each reference runs in its own node:vm context, given only what the page
 // gave it: the globals, set from localize() exactly as the new functions get
@@ -32,7 +32,7 @@ const htmlLang = (l: Locale) => {
   if (!m) throw new Error(`reference/${l}.js has no html-lang line`);
   // The page's own tag. From 28 Oct to 3 Nov 2026 the reference was the
   // European pt-PT page and this gave the new code's tag instead; the pages
-  // at 2f3d72c are Brazilian, as the new code (lib/frame.ts PAGE_LANG), so
+  // at 565cec0 are Brazilian, as the new code (lib/frame.ts PAGE_LANG), so
   // the two must agree, and old and new format dates and numbers alike.
   if (m[1] !== PAGE_LANG[l]) throw new Error(`the page says <html lang="${m[1]}">, lib/frame.ts PAGE_LANG ${PAGE_LANG[l]}`);
   return m[1];
