@@ -1,0 +1,424 @@
+{
+	"Sidebar": {
+		"partners_subitem_unitaid": "Painel LAUNCH de Produtos contra a Malária",
+		"partners_subitem_unitaid_tooltip": "Acompanhamento de novos medicamentos antimaláricos ao longo do processo de acesso ao mercado"
+	},
+	"Unitaid": {
+		"title": "Painel LAUNCH de Produtos contra a Malária",
+		"metadata": {
+			"title": "Painel LAUNCH de Produtos contra a Malária | RBM Partnership to End Malaria",
+			"description": "Acompanhamento de novos medicamentos antimaláricos ao longo do processo de acesso ao mercado",
+			"keywords": "LAUNCH, Unitaid, Malaria, Antimalarial medicines, Market access, Product launch, Dashboard, RBM Partnership to End Malaria"
+		},
+		"header": {
+			"title": "Painel LAUNCH de Produtos contra a Malária",
+			"poweredBy": "Com tecnologia",
+			"unitaidLogoAlt": "Unitaid",
+			"description": "Acompanhamento de novos medicamentos antimaláricos ao longo do processo de acesso ao mercado",
+			"lastUpdated": "Última atualização {date}"
+		},
+		"banner": {
+			"mockupTitle": "Protótipo visual do design.",
+			"mockupBody": "Todos os status, datas, preços e volumes abaixo são dados ilustrativos provisórios para avaliação do layout — não são dados reais do programa.",
+			"mockupLink": "Ler a declaração de isenção de responsabilidade"
+		},
+		"subscribe": {
+			"button": "Inscrever-se para receber atualizações",
+			"title": "Inscrever-se para receber atualizações",
+			"intro": "Receba um e-mail quando as informações sobre produtos forem atualizadas.",
+			"firstName": "Nome",
+			"lastName": "Sobrenome",
+			"email": "E-mail",
+			"emailPlaceholder": "you@organisation.org",
+			"organisation": "Organização",
+			"optional": "(opcional)",
+			"submit": "Envie-me uma notificação",
+			"sending": "Enviando…",
+			"privacyNote": "Seus dados são enviados à equipe do LAUNCH e utilizados exclusivamente para enviar e-mails sobre atualizações desta página.",
+			"nameMissing": "Insira seu nome e sobrenome.",
+			"emailInvalid": "Insira um endereço de e-mail pelo qual possamos entrar em contato com você.",
+			"failed": "Desculpe, não foi possível concluir sua inscrição neste momento. Tente novamente em alguns instantes.",
+			"subscribed": "Obrigado por se inscrever. Você receberá um e-mail sempre que os dados do painel forem atualizados.",
+			"alreadySubscribed": "Este endereço de e-mail já está inscrito. Você continuará recebendo um e-mail sempre que os dados do painel forem atualizados."
+		},
+		"unsubscribe": {
+			"title": "Cancelar inscrição para receber atualizações do painel de controle LAUNCH?",
+			"intro": "Você deixará de receber e-mails quando os dados do painel forem atualizados.",
+			"button": "Cancelar inscrição",
+			"sending": "Cancelar inscrição…",
+			"doneTitle": "Você cancelou a sua inscrição.",
+			"doneText": "Você não receberá mais e-mails de atualização do painel LAUNCH.",
+			"doneAgain": "Mudou de ideia? Você pode se inscrever novamente pelo painel de controle a qualquer momento.",
+			"badLinkTitle": "Este link não funciona.",
+			"badLinkText": "Pode ter sido copiado de forma incompleta. Utilize o link de cancelamento de inscrição presente no e-mail mais recente que recebemos de nós.",
+			"failedTitle": "Desculpe, isso não funcionou.",
+			"failedText": "Não foi possível cancelar sua inscrição agora. Por favor, tente novamente em alguns minutos.",
+			"back": "Voltar ao painel de controle"
+		},
+		"pathway": {
+			"label": "O processo de acesso: oito marcos distribuídos em sete etapas. A recomendação da OMS e a inclusão na lista de PQ da OMS são marcos paralelos dentro da etapa 3. Selecione uma etapa para ver o que acontece nela e em que ponto se encontra cada medicamento.",
+			"stageButtonLabel": "Estágio {n}, {stage}. Mostra o que acontece aqui e onde cada medicamento está localizado.",
+			"stageButtonExpected": ", esperado {years}",
+			"stageButtonDelayed": ", {n} atrasado",
+			"parallelGroupLabel": "{names} — aprovações independentes, sem ordem definida entre elas",
+			"expectedTag": "{years} esperado"
+		},
+		"stepPanel": {
+			"label": "Etapa {n}: {stage}",
+			"stepOfTotal": "Etapa {n} de {total}",
+			"statusSummaryLabel": "Situação dos medicamentos {count} nesta etapa",
+			"statusCounts": {
+				"complete": "concluir",
+				"inProgress": "em andamento",
+				"delayed": "atrasado",
+				"notStarted": "não iniciado"
+			},
+			"parallelMilestones": "{first} e{second} são marcos paralelos dentro da etapa {n}.",
+			"whatHappens": "O que acontece aqui",
+			"whoDecides": "Quem decide",
+			"whyItCanStall": "Por que pode estagnar",
+			"source": "Fonte"
+		},
+		"board": {
+			"columns": {
+				"medicine": "Medicamento",
+				"journey": "Percurso",
+				"currentStage": "Etapa atual",
+				"marketAccess": "Acesso ao Mercado",
+				"access": "Acesso no País",
+				"mainBarrier": "Principal barreira"
+			},
+			"accessDefinition": "O acesso ao mercado é alcançado quando um medicamento é recomendado e pré-qualificado pela OMS. O acesso no país começa a partir daí e se estende até que o registro nacional, a adoção nas políticas, as aquisições em volumes significativos e a distribuição no país estejam todos concluídos.",
+			"showJourney": "Mostrar o percurso de {medicine}",
+			"milestonesComplete": "{done} de {total} marcos concluídos",
+			"accessNotReached": "Ainda não alcançado",
+			"accessReachedIn": "Alcançado em {year}",
+			"accessReachedNoYear": "Alcançado, ano não registrado",
+			"accessSoFar": "{duration} até o momento",
+			"accessUnderOneYear": "Menos de 1 ano até o momento",
+			"delayedDefinition": "A etapa atual do medicamento está estagnada ou avançando de forma excepcionalmente lenta, segundo a avaliação do LAUNCH com base em evidências públicas. A principal barreira indica o motivo. Essa avaliação não é feita com base em um prazo preestabelecido.",
+			"delayedHint": "{status}: {definition}",
+			"noBarrier": "Nenhuma barreira publicamente documentada identificada"
+		},
+		"product": {
+			"accessLine": "{phase}: {figure}",
+			"journeyView": "Visualização do percurso",
+			"viewTimeline": "Cronograma real",
+			"viewPathway": "Ordem do processo",
+			"viewTimeTaken": "Tempo decorrido",
+			"stageMarkerLabel": "{stage}. {status}. Abre a visualização completa do detalhe.",
+			"dotTitle": "{stage}: {status}",
+			"parallelGroupLabel": "{names} — aprovações independentes, sem ordem definida entre elas",
+			"timeline": {
+				"today": "hoje",
+				"since": "desde {milestone} ({year}) · {duration}",
+				"sinceYear": "desde {year}",
+				"reachedNoYear": "Alcançado · ano não registrado",
+				"ongoingNoDate": "Em andamento · sem data",
+				"notYetDated": "Ainda sem data registrada",
+				"notStarted": "Não iniciado · {count}",
+				"ongoing": "em andamento",
+				"delayed": "atrasado",
+				"none": "Nenhum"
+			},
+			"stagePanel": {
+				"recorded": "Registrado",
+				"nextStep": "Próxima etapa",
+				"expected": "Esperado",
+				"pendingSince": "Pendente desde",
+				"adoptionNeeds": "O que é necessário para a adoção",
+				"verifiedOn": "verificado {date}",
+				"surveyIllustrative": "a pesquisa no país é ilustrativa",
+				"surveyStatus": "A pesquisa de país é {status}"
+			},
+			"moreDetail": "Mais detalhes",
+			"hideDetail": "Ocultar detalhe",
+			"cards": {
+				"useCase": "Uso pretendido",
+				"accessCommitments": "Compromissos de acesso e fornecimento",
+				"adoption": "Requisitos para adoção",
+				"countryAccess": "Acesso de país",
+				"countriesOnMap": "Países no mapa",
+				"confirmedInRegisters": "Confirmado nos registros nacionais",
+				"moreThanOneStage": "Um país pode ser contabilizado em mais de um nível.",
+				"forecastDemand": "Previsão de demanda",
+				"research": "Pesquisa operacional",
+				"researchLead": "Responsável",
+				"researchGeographies": "Geografias",
+				"researchTimeline": "Cronologia",
+				"acknowledgement": "Agradecimento"
+			},
+			"procurement": {
+				"title": "Aquisições por meio de canais públicos",
+				"globalFundOnly": "Todas as transações apresentadas são pedidos financiados pelo Fundo Global, provenientes de seu banco de dados PQR. Pedidos pagos por outros doadores, governos nacionais ou compradores privados não estão incluídos; portanto, este valor não representa o total de aquisições globais do produto.",
+				"notAvailable": "Dados ainda não disponíveis",
+				"presentation": "Apresentação",
+				"transactions": "Transações",
+				"packs": "Pacotes",
+				"courses": "Tratamentos completos (est.)",
+				"notEstimated": "não estimado"
+			},
+			"milestones": {
+				"milestone": "Marco",
+				"status": "Status",
+				"dateAchieved": "Data de conclusão / submissão",
+				"nextStep": "Próxima etapa prevista",
+				"anticipated": "Previsto"
+			}
+		},
+		"yardstick": {
+			"soFar": "até o momento",
+			"notApprovedYet": "Não aprovado ainda",
+			"expected": "Esperado",
+			"routineUseBy": "uso de rotina em {year}",
+			"actual": "Real",
+			"actualSoFar": "Efetivo até o momento",
+			"since": "desde {year}",
+			"sinceNotRoutine": "desde {year}, ainda não em uso rotineiro",
+			"variance": "Variação",
+			"fromExpected": "em relação ao previsto",
+			"expectedRoutineUse": "Previsão de uso de rotina até {due}, {n} anos após primeiro marco em {start}.",
+			"stillNotRoutine": "Ainda não em uso de rotina em {year}.",
+			"largestVariance": "Maior variação:",
+			"notApprovedTitle": "Não aprovado ainda.",
+			"notApprovedBody": "Começamos a comparação assim que o medicamento recebe uma aprovação regulatória com data registrada.",
+			"stageHeading": "Etapa",
+			"wholeJourney": "Percurso completo",
+			"notePublished": "Tempos esperados a partir de um cronograma publicado: {stages}.",
+			"noteEstimate": "Tempos esperados a partir das estimativas de trabalho de LAUNCH, ainda a serem acordados: {stages}.",
+			"doneNoDate": "Concluído, data não registrada",
+			"ongoingNoStart": "Em andamento, sem data de início",
+			"onTrackSoFar": "Dentro do previsto até o momento"
+		},
+		"tooltip": {
+			"clickForDetail": "Clique para todos os detalhes",
+			"expected": "esperado {date}",
+			"mapClickForDetails": "Clique para detalhes ›",
+			"notListed": "não listado",
+			"dataStatus": "{medicine} · {status} dados"
+		},
+		"map": {
+			"title": "Mapa de acesso por país",
+			"note": "Países onde um registo nacional de medicamentos confirma que o medicamento está registado. Selecione outra etapa de acesso em Filtros; um país pode aparecer em mais de uma etapa.",
+			"noteGuidelines": "Países cujas diretrizes ou políticas nacionais de tratamento incluem o medicamento, conforme citado em uma publicação da OMS ou em um artigo revisado por pares. Um país pode aparecer em mais de uma etapa.",
+			"noteMft": "Países com um plano de terapia de primeira linha múltipla (MFT) que utiliza o medicamento: um projeto piloto, um projeto piloto planejado ou uma implementação nacional. Um país pode aparecer em mais de uma etapa.",
+			"hint": "Arraste para mover · Ctrl + rolagem ou clique duplo para ampliar · use as teclas de seta para mover o mapa quando ele estiver em foco",
+			"canvasLabel": "Mapa-mundi, desloque e aplique zoom usando o mouse ou as teclas de seta",
+			"countryListLabel": "Países deste mapa, formato de lista",
+			"zoomIn": "Ampliar",
+			"zoomOut": "Reduzir",
+			"ctrlScrollHelp": "Use Ctrl + rolagem para aplicar zoom no mapa",
+			"cmdScrollHelp": "Use ⌘ + rolagem para aplicar zoom no mapa",
+			"twoFingerHelp": "Use dois dedos para mover o mapa",
+			"preLaunch": "{medicine} está em fase de pré-lançamento — ainda não há acesso a determinados países.",
+			"noCountryData": "Ainda não existem dados a nível de país para {medicine}.",
+			"accessStage": "Estágio de acesso",
+			"countHeading": "No. de países",
+			"recommendedUse": "Uso recomendado no país",
+			"noPolicy": "Nenhuma política nacional de tratamento inclui {medicine} até o momento.",
+			"policySource": "Fonte: OMS {edition}, Anexo 4B (política {year}).",
+			"regions": {
+				"all": "Todas as regiões",
+				"afro": "África",
+				"amro": "Américas",
+				"emro": "Mediterrâneo Oriental",
+				"euro": "Europa",
+				"searo": "Sudeste Asiático",
+				"wpro": "Pacífico Ocidental"
+			},
+			"groups": {
+				"testedShort": "Recomendado para P. falciparum",
+				"testedLabel": "Recomendado para malária causada por Plasmodium falciparum",
+				"testedWhy": "Primeira linha para casos confirmados (por teste) na política nacional",
+				"vivaxShort": "Recomendado para P. vivax",
+				"vivaxLabel": "Recomendado para malária causada por Plasmodium vivax",
+				"vivaxWhy": "Incluído como tratamento na política nacional"
+			},
+			"tabs": {
+				"heading": "Medicamento",
+				"label": "Selecione um medicamento para o mapa"
+			},
+			"filters": {
+				"heading": "Filtros",
+				"reset": "Redefinir",
+				"show": "Mostrar no mapa",
+				"tickHint": "Marque um grupo para exibir seus limites no mapa.",
+				"location": "Local",
+				"region": "Região",
+				"regionLabel": "Filtrar mapa por região da OMS",
+				"country": "País ou área",
+				"countryLabel": "Filtrar mapa por país",
+				"allCountries": "Todos os países"
+			},
+			"legend": {
+				"heading": "Legenda",
+				"resistanceNote": "Os resultados sobre resistência aos medicamentos não são apresentados neste mapa. Para explorá-los, consulte o",
+				"resistanceLink": "Mapa de Ameaças da Malária da OMS"
+			},
+			"finder": {
+				"title": "Encontrar um país",
+				"count": "{shown} de {total}",
+				"searchPlaceholder": "Digite o nome de um país…",
+				"searchLabel": "Pesquisar países",
+				"noMatch": "Nenhum país corresponde.",
+				"noneMatchFilters": "Nenhum país corresponde aos filtros à esquerda.",
+				"resetFilters": "Redefinir filtros"
+			},
+			"table": {
+				"country": "País",
+				"stage": "Etapa",
+				"use": "Uso"
+			},
+			"panel": {
+				"heading": "Detalhe",
+				"overviewTab": "Visão geral",
+				"countriesTab": "Países",
+				"selectHint": "Selecione qualquer país no mapa ou na aba Países para abrir sua página.",
+				"factsTitle": "{medicine} · informações sobre o medicamento",
+				"currentStage": "Etapa atual",
+				"procurement": "Aquisições por canais públicos (Global Fund)",
+				"preLaunchOverview": "{medicine} está em fase de pré-lançamento, portanto, ainda não há status ou políticas no âmbito do país.",
+				"preLaunchCountry": "{medicine} está em fase de pré-lançamento, portanto, ainda não há status ou políticas do país.",
+				"stageMixTitle": "Etapas de acesso · {medicine}",
+				"stageMixCount": "de {total} países têm uma etapa de acesso",
+				"moreThanOneStage": "Um país pode ser contabilizado em mais de um nível.",
+				"tickLeft": "Marque um grupo à esquerda para ver seus países.",
+				"group": "Grupo",
+				"donutLabelOne": "{count} país por grupo de pacientes",
+				"donutLabelOther": "{count} países por grupo de pacientes",
+				"donutUnitOne": "país",
+				"donutUnitOther": "países",
+				"notDrawn": "Também incluído na política, mas não representado neste mapa: {countries}.",
+				"backToCountries": "Voltar aos países",
+				"backToOverview": "Voltar à visão geral",
+				"previousCountry": "País anterior",
+				"nextCountry": "Próximo país",
+				"inWhoPolicy": "na política da OMS {year}",
+				"notInPolicy": "Não incluído na política nacional de tratamento",
+				"partLists": "{part}: listas {medicine}.",
+				"partDoesNotList": "{part}: não lista {medicine}.",
+				"amongRegion": "{country} entre {count} {region} países · {medicine}",
+				"sameStage": "Outros países na mesma etapa · {stage}",
+				"moreInCountriesTab": "+{count} mais na aba Países",
+				"countrySources": "Fontes para esta etapa de acesso:",
+				"checkedOn": "Verificado em {date}."
+			}
+		},
+		"download": {
+			"button": "Baixar CSV",
+			"columns": {
+				"product": "Produto",
+				"record": "Registro",
+				"item": "Item",
+				"status": "Status",
+				"detail": "Detalhe",
+				"date": "Data",
+				"nextStep": "Próxima etapa",
+				"anticipated": "Previsto",
+				"source": "Fonte",
+				"asOf": "A partir de"
+			},
+			"records": {
+				"stage": "Etapa",
+				"milestone": "Marco"
+			}
+		},
+		"feedback": {
+			"open": "Enviar feedback",
+			"title": "Enviar feedback",
+			"intro": "Alguma informação parece incorreta ou desatualizada? Conte-nos o que você está vendo.",
+			"closeLabel": "Fechar",
+			"typeLabel": "Sobre o que é seu feedback?",
+			"types": {
+				"correction": "Algo na página parece estar errado",
+				"source": "Uma fonte está faltando ou desatualizada",
+				"suggestion": "Uma ideia para tornar isso mais claro ou útil",
+				"other": "Outra coisa"
+			},
+			"productLabel": "A qual medicamento isso se refere?",
+			"productGeneral": "Geral — o painel como um todo",
+			"productPlanned": "{medicine} (planejado)",
+			"optional": "opcional",
+			"messageLabel": "O que você gostaria de nos dizer?",
+			"messagePlaceholder": "Por exemplo: o mapa indica que este medicamento ainda não foi registrado na Tanzânia, mas ele foi aprovado no país em junho de 2026.",
+			"name": "Seu nome",
+			"email": "E-mail",
+			"organisation": "Organização",
+			"organisationPlaceholder": "Ministério da saúde, fabricante, parceiro…",
+			"note": "Informar o seu e-mail é opcional, e ele será usado apenas para o envio de respostas. Junto com sua mensagem, enviamos a página em que você está, a versão dos dados que ela apresenta e informações sobre seu navegador, para que a equipe possa ver o que você viu.",
+			"cancel": "Cancelar",
+			"submit": "Enviar feedback",
+			"sending": "Enviando…",
+			"failed": "Desculpe, não foi possível enviar seu feedback neste momento. Tente novamente em alguns instantes.",
+			"messageMissing": "Descreva o problema.",
+			"messageTooShort": "Um pouco mais de detalhes, por favor — pelo menos 10 caracteres.",
+			"emailInvalid": "Esse endereço de e-mail não parece estar correto.",
+			"doneTitle": "Obrigado — seu feedback foi enviado.",
+			"doneMessage": "A equipe do LAUNCH lê todas as mensagens e, quando você nos indica uma fonte pública cujas informações são confirmadas, corrigimos os dados na próxima atualização. Se você tiver fornecido um endereço de e-mail, nossas respostas sempre incluirão a referência abaixo.",
+			"reference": "Referência {ref}",
+			"again": "Enviar mais feedback",
+			"notConnected": {
+				"note": "Apenas uma simulação — o envio de feedback ainda não está conectado.",
+				"doneTitle": "Obrigado — embora isso ainda não seja enviado a lugar nenhum.",
+				"doneMessage": "Este formulário ainda não está conectado a uma caixa de entrada, portanto, nada foi realmente enviado — sua mensagem permaneceu nesta aba do navegador. Assim que estiver conectado, a equipe do LAUNCH lerá todas as mensagens e, quando você nos indicar uma fonte pública cujas informações forem confirmadas, corrigiremos os dados na próxima atualização."
+			}
+		},
+		"disclaimer": {
+			"title": "Isenção de responsabilidade",
+			"notComplete": "Os usuários não devem considerar o painel LAUNCH como uma fonte completa e definitiva de informações de acesso. Ele fornece um retrato momentâneo, baseado em informações disponíveis publicamente e em dados confirmados por escrito pelo fabricante. Cada valor reflete os melhores dados disponíveis na data exibida; alguns países, anos ou canais de compra podem estar ausentes.",
+			"noLiability": "A Unitaid não assume responsabilidade legal pela exatidão dos dados. A Unitaid não garante que os mesmos sejam completos, estejam atualizados ou sejam adequados a uma finalidade específica.",
+			"countriesVerified": "Os registros de país foram verificados para: {medicines}.",
+			"countriesNotVerified": "As etapas do país ainda não foram verificadas para: {medicines}.",
+			"ownChecks": "Os usuários devem realizar suas próprias verificações em âmbito nacional antes de tomar qualquer decisão com base nesses dados.",
+			"notEverything": "Uma compreensão completa da situação de acesso a um medicamento em qualquer país pode exigir informações que não constam deste painel."
+		},
+		"about": {
+			"launchTitle": "Sobre o LAUNCH",
+			"launchPurpose": "Financiado pela Unitaid, o LAUNCH é uma prova de conceito destinada a tornar transparente o processo de acesso a novos medicamentos antimaláricos. Ele reúne em um só lugar informações públicas sobre cada medicamento, desde o desenvolvimento e a aprovação regulatória, passando pela recomendação e pré-qualificação da OMS, até o registro, as políticas, aquisições e a distribuição nos países, para que os parceiros possam identificar onde o acesso está sendo dificultado e tomar medidas para solucionar esses obstáculos.",
+			"launchScope": "O projeto começa com quatro medicamentos relevantes para as estratégias de terapia múltipla de primeira linha (MFT), que utilizam mais de um tratamento de primeira linha em uma população para reduzir o risco de resistência aos medicamentos. Dois já são recomendados pela OMS, mas são subutilizados: artesunato–pironaridina (ASPY) e di-hidroartemisinina–piperaquina (DHA–PPQ). Dois estão em estágio avançado de desenvolvimento: ganaplacida–lumefantrina (GanLum) e arteméter–lumefantrina–amodiaquina (ALAQ). Juntos, eles abrangem as duas partes do processo: a aprovação dos medicamentos em desenvolvimento e adoção e aquisição daqueles já recomendados.",
+			"launchNoEndorsement": "O acompanhamento de um medicamento não significa que o LAUNCH ou a Unitaid o endosse ou recomende para qualquer uso. O painel informa em que etapa do processo de acesso se encontra cada medicamento, e não se ele deve ser utilizado. Para esta prova de conceito, o escopo são esses quatro medicamentos; futuramente, poderá ser ampliado para incluir outros medicamentos e ferramentas de combate à malária.",
+			"dataTitle": "Sobre os dados",
+			"dataBody": "O painel LAUNCH apresenta apenas informações disponíveis publicamente. Detalhes específicos de produtos são apresentados somente quando o fabricante confirma por escrito que podem ser compartilhados. As análises pelas autoridades sanitárias podem ocorrer em qualquer etapa do desenvolvimento, e seu status geralmente não é público. Portanto, as etapas regulatórias só são modificadas quando uma autoridade reguladora ou o fabricante anuncia um resultado. Os dados de aquisições abrangem apenas os canais públicos. Passe o cursor sobre qualquer etapa para visualizar detalhes de status; selecione um medicamento para abrir seu perfil completo.",
+			"definitionsTitle": "Definições"
+		},
+		"sources": {
+			"title": "Fontes",
+			"intro": "Todas as informações desta página podem ser verificadas em uma das fontes públicas abaixo.",
+			"keyDocumentsTitle": "Documentos principais.",
+			"keyDocumentsIntro": "Estudos, avaliações e comunicados individuais relacionados a medicamentos específicos",
+			"rawData": "Dados brutos (para desenvolvedores):"
+		},
+		"errors": {
+			"dataFailedTitle": "Não foi possível carregar os dados do painel.",
+			"dataFailedReload": "Recarregue a página para tentar novamente.",
+			"dataFailedRetry": "Tente novamente em alguns minutos.",
+			"updatingTitle": "Este painel está sendo atualizado.",
+			"updatingBody": "Consulte novamente em breve.",
+			"sourcesFailed": "Não foi possível carregar a lista de fontes. Recarregue a página para tentar novamente."
+		},
+		"common": {
+			"close": "Fechar",
+			"and": "e",
+			"sourceLabel": "Fonte:",
+			"yearsOne": "{n} ano",
+			"yearsOther": "{n} anos",
+			"status": {
+				"complete": "Completo",
+				"inProgress": "Em andamento",
+				"delayed": "Atrasado",
+				"notStarted": "Não iniciado"
+			},
+			"phases": {
+				"market": "Acesso ao Mercado",
+				"country": "Acesso no País"
+			},
+			"accessLevels": {
+				"registered": "Registrado",
+				"guidelines": "Em diretrizes nacionais",
+				"guidelinesShort": "Nas diretrizes",
+				"mft": "Em planos de MFT",
+				"none": "Nenhum dado"
+			}
+		}
+	}
+}
