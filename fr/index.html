@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <meta charset="utf-8">
-<title>Tableau de bord de lancement de produits contre le paludisme</title>
+<title>Tableau de bord des lancements de produits antipaludiques</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.css"
       integrity="sha512-KIMsMWIdnoG9OwZa+oaIafmbDonqck1UCmq+/zcUi2aaZ97N9QE6TqpTM+n36EO40HGh64hU/375zxtjx7WTyQ==" crossorigin="anonymous">
@@ -1548,25 +1548,25 @@
 <div class="wrap">
   <header>
     <div class="hd-top">
-      <h1 class="hd-title">Tableau de bord de lancement de produits contre le paludisme</h1>
+      <h1 class="hd-title">Tableau de bord des lancements de produits antipaludiques</h1>
       <div class="attrib">
         <a href="https://unitaid.org" target="_blank" rel="noopener noreferrer">
-          <span class="ptxt">Alimenté par</span>
+          <span class="ptxt">Développé par</span>
           <img src="../assets/unitaid-logo.svg" alt="Unitaid" width="1200" height="418">
         </a>
       </div>
     </div>
     <div class="hd-bar">
       <div class="hd-text">
-        <p class="hd-desc">Suivi des nouveaux médicaments antipaludiques tout au long de leur parcours d'accès au marché</p>
+        <p class="hd-desc">Suivez les nouveaux médicaments antipaludiques tout au long du parcours d’accès au marché</p>
         <div class="hd-status"><span id="updated"></span></div>
       </div>
       <div class="hdr-actions">
         <button class="dl-btn" id="dl-csv" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v7.5M4.75 6.75 8 10l3.25-3.25M2.5 13h11"/></svg> Télécharger le fichier CSV</button>
-        <button class="sub-btn" id="sub-open" type="button" aria-expanded="false" aria-controls="subwrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="3.25" width="12.5" height="9.5" rx="1.5"/><path d="m2.25 4.6 5.05 3.85a1.15 1.15 0 0 0 1.4 0L13.75 4.6"/></svg> Abonnez-vous pour recevoir les mises à jour</button>
+        <button class="sub-btn" id="sub-open" type="button" aria-expanded="false" aria-controls="subwrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="3.25" width="12.5" height="9.5" rx="1.5"/><path d="m2.25 4.6 5.05 3.85a1.15 1.15 0 0 0 1.4 0L13.75 4.6"/></svg> Recevoir les mises à jour</button>
         <section class="subwrap" id="subwrap" hidden aria-labelledby="sub-title">
-          <h2 id="sub-title" tabindex="-1">Abonnez-vous pour recevoir les mises à jour</h2>
-          <p>Recevez un e-mail lorsque les informations sur le produit sont mises à jour.</p>
+          <h2 id="sub-title" tabindex="-1">Recevoir les mises à jour</h2>
+          <p>Recevez un courriel dès que nous mettons à jour les informations du tableau de bord.</p>
           <form class="subrow subform" id="sub-form" novalidate>
             <div class="subgrid">
               <div class="subfield">
@@ -1574,23 +1574,23 @@
                 <input id="sub-first" name="firstName" type="text" autocomplete="given-name" maxlength="100" aria-describedby="sub-msg">
               </div>
               <div class="subfield">
-                <label for="sub-last">Nom de famille</label>
+                <label for="sub-last">Nom</label>
                 <input id="sub-last" name="lastName" type="text" autocomplete="family-name" maxlength="100" aria-describedby="sub-msg">
               </div>
               <div class="subfield subfield-wide">
-                <label for="sub-email">Adresse email</label>
+                <label for="sub-email">Adresse électronique</label>
                 <input id="sub-email" name="email" type="email" autocomplete="email" maxlength="254"
-                       placeholder="vous@organisation.org" aria-describedby="sub-msg">
+                       placeholder="you@organisation.org" aria-describedby="sub-msg">
               </div>
               <div class="subfield subfield-wide">
                 <label for="sub-org">Organisation <span class="sub-opt">(facultatif)</span></label>
                 <input id="sub-org" name="organisation" type="text" autocomplete="organization" maxlength="200">
               </div>
             </div>
-            <button class="sub-go" type="submit">Prévenez-moi</button>
+            <button class="sub-go" type="submit">S’inscrire</button>
           </form>
           <p class="sub-msg" id="sub-msg" role="status" hidden></p>
-          <p class="sub-note">Vos coordonnées sont transmises à l'équipe LAUNCH et ne sont utilisées que pour vous envoyer des e-mails concernant les mises à jour de cette page.</p>
+          <p class="sub-note">Vos coordonnées seront transmises à l’équipe de LAUNCH. Elles ne seront utilisées que pour vous envoyer par courriel des informations concernant les mises à jour de cette page.</p>
         </section>
       </div>
     </div>
@@ -1598,20 +1598,20 @@
 
   <div class="demo-banner" id="banner" hidden></div>
 
-  <div class="pathway" id="pathway" role="group" aria-label="Le parcours d'accès : huit étapes clés réparties en sept phases. La recommandation de l'OMS et l'inscription de l'OMS sur la liste PQ sont des étapes clés parallèles au sein de la phase 3. Choisissez une phase pour découvrir ce qui s'y passe et où se trouve chaque médicament." hidden></div>
+  <div class="pathway" id="pathway" role="group" aria-label="Le parcours d’accès : huit étapes clés réparties sur sept phases. La recommandation de l’OMS et l’inscription sur la liste de préqualification de l’OMS constituent des étapes clés parallèles au sein de la phase 3. Choisissez une phase pour découvrir ce qui s’y passe et où se situe chaque médicament." hidden></div>
 
   <div class="gatewrap" id="gatewrap" hidden></div>
 
   <div class="board" id="board"></div>
 
   <section class="viz" id="mapsec" hidden>
-    <h2>Carte d'accès au pays</h2>
+    <h2>Carte de l’accès aux pays</h2>
     <p class="viznote" id="mapnote">Pays où un registre national des médicaments confirme l'enregistrement du médicament. Sélectionnez une autre étape d'accès sous Filtres ; un pays peut apparaître à plusieurs étapes.</p>
     <div class="map-dock">
       <aside class="map-dock-rail map-dock-left">
         <div class="dock-section">
-          <h3>Médecine</h3>
-          <div class="tabs" id="maptabs" role="tablist" aria-label="Sélectionnez le médicament pour la carte"></div>
+          <h3>Médicament</h3>
+          <div class="tabs" id="maptabs" role="tablist" aria-label="Sélectionner un médicament pour l’afficher"></div>
         </div>
         <div class="dock-section" id="filters">
           <div class="flt-head">
@@ -1622,25 +1622,25 @@
           <p class="mft-hint" id="mft-hint"></p>
         </div>
         <div class="dock-section" id="loc-controls">
-          <h3>Emplacement</h3>
-          <label class="res-pick">Région <select id="loc-region" aria-label="Filtrer la carte par région de l'OMS"></select></label>
-          <label class="res-pick">Pays ou région <select id="loc-country" aria-label="Filtrer la carte par pays"></select></label>
+          <h3>Lieu</h3>
+          <label class="res-pick">Région <select id="loc-region" aria-label="Filtrer la carte par région de l’OMS"></select></label>
+          <label class="res-pick">Pays ou zone <select id="loc-country" aria-label="Filtrer la carte par pays"></select></label>
         </div>
       </aside>
 
       <div class="map-dock-center">
         <div class="mapwrap" id="mapwrap"></div>
-        <p class="map-hint" id="map-hint">Faites glisser pour vous déplacer · Ctrl + molette ou double-clic pour zoomer · les flèches directionnelles permettent de se déplacer lorsque la carte est sélectionnée.</p>
+        <p class="map-hint" id="map-hint">Faire glisser pour déplacer la vue · Ctrl + molette ou double-clic pour zoomer · utiliser les flèches du clavier pour déplacer la vue dans la carte</p>
         <div class="map-legend-bar">
           <div class="dock-section">
             <h3>Légende</h3>
             <div class="legend-tables">
             <div class="map-legend">
               <table class="ftab">
-                <thead><tr><th colspan="2">Étape d'accès</th><th class="n">Nombre de pays</th></tr></thead>
+                <thead><tr><th colspan="2">Phases du parcours d’accès</th><th class="n">Nombre de pays</th></tr></thead>
                 <tbody>
-                  <tr data-lvl="registered"><td class="sw"><span class="mapsw registered"></span></td><td>Inscrit</td><td class="n"><span class="ct" id="mapct-registered">–</span></td></tr>
-                  <tr data-lvl="guidelines"><td class="sw"><span class="mapsw guidelines"></span></td><td>Conformément aux directives nationales</td><td class="n"><span class="ct" id="mapct-guidelines">–</span></td></tr>
+                  <tr data-lvl="registered"><td class="sw"><span class="mapsw registered"></span></td><td>Enregistré</td><td class="n"><span class="ct" id="mapct-registered">–</span></td></tr>
+                  <tr data-lvl="guidelines"><td class="sw"><span class="mapsw guidelines"></span></td><td>Dans les directives nationales</td><td class="n"><span class="ct" id="mapct-guidelines">–</span></td></tr>
                   <tr data-lvl="mft"><td class="sw"><span class="mapsw mft"></span></td><td>Dans les plans MFT</td><td class="n"><span class="ct" id="mapct-mft">–</span></td></tr>
                   <tr data-lvl="none"><td class="sw"><span class="mapsw none"></span></td><td>Aucune donnée</td><td class="n"><span class="ct" id="mapct-none">–</span></td></tr>
                 </tbody>
@@ -1648,7 +1648,7 @@
             </div>
             <div class="mft-legend" id="mft-legend"></div>
             </div>
-            <p class="res-rule" id="mapnote-who">Les résultats concernant la résistance aux médicaments ne sont pas affichés sur cette carte. Pour les consulter, voir la carte. <a href="https://apps.who.int/malaria/maps/threats/" target="_blank" rel="noopener noreferrer">Carte des menaces de paludisme de l'OMS<span class="ext" aria-hidden="true">↗</span></a>.</p>
+            <p class="res-rule" id="mapnote-who">Les résultats relatifs à la pharmacorésistance n’apparaissent pas sur cette carte. Pour les consulter, rendez-vous sur la <a href="https://apps.who.int/malaria/maps/threats/" target="_blank" rel="noopener noreferrer">Carte des menaces du paludisme de l’OMS<span class="ext" aria-hidden="true">↗</span></a>.</p>
           </div>
         </div>
       </div>
@@ -1666,32 +1666,32 @@
     <div class="disclaimer" id="disclaimer" tabindex="-1">
       <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>Clause de non-responsabilité</h3>
       <p>Les utilisateurs ne doivent pas considérer le tableau de bord LAUNCH comme une source d'information complète et faisant autorité. Il offre un aperçu à un instant T, basé sur des informations publiques et sur des chiffres confirmés par écrit par le fabricant. Chaque chiffre reflète les meilleures données disponibles à la date indiquée ; certaines données peuvent être manquantes pour certains pays, années ou canaux d'achat.</p>
-      <p>Unitaid décline toute responsabilité quant à l'exactitude des données. Unitaid ne garantit pas que ces données soient complètes, à jour ou adaptées à un usage particulier. <span id="disc-countries"></span>Les utilisateurs doivent effectuer leurs propres vérifications au niveau national avant de prendre toute décision basée sur ces données.</p>
-      <p>Pour bien comprendre la situation d'accès à un médicament dans un pays donné, il peut être nécessaire de se renseigner sur des informations qui ne figurent pas sur ce tableau de bord.</p>
+      <p>Unitaid décline toute responsabilité quant à l’exactitude de ces données et ne garantit pas qu’elles soient exhaustives, à jour ou adaptées à un usage particulier. <span id="disc-countries"></span>Les utilisateurs sont invités à effectuer leurs propres vérifications au niveau des pays avant de prendre toute décision sur la base de ces données.</p>
+      <p>Pour bien comprendre la situation en matière d’accès à un médicament dans un pays donné, il peut être nécessaire de disposer d’informations qui ne figurent pas dans ce tableau de bord.</p>
     </div>
     <!-- LAUNCH's mandate (partner feedback, row 57, 19 Oct 2026): why these
          four medicines, no endorsement, and the scope. Facts as in
          docs/domain-primer.md §1 and §4; see docs/access-milestones-notes.md. -->
     <section class="ft-sec" id="about-launch">
       <h3>À propos de LAUNCH</h3>
-      <p>Le projet LAUNCH, financé par Unitaid, est une preuve de concept visant à rendre transparent le parcours d'accès aux nouveaux médicaments antipaludiques. Il centralise les informations publiques relatives à chaque médicament, depuis son développement et son approbation réglementaire jusqu'à la recommandation et la préqualification de l'OMS, en passant par l'enregistrement, les politiques, l'approvisionnement et la distribution dans les pays. Ainsi, les partenaires peuvent identifier les obstacles à l'accès et agir en conséquence.</p>
-      <p>Ce document présente quatre médicaments pertinents pour les stratégies de traitement de première ligne multiple (MFT), qui associent plusieurs traitements de première ligne au sein d'une même population afin de réduire le risque de résistance aux médicaments. Deux d'entre eux sont déjà recommandés par l'OMS mais sous-utilisés : l'artésunate-pyronaridine (ASPY) et la dihydroartémisinine-pipéraquine (DHA-PPQ). Deux autres sont en phase finale de développement : le ganaplacide-luméfantrine (GanLum) et l'artéméther-luméfantrine-amodiaquine (ALAQ). Ensemble, ils couvrent les deux étapes du processus : l'autorisation de mise sur le marché des médicaments en développement, ainsi que leur adoption et leur approvisionnement.</p>
-      <p>Le suivi d'un médicament ici ne signifie pas que LAUNCH ou Unitaid l'approuvent ou le recommandent pour quelque usage que ce soit. Le tableau de bord indique la position de chaque médicament dans le processus d'accès, et non s'il doit être utilisé. Pour cette preuve de concept, le périmètre se limite à ces quatre médicaments ; il pourrait être étendu ultérieurement à d'autres médicaments et outils de lutte contre le paludisme.</p>
+      <p>Financé par Unitaid, LAUNCH constitue une démonstration de faisabilité visant à apporter plus de transparence au parcours d’accès des nouveaux médicaments antipaludiques. Il rassemble en un seul et même endroit des informations publiques sur chaque médicament – développement, approbation réglementaire via les recommandations et la préqualification de l’OMS, enregistrement, politiques nationales et mise en œuvre dans les pays – afin que les partenaires puissent identifier les obstacles à l’accès et prendre les mesures qui s’imposent.</p>
+      <p>LAUNCH suit pour l’instant quatre médicaments entrant dans le cadre des stratégies de traitements de première intention multiples (MFT), qui consistent à utiliser plusieurs traitements de première intention au sein d’une même population afin de réduire le risque de pharmacorésistance. Deux d’entre eux sont déjà recommandés par l’OMS, mais restent sous-utilisés : l’artésunate-pyronaridine (ASPY) et la dihydroartémisinine-pipéraquine (DHA–PPQ). Les deux autres, le ganaplacide-luméfantrine (GanLum) et l’artéméther-luméfantrine-amodiaquine (ALAQ), sont en phase avancée de développement. À eux quatre, ces médicaments couvrent les deux volets du parcours d’accès : l’approbation des médicaments en cours de développement, ainsi que l’adoption et l’achat de ceux déjà recommandés.</p>
+      <p>La possibilité de suivre un médicament sur cette plateforme ne signifie pas que LAUNCH ou Unitaid le recommandent ou l’approuvent pour quelque usage que ce soit. Le tableau de bord indique à quelle étape du parcours d’accès se trouve chaque médicament, et non s’il doit être utilisé. La portée de cette démonstration de faisabilité se limite à ces quatre médicaments ; elle pourrait être étendue ultérieurement à d’autres médicaments et outils de lutte contre le paludisme.</p>
     </section>
     <section class="ft-sec">
       <h3>À propos des données</h3>
-      <p>Le tableau de bord LAUNCH affiche uniquement les informations publiques. Les détails spécifiques à un produit apparaissent uniquement lorsque le fabricant a confirmé par écrit qu'ils pouvaient être partagés. Les évaluations des autorités sanitaires peuvent intervenir à n'importe quel stade du développement et leur statut n'est généralement pas public ; les procédures réglementaires ne changent donc que lorsqu'un organisme de réglementation ou le fabricant annonce une décision. Les données d'approvisionnement concernent uniquement les canaux publics. Survolez une étape pour afficher son statut détaillé ; sélectionnez un médicament pour ouvrir son profil complet.</p>
+      <p>Le tableau de bord LAUNCH fournit uniquement des informations accessibles au public. Les détails spécifiques à un produit n’apparaissent que lorsque son fabricant a confirmé par écrit qu’ils pouvaient être communiqués. Les examens des autorités sanitaires peuvent avoir lieu à n’importe quelle étape du développement d’un médicament, et leur statut n’est généralement pas rendu public. Par conséquent, les étapes du processus réglementaire ne sont mises à jour que lorsqu’une autorité de réglementation ou le fabricant annonce un résultat. Les chiffres relatifs aux achats ne concernent que les canaux publics. Passez la souris sur la phase de votre choix pour obtenir des détails sur son statut, et sélectionnez un médicament pour ouvrir son profil complet.</p>
     </section>
     <details class="srcs" id="sources">
       <summary><span class="srcs-title">Sources</span><svg class="srcs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-      <p class="srcs-intro">Tout le contenu de cette page est traçable jusqu'à l'une des sources publiques ci-dessous.</p>
+      <p class="srcs-intro">Toutes les informations figurant sur cette page proviennent de l’une des sources publiques mentionnées ci-dessous.</p>
     <!-- Both lists are rendered from data/sources.js (see renderSources below).
          Do not hand-edit entries back into this markup: the registry is also
          what the stage citations and the analyst's editor read, so a second
          copy here would be the one that quietly goes stale. -->
     <ul class="srclist" id="srclist"></ul>
     <div id="srcdocs-wrap" hidden>
-      <b>Documents clés.</b> Études individuelles, évaluations et annonces concernant des médicaments spécifiques.
+      <b>Principaux documents.</b> Les études, évaluations et communiqués relatifs aux médicaments.
       <ul class="srclist" id="srcdocs"></ul>
     </div>
     </details>
@@ -1716,7 +1716,7 @@
 (function () {
   "use strict";
   var DATA_URL = "../data/dashboard.json", LANG = "fr", SCHEMA = 1;
-  var MSG = {"fail":"<b>Les données du tableau de bord n’ont pas pu être chargées.</b> Veuillez réessayer dans quelques minutes.","schema":"<b>Ce tableau de bord est en cours de mise à jour.</b> Veuillez revenir bientôt."};
+  var MSG = {"fail":"<b>Les données du tableau de bord n’ont pas pu être chargées.</b> Veuillez réessayer dans quelques minutes.","schema":"<b>Le tableau de bord est en cours de mise à jour.</b> Veuillez revenir dans quelques instants."};
   // every reader-facing text in dashboard.json is { en, fr, pt, ... }, one key
   // per language the file lists in ds.locales: keep this page's, or the English
   // where the file does not have this language yet. No fixed number of keys,
@@ -1774,8 +1774,8 @@
   if (!window.LAUNCH_DATA) {
     banner.hidden = false;
     banner.classList.add("error");
-    banner.innerHTML = "<b>Les données du tableau de bord n’ont pas pu être chargées.</b> Veuillez recharger la page pour réessayer.";
-    console.error("[LAUNCH] Le fichier data/products.js est manquant ou contient une erreur de syntaxe — exécutez node scripts/validate-data.js");
+    banner.innerHTML = "<b>Les données du tableau de bord n’ont pas pu être chargées.</b> Veuillez actualiser la page et réessayer.";
+    console.error("[LAUNCH] Le fichier data/products.js est manquant ou contient une erreur de syntaxe – exécutez le script node scripts/validate-data.js");
     // its handler is attached further down, which this early return skips
     const dl = document.getElementById("dl-csv");
     if (dl) dl.hidden = true;
@@ -1805,12 +1805,12 @@
     return STAGE_COLUMNS[ci - 1].stages.every(j => p.stages[j].status === "done");
   };
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
-  const LABEL = { done: "Complet", prog: "En cours", late: "Retardé", idle: "Pas encore commencé" };
+  const LABEL = { done: "Terminé", prog: "En cours", late: "En retard", idle: "Non démarré" };
   // What "Delayed" means, shown from the i beside it in the medicines table.
   // It said "not moving as fast as expected", which named no expectation; a
   // partner asked what Delayed refers to (19 Oct 2026). It is the hand-set
   // `late` status (docs/data-analyst-guide.md), not a measured comparison.
-  const LATE_DEF = "Le développement du médicament est actuellement au point mort ou progresse anormalement lentement, selon l’évaluation de LAUNCH basée sur des informations publiques. Le principal obstacle en est la raison. Il n’est pas assorti d’un délai précis.";
+  const LATE_DEF = "Selon l’avis de LAUNCH, fondé sur des données publiques, le développement de ce médicament est à l’arrêt ou avance à un rythme inhabituellement lent. L’obstacle principal en explique la raison. Ce retard n’est pas évalué au regard d’une échéance fixe.";
   // Not shown since 3 Nov 2026: the medicines table's Status column, which
   // carried it, became Market Access (partner feedback). Kept for when the
   // status words return.
@@ -1833,7 +1833,7 @@
   // GanLum's "No publicly documented barrier identified" beside two empty cells.
   const SHOW_BARRIERS = false;
   // The grey line under the stage name in the medicines table's
-  // "Stade actuel" cell: the first clause of the stage's date or note
+  // "Phase actuelle" cell: the first clause of the stage's date or note
   // ("Ghana 2022", "Since 2008"). Hidden for every medicine at the owner's
   // request (20 Oct 2026); the stage name and status word stay, and the full
   // date still shows on the journey and in the stage panel. true brings it back.
@@ -1889,7 +1889,7 @@
   // shows no banner, and the footer disclaimer is the page's notice.
   const status = DATA.meta.dataStatus;
   const BANNERS = {
-    illustrative: "<b>Maquette de conception.</b> Tous les statuts, dates, prix et volumes ci-dessous sont des exemples pour la révision de la mise en page — et non des données réelles du programme. <a class='bl-link' href='#disclaimer'>Lisez l’avertissement</a>"
+    illustrative: "<b>Maquette de conception.</b> Tous les statuts, dates, prix et volumes indiqués ci-dessous sont des exemples fournis à titre indicatif pour la révision de la mise en page ; il ne s’agit pas de données réelles. <a class='bl-link' href='#disclaimer'>Lire la clause de non-responsabilité</a>"
   };
   if (BANNERS[status]) {
     banner.hidden = false;
@@ -1922,8 +1922,8 @@
       "@graph": [{
         "@type": "Dataset",
         "@id": SITE + "/#dataset",
-        "name": "LAUNCH Ensemble de données du tableau de bord de transparence",
-        "description": "État d’avancement des voies d’accès aux nouveaux médicaments antipaludiques — étapes, jalons, accès par pays et approvisionnement — avec provenance de sources publiques pour chaque figure.",
+        "name": "Ensemble de données du tableau de bord LAUNCH sur la transparence",
+        "description": "État d’avancement des nouveaux médicaments antipaludiques sur le parcours d’accès – phases, étapes, accès aux pays et achats – avec indication de la source publique pour chaque donnée fournie.",
         "url": SITE + "/",
         "dateModified": DATA.meta.lastUpdated,
         "creativeWorkStatus": DATA.meta.dataStatus,
@@ -2043,7 +2043,7 @@
   // here is stored separately. "As-of" year is the dataset's own date, not the
   // visitor's clock, so "today" never reads later than the data was checked.
   const ASOF_YEAR = parseInt(DATA.meta.lastUpdated.slice(0, 4), 10);
-  const yrsText = n => n + (n === 1 ? " année" : " années");
+  const yrsText = n => n + (n === 1 ? " an" : " ans");
 
   function firstYear(p) {
     const ys = p.stages.map(stageYear).filter(y => y != null);
@@ -2066,8 +2066,8 @@
     const ys = idx.map(i => stageYear(p.stages[i])).filter(y => y != null);
     return { year: ys.length ? Math.max(...ys) : null };
   }
-  const reachedText = y => (y != null ? `Atteint en ${y}` : "Atteint, année non enregistrée");
-  const soFarText = n => (n > 0 ? `${yrsText(n)} jusqu’à présent` : "Moins d’un an jusqu’à présent");
+  const reachedText = y => (y != null ? `Atteint en ${y}` : "Atteint, année non consignée");
+  const soFarText = n => (n > 0 ? `${yrsText(n)} à ce jour` : "Moins de 1 an à ce jour");
   // [phase name, figure, tone] for each phase shown. Country Access appears
   // only once Market Access is reached, because it counts from there.
   function accessParts(p) {
@@ -2080,7 +2080,7 @@
     return [[PHASES[0].name, reachedText(m.year), "ok"], [PHASES[1].name, ...country]];
   }
   // What the two figures mean, from the i beside them.
-  const ACCESS_DEF = "L’accès au marché est accordé lorsqu’un médicament est à la fois recommandé par l’OMS et préqualifié par celle-ci. L’accès au pays intervient ensuite jusqu’à ce que l’enregistrement national, l’adoption de politiques de santé, l’approvisionnement en volumes importants et la distribution dans le pays soient achevés.";
+  const ACCESS_DEF = "L’accès au marché est effectif lorsqu’un médicament est à la fois recommandé et préqualifié par l’OMS. Pour que l’accès aux pays soit effectif, il faut également que les phases de l’enregistrement national, de l’intégration dans les politiques, de l’achat en quantités importantes et de la mise en œuvre sur le territoire national aient toutes été effectuées.";
   const accessInfo = () => `<button type="button" class="info" data-tip="${esc(ACCESS_DEF)}" aria-label="${esc(ACCESS_DEF)}">i</button>`;
   // The medicines table gives each phase its own column (partner feedback,
   // 21 Oct 2026, tracker row "Market, Country & Population Access
@@ -2126,7 +2126,7 @@
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
   // read it: the badge under "On pathway", the box at the top of an open row,
-  // and the "Temps passé" view. The clock starts where "On pathway" starts
+  // and the "Délai écoulé" view. The clock starts where "On pathway" starts
   // (firstYear), so the two numbers always agree, and only once the medicine
   // has a dated regulatory approval. A stage's own clock: stages 2 to 4 start
   // with the pathway, policy adoption at the WHO recommendation, procurement
@@ -2153,7 +2153,7 @@
   const ACCESS_SPLIT = 4;
   const PHASES = [
     { name: "Accès au marché" },
-    { name: "Accès au pays" }
+    { name: "Accès aux pays" }
   ];
   const phaseOf = i => (i >= ACCESS_SPLIT ? 1 : 0);
   // "Since 2018" is translated with the rest of the data ("Depuis 2018",
@@ -2198,12 +2198,12 @@
   // One plain label per step: text, tone (bad / good / none), still going.
   function yardResult(s) {
     if (s.kind === "idle") return { t: LABEL.idle, tone: "none" };
-    if (s.kind === "nodate") return { t: "Terminé, aucune date enregistrée", tone: "none" };
-    if (s.kind === "nostart") return { t: "En cours, sans date de début", tone: "none" };
+    if (s.kind === "nodate") return { t: "Terminé, pas de date connue", tone: "none" };
+    if (s.kind === "nostart") return { t: "En cours, pas de date de début", tone: "none" };
     if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
-    return s.kind === "going" ? { t: "Tout se déroule comme prévu jusqu’à présent", tone: "good" } : { t: yrsText(0), tone: "good" };
+    return s.kind === "going" ? { t: "En bonne voie jusqu’à présent", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· jusqu’à présent</i>` : ""}</span>`;
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· à ce jour</i>` : ""}</span>`;
   // Which steps use a published timeline and which LAUNCH's own estimate is
   // read from each step's "basis" (12 Oct 2026), not typed here, so the note
   // cannot disagree with the data. Each label is a whole literal and the list
@@ -2211,8 +2211,8 @@
   const yardNote = () => {
     const by = b => YARD.expected.map((e, i) => (e && e.basis === b ? STAGES[i] : null)).filter(Boolean).join(", ");
     const line = (label, list) => (list ? `<span>${label} ${esc(list)}.</span> ` : "");
-    const pub = line("Délais prévus d’après le calendrier publié :", by("published"));
-    const est = line("Délais prévus d’après les estimations de travail de LAUNCH, encore à convenir :", by("estimate"));
+    const pub = line("Délais attendus, d’après le calendrier communiqué :", by("published"));
+    const est = line("Délais attendus d’après les estimations de LAUNCH, qui restent à valider :", by("estimate"));
     return `<p class="ysnote">${pub}${est}</p>`;
   };
   // under the access milestones in the medicines table (was "On pathway")
@@ -2229,22 +2229,22 @@
     const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
     return `<div class="ysbox">
       <div class="ysfigs">
-        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>utilisation courante par ${due}</span></div>
-        <div><small>${going ? "Situation actuelle jusqu’à présent" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore en usage courant" : ""}</span></div>
-        <div class="ysdiff"><small>Variance</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "jusqu’à présent" : "par rapport aux attentes"}</span></div>
+        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>utilisation courante d’ici ${due}</span></div>
+        <div><small>${going ? "À ce jour" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore couramment utilisé" : ""}</span></div>
+        <div class="ysdiff"><small>Écart</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "à ce jour" : "par rapport à la date prévue"}</span></div>
       </div>
-      <p>Son utilisation courante est prévue d’ici ${due}, ${y.whole.exp} ans après sa première étape importante en ${y.start}.${going && ASOF_YEAR >= due ? ` Toujours pas d’usage courant dans ${ASOF_YEAR}.` : ""}</p>
-      ${y.biggest ? `<p>Variance la plus importante : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· jusqu’à présent</i>` : ""}</p>` : ""}
+      <p>Utilisation courante attendue d’ici ${due}, ${y.whole.exp} ans après avoir atteint la première étape en ${y.start}.${going && ASOF_YEAR >= due ? ` Toujours pas couramment utilisé en ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Écart le plus important : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· à ce jour</i>` : ""}</p>` : ""}
     </div>`;
   }
-  // the "Temps passé" view: expected against actual, under the two access groups
+  // the "Délai écoulé" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
-    if (!y.approved) return `<div class="ysempty"><b>Pas encore approuvé.</b> Nous commençons la comparaison une fois que le médicament a reçu une autorisation de mise sur le marché datée.</div>`;
+    if (!y.approved) return `<div class="ysempty"><b>Pas encore approuvé.</b> Nous ne comparons les médicaments que lorsqu’ils ont obtenu une autorisation réglementaire datée.</div>`;
     // "—", not "n/a": text with no two letters in a row is never collected for
     // translation, so "n/a" stayed English on /fr, /pt and /es.
-    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>jusqu’à présent</i>` : "");
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>à ce jour</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -2255,9 +2255,9 @@
       return h + row(esc(STAGES[s.i]), s);
     }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Scène</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Variance</th></tr></thead>
+      <thead><tr><th scope="col">Phase</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Écart</th></tr></thead>
       <tbody>${body}</tbody>
-      <tfoot>${row("Tout le voyage", y.whole, true)}</tfoot>
+      <tfoot>${row("Parcours complet", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
   }
   // under each step icon in the pathway strip: its expected time. The first
@@ -2304,22 +2304,22 @@
   function countryAccessKv(d) {
     const list = d.countries && Array.isArray(d.countries.list) ? d.countries.list : null;
     if (!list) return `
-              <div class="kv"><span>Inscrit</span><span>${esc(d.country.registered)}</span></div>
-              <div class="kv"><span>Conformément aux directives nationales</span><span>${esc(d.country.inGuidelines)}</span></div>
+              <div class="kv"><span>Enregistré</span><span>${esc(d.country.registered)}</span></div>
+              <div class="kv"><span>Dans les directives nationales</span><span>${esc(d.country.inGuidelines)}</span></div>
               <div class="kv"><span>Dans les plans MFT</span><span>${esc(d.country.inMft)}</span></div>`;
     const c = { registered: 0, guidelines: 0, mft: 0 };
     Object.values(countryStages(list)).forEach(s => Object.keys(c).forEach(k => { if (s[k]) c[k]++; }));
     return `
               <div class="kv"><span>Pays sur la carte</span><span>${list.length}</span></div>
               <div class="kv sub"><span>Confirmé dans les registres nationaux</span><span>${c.registered}</span></div>
-              <div class="kv sub"><span>Conformément aux directives nationales</span><span>${c.guidelines}</span></div>
+              <div class="kv sub"><span>Dans les directives nationales</span><span>${c.guidelines}</span></div>
               <div class="kv sub"><span>Dans les plans MFT</span><span>${c.mft}</span></div>
               <p style="margin:4px 0 2px 14px;font-size:13px;color:var(--ink-3)">Un pays peut être comptabilisé à plusieurs étapes.</p>`;
   }
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
     const dot = i => `<i class="md ${p.stages[i].status}" title="${esc(STAGES[i])}${statusShown(p, p.stages[i].status) ? ": " + LABEL[p.stages[i].status] : ""}"></i>`;
-    return `<div class="mini" role="img" aria-label="${done} sur ${p.stages.length} étapes franchies">` +
+    return `<div class="mini" role="img" aria-label="${done} étapes terminées sur ${p.stages.length}">` +
       STAGE_COLUMNS.map((col, c) => `<span class="jcell" data-c="${c}">` +
         (col.stages.length === 1 ? dot(col.stages[0]) : `<span class="mp">${col.stages.map(dot).join("")}</span>`) +
         `</span>`).join('<i class="ln"></i>') + `</div>`;
@@ -2336,7 +2336,7 @@
     const peekLine = peekLineFor(p);
     return `<button class="smark" type="button"
       aria-expanded="false" aria-controls="${esc(p.id)}-gate"
-      aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Ouvre les détails complets."
+      aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Affiche les détails complets."
       data-stage="${esc(STAGES[i])}" data-stagei="${i}" data-pid="${esc(p.id)}"
       data-status="${st.status}"
       data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>`;
@@ -2411,7 +2411,7 @@
     const chip = (j, withStatus) => {
       const st = p.stages[j];
       return `<span class="uchip"><span class="ui m-${st.status}">${stageIconImg(j, "")}</span><span>${esc(STAGES[j])}</span>` +
-        (withStatus ? ` · <span class="st ${st.status}">${st.status === "late" ? "retardé" : "en cours"}</span>` : "") + `</span>`;
+        (withStatus ? ` · <span class="st ${st.status}">${st.status === "late" ? "en retard" : "en cours"}</span>` : "") + `</span>`;
     };
     const group = (title, list, withStatus) =>
       `<div class="ugrp"><div class="h">${title}</div>` +
@@ -2427,7 +2427,7 @@
     // a product early in the pathway has up to seven of them, which made this
     // panel the tallest thing in the row. Names are in each icon's title and
     // aria-label, and the strip above the table names every gate.
-    const notStartedHtml = `<div class="ugrp"><div class="h">Pas encore démarré · ${notStarted.length}</div>` +
+    const notStartedHtml = `<div class="ugrp"><div class="h">Non démarré · ${notStarted.length}</div>` +
       (notStarted.length
         ? `<div class="uicons">${notStarted.map(j => `<span class="ui" role="img" title="${esc(STAGES[j])}" aria-label="${esc(STAGES[j])}">${stageIconImg(j, "")}</span>`).join("")}</div>`
         : `<span class="unone">Aucun</span>`) + `</div>`;
@@ -2436,8 +2436,8 @@
     // already holds).
     const ongoingShown = ongoing.every(j => statusShown(p, p.stages[j].status));
     return `<div class="tsp"><div class="cscroll"><div class="tsa" style="height:${height}px">${h}</div></div>` +
-      `<div class="tsz">${noYear.length ? group("Atteint · année non enregistrée", noYear) : ""}` +
-      `${ongoingShown ? group("En cours · sans date", ongoing, true) : group("Pas encore daté", ongoing)}${notStartedHtml}</div></div>`;
+      `<div class="tsz">${noYear.length ? group("Atteint · année non consignée", noYear) : ""}` +
+      `${ongoingShown ? group("En cours · aucune date", ongoing, true) : group("Pas encore daté", ongoing)}${notStartedHtml}</div></div>`;
   }
 
   // The fixed tier spacing above (TH) and last-block allowance (126px) are
@@ -2489,14 +2489,14 @@
     const phase = stacked ? "" : ` data-phase="${phaseOf(i)}"`;
     const exp = SHOW_STAGE_EXPECTED && YARD && YARD.expected[i] ? ", attendu " + yrsText(YARD.expected[i].years) : "";
     return `<button class="pathnode${stacked ? " pathnode-sm" : ""}" type="button" aria-expanded="false" aria-controls="gatewrap"
-      data-gate="${i}"${phase} aria-label="Étape ${stepNo(i)}, ${esc(s)}${exp}. Indique ce qui se passe ici et où se trouve chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
+      data-gate="${i}"${phase} aria-label="Phase ${stepNo(i)}, ${esc(s)}${exp}. Indique le déroulé de cette phase et où en est chaque médicament${n ? ", " + n + " delayed" : ""}.">` +
       `<span class="pill">${stageIconImg(i, "")}<span class="nb" aria-hidden="true">${stepNo(i)}</span></span><span class="plabel">${esc(s)}</span>${pathExpHtml(i)}</button>`;
   }
 
   function stepColumnHtml(col) {
     if (col.stages.length === 1) return pathNodeHtml(col.stages[0], false);
     const names = col.stages.map(i => STAGES[i]).join(" et ");
-    return `<span class="pathgroup" data-phase="${phaseOf(col.stages[0])}" role="group" aria-label="${esc(names)} — approbations indépendantes sans ordre défini entre elles">` +
+    return `<span class="pathgroup" data-phase="${phaseOf(col.stages[0])}" role="group" aria-label="${esc(names)} – approbations indépendantes, sans ordre particulier">` +
       col.stages.map(i => pathNodeHtml(i, true)).join(`<span class="pathgroup-note" aria-hidden="true"></span>`) +
       `</span>`;
   }
@@ -2508,8 +2508,8 @@
   }).join(`<span class="patharrow phasegap" aria-hidden="true">→</span>`);
 
   board.insertAdjacentHTML("afterbegin",
-    `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
-    `<span class="c-stage">Stade actuel</span><span class="c-stat">Accès au marché</span><span class="c-path">Accès au pays ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barrière principale</span>` : ""}</div>`);
+    `<div class="srow hd" role="presentation"><span></span><span>Médicament</span><span class="c-mini">Parcours</span>` +
+    `<span class="c-stage">Phase actuelle</span><span class="c-stat">Accès au marché</span><span class="c-path">Accès aux pays ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Principal obstacle</span>` : ""}</div>`);
   if (!SHOW_BARRIERS) board.classList.add("nobar");
 
   // "Delayed" carries an i with its definition: hover, focus or tap shows it.
@@ -2547,7 +2547,7 @@
             <div class="bar pre ${preDone ? "done-bar" : ""}"></div>
             <button class="smark" type="button"
               aria-expanded="false" aria-controls="${esc(p.id)}-gate"
-              aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Ouvre les détails complets."
+              aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Affiche les détails complets."
               data-stage="${esc(STAGES[i])}" data-stagei="${i}" data-pid="${esc(p.id)}"
               data-status="${st.status}"
               data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>
@@ -2570,7 +2570,7 @@
       const cls = ["stagegroup", preDone ? "sg-pre-done" : "", allDone ? "sg-post-done" : ""]
         .filter(Boolean).join(" ");
       const names = col.stages.map(i => STAGES[i]).join(" et ");
-      return `<div class="${cls}" role="group" aria-label="${esc(names)} — approbations indépendantes, sans ordre défini entre elles">` +
+      return `<div class="${cls}" role="group" aria-label="${esc(names)} – approbations indépendantes, sans ordre particulier">` +
         `<svg class="forkline" preserveAspectRatio="none" aria-hidden="true" focusable="false"></svg>` +
         col.stages.map((i, n) => stageUnitHtml(i, n === 0 ? "sg-top" : "sg-bottom"))
           .join(`<div class="stagegroup-note" aria-hidden="true"></div>`) +
@@ -2590,13 +2590,13 @@
     const NUMF = new Intl.NumberFormat(DATE_LANG);
     const byPres = d.volume && Array.isArray(d.volume.byPresentation) && d.volume.byPresentation.length ? `
         <div class="cscroll"><table class="ystable proc-table">
-          <thead><tr><th scope="col">Présentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Durée du traitement (estimation)</th></tr></thead>
-          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Durée du traitement (estimation)</span>${b.courses == null ? "<i>non estimé</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
+          <thead><tr><th scope="col">Présentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Nombre de traitements (estimé)</th></tr></thead>
+          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Nombre de traitements (estimé)</span>${b.courses == null ? "<i>non estimé</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
         </table></div>
         ${d.volume.coursesRule ? `<p class="proc-rule">${esc(d.volume.coursesRule)}</p>` : ""}` : "";
     const volumeCard = d.volume ? `
       <div class="card${byPres ? " card-wide" : ""}">
-        <h3>Achats par voie publique</h3>
+        <h3>Achats via les canaux publics</h3>
         <div class="big">${esc(fmtFig(d.volume.total))}</div>
         <div class="sub">${esc(fmtFig(d.volume.period))}</div>
         ${gfOnly ? `<p class="proc-scope">Toutes les transactions affichées correspondent à des commandes financées par le Fonds mondial et issues de sa base de données PQR. Les commandes réglées par d’autres donateurs, des gouvernements nationaux ou des acheteurs privés ne sont pas incluses ; ce chiffre ne reflète donc pas la totalité des achats mondiaux de ce produit.</p>` : `
@@ -2607,35 +2607,35 @@
           ${d.volume.split.map((s, i) => `<span class="key"><span class="sw" style="background:${shades[i % shades.length]}"></span>${esc(s.channel)} ${s.pct}%</span>`).join("")}
         </div>`}
         ${byPres}
-        ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Source: ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
+        ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Source : ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
       </div>` : `
       <div class="card">
-        <h3>Achats par voie publique</h3>
+        <h3>Achats via les canaux publics</h3>
         <div class="big">—</div>
-        <div class="sub">${esc(d.volumeNote || "Données non disponibles pour le moment")}</div>
+        <div class="sub">${esc(d.volumeNote || "Données indisponibles à ce jour")}</div>
       </div>`;
 
     const node = el(`
       <section class="product" id="${esc(p.id)}">
         <div class="srow">
           <button class="exp" type="button" aria-expanded="false" aria-controls="${esc(p.id)}-l1"
-            aria-label="Afficher le parcours pour ${esc(p.name)}">▾</button>
+            aria-label="Voir le parcours pour ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
           <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${SHOW_STAGE_NOTE && firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell c-stat">${marketCell(p)}</span>
           <span class="cell c-path">${countryCell(p)}${yardBadge(p)}</span>
-          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucun obstacle documenté publiquement n’a été identifié."}</div>` : ""}
+          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucun obstacle documenté publiquement n’a été identifié"}</div>` : ""}
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
           <div class="l1in">
             <div class="l1h">
               <div class="l1id"><span>${esc(p.manufacturer)}</span><span class="chip ${p.class === "pipeline" ? "pipeline" : ""}">${esc(p.classLabel)}</span></div>
               <div class="l1ctl"><span class="l1t">${accessLine(p)} ${accessInfo()}</span>
-                <div class="swg" role="group" aria-label="Vue du voyage">
-                  <button type="button" data-v="time" aria-pressed="true">Chronologie réelle</button>
-                  <button type="button" data-v="path" aria-pressed="false">Ordre du parcours</button>
-                  ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Temps passé</button>` : ""}
+                <div class="swg" role="group" aria-label="Afficher le parcours">
+                  <button type="button" data-v="time" aria-pressed="true">Chronologie</button>
+                  <button type="button" data-v="path" aria-pressed="false">Progression</button>
+                  ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Délai écoulé</button>` : ""}
                 </div></div>
             </div>
             ${yardBox(p)}
@@ -2650,39 +2650,39 @@
         <div class="detail" id="${esc(p.id)}-detail">
           <div class="cards">
             <div class="card">
-              <h3>Cas d’utilisation cible</h3>
+              <h3>Utilisation visée</h3>
               <p>${esc(d.useCase)}</p>
             </div>
             <div class="card">
-              <h3>Engagements en matière d’accès et d’approvisionnement</h3>
+              <h3>Engagements sur l’accès et l’approvisionnement</h3>
               <ul>${d.access.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
             </div>
             <div class="card">
-              <h3>exigences d’adoption</h3>
+              <h3>Exigences liées à l’adoption</h3>
               <ul>${d.adoption.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
             </div>
             <div class="card">
-              <h3>Accès au pays</h3>
+              <h3>Accès aux pays</h3>
               ${countryAccessKv(d)}
-              <div class="kv"><span>Prévision de la demande</span><span>${esc(d.country.forecastDemand)}</span></div>
+              <div class="kv"><span>Demande projetée</span><span>${esc(d.country.forecastDemand)}</span></div>
             </div>
             <div class="card">
               <h3>Recherche opérationnelle</h3>
-              <div class="kv"><span>Plomb</span><span>${esc(d.research.lead)}</span></div>
-              <div class="kv"><span>Géographies</span><span>${esc(d.research.geographies)}</span></div>
-              <div class="kv"><span>Chronologie</span><span>${esc(d.research.timeline)}</span></div>
+              <div class="kv"><span>Direction</span><span>${esc(d.research.lead)}</span></div>
+              <div class="kv"><span>Lieux</span><span>${esc(d.research.geographies)}</span></div>
+              <div class="kv"><span>Calendrier</span><span>${esc(d.research.timeline)}</span></div>
               <p style="margin-top:6px"><em>${esc(d.research.question)}</em></p>
             </div>
             ${volumeCard}
-            ${p.acknowledgement ? `<div class="card" style="grid-column:1/-1"><h3>Reconnaissance</h3><p>${esc(p.acknowledgement)}</p></div>` : ""}
+            ${p.acknowledgement ? `<div class="card" style="grid-column:1/-1"><h3>Contributeurs</h3><p>${esc(p.acknowledgement)}</p></div>` : ""}
           </div>
           <div class="mtable-box">
             <table class="mtable">
-              <thead><tr><th>Jalon</th><th>Statut</th><th>Date d’obtention / de soumission</th><th>Prochaine étape prévue</th><th>Prévu</th></tr></thead>
+              <thead><tr><th>Étape</th><th>Statut</th><th>Date d’achèvement / du dépôt</th><th>Étape suivante attendue</th><th>Attendu</th></tr></thead>
               <tbody>
                 ${d.milestones.map(m => `
                   <tr>
-                    <td>${esc(m.milestone)}${(m.sources || []).length ? `<span class="mcite">Source: ${citeLinks(m.sources)}</span>` : ""}</td>
+                    <td>${esc(m.milestone)}${(m.sources || []).length ? `<span class="mcite">Source : ${citeLinks(m.sources)}</span>` : ""}</td>
                     <td><span class="pill ${m.status}">${ICON[m.status] ? ICON[m.status] + " " : ""}${esc(m.label)}</span></td>
                     <td>${esc(m.date)}</td>
                     <td>${esc(m.next)}</td>
@@ -2893,7 +2893,7 @@
     btn.addEventListener("click", () => {
       const open = btn.closest(".product").classList.toggle("open");
       btn.setAttribute("aria-expanded", open ? "true" : "false");
-      btn.querySelector(".more-t").textContent = open ? "Masquer les détails" : "Plus de détails";
+      btn.querySelector(".more-t").textContent = open ? "Voir moins" : "Plus de détails";
     });
   });
 
@@ -2944,30 +2944,30 @@
     if (st.date) kv.push(["Enregistré", esc(st.date)]);
     if (st.next) kv.push(["Étape suivante", esc(st.next)]);
     if (st.nextDate) kv.push(["Attendu", esc(st.nextDate)]);
-    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} année${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
+    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} an${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
 
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
     const reqs = (i === 5 && Array.isArray(p.detail.adoption) && p.detail.adoption.length)
-      ? `<div class="gp-kv"><dt>Quels sont les besoins en matière d’adoption ?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
+      ? `<div class="gp-kv"><dt>Conditions requises pour l’adoption</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
 
     let countries = "";
     if ((i === 4 || i === 5) && p.detail.countries && Array.isArray(p.detail.countries.list)) {
       const c = { registered: 0, guidelines: 0, mft: 0 };
       p.detail.countries.list.forEach(e => { if (e.level in c) c[e.level]++; });
       countries = `<div class="gp-countries">` +
-        `<span class="key"><span class="mapsw registered"></span>Inscrit <span class="n">${c.registered}</span></span>` +
-        `<span class="key"><span class="mapsw guidelines"></span>Conformément aux directives nationales <span class="n">${c.guidelines}</span></span>` +
+        `<span class="key"><span class="mapsw registered"></span>Enregistré <span class="n">${c.registered}</span></span>` +
+        `<span class="key"><span class="mapsw guidelines"></span>Dans les directives nationales <span class="n">${c.guidelines}</span></span>` +
         `<span class="key"><span class="mapsw mft"></span>Dans les plans MFT <span class="n">${c.mft}</span></span>` +
         `</div>`;
     }
 
     const prov = [
-      (st.source || (st.sources || []).length) ? "Source: " + citeHtml(st.sources, st.source) : "",
+      (st.source || (st.sources || []).length) ? "Source : " + citeHtml(st.sources, st.source) : "",
       st.asOf ? "vérifié " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
-        ? (p.detail.countries.status === "illustrative" ? "L’enquête nationale est illustrative" : "L’enquête nationale est " + esc(p.detail.countries.status)) : ""
+        ? (p.detail.countries.status === "illustrative" ? "l’enquête nationale est à titre illustratif" : "l’enquête nationale est " + esc(p.detail.countries.status)) : ""
     ].filter(Boolean).join(" · ");
 
     return `
@@ -3031,7 +3031,7 @@
   // belongs to the summary table, which lights up the selected step's column
   // (highlightStep); per-medicine detail is one click on that stage's marker.
   // Without stageInfo the band is simply left out.
-  const STATUS_NOUN = { done: "complet", prog: "en cours", late: "retardé", idle: "pas commencé" };
+  const STATUS_NOUN = { done: "terminé", prog: "en cours", late: "en retard", idle: "non démarré" };
   function openGatePanel(btn) {
     const i = +btn.dataset.gate;
     closeGate();
@@ -3044,11 +3044,11 @@
       .map(k => `<span class="gp-pill ${k}">${counts[k]} ${STATUS_NOUN[k]}</span>`).join("");
     const band = info ? `
       <div class="gw-band">
-        <h4>Que se passe-t-il ici ?</h4>
+        <h4>Ce qu’il se passe à cette étape</h4>
         <p>${esc(info.what)}</p>
         <div class="gw-facts">
-          <div><h5>Qui décide ?</h5><p>${esc(info.who)}</p></div>
-          <div><h5>Pourquoi cela peut bloquer</h5><p>${esc(info.stall)}</p></div>
+          <div><h5>Décisionnaires</h5><p>${esc(info.who)}</p></div>
+          <div><h5>Freins potentiels</h5><p>${esc(info.stall)}</p></div>
           <div><h5>Source</h5><p>${esc(info.source)}</p></div>
         </div>
       </div>` : "";
@@ -3057,14 +3057,14 @@
     // says so: they run in parallel, so eight milestones fit in seven stages.
     const col = STAGE_COLUMNS.find(c => c.stages.includes(i));
     const par = col && col.stages.length === 2
-      ? `<p class="gw-par">${esc(`${STAGES[col.stages[0]]} et ${STAGES[col.stages[1]]} sont des étapes parallèles au sein de l’étape ${stepNo(i)}.`)}</p>`
+      ? `<p class="gw-par">${esc(`${STAGES[col.stages[0]]} et ${STAGES[col.stages[1]]} sont des étapes parallèles au sein de la même phase ${stepNo(i)}.`)}</p>`
       : "";
-    wrap.setAttribute("aria-label", "Scène " + stepNo(i) + ": " + STAGES[i]);
+    wrap.setAttribute("aria-label", "Phase " + stepNo(i) + ": " + STAGES[i]);
     wrap.innerHTML = `
       <div class="gw-head">
         <span class="gw-ico">${stageIconImg(i, "")}</span>
-        <div><div class="gw-step">Étape ${stepNo(i)} sur ${STAGE_COLUMNS.length}</div><h3>${esc(STAGES[i])}</h3></div>
-        <span class="gw-sum" aria-label="État des médicaments ${tracked.length} à ce stade">${chips}</span>
+        <div><div class="gw-step">Phase ${stepNo(i)} sur ${STAGE_COLUMNS.length}</div><h3>${esc(STAGES[i])}</h3></div>
+        <span class="gw-sum" aria-label="Progression des ${tracked.length} médicaments dans cette phase">${chips}</span>
         <button class="gp-close" type="button" data-close="gate">Fermer</button>
       </div>
       ${par}${band}`;
@@ -3124,7 +3124,7 @@
     showTipAt(dot,
       `<b>${esc(d.stage)}</b>` +
       (line ? `<div>${esc(line)}</div>` : "") +
-      `<div class="thint">Cliquez pour plus de détails</div>`);
+      `<div class="thint">Cliquer pour plus de détails</div>`);
   }
   document.querySelectorAll(".stage .smark").forEach(dot => {
     // The tooltip is the fast peek; the panel is the full read. Once a marker's
@@ -3194,7 +3194,7 @@
   }
 
   // ---- country access map ----
-  const LEVEL_LABEL = { registered: "Inscrit", guidelines: "Conformément aux directives nationales",
+  const LEVEL_LABEL = { registered: "Enregistré", guidelines: "Dans les directives nationales",
                         mft: "Dans les plans MFT", none: "Aucune donnée" };
   // The line under the map's heading, one per access stage shown.
   const VIEW_NOTE = {
@@ -3309,7 +3309,7 @@
     wrap.innerHTML = `<div id="mapwrap-gl"></div>
       <div class="map-empty" id="map-empty" hidden></div>
       <span class="map-zoom-lvl" id="mz-lvl" aria-live="polite" hidden></span>
-      <ul class="map-country-list" id="map-country-list" aria-label="Pays figurant sur cette carte, liste"></ul>`;
+      <ul class="map-country-list" id="map-country-list" aria-label="Pays sur cette carte, sous forme de liste"></ul>`;
 
     // ---- MapLibre init (DEV-13 D18/D19 — supersedes D13) -------------------
     // An earlier decision rejected any mapping library ("the first runtime
@@ -3401,13 +3401,13 @@
       locale: {
         "NavigationControl.ZoomIn": "Zoomer",
         "NavigationControl.ZoomOut": "Dézoomer",
-        "CooperativeGesturesHandler.WindowsHelpText": "Utilisez Ctrl + molette pour zoomer sur la carte",
-        "CooperativeGesturesHandler.MacHelpText": "Utilisez ⌘ + molette pour zoomer sur la carte",
-        "CooperativeGesturesHandler.MobileHelpText": "Utilisez deux doigts pour déplacer la carte",
+        "CooperativeGesturesHandler.WindowsHelpText": "Ctrl + molette pour zoomer sur la carte",
+        "CooperativeGesturesHandler.MacHelpText": "⌘ + molette pour zoomer sur la carte",
+        "CooperativeGesturesHandler.MobileHelpText": "Glisser deux doigts sur l’écran pour déplacer la carte",
       },
       attributionControl: false,
     });
-    map.getCanvas().setAttribute("aria-label", "Carte du monde, déplacement et zoom avec la souris ou les touches fléchées");
+    map.getCanvas().setAttribute("aria-label", "Carte du monde, utiliser la souris ou les flèches du clavier pour se déplacer ou zoomer");
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
     // Keyboard parity for pan (D13's arrow-key affordance) — MapLibre's own
@@ -3533,8 +3533,8 @@
       if (!p.detail.countries) {
         empty.hidden = false;
         empty.textContent = p.class === "pipeline"
-          ? p.name + " En phase de pré-lancement — aucun accès national pour le moment."
-          : "Aucune donnée au niveau national pour le moment. " + p.name + ".";
+          ? p.name + " est en prélancement – pas d’accès aux pays à ce jour."
+          : "Aucune donnée nationale à ce jour pour " + p.name + ".";
       } else {
         empty.hidden = true;
       }
@@ -3680,12 +3680,12 @@
     // group then draws and counts it on its own. Countries that list it only for
     // untested P. falciparum, severe malaria or pregnancy are not shown.
     const MFT_GROUPS = [
-      { id: "tested", short: "Recommandé pour P. falciparum", label: "Recommandé pour le paludisme à Plasmodium falciparum", why: "Première ligne pour les cas confirmés (testés) dans la politique nationale" },
-      { id: "vivax",  short: "Recommandé pour P. vivax", label: "Recommandé pour le paludisme à Plasmodium vivax", why: "Inscrit comme traitement dans la politique nationale" },
+      { id: "tested", short: "Recommandé pour P. falciparum", label: "Recommandé pour le paludisme à Plasmodium falciparum", why: "En première intention pour les cas confirmés (testés) dans les politiques nationales" },
+      { id: "vivax",  short: "Recommandé pour P. vivax", label: "Recommandé pour le paludisme à Plasmodium vivax", why: "Inscrit dans les politiques nationales de traitement" },
     ];
-    const MFT_TXT = { show: "Afficher sur la carte", count: "Nombre de pays", use: "Utilisation recommandée par pays", group: "Groupe", stage: "Étape d’accès", tickHint: "Cochez un groupe pour tracer ses frontières sur la carte.", tickLeft: "Cochez un groupe à gauche pour voir ses pays.",
-                      noPolicy: (n) => `Aucune liste de politique nationale de traitement ${n} pour le moment.`, notListed: "non répertorié",
-                      sources: "Sources pour cette étape d’accès :", checked: "Vérifié" };
+    const MFT_TXT = { show: "Afficher sur la carte", count: "Nombre de pays", use: "Utilisation recommandée dans les pays", group: "Groupe", stage: "Phases du parcours d’accès", tickHint: "Sélectionner un groupe pour tracer les frontières correspondantes sur la carte.", tickLeft: "Sélectionner un groupe sur la gauche pour afficher les pays correspondants.",
+                      noPolicy: (n) => `Aucune politique nationale de traitement ne mentionne encore ${n}.`, notListed: "non répertorié",
+                      sources: "Sources pour cette phase du parcours d’accès :", checked: "Vérifié sur" };
     // Colour and line pattern belong to the POLICY GROUP, never to the medicine:
     // every medicine draws first-line as the same solid vermilion line, and so on.
     // The four colours stay separable under protan, deutan and tritan vision, and
@@ -3725,7 +3725,7 @@
     const mftProductName = () => (tracked.find((p) => p.id === mftProductId) || {}).name || "";
     const mftSource = () => {
       const m = (TP && TP.meta) || {};
-      return `Source : OMS ${esc(m.edition || "World Malaria Report")}, Annexe 4B (${esc(String(m.policyYear || ""))} politique).`;
+      return `Source : ${esc(m.edition || "World Malaria Report")} de l’OMS, annexe 4B (politique de ${esc(String(m.policyYear || ""))}).`;
     };
     // The sources behind one country's access stage for the selected medicine:
     // the ids its entry in detail.countries.list cites, named and linked as in
@@ -3844,33 +3844,33 @@
     function detFacts() {
       const p = curProduct();
       const vol = p.detail && p.detail.volume && p.detail.volume.total;
-      return `<div class="det-card"><h4>${esc(p.name)} · Informations médicales</h4>` +
+      return `<div class="det-card"><h4>${esc(p.name)} · Informations</h4>` +
         `<div class="det-small">${esc(p.inn || "")}</div>` +
-        `<div class="det-k">Stade actuel</div><div class="det-v">${esc(STAGES[p.currentStage] || "")}</div>` +
-        (vol ? `<div class="det-k">Achats publics (Fonds mondial)</div><div class="det-v">${esc(fmtFig(vol))}</div>` : "") +
+        `<div class="det-k">Phase actuelle</div><div class="det-v">${esc(STAGES[p.currentStage] || "")}</div>` +
+        (vol ? `<div class="det-k">Achats via les canaux publics (Fonds mondial)</div><div class="det-v">${esc(fmtFig(vol))}</div>` : "") +
         (SHOW_BARRIERS && p.flag ? `<p class="det-small det-flag">${esc(p.flag)}</p>` : "") + `</div>`;
     }
     function detOverview(byCat) {
       const p = curProduct(), n = Object.keys(M.countries).length;
       let h = `<div class="det-banner"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 21 12l-6 1.5L12 21z"/></svg>` +
-        `<span>Sélectionnez un pays sur la carte ou dans l’onglet Pays pour ouvrir sa page.</span></div>` + detFacts();
-      if (!hasCountries()) return h + `<div class="det-card"><p class="det-empty">${esc(p.name)} est en phase de pré-lancement, il n’y a donc pas encore de statut ou de politique au niveau national.</p></div>`;
+        `<span>Sélectionner un pays sur la carte ou dans la liste de pays pour ouvrir son profil.</span></div>` + detFacts();
+      if (!hasCountries()) return h + `<div class="det-card"><p class="det-empty">${esc(p.name)} est en phase de prélancement, il n’existe donc pas encore de statut ni de politique au niveau national.</p></div>`;
       // One bar per stage: a country counts in every stage it has a source
       // for, so the stages are not parts of one whole.
       const vc = viewCounts();
       const withStage = Object.keys(M.countries).filter((i) => stageSets[i] && VIEW_ROWS.some(([k]) => stageSets[i][k])).length;
       h += `<div class="det-card"><h4>Étapes d’accès · ${esc(p.name)}</h4>` +
-        `<div class="det-big">${withStage}<span class="det-small"> ${n} pays ont une étape d’accès</span></div>` +
+        `<div class="det-big">${withStage}<span class="det-small"> pays sur ${n} ont atteint une phase du parcours d’accès</span></div>` +
         VIEW_ROWS.map(([k, l]) => `<div class="det-srow"><span><i class="mapsw ${k}"></i>${esc(k === "guidelines" ? "Dans les directives" : l)}</span><b>${vc[k]}</b></div>` +
           `<div class="det-bar thin" role="img" aria-label="${esc(l)} ${vc[k]}"><i style="width:${vc[k] / n * 100}%;background:${stageVar(k)}"></i></div>`).join("") +
         `<p class="det-small det-snote">Un pays peut être comptabilisé à plusieurs étapes.</p></div>`;
       h += `<div class="det-card"><h4>${esc(MFT_TXT.use)} · ${esc(p.name)}</h4>`;
-      if (!Object.keys(mftAvail()).length) h += `<p class="det-empty">Aucune liste de politique nationale de traitement ${esc(p.name)} pour le moment.</p>`;
+      if (!Object.keys(mftAvail()).length) h += `<p class="det-empty">Aucune politique nationale de traitement ne mentionne encore ${esc(p.name)}.</p>`;
       else if (!mftOn) h += `<p class="det-empty">${esc(MFT_TXT.tickLeft)}</p>`;
       else {
         const und = mftUndrawn();
         h += mftDonut(byCat, null, mftTick) +
-          (und.length ? `<p class="mft-note">Également dans la politique mais non représenté sur cette carte : ${esc(und.join(", "))}.</p>` : "") +
+          (und.length ? `<p class="mft-note">Également dans les politiques, mais non représenté sur la carte : ${esc(und.join(", "))}.</p>` : "") +
           `<p class="mft-note">${mftSource()}</p>`;
       }
       return h + `</div>`;
@@ -3881,7 +3881,7 @@
     // stages were checkboxes, unticking one also took its countries out.)
     const mftMatches = () => true;
     const mftListed = () => mftScope().filter(mftMatches);
-    const FIND_TXT = { country: "Pays", stage: "Scène", use: "Utiliser", none: "Aucun pays ne correspond aux filtres de gauche.", reset: "Réinitialiser les filtres", of: "de", guidelines: "Dans les directives" };
+    const FIND_TXT = { country: "Pays", stage: "Phase", use: "Utilisation", none: "Aucun pays ne correspond aux filtres sélectionnés à gauche.", reset: "Réinitialiser les filtres", of: "de", guidelines: "Dans les directives" };
     const countLabel = () => `${mftListed().length} ${FIND_TXT.of} ${mftScope().length}`;
     function finderRows(q) {
       const k = q.trim().toLowerCase();
@@ -3901,23 +3901,23 @@
         }).join("") + `</tbody></table>`;
     }
     function detCountries() {
-      return `<div class="det-card"><h4>Trouver un pays <span class="det-n">${countLabel()}</span></h4>` +
-        `<input id="det-q" class="det-q" type="search" placeholder="Saisissez le nom d’un pays…" aria-label="Rechercher des pays" autocomplete="off">` +
+      return `<div class="det-card"><h4>Rechercher un pays <span class="det-n">${countLabel()}</span></h4>` +
+        `<input id="det-q" class="det-q" type="search" placeholder="Saisir un pays..." aria-label="Rechercher un pays" autocomplete="off">` +
         `<div class="det-list" id="det-list">${finderRows("")}</div></div>`;
     }
 
     function detCountry(iso3) {
       const p = curProduct(), region = REGION_NAME[WHO_REGION[iso3]] || "";
-      let h = (mftSel ? `<button type="button" class="det-back" data-back>${cameFrom === "countries" ? "‹ Retour aux pays" : "‹ Retour à l’aperçu"}</button>` : "") +
+      let h = (mftSel ? `<button type="button" class="det-back" data-back>${cameFrom === "countries" ? "‹ Retour aux pays" : "‹ Retour à la vue d’ensemble"}</button>` : "") +
         `<div class="det-chead"><div><h4 class="det-cname" tabindex="-1">${esc(mftName(iso3))}</h4><span class="det-reg">${esc(region)}</span></div>` +
         `<div class="det-nav"><button type="button" data-step="-1" aria-label="Pays précédent">‹</button>` +
         `<button type="button" data-step="1" aria-label="Pays suivant">›</button></div></div>`;
-      if (!hasCountries()) return h + `<div class="det-card"><h4>${esc(p.name)}</h4><p class="det-empty">${esc(p.name)} est en phase de pré-lancement, il n’y a donc pas encore de statut ni de politique concernant certains pays.</p></div>`;
+      if (!hasCountries()) return h + `<div class="det-card"><h4>${esc(p.name)}</h4><p class="det-empty">${esc(p.name)} est en phase de prélancement, il n’existe donc pas encore de statut ni de politique au niveau national.</p></div>`;
       const st = mftStage(iso3), has = stageSets[iso3] || {}, g = mftGroups(iso3);
       const gl = mftCatsOf(iso3), tp = TP && TP.countries[iso3];
       const parts = tp && tp.parts ? Object.keys(tp.parts).map((k) => {
         const pg = (tp.parts[k].products || {})[mftProductId] || [];
-        return `${esc(k)}: ${pg.length ? "listes " : "ne liste pas "}${esc(p.name)}.`;
+        return `${esc(k)}: ${pg.length ? "a inscrit " : "n’a pas inscrit "}${esc(p.name)}.`;
       }).join(" ") : "";
       // The pill and "Other countries at the same stage" name the stage on the
       // map, so they show only when this country is at it; the track below
@@ -3925,10 +3925,10 @@
       h += `<div class="det-card"><div class="det-top"><b>${esc(p.name)}</b>${st.lvl !== "none" ? stagePill(st.lvl) : ""}</div>` +
         // each stage lit on its own, in its own colour, where a source supports it
         `<div class="det-trk">${STAGE_KEYS.map((k) => `<i${has[k] ? ` style="background:${stageVar(k)}"` : ""}></i>`).join("")}</div>` +
-        `<div class="det-trkl"><span>Inscrit</span><span>Dans les directives</span><span>Dans les plans MFT</span></div>` +
+        `<div class="det-trkl"><span>Enregistré</span><span>Dans les directives</span><span>Dans les plans MFT</span></div>` +
         countrySources(iso3) +
-        (gl.length ? gl.map((gm) => `<div class="det-gline">${mftLineSvg(gm.id)}<b>${esc(gm.short)}</b><span class="det-small">dans la politique de l’OMS ${esc(String((TP && TP.meta && TP.meta.policyYear) || ""))}</span></div>`).join("")
-            : `<div class="det-gline det-small">Non répertorié dans la politique nationale de traitement</div>`) +
+        (gl.length ? gl.map((gm) => `<div class="det-gline">${mftLineSvg(gm.id)}<b>${esc(gm.short)}</b><span class="det-small">dans les politiques de l’OMS ${esc(String((TP && TP.meta && TP.meta.policyYear) || ""))}</span></div>`).join("")
+            : `<div class="det-gline det-small">Non inscrit dans les politiques nationales de traitement</div>`) +
         (gl.length ? `<div class="mft-grp">${esc(MFT_TXT.use)}</div><div class="mft-chips">` +
           MFT_GROUPS.map((x) => `<span class="mft-pchip${g.includes(x.id) ? " yes" : ""}">${g.includes(x.id) ? "✓ " : ""}${esc(x.short)}</span>`).join("") + `</div>` : "") +
         (parts ? `<p class="mft-note">${parts}</p>` : "") + `<p class="mft-note">${mftSource()}</p></div>`;
@@ -3940,15 +3940,15 @@
         let before = 0;
         for (const [k] of STAGE_ROWS) { if (k === st.lvl) break; before += rc[k]; }
         const pos = (before + rc[st.lvl] / 2) / ids.length * 100;
-        h += `<div class="det-card"><h4>${esc(mftName(iso3))} parmi ${ids.length} ${esc(region)} pays · ${esc(p.name)}</h4>` +
+        h += `<div class="det-card"><h4>${esc(mftName(iso3))} parmi ${ids.length} pays de la région ${esc(region)} · ${esc(p.name)}</h4>` +
           `<div class="det-mkr">${stageBar(rc, ids.length)}<span class="pin" style="left:${pos}%"></span></div>${stageLegend(rc)}</div>`;
       }
       // other countries at the same stage
       const peers = drawnIsos().filter((x) => x !== iso3 && mftStage(x).lvl === st.lvl);
       if (st.lvl !== "none" && peers.length) {
-        h += `<div class="det-card"><h4>Autres pays au même stade · ${esc(st.label)}</h4><div class="det-chips">` +
+        h += `<div class="det-card"><h4>Autres pays dans la même phase · ${esc(st.label)}</h4><div class="det-chips">` +
           peers.slice(0, 24).map((x) => `<button type="button" class="det-chip" data-iso3="${esc(x)}">${esc(mftName(x))}</button>`).join("") +
-          (peers.length > 24 ? `<span class="det-small">+${peers.length - 24} Plus d’informations dans l’onglet Pays</span>` : "") + `</div></div>`;
+          (peers.length > 24 ? `<span class="det-small">et ${peers.length - 24} autres pays de la liste de pays</span>` : "") + `</div></div>`;
       }
       return h;
     }
@@ -3960,7 +3960,7 @@
       if (iso3) { el.innerHTML = detCountry(iso3); el.scrollTop = 0; return; }
       const nC = countLabel();
       el.innerHTML = `<div class="det-tabs" role="tablist">` +
-        `<button type="button" role="tab" aria-selected="${detTab === "overview"}" data-det-tab="overview">Aperçu</button>` +
+        `<button type="button" role="tab" aria-selected="${detTab === "overview"}" data-det-tab="overview">Vue d’ensemble</button>` +
         `<button type="button" role="tab" aria-selected="${detTab === "countries"}" data-det-tab="countries">Pays <span class="det-n">${nC}</span></button></div>` +
         (detTab === "countries" ? detCountries() : detOverview(byCat));
     }
@@ -4009,7 +4009,7 @@
     // stage at a time, with every country that has a source for it (partner
     // feedback, 3 Nov 2026; they were checkboxes that faded the
     // countries at a stage, each country shaded at its furthest stage only).
-    const STAGE_ROWS = [["registered", "Inscrit"], ["guidelines", "Conformément aux directives nationales"],
+    const STAGE_ROWS = [["registered", "Enregistré"], ["guidelines", "Dans les directives nationales"],
                         ["mft", "Dans les plans MFT"], ["none", "Aucune donnée"]];
     const VIEW_ROWS = STAGE_ROWS.filter(([k]) => k !== "none");
     // How many drawn countries each view shades. A country counts in every
@@ -4105,7 +4105,7 @@
         map.getCanvas().style.cursor = "pointer";
         showTipAtPoint(e.originalEvent.clientX, e.originalEvent.clientY,
           `<b>${esc(mftName(iso3))}</b><div class="tlvl"><span class="mapsw ${st.lvl}"></span>${esc(st.label)}</div>${mftTipLine(iso3)}` +
-          `<div class="tprod det-cta">Cliquez pour plus de détails ›</div>`);
+          `<div class="tprod det-cta">Cliquer pour plus de détails ›</div>`);
       });
       map.on("mouseleave", "country-fill", () => { hideTip(); map.getCanvas().style.cursor = ""; });
       map.on("click", "country-fill", (e) => {
@@ -4215,19 +4215,19 @@
     const missing = [subFirst, subLast].filter(i => !i.value.trim());
     if (missing.length) {
       missing.forEach(i => i.setAttribute("aria-invalid", "true"));
-      subSay("Veuillez saisir votre prénom et votre nom.", "bad");
+      subSay("Veuillez saisir votre prénom et votre nom de famille.", "bad");
       missing[0].focus();
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       subMail.setAttribute("aria-invalid", "true");
-      subSay("Veuillez saisir une adresse e-mail à laquelle nous pouvons vous contacter.", "bad");
+      subSay("Veuillez saisir l’adresse électronique sur laquelle nous pouvons vous joindre.", "bad");
       subMail.focus();
       return;
     }
     subBusy = true;
     subGo.disabled = true;
-    subGo.textContent = "Envoi…";
+    subGo.textContent = "Envoi en cours...";
     subSay("");
     // Says what actually happened: success shows only once the server has the
     // address on the list, and an address that was already there is told so
@@ -4236,18 +4236,18 @@
     try {
       const result = await subscribeEmail({ firstName: first, lastName: last, email, organisation: org });
       if (result && result.status === "already") {
-        subSay("Cette adresse e-mail est déjà abonnée. Vous continuerez à recevoir un e-mail à chaque mise à jour des données du tableau de bord.", "ok");
+        subSay("Cette adresse électronique est déjà enregistrée. Vous continuerez à recevoir un courriel chaque fois que les données du tableau de bord seront mises à jour.", "ok");
       } else {
-        subSay("Merci de votre inscription. Vous recevrez un courriel à chaque mise à jour des données du tableau de bord.", "ok");
+        subSay("Merci pour votre inscription. Vous recevrez un courriel chaque fois que les données du tableau de bord seront mises à jour.", "ok");
       }
       subForm.reset();
     } catch (err) {
-      subSay("Désolé, nous n’avons pas pu vous ajouter pour le moment. Veuillez réessayer dans quelques instants.", "bad");
-      if (window.console && console.warn) console.warn("[LAUNCH] Échec de l’abonnement :", err);
+      subSay("Désolé, nous ne sommes pas parvenus à vous ajouter. Veuillez réessayer dans un instant.", "bad");
+      if (window.console && console.warn) console.warn("[LAUNCH] échec de l’inscription :", err);
     } finally {
       subBusy = false;
       subGo.disabled = false;
-      subGo.textContent = "Prévenez-moi";
+      subGo.textContent = "S’inscrire";
     }
   });
 
@@ -4255,9 +4255,9 @@
   // snippet in i18n/reviewed-strings.json: single words are never collected by
   // pattern, and until 12 Oct 2026 the French, Portuguese and Spanish CSVs had
   // seven English headings beside three translated ones.
-  const CSV_COL = { product: "Produit", record: "Enregistrer", item: "Article", status: "Statut", detail: "Détail",
-    date: "Date", next: "Étape suivante", anticipated: "Prévu", source: "Source", asOf: "À partir de" };
-  const CSV_REC = { stageRow: "Scène", milestoneRow: "Jalon" };
+  const CSV_COL = { product: "Produit", record: "Dossier", item: "Élément", status: "Statut", detail: "Détail",
+    date: "Date", next: "Étape suivante", anticipated: "Attendu", source: "Source", asOf: "En date de" };
+  const CSV_REC = { stageRow: "Phase", milestoneRow: "Étape" };
   document.getElementById("dl-csv").addEventListener("click", () => {
     const rows = [[CSV_COL.product, CSV_COL.record, CSV_COL.item, CSV_COL.status, CSV_COL.detail,
       CSV_COL.date, CSV_COL.next, CSV_COL.anticipated, CSV_COL.source, CSV_COL.asOf]];
@@ -4296,8 +4296,8 @@
       // Say so rather than leaving an empty list. A footer that quietly loses
       // its sources still looks finished, and this page's entire claim is that
       // every figure on it is traceable to one of them.
-      dataUl.outerHTML = '<p class="viznote">La liste des sources n’a pas pu être chargée. Veuillez recharger la page pour réessayer.</p>';
-      console.error("[LAUNCH] Le fichier data/sources.js n’a pas été chargé.");
+      dataUl.outerHTML = '<p class="viznote">La liste des sources n’a pas pu être chargée. Veuillez actualiser la page et réessayer.</p>';
+      console.error("[LAUNCH] échec du chargement de data/sources.js");
       if (docsWrap) docsWrap.remove();
       return;
     }
@@ -4339,8 +4339,8 @@
     const named = ok => PRODUCTS.filter(p => p.detail && p.detail.countries &&
       (p.detail.countries.status === "verified") === ok).map(p => p.name).join(", ");
     const line = (label, list) => (list ? `${label} ${esc(list)}. ` : "");
-    slot.innerHTML = line("Les enregistrements des pays ont été vérifiés pour :", named(true)) +
-      line("Les étapes nationales n’ont pas encore été vérifiées pour :", named(false));
+    slot.innerHTML = line("Les enregistrements nationaux ont été vérifiés pour :", named(true)) +
+      line("Les phases atteintes par les pays n’ont pas encore été vérifiées pour :", named(false));
   })();
 
   // print: open every panel so the printout is complete
@@ -4383,9 +4383,9 @@
     // Partner feedback, 15 Oct 2026. This page only; the widget's own intro
     // ("Something look wrong, out of date, or hard to follow? …") stays on
     // the other pages.
-    intro: "Quelque chose vous semble-t-il anormal ou obsolète ? Dites-nous ce que vous voyez.",
+    intro: "Une information vous paraît erronée ou obsolète ? Dites-le-nous.",
     messagePlaceholder:
-      "Par exemple, la carte indique que ce médicament n’est pas encore enregistré en Tanzanie, mais il y a été approuvé en juin 2026."
+      "Par exemple, la carte indique que ce médicament n’est pas encore enregistré en Tanzanie, alors qu’il a été approuvé dans le pays en juin 2026."
   };
 </script>
 <script src="assets/report-issue.js" defer></script>
