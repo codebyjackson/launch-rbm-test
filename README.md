@@ -13,14 +13,16 @@ country names, dates and numbers).
 
 | | Version | Notes |
 |---|---|---|
-| Node.js | 20.9 or later | |
-| Next.js | 16.4.3 | If your site runs 16.x, use 16.4.1 or later: 16.0.0 to 16.4.0 have published security advisories (GHSA-2464-fhr4-w9xw, GHSA-673q-mjm6-r5xr, GHSA-p3m5-59mp-jv5r). |
-| React | 19.3.0 | |
-| maplibre-gl | 6.14.0 | From npm, as a dependency. |
-| next-intl | not used by the components | Your `i18n.ts` loads our message files; see "Interface text". |
+| Node.js | 20 | Tested on 20.20.2. |
+| Next.js | 15.5.28 | When your site moves to 16.x, use 16.4.1 or later: 16.0.0 to 16.4.0 have published security advisories (GHSA-2464-fhr4-w9xw, GHSA-673q-mjm6-r5xr, GHSA-p3m5-59mp-jv5r). |
+| React | 18.3.1 | |
+| maplibre-gl | 6.14.0 | From npm, as a dependency (approved for the module). |
+| next-intl | not used by the components | Your `i18n.ts` loads our message files; tested with 3.26.5. See "Interface text". |
 
-Every version is pinned exactly in `package.json`. If your site runs an older
-Next.js or React, tell us which, so we can test the components on it.
+Every version is pinned exactly in `package.json`, the versions that your
+module repository's `package-lock.json` installs (`rbm-module-unitaid`). When
+your site upgrades, tell us which versions, so we can test the components on
+them.
 
 ## Try it
 
@@ -42,7 +44,7 @@ Send feedback shows as not connected.
 |---|---|
 | `components/` | The dashboard. `components/Dashboard.tsx` is the one to place on a page. |
 | `lib/` | Data loading, stage rules, map logic, the text adapters. |
-| `messages/` | The interface text, `en.json`, `fr.json`, `pt.json` (see below). |
+| `messages/` | The interface text, `en.json`, `fr.json`, `pt.json`. In your module repository they go in `src/app/[locale]/unitaid/i18n/` (see below). |
 | `styles/launch-dashboard.css` | The dashboard's styles. Import it once, for example in your layout. Every rule is scoped under `.launch-dashboard`, so it does not touch your page. (`styles/feedback.css` is imported by the feedback form itself.) |
 | `public/launch-map/` | The map's shapes (`world-shapes.json`) and MapLibre's worker (`maplibre-gl-worker.mjs`, served as JavaScript). |
 | `public/launch-icons/`, `public/assets/` | The WHO emblem and the Unitaid logo. |
@@ -112,25 +114,30 @@ language.
 
 ## Interface text (your `i18n.ts`)
 
-`messages/en.json`, `fr.json` and `pt.json` follow the structure of your sample
-files, with the same keys in all three:
+`messages/en.json`, `fr.json` and `pt.json` follow your module repository's
+rules, with the same keys in all three:
 
 | Key | What it is |
 |---|---|
-| `Sidebar.unitaid`, `Sidebar.unitaid_tooltip` | The module's menu entry and its tooltip. |
+| `Sidebar.partners_subitem_unitaid`, `Sidebar.partners_subitem_unitaid_tooltip` | The module's menu entry and its tooltip, in the `partners` group your sandbox's sidebar reads. |
 | `Unitaid.title` | The page's title. |
 | `Unitaid.metadata` | `title`, `description` and `keywords` for the page's `<head>`. Your name stays in English in the title, and the keywords are the same English list in every language, as in your sample. |
-| `Unitaid.*` (everything else) | The dashboard's 318 messages, by component area (`header`, `subscribe`, `board`, `map`, …). |
+| `Unitaid.*` (everything else) | The dashboard's 330 messages, by component area (`header`, `subscribe`, `board`, `map`, …). |
 
-Merge them into your own message files: under `Unitaid` our messages cannot
-collide with yours. Then pass `Unitaid` to the dashboard as `text`, and call
-`provideMessages()` on the server, as above. The example app
-(`app/[locale]/layout.tsx`) shows `Unitaid.metadata` used as the page's
-metadata.
+In `rbm-module-unitaid`, copy the three files as they are into
+`src/app/[locale]/unitaid/i18n/`; its `src/i18n.ts` merges them into the
+site's messages. Under `Unitaid` our messages cannot collide with yours. Then
+pass `Unitaid` to the dashboard as `text`, and call `provideMessages()` on the
+server, as above. The example app (`app/[locale]/layout.tsx`) shows
+`Unitaid.metadata` used as the page's metadata.
 
-- Placeholders are `{name}`, which next-intl reads as they are. next-intl
-  3.15.2 read all 319 keys in all three files exactly as written (28 Oct 2026;
-  324 since 3 Nov, not re-read with next-intl).
+- Checked on 4 Nov 2026 in `rbm-module-unitaid` (`6ca0e99`, Node 20.20.2),
+  with the files in `src/app/[locale]/unitaid/i18n/`: `check:contract` and
+  `format:check` pass; next-intl 3.26.5 returns all 336 keys exactly as
+  written, and formats every one, its `{placeholders}` filled, in en, fr and
+  pt; `next build` serves them on `/en/unitaid`, `/fr/unitaid` and
+  `/pt/unitaid`, with our menu entry in the sidebar.
+- Placeholders are `{name}`, which next-intl reads as they are.
 - Each message you pass is used when it is text with the same `{placeholders}`
   as ours. Anything missing or broken shows our own copy (the files in
   `messages/`), so the dashboard never shows a blank or a raw key.

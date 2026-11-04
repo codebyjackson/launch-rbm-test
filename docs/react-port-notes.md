@@ -1145,6 +1145,38 @@ This file is updated in the same commit as each change it describes.
       `sourceMappingURL`. RBM's own repository has the same copy under
       `next`. The only fix npm offers is Next 16.4.4. PostCSS here reads
       only `styles/*.css`, ours, so no reader's input reaches it.
+63. **The message files pass RBM's module repository: `Sidebar` keys
+    renamed, tab indent** (4 Nov; local branch `fix/rbm-sidebar-keys`, on
+    `feat/rbm-versions`). The files from launch-development-test `ad3f394`
+    (`fix/rbm-sidebar-keys`, its decision 16), copied by
+    `copy-rbm-messages.js`. Supersedes decision 57's `Sidebar.unitaid`.
+    - **Found.** `rbm-module-unitaid` (`6ca0e99`) loads the files from
+      `src/app/[locale]/unitaid/i18n/` with next-intl 3.26.5 (decision 55
+      had 3.15.2, RBM's word, not its lock). A trial there on a local branch,
+      on Node 20.20.2, with this branch's base files: next-intl returned all
+      336 keys as written and formatted all of them in en, fr and pt (no
+      error; the 13 straight apostrophes in English read as text), and `next
+      build` served them on `/en|fr|pt/unitaid`. Failed: `check:contract`
+      (`Sidebar.<group>_subitem_unitaid[_tooltip]` required, 6 errors), the
+      sidebar (it reads `Sidebar.partners_subitem_unitaid`: `MISSING_MESSAGE`,
+      raw key shown), and `format:check` (Biome wants tabs; not a word
+      different).
+    - **Changed.** `Sidebar.partners_subitem_unitaid` and its `_tooltip`
+      (the owner's choice: the `partners` group the sandbox reads; the words
+      stay the header's title and description), tab indent. No message
+      changed. `tests/messages.test.ts` expects the new keys and the tooltip.
+      `README.md`: the versions table (it still said Next 16.4.3, React
+      19.3.0), where the files go in RBM's repository, the 4 Nov check, 330
+      messages (it said 318). `messages/README.md` likewise.
+    - **Checked, 4 Nov.** In the trial, with these files:
+      `check:contract` OK, `format:check` passes on them, `lint` clean,
+      next-intl 15 of 15 (the sidebar keys included), `next build`, and the
+      sidebar shows our title in each language, no `MISSING_MESSAGE`. Here:
+      see Status.
+    - **Windows.** `core.autocrlf=true` checks the sandbox out with CRLF, and
+      its contract then reports 53 protected files as modified (hashes of
+      LF files). The trial clone has `core.autocrlf=false`; RBM's CI is not
+      affected.
 
 ## Deferred, and found on the way
 
