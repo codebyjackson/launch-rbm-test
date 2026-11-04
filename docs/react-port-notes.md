@@ -1177,6 +1177,40 @@ This file is updated in the same commit as each change it describes.
       its contract then reports 53 protected files as modified (hashes of
       LF files). The trial clone has `core.autocrlf=false`; RBM's CI is not
       affected.
+64. **The professional translators' French and Portuguese** (5 Nov; branch
+    `fix/rbm-sidebar-keys`). Messages from launch-development-test `a9af77b`
+    (PRs #144, #145, #146), the same as `rbm-module-unitaid` `v1.1.1`. The
+    tests read the last build of the static pages, launch-rbm-test `main`
+    `565cec0` (PR #37, tagged `static-pages-final` before the pages left
+    `main`), and the data published as launch-data-test `bba1950`.
+    - **Pins and references.** Every pin moves from `2f3d72c` to `565cec0`;
+      the five extractors and `build-map-assets.mjs` ran again (the map
+      names and worker came back the same). `tests/fixtures/dashboard*.json`
+      are `bba1950`'s files. `dataset.test.ts` expects the translators' stage
+      name, "R&D et essais cliniques".
+    - **The text tables hold the pages' words.** `tests/fixtures/text/`'s
+      French and Portuguese, and `map-markup.ts`, were rebuilt from the
+      adapters handed the pages' own words, so they say what `565cec0`
+      says.
+    - **Where a message and the page differ.** A message with
+      {placeholders} has its own memory entry under its own English. Where
+      the translators delivered the page's sentence, the message takes its
+      words (launch-development-test `import-xliff.js`, "derived"); the rest
+      stay Google's until the translators' follow-up file comes back
+      (e.g. "{n} année" against the page's "{n} an"): 17 French and 14
+      Portuguese values in `CHANGED`, from 18 and 12 messages.
+      `tests/setup/page-words.ts` hands every test file the pages' words for
+      those messages (`fixtures/messages/page-words.json`), as the European
+      pin did until 3 Nov, so the golden and markup tests test the logic;
+      `text-parity.test.ts` drops them and lists each difference in
+      `CHANGED`. `pathwayText.nodeDelayed` is back there: the page writes
+      ", n delayed" in English in every language.
+    - **Found.** The Portuguese delivery dropped the leading "· " of
+      "· expected" and "· so far", so /pt read "Em andamento esperado
+      Q4 2026"; fixed in launch-development-test #146 and on the pages
+      (#37).
+    - **Checked, 5 Nov, Node 20.20.2:** `tsc` clean; vitest 19 of 19 files,
+      394 of 394 tests.
 
 ## Deferred, and found on the way
 

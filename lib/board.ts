@@ -2,7 +2,7 @@
 // order, how a journey is laid out on its time axis, the fork drawn for a
 // parallel pair, the procurement card's two rules, and where glossary terms
 // go. Ported from
-// the main script of launch-rbm-test 2f3d72c (en/index.html), keeping the old
+// the main script of launch-rbm-test 565cec0 (en/index.html), keeping the old
 // names; tests/golden-board.test.ts checks each against the original in all
 // three languages, and tests/markup-board.test.ts checks the markup built
 // from them.

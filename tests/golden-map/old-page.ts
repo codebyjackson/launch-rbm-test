@@ -295,7 +295,7 @@ export function runOldPage(
   });
   const documentElement = new FakeEl("html");
   // the language the new code declares (lib/frame.ts PAGE_LANG), which the
-  // other harnesses check equals the pages' own <html lang> (pt-BR since 2f3d72c)
+  // other harnesses check equals the pages' own <html lang> (pt-BR since 565cec0)
   documentElement.lang = PAGE_LANG[lang];
   const document = {
     documentElement,

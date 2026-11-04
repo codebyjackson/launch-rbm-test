@@ -1,7 +1,7 @@
 // The pathway strip's and the step panels' rules, as pure functions: which
 // medicines are listed, a step's number and column, how many medicines are
 // delayed at it, how long the current gate has waited, and the counts the
-// panels show. Ported from the main script of launch-rbm-test 2f3d72c
+// panels show. Ported from the main script of launch-rbm-test 565cec0
 // (en/index.html), keeping the old names where the page had a function.
 //
 // tests/golden-pathway.test.ts checks every function the page had on its own

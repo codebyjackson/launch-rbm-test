@@ -1,6 +1,6 @@
 // Markup parity for components/pathway/: each component rendered with
 // renderToStaticMarkup, against the markup the page's own code builds for the
-// same input (tests/golden-pathway/reference/, launch-rbm-test 2f3d72c), in
+// same input (tests/golden-pathway/reference/, launch-rbm-test 565cec0), in
 // all three languages, for every step, every medicine variant and every
 // stage. Both sides are put in canonical form first (tests/golden-pathway/
 // html.ts): attribute order, boolean attributes, entity encoding and

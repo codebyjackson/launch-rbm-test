@@ -2,7 +2,7 @@
 //
 // The reference for tests/golden-board.test.ts and tests/markup-board.test.ts:
 // the static page's own board code, frozen. Source: launch-rbm-test commit
-// 2f3d72c: first assets/journey-icons/icons-solid.js whole, then from fr/index.html, the
+// 565cec0: first assets/journey-icons/icons-solid.js whole, then from fr/index.html, the
 // <script type="text/x-launch-app"> block, every top-level declaration the
 // tests call and every one those read, and the statements that build the
 // board, copied verbatim with the comments above them, in page order; each
@@ -175,14 +175,14 @@
   const ICON = { done: "✓", prog: "›", late: "!", idle: "" };
 
 // @@ fr/index.html:1808
-  const LABEL = { done: "Complet", prog: "En cours", late: "Retardé", idle: "Pas encore commencé" };
+  const LABEL = { done: "Terminé", prog: "En cours", late: "En retard", idle: "Non démarré" };
 
 // @@ fr/index.html:1813
   // What "Delayed" means, shown from the i beside it in the medicines table.
   // It said "not moving as fast as expected", which named no expectation; a
   // partner asked what Delayed refers to (19 Oct 2026). It is the hand-set
   // `late` status (docs/data-analyst-guide.md), not a measured comparison.
-  const LATE_DEF = "Le développement du médicament est actuellement au point mort ou progresse anormalement lentement, selon l’évaluation de LAUNCH basée sur des informations publiques. Le principal obstacle en est la raison. Il n’est pas assorti d’un délai précis.";
+  const LATE_DEF = "Selon l’avis de LAUNCH, fondé sur des données publiques, le développement de ce médicament est à l’arrêt ou avance à un rythme inhabituellement lent. L’obstacle principal en explique la raison. Ce retard n’est pas évalué au regard d’une échéance fixe.";
 
 // @@ fr/index.html:1817
   // Not shown since 3 Nov 2026: the medicines table's Status column, which
@@ -215,7 +215,7 @@
 
 // @@ fr/index.html:1840
   // The grey line under the stage name in the medicines table's
-  // "Stade actuel" cell: the first clause of the stage's date or note
+  // "Phase actuelle" cell: the first clause of the stage's date or note
   // ("Ghana 2022", "Since 2008"). Hidden for every medicine at the owner's
   // request (20 Oct 2026); the stage name and status word stay, and the full
   // date still shows on the journey and in the stage panel. true brings it back.
@@ -395,7 +395,7 @@
   const ASOF_YEAR = parseInt(DATA.meta.lastUpdated.slice(0, 4), 10);
 
 // @@ fr/index.html:2046
-  const yrsText = n => n + (n === 1 ? " année" : " années");
+  const yrsText = n => n + (n === 1 ? " an" : " ans");
 
 // @@ fr/index.html:2048
   function firstYear(p) {
@@ -423,10 +423,10 @@
   }
 
 // @@ fr/index.html:2069
-  const reachedText = y => (y != null ? `Atteint en ${y}` : "Atteint, année non enregistrée");
+  const reachedText = y => (y != null ? `Atteint en ${y}` : "Atteint, année non consignée");
 
 // @@ fr/index.html:2070
-  const soFarText = n => (n > 0 ? `${yrsText(n)} jusqu’à présent` : "Moins d’un an jusqu’à présent");
+  const soFarText = n => (n > 0 ? `${yrsText(n)} à ce jour` : "Moins de 1 an à ce jour");
 
 // @@ fr/index.html:2073
   // [phase name, figure, tone] for each phase shown. Country Access appears
@@ -443,7 +443,7 @@
 
 // @@ fr/index.html:2083
   // What the two figures mean, from the i beside them.
-  const ACCESS_DEF = "L’accès au marché est accordé lorsqu’un médicament est à la fois recommandé par l’OMS et préqualifié par celle-ci. L’accès au pays intervient ensuite jusqu’à ce que l’enregistrement national, l’adoption de politiques de santé, l’approvisionnement en volumes importants et la distribution dans le pays soient achevés.";
+  const ACCESS_DEF = "L’accès au marché est effectif lorsqu’un médicament est à la fois recommandé et préqualifié par l’OMS. Pour que l’accès aux pays soit effectif, il faut également que les phases de l’enregistrement national, de l’intégration dans les politiques, de l’achat en quantités importantes et de la mise en œuvre sur le territoire national aient toutes été effectuées.";
 
 // @@ fr/index.html:2084
   const accessInfo = () => `<button type="button" class="info" data-tip="${esc(ACCESS_DEF)}" aria-label="${esc(ACCESS_DEF)}">i</button>`;
@@ -504,7 +504,7 @@
   // ---- yardstick: expected time against time taken (7 Oct 2026) -------------
   // DATA.yardstick gives the years each stage is expected to take. Three places
   // read it: the badge under "On pathway", the box at the top of an open row,
-  // and the "Temps passé" view. The clock starts where "On pathway" starts
+  // and the "Délai écoulé" view. The clock starts where "On pathway" starts
   // (firstYear), so the two numbers always agree, and only once the medicine
   // has a dated regulatory approval. A stage's own clock: stages 2 to 4 start
   // with the pathway, policy adoption at the WHO recommendation, procurement
@@ -534,7 +534,7 @@
 // @@ fr/index.html:2154
   const PHASES = [
     { name: "Accès au marché" },
-    { name: "Accès au pays" }
+    { name: "Accès aux pays" }
   ];
 
 // @@ fr/index.html:2158
@@ -587,14 +587,14 @@
   // One plain label per step: text, tone (bad / good / none), still going.
   function yardResult(s) {
     if (s.kind === "idle") return { t: LABEL.idle, tone: "none" };
-    if (s.kind === "nodate") return { t: "Terminé, aucune date enregistrée", tone: "none" };
-    if (s.kind === "nostart") return { t: "En cours, sans date de début", tone: "none" };
+    if (s.kind === "nodate") return { t: "Terminé, pas de date connue", tone: "none" };
+    if (s.kind === "nostart") return { t: "En cours, pas de date de début", tone: "none" };
     if (s.late > 0) return { t: varianceText(s.late), tone: "diff", going: s.kind === "going" };
-    return s.kind === "going" ? { t: "Tout se déroule comme prévu jusqu’à présent", tone: "good" } : { t: yrsText(0), tone: "good" };
+    return s.kind === "going" ? { t: "En bonne voie jusqu’à présent", tone: "good" } : { t: yrsText(0), tone: "good" };
   }
 
 // @@ fr/index.html:2206
-  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· jusqu’à présent</i>` : ""}</span>`;
+  const yardPill = (r, sm) => `<span class="ysp${sm ? " sm" : ""} ${r.tone}">${esc(r.t)}${r.going && !sm ? ` <i>· à ce jour</i>` : ""}</span>`;
 
 // @@ fr/index.html:2211
   // Which steps use a published timeline and which LAUNCH's own estimate is
@@ -604,8 +604,8 @@
   const yardNote = () => {
     const by = b => YARD.expected.map((e, i) => (e && e.basis === b ? STAGES[i] : null)).filter(Boolean).join(", ");
     const line = (label, list) => (list ? `<span>${label} ${esc(list)}.</span> ` : "");
-    const pub = line("Délais prévus d’après le calendrier publié :", by("published"));
-    const est = line("Délais prévus d’après les estimations de travail de LAUNCH, encore à convenir :", by("estimate"));
+    const pub = line("Délais attendus, d’après le calendrier communiqué :", by("published"));
+    const est = line("Délais attendus d’après les estimations de LAUNCH, qui restent à valider :", by("estimate"));
     return `<p class="ysnote">${pub}${est}</p>`;
   };
 
@@ -626,24 +626,24 @@
     const due = y.start + y.whole.exp, late = y.whole.late, going = y.whole.kind === "going";
     return `<div class="ysbox">
       <div class="ysfigs">
-        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>utilisation courante par ${due}</span></div>
-        <div><small>${going ? "Situation actuelle jusqu’à présent" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore en usage courant" : ""}</span></div>
-        <div class="ysdiff"><small>Variance</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "jusqu’à présent" : "par rapport aux attentes"}</span></div>
+        <div><small>Attendu</small><strong>${esc(yrsText(y.whole.exp))}</strong><span>utilisation courante d’ici ${due}</span></div>
+        <div><small>${going ? "À ce jour" : "Réel"}</small><strong>${esc(yrsText(y.whole.took))}</strong><span>depuis ${y.start}${going && ASOF_YEAR >= due ? ", pas encore couramment utilisé" : ""}</span></div>
+        <div class="ysdiff"><small>Écart</small><strong>${late > 0 ? esc(varianceText(late)) : esc(yrsText(0))}</strong><span>${going ? "à ce jour" : "par rapport à la date prévue"}</span></div>
       </div>
-      <p>Son utilisation courante est prévue d’ici ${due}, ${y.whole.exp} ans après sa première étape importante en ${y.start}.${going && ASOF_YEAR >= due ? ` Toujours pas d’usage courant dans ${ASOF_YEAR}.` : ""}</p>
-      ${y.biggest ? `<p>Variance la plus importante : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· jusqu’à présent</i>` : ""}</p>` : ""}
+      <p>Utilisation courante attendue d’ici ${due}, ${y.whole.exp} ans après avoir atteint la première étape en ${y.start}.${going && ASOF_YEAR >= due ? ` Toujours pas couramment utilisé en ${ASOF_YEAR}.` : ""}</p>
+      ${y.biggest ? `<p>Écart le plus important : <b>${esc(STAGES[y.biggest.i])}</b> · ${esc(varianceText(y.biggest.late))}${y.biggest.kind === "going" ? ` <i>· à ce jour</i>` : ""}</p>` : ""}
     </div>`;
   }
 
 // @@ fr/index.html:2241
-  // the "Temps passé" view: expected against actual, under the two access groups
+  // the "Délai écoulé" view: expected against actual, under the two access groups
   function yardTable(p) {
     const y = yardstick(p);
     if (!y) return "";
-    if (!y.approved) return `<div class="ysempty"><b>Pas encore approuvé.</b> Nous commençons la comparaison une fois que le médicament a reçu une autorisation de mise sur le marché datée.</div>`;
+    if (!y.approved) return `<div class="ysempty"><b>Pas encore approuvé.</b> Nous ne comparons les médicaments que lorsqu’ils ont obtenu une autorisation réglementaire datée.</div>`;
     // "—", not "n/a": text with no two letters in a row is never collected for
     // translation, so "n/a" stayed English on /fr, /pt and /es.
-    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>jusqu’à présent</i>` : "");
+    const actual = s => s.took == null ? "—" : yrsText(s.took) + (s.kind === "going" ? ` <i>à ce jour</i>` : "");
     const row = (name, s, foot) => `<tr${foot ? ' class="whole"' : ""}><th scope="row">${name}</th><td>${yrsText(s.exp)}</td><td>${actual(s)}</td><td>${yardPill(yardResult(s))}</td></tr>`;
     const head = ph => `<tr class="ysgrp ph${ph}"><th scope="colgroup" colspan="4"><i class="phn">${ph + 1}</i>${esc(PHASES[ph].name)}</th></tr>`;
     let ph = -1;
@@ -654,9 +654,9 @@
       return h + row(esc(STAGES[s.i]), s);
     }).join("");
     return `<div class="cscroll"><table class="ystable">
-      <thead><tr><th scope="col">Scène</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Variance</th></tr></thead>
+      <thead><tr><th scope="col">Phase</th><th scope="col">Attendu</th><th scope="col">Réel</th><th scope="col">Écart</th></tr></thead>
       <tbody>${body}</tbody>
-      <tfoot>${row("Tout le voyage", y.whole, true)}</tfoot>
+      <tfoot>${row("Parcours complet", y.whole, true)}</tfoot>
     </table></div>${yardNote()}`;
   }
 
@@ -697,15 +697,15 @@
   function countryAccessKv(d) {
     const list = d.countries && Array.isArray(d.countries.list) ? d.countries.list : null;
     if (!list) return `
-              <div class="kv"><span>Inscrit</span><span>${esc(d.country.registered)}</span></div>
-              <div class="kv"><span>Conformément aux directives nationales</span><span>${esc(d.country.inGuidelines)}</span></div>
+              <div class="kv"><span>Enregistré</span><span>${esc(d.country.registered)}</span></div>
+              <div class="kv"><span>Dans les directives nationales</span><span>${esc(d.country.inGuidelines)}</span></div>
               <div class="kv"><span>Dans les plans MFT</span><span>${esc(d.country.inMft)}</span></div>`;
     const c = { registered: 0, guidelines: 0, mft: 0 };
     Object.values(countryStages(list)).forEach(s => Object.keys(c).forEach(k => { if (s[k]) c[k]++; }));
     return `
               <div class="kv"><span>Pays sur la carte</span><span>${list.length}</span></div>
               <div class="kv sub"><span>Confirmé dans les registres nationaux</span><span>${c.registered}</span></div>
-              <div class="kv sub"><span>Conformément aux directives nationales</span><span>${c.guidelines}</span></div>
+              <div class="kv sub"><span>Dans les directives nationales</span><span>${c.guidelines}</span></div>
               <div class="kv sub"><span>Dans les plans MFT</span><span>${c.mft}</span></div>
               <p style="margin:4px 0 2px 14px;font-size:13px;color:var(--ink-3)">Un pays peut être comptabilisé à plusieurs étapes.</p>`;
   }
@@ -714,7 +714,7 @@
   function miniJourney(p) {
     const done = p.stages.filter(st => st.status === "done").length;
     const dot = i => `<i class="md ${p.stages[i].status}" title="${esc(STAGES[i])}${statusShown(p, p.stages[i].status) ? ": " + LABEL[p.stages[i].status] : ""}"></i>`;
-    return `<div class="mini" role="img" aria-label="${done} sur ${p.stages.length} étapes franchies">` +
+    return `<div class="mini" role="img" aria-label="${done} étapes terminées sur ${p.stages.length}">` +
       STAGE_COLUMNS.map((col, c) => `<span class="jcell" data-c="${c}">` +
         (col.stages.length === 1 ? dot(col.stages[0]) : `<span class="mp">${col.stages.map(dot).join("")}</span>`) +
         `</span>`).join('<i class="ln"></i>') + `</div>`;
@@ -735,7 +735,7 @@
     const peekLine = peekLineFor(p);
     return `<button class="smark" type="button"
       aria-expanded="false" aria-controls="${esc(p.id)}-gate"
-      aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Ouvre les détails complets."
+      aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Affiche les détails complets."
       data-stage="${esc(STAGES[i])}" data-stagei="${i}" data-pid="${esc(p.id)}"
       data-status="${st.status}"
       data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>`;
@@ -813,7 +813,7 @@
     const chip = (j, withStatus) => {
       const st = p.stages[j];
       return `<span class="uchip"><span class="ui m-${st.status}">${stageIconImg(j, "")}</span><span>${esc(STAGES[j])}</span>` +
-        (withStatus ? ` · <span class="st ${st.status}">${st.status === "late" ? "retardé" : "en cours"}</span>` : "") + `</span>`;
+        (withStatus ? ` · <span class="st ${st.status}">${st.status === "late" ? "en retard" : "en cours"}</span>` : "") + `</span>`;
     };
     const group = (title, list, withStatus) =>
       `<div class="ugrp"><div class="h">${title}</div>` +
@@ -829,7 +829,7 @@
     // a product early in the pathway has up to seven of them, which made this
     // panel the tallest thing in the row. Names are in each icon's title and
     // aria-label, and the strip above the table names every gate.
-    const notStartedHtml = `<div class="ugrp"><div class="h">Pas encore démarré · ${notStarted.length}</div>` +
+    const notStartedHtml = `<div class="ugrp"><div class="h">Non démarré · ${notStarted.length}</div>` +
       (notStarted.length
         ? `<div class="uicons">${notStarted.map(j => `<span class="ui" role="img" title="${esc(STAGES[j])}" aria-label="${esc(STAGES[j])}">${stageIconImg(j, "")}</span>`).join("")}</div>`
         : `<span class="unone">Aucun</span>`) + `</div>`;
@@ -838,8 +838,8 @@
     // already holds).
     const ongoingShown = ongoing.every(j => statusShown(p, p.stages[j].status));
     return `<div class="tsp"><div class="cscroll"><div class="tsa" style="height:${height}px">${h}</div></div>` +
-      `<div class="tsz">${noYear.length ? group("Atteint · année non enregistrée", noYear) : ""}` +
-      `${ongoingShown ? group("En cours · sans date", ongoing, true) : group("Pas encore daté", ongoing)}${notStartedHtml}</div></div>`;
+      `<div class="tsz">${noYear.length ? group("Atteint · année non consignée", noYear) : ""}` +
+      `${ongoingShown ? group("En cours · aucune date", ongoing, true) : group("Pas encore daté", ongoing)}${notStartedHtml}</div></div>`;
   }
 
 // @@ fr/index.html:2451
@@ -871,8 +871,8 @@
 
 // @@ fr/index.html:2510
   board.insertAdjacentHTML("afterbegin",
-    `<div class="srow hd" role="presentation"><span></span><span>Médecine</span><span class="c-mini">Voyage</span>` +
-    `<span class="c-stage">Stade actuel</span><span class="c-stat">Accès au marché</span><span class="c-path">Accès au pays ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Barrière principale</span>` : ""}</div>`);
+    `<div class="srow hd" role="presentation"><span></span><span>Médicament</span><span class="c-mini">Parcours</span>` +
+    `<span class="c-stage">Phase actuelle</span><span class="c-stat">Accès au marché</span><span class="c-path">Accès aux pays ${accessInfo()}</span>${SHOW_BARRIERS ? `<span class="c-bar">Principal obstacle</span>` : ""}</div>`);
 
 // @@ fr/index.html:2513
   if (!SHOW_BARRIERS) board.classList.add("nobar");
@@ -892,7 +892,7 @@
             <div class="bar pre ${preDone ? "done-bar" : ""}"></div>
             <button class="smark" type="button"
               aria-expanded="false" aria-controls="${esc(p.id)}-gate"
-              aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Ouvre les détails complets."
+              aria-label="${esc(STAGES[i])}. ${esc(peekLine(st.status, st.date, st.nextDate))}. Affiche les détails complets."
               data-stage="${esc(STAGES[i])}" data-stagei="${i}" data-pid="${esc(p.id)}"
               data-status="${st.status}"
               data-date="${esc(st.date)}" data-nextdate="${esc(st.nextDate)}">${stageIconImg(i, "sicon")}<span class="dot ${st.status}" aria-hidden="true">${ICON[st.status]}</span></button>
@@ -915,7 +915,7 @@
       const cls = ["stagegroup", preDone ? "sg-pre-done" : "", allDone ? "sg-post-done" : ""]
         .filter(Boolean).join(" ");
       const names = col.stages.map(i => STAGES[i]).join(" et ");
-      return `<div class="${cls}" role="group" aria-label="${esc(names)} — approbations indépendantes, sans ordre défini entre elles">` +
+      return `<div class="${cls}" role="group" aria-label="${esc(names)} – approbations indépendantes, sans ordre particulier">` +
         `<svg class="forkline" preserveAspectRatio="none" aria-hidden="true" focusable="false"></svg>` +
         col.stages.map((i, n) => stageUnitHtml(i, n === 0 ? "sg-top" : "sg-bottom"))
           .join(`<div class="stagegroup-note" aria-hidden="true"></div>`) +
@@ -935,13 +935,13 @@
     const NUMF = new Intl.NumberFormat(DATE_LANG);
     const byPres = d.volume && Array.isArray(d.volume.byPresentation) && d.volume.byPresentation.length ? `
         <div class="cscroll"><table class="ystable proc-table">
-          <thead><tr><th scope="col">Présentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Durée du traitement (estimation)</th></tr></thead>
-          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Durée du traitement (estimation)</span>${b.courses == null ? "<i>non estimé</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
+          <thead><tr><th scope="col">Présentation</th><th scope="col">Transactions</th><th scope="col">Packs</th><th scope="col">Nombre de traitements (estimé)</th></tr></thead>
+          <tbody>${d.volume.byPresentation.map((b) => `<tr><th scope="row">${esc(b.label)}</th><td><span class="pk">Transactions</span>${NUMF.format(b.transactions)}</td><td><span class="pk">Packs</span>${NUMF.format(b.packs)}</td><td><span class="pk">Nombre de traitements (estimé)</span>${b.courses == null ? "<i>non estimé</i>" : NUMF.format(b.courses)}</td></tr>`).join("")}</tbody>
         </table></div>
         ${d.volume.coursesRule ? `<p class="proc-rule">${esc(d.volume.coursesRule)}</p>` : ""}` : "";
     const volumeCard = d.volume ? `
       <div class="card${byPres ? " card-wide" : ""}">
-        <h3>Achats par voie publique</h3>
+        <h3>Achats via les canaux publics</h3>
         <div class="big">${esc(fmtFig(d.volume.total))}</div>
         <div class="sub">${esc(fmtFig(d.volume.period))}</div>
         ${gfOnly ? `<p class="proc-scope">Toutes les transactions affichées correspondent à des commandes financées par le Fonds mondial et issues de sa base de données PQR. Les commandes réglées par d’autres donateurs, des gouvernements nationaux ou des acheteurs privés ne sont pas incluses ; ce chiffre ne reflète donc pas la totalité des achats mondiaux de ce produit.</p>` : `
@@ -952,35 +952,35 @@
           ${d.volume.split.map((s, i) => `<span class="key"><span class="sw" style="background:${shades[i % shades.length]}"></span>${esc(s.channel)} ${s.pct}%</span>`).join("")}
         </div>`}
         ${byPres}
-        ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Source: ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
+        ${(d.volume.source || (d.volume.sources || []).length) ? `<div class="prov">Source : ${citeHtml(d.volume.sources, d.volume.source)}</div>` : ""}
       </div>` : `
       <div class="card">
-        <h3>Achats par voie publique</h3>
+        <h3>Achats via les canaux publics</h3>
         <div class="big">—</div>
-        <div class="sub">${esc(d.volumeNote || "Données non disponibles pour le moment")}</div>
+        <div class="sub">${esc(d.volumeNote || "Données indisponibles à ce jour")}</div>
       </div>`;
 
     const node = el(`
       <section class="product" id="${esc(p.id)}">
         <div class="srow">
           <button class="exp" type="button" aria-expanded="false" aria-controls="${esc(p.id)}-l1"
-            aria-label="Afficher le parcours pour ${esc(p.name)}">▾</button>
+            aria-label="Voir le parcours pour ${esc(p.name)}">▾</button>
           <div class="nm"><b>${esc(p.name)}</b><small>${esc(p.inn)}</small></div>
           <div class="c-mini">${miniJourney(p)}</div>
           <span class="c-stage"><span class="stg">${esc(STAGES[p.currentStage])}</span>${SHOW_STAGE_NOTE && firstClause(p.stages[p.currentStage].date) ? `<span class="note">${esc(firstClause(p.stages[p.currentStage].date))}</span>` : ""}</span>
           <span class="cell c-stat">${marketCell(p)}</span>
           <span class="cell c-path">${countryCell(p)}${yardBadge(p)}</span>
-          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucun obstacle documenté publiquement n’a été identifié."}</div>` : ""}
+          ${SHOW_BARRIERS ? `<div class="c-bar${p.barrier || p.flag ? "" : " none"}">${p.barrier || p.flag ? esc(p.barrier || p.flag) : "Aucun obstacle documenté publiquement n’a été identifié"}</div>` : ""}
         </div>
         <div class="l1" id="${esc(p.id)}-l1">
           <div class="l1in">
             <div class="l1h">
               <div class="l1id"><span>${esc(p.manufacturer)}</span><span class="chip ${p.class === "pipeline" ? "pipeline" : ""}">${esc(p.classLabel)}</span></div>
               <div class="l1ctl"><span class="l1t">${accessLine(p)} ${accessInfo()}</span>
-                <div class="swg" role="group" aria-label="Vue du voyage">
-                  <button type="button" data-v="time" aria-pressed="true">Chronologie réelle</button>
-                  <button type="button" data-v="path" aria-pressed="false">Ordre du parcours</button>
-                  ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Temps passé</button>` : ""}
+                <div class="swg" role="group" aria-label="Afficher le parcours">
+                  <button type="button" data-v="time" aria-pressed="true">Chronologie</button>
+                  <button type="button" data-v="path" aria-pressed="false">Progression</button>
+                  ${YARD && YARD_COMPARE ? `<button type="button" data-v="taken" aria-pressed="false">Délai écoulé</button>` : ""}
                 </div></div>
             </div>
             ${yardBox(p)}
@@ -995,39 +995,39 @@
         <div class="detail" id="${esc(p.id)}-detail">
           <div class="cards">
             <div class="card">
-              <h3>Cas d’utilisation cible</h3>
+              <h3>Utilisation visée</h3>
               <p>${esc(d.useCase)}</p>
             </div>
             <div class="card">
-              <h3>Engagements en matière d’accès et d’approvisionnement</h3>
+              <h3>Engagements sur l’accès et l’approvisionnement</h3>
               <ul>${d.access.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
             </div>
             <div class="card">
-              <h3>exigences d’adoption</h3>
+              <h3>Exigences liées à l’adoption</h3>
               <ul>${d.adoption.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
             </div>
             <div class="card">
-              <h3>Accès au pays</h3>
+              <h3>Accès aux pays</h3>
               ${countryAccessKv(d)}
-              <div class="kv"><span>Prévision de la demande</span><span>${esc(d.country.forecastDemand)}</span></div>
+              <div class="kv"><span>Demande projetée</span><span>${esc(d.country.forecastDemand)}</span></div>
             </div>
             <div class="card">
               <h3>Recherche opérationnelle</h3>
-              <div class="kv"><span>Plomb</span><span>${esc(d.research.lead)}</span></div>
-              <div class="kv"><span>Géographies</span><span>${esc(d.research.geographies)}</span></div>
-              <div class="kv"><span>Chronologie</span><span>${esc(d.research.timeline)}</span></div>
+              <div class="kv"><span>Direction</span><span>${esc(d.research.lead)}</span></div>
+              <div class="kv"><span>Lieux</span><span>${esc(d.research.geographies)}</span></div>
+              <div class="kv"><span>Calendrier</span><span>${esc(d.research.timeline)}</span></div>
               <p style="margin-top:6px"><em>${esc(d.research.question)}</em></p>
             </div>
             ${volumeCard}
-            ${p.acknowledgement ? `<div class="card" style="grid-column:1/-1"><h3>Reconnaissance</h3><p>${esc(p.acknowledgement)}</p></div>` : ""}
+            ${p.acknowledgement ? `<div class="card" style="grid-column:1/-1"><h3>Contributeurs</h3><p>${esc(p.acknowledgement)}</p></div>` : ""}
           </div>
           <div class="mtable-box">
             <table class="mtable">
-              <thead><tr><th>Jalon</th><th>Statut</th><th>Date d’obtention / de soumission</th><th>Prochaine étape prévue</th><th>Prévu</th></tr></thead>
+              <thead><tr><th>Étape</th><th>Statut</th><th>Date d’achèvement / du dépôt</th><th>Étape suivante attendue</th><th>Attendu</th></tr></thead>
               <tbody>
                 ${d.milestones.map(m => `
                   <tr>
-                    <td>${esc(m.milestone)}${(m.sources || []).length ? `<span class="mcite">Source: ${citeLinks(m.sources)}</span>` : ""}</td>
+                    <td>${esc(m.milestone)}${(m.sources || []).length ? `<span class="mcite">Source : ${citeLinks(m.sources)}</span>` : ""}</td>
                     <td><span class="pill ${m.status}">${ICON[m.status] ? ICON[m.status] + " " : ""}${esc(m.label)}</span></td>
                     <td>${esc(m.date)}</td>
                     <td>${esc(m.next)}</td>
@@ -1181,30 +1181,30 @@
     if (st.date) kv.push(["Enregistré", esc(st.date)]);
     if (st.next) kv.push(["Étape suivante", esc(st.next)]);
     if (st.nextDate) kv.push(["Attendu", esc(st.nextDate)]);
-    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} année${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
+    if (el2 && shown) kv.push(["En attente depuis", `<span class="gp-elapsed">${el2.yrs} an${el2.yrs === 1 ? "" : "s"}</span> — ${esc(el2.label)} (${el2.year})`]);
 
     // Adoption requirements belong to the national-policy gate specifically;
     // the country survey speaks to registration and policy adoption.
     const reqs = (i === 5 && Array.isArray(p.detail.adoption) && p.detail.adoption.length)
-      ? `<div class="gp-kv"><dt>Quels sont les besoins en matière d’adoption ?</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
+      ? `<div class="gp-kv"><dt>Conditions requises pour l’adoption</dt><dd>${p.detail.adoption.map(esc).join(" · ")}</dd></div>` : "";
 
     let countries = "";
     if ((i === 4 || i === 5) && p.detail.countries && Array.isArray(p.detail.countries.list)) {
       const c = { registered: 0, guidelines: 0, mft: 0 };
       p.detail.countries.list.forEach(e => { if (e.level in c) c[e.level]++; });
       countries = `<div class="gp-countries">` +
-        `<span class="key"><span class="mapsw registered"></span>Inscrit <span class="n">${c.registered}</span></span>` +
-        `<span class="key"><span class="mapsw guidelines"></span>Conformément aux directives nationales <span class="n">${c.guidelines}</span></span>` +
+        `<span class="key"><span class="mapsw registered"></span>Enregistré <span class="n">${c.registered}</span></span>` +
+        `<span class="key"><span class="mapsw guidelines"></span>Dans les directives nationales <span class="n">${c.guidelines}</span></span>` +
         `<span class="key"><span class="mapsw mft"></span>Dans les plans MFT <span class="n">${c.mft}</span></span>` +
         `</div>`;
     }
 
     const prov = [
-      (st.source || (st.sources || []).length) ? "Source: " + citeHtml(st.sources, st.source) : "",
+      (st.source || (st.sources || []).length) ? "Source : " + citeHtml(st.sources, st.source) : "",
       st.asOf ? "vérifié " + esc(shortDate(st.asOf)) : "",
       (i === 4 || i === 5) && p.detail.countries && p.detail.countries.status !== "verified"
         // the status is a key ("illustrative"); spelled out whole so the sentence translates as one
-        ? (p.detail.countries.status === "illustrative" ? "L’enquête nationale est illustrative" : "L’enquête nationale est " + esc(p.detail.countries.status)) : ""
+        ? (p.detail.countries.status === "illustrative" ? "l’enquête nationale est à titre illustratif" : "l’enquête nationale est " + esc(p.detail.countries.status)) : ""
     ].filter(Boolean).join(" · ");
 
     return `

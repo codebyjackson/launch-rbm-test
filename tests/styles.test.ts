@@ -248,7 +248,7 @@ for (const [file, css] of [["styles/launch-dashboard.css", CSS], ["styles/feedba
 // ---- feedback.css against the widget ----------------------------------------
 
 // The widget's stylesheet as the page injected it: the CSS array in
-// assets/report-issue.js at launch-rbm-test 2f3d72c, frozen with the page by
+// assets/report-issue.js at launch-rbm-test 565cec0, frozen with the page by
 // tests/golden-frame/extract.mjs.
 function widgetCss(lang: string): string {
   const js = readFileSync(new URL(`./golden-frame/reference/${lang}.feedback.js`, import.meta.url), "utf8");

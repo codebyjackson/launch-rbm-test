@@ -4,7 +4,7 @@
 // run this and the static pages' own code on exactly the same input.
 //
 // A port of the `if (window.LAUNCH_MAP && ...)` block of the static pages'
-// app script (launch-rbm-test 2f3d72c). Each function names the one it
+// app script (launch-rbm-test 565cec0). Each function names the one it
 // replaces ("old: mftScope"). Where the old code wrote HTML, the function here
 // returns the same content as data, and components/map/ renders it. No words
 // are chosen here, only keys (a stage, a group, a region) that the components

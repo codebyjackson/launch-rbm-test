@@ -27,6 +27,7 @@ import { frameText } from "@/components/frame/text";
 import { mapText } from "@/components/map/text";
 import { pathwayText } from "@/components/pathway/text";
 import { LOCALES, type Locale } from "@/lib/locales";
+import { provideMessages } from "@/lib/messages";
 import { pageText } from "@/lib/strings";
 import { BOARD_TEXT } from "./fixtures/text/board-text";
 import { FRAME_TEXT } from "./fixtures/text/frame-text";
@@ -35,6 +36,10 @@ import { mapTextEn } from "./fixtures/text/map-text";
 import { PAGE_TEXT } from "./fixtures/text/page-text";
 import { pathwayText as PATHWAY_TEXT } from "./fixtures/text/pathway-text";
 import { deriveText } from "./golden-map/translate";
+
+// This file checks the words the message files ship, so it drops the pages'
+// words that tests/setup/page-words.ts hands the other test files.
+for (const l of LOCALES) provideMessages(l, undefined);
 
 type Tree = { readonly [key: string]: unknown };
 
@@ -45,50 +50,108 @@ type Tree = { readonly [key: string]: unknown };
  */
 const CHANGED: Record<Locale, { [areaPath: string]: [today: string, shipped: string] }> = {
   en: {},
-  // pathwayText.nodeDelayed: the pathway's per-step delayed count, for screen
-  // readers; singular, which is wrong for two or more (for the translation
-  // reviewer). Not rendered while DISPLAY.showLate is off.
-  // Portuguese, ten messages with a {placeholder} whose words differ from
-  // the Brazilian page's: the page joins a translated fragment and the
-  // value ("Os registros por país …: ASPY", "{name} Está em fase …", a
-  // capital mid-sentence), the message file has the whole message's own
-  // translation, filed under its own English since 28 Oct (the message
-  // build's decision 11), and the Brazilian retranslation of that day gave
-  // the two different words. Seen only once the tests compared the
-  // Brazilian pages (2f3d72c); until then they handed both sides the
-  // European words. For the translation reviewer.
-  // (The seven words of 28 Oct, translated by PR #129, are on the pages at
-  // 2f3d72c, so their entries went.)
+  // French and Portuguese messages with {placeholders} whose words differ from
+  // the page's (launch-rbm-test 565cec0, built 4 Nov 2026 with the professional
+  // translators' text). The page says the sentence, or joins its pieces, in the
+  // translators' words; the message has its own memory entry under its own
+  // English, still Google's until the translators' follow-up file comes back
+  // (launch-development-test docs/translation-notes.md, "Professional
+  // translations"). Messages whose page sentence the translators delivered
+  // already take its words (import-xliff.js, "derived") and are not here.
   fr: {
+    "pageText.year": ["{n} an", "{n} année"],
+    "pageText.years": ["{n} ans", "{n} années"],
+    "boardText.sinceNotRoutine": [
+      "depuis {year}, pas encore couramment utilisé",
+      "depuis {year}, pas encore en usage courant",
+    ],
+    "boardText.notePublished": [
+      "Délais attendus, d’après le calendrier communiqué : {stages}.",
+      "Délais prévus d’après le calendrier publié : {stages}.",
+    ],
+    "boardText.noteEstimate": [
+      "Délais attendus d’après les estimations de LAUNCH, qui restent à valider : {stages}.",
+      "Délais prévus d’après les estimations de travail de LAUNCH, encore à convenir : {stages}.",
+    ],
+    "frameText.footer.verifiedFor": [
+      "Les enregistrements nationaux ont été vérifiés pour :",
+      "Les enregistrements des pays ont été vérifiés pour :",
+    ],
+    "frameText.footer.notVerifiedFor": [
+      "Les phases atteintes par les pays n’ont pas encore été vérifiées pour :",
+      "Les étapes nationales n’ont pas encore été vérifiées pour :",
+    ],
+    "pathwayText.nodeLabel": [
+      "Phase {n}, {stage}{expected}. Indique le déroulé de cette phase et où en est chaque médicament{delayed}.",
+      "Étape {n}, {stage}{expected}. Indique ce qui se passe ici et où se trouve chaque médicament{delayed}.",
+    ],
+    // pathwayText.nodeDelayed: the pathway's per-step delayed count, for screen
+    // readers. The page writes it in English in every language (", " + n +
+    // " delayed"); the message files translate it.
     "pathwayText.nodeDelayed": [", {n} delayed", ", {n} retardé"],
+    "pathwayText.stepPanelLabel": ["Phase {n}: {stage}", "Scène {n}: {stage}"],
+    "pathwayText.surveyStatus": ["l’enquête nationale est {status}", "L’enquête nationale est {status}"],
+    "mapText.emptyPipeline": [
+      "{name} est en prélancement – pas d’accès aux pays à ce jour.",
+      "{name} En phase de pré-lancement — aucun accès national pour le moment.",
+    ],
+    "mapText.emptyNoData": [
+      "Aucune donnée nationale à ce jour pour {name}.",
+      "Aucune donnée au niveau national pour le moment. {name}.",
+    ],
+    "mapText.checkedOn": ["Vérifié sur", "Vérifié"],
+    "mapText.partLists": ["{part}: a inscrit {name}.", "{part}: listes {name}."],
+    "mapText.partNotLists": ["{part}: n’a pas inscrit {name}.", "{part}: ne liste pas {name}."],
+    "mapText.inPolicy": ["dans les politiques de l’OMS {year}", "dans la politique de l’OMS {year}"],
   },
   pt: {
+    // pathwayText.nodeDelayed: the pathway's per-step delayed count, for screen
+    // readers. The page writes it in English in every language (", " + n +
+    // " delayed"); the message files translate it.
     "pathwayText.nodeDelayed": [", {n} delayed", ", {n} atrasado"],
-    "frameText.footer.verifiedFor": ["Os registros por país foram verificados para:", "Os registros de país foram verificados para:"],
-    "frameText.footer.notVerifiedFor": [
-      "As etapas de verificação de cada país ainda não foram realizadas para:",
-      "As etapas do país ainda não foram verificadas para:",
+    "boardText.sinceNotRoutine": [
+      "desde {year}, ainda não em uso de rotina",
+      "desde {year}, ainda não em uso rotineiro",
     ],
-    "mapText.emptyPipeline": [
-      "{name} Está em fase de pré-lançamento — ainda não há acesso a alguns países.",
-      "{name} está em fase de pré-lançamento — ainda não há acesso a determinados países.",
-    ],
-    "mapText.emptyNoData": ["Ainda não existem dados a nível nacional para {name}.", "Ainda não existem dados a nível de país para {name}."],
-    "pathwayText.nodeLabel": [
-      "Estágio {n}, {stage}{expected}. Mostra o que acontece aqui e onde cada medicamento está{delayed}.",
-      "Estágio {n}, {stage}{expected}. Mostra o que acontece aqui e onde cada medicamento está localizado{delayed}.",
-    ],
-    "pathwayText.stepPanelLabel": ["Estágio {n}: {stage}", "Etapa {n}: {stage}"],
-    "pathwayText.surveyStatus": ["pesquisa de país {status}", "A pesquisa de país é {status}"],
-    "boardText.sinceNotRoutine": ["desde {year}, ainda não é de uso rotineiro", "desde {year}, ainda não em uso rotineiro"],
     "boardText.notePublished": [
-      "Horários previstos a partir de um cronograma publicado: {stages}.",
+      "Tempos previstos com base em um cronograma publicado: {stages}.",
       "Tempos esperados a partir de um cronograma publicado: {stages}.",
     ],
     "boardText.noteEstimate": [
-      "Tempos previstos a partir das estimativas de trabalho de LAUNCH, ainda a serem acordados: {stages}.",
+      "Tempos previstos com base nas estimativas preliminares do LAUNCH, ainda a serem acordadas: {stages}.",
       "Tempos esperados a partir das estimativas de trabalho de LAUNCH, ainda a serem acordados: {stages}.",
     ],
+    "frameText.footer.verifiedFor": [
+      "Os registros nacionais foram verificados para:",
+      "Os registros de país foram verificados para:",
+    ],
+    "frameText.footer.notVerifiedFor": [
+      "As etapas de país ainda não foram verificadas para:",
+      "As etapas do país ainda não foram verificadas para:",
+    ],
+    "pathwayText.nodeLabel": [
+      "Etapa {n}, {stage}{expected}. Mostra o que acontece nesta etapa e em que ponto se encontra cada medicamento{delayed}.",
+      "Estágio {n}, {stage}{expected}. Mostra o que acontece aqui e onde cada medicamento está localizado{delayed}.",
+    ],
+    "pathwayText.surveyStatus": ["a pesquisa no país é {status}", "A pesquisa de país é {status}"],
+    "mapText.emptyPipeline": [
+      "{name} pré-lançamento — ainda sem acesso de país.",
+      "{name} está em fase de pré-lançamento — ainda não há acesso a determinados países.",
+    ],
+    "mapText.emptyNoData": [
+      "Ainda não há dados por país para {name}.",
+      "Ainda não existem dados a nível de país para {name}.",
+    ],
+    "mapText.noPolicy": [
+      "Nenhuma política nacional de tratamento inclui {name} ainda.",
+      "Nenhuma política nacional de tratamento inclui {name} até o momento.",
+    ],
+    "mapText.overviewNoPolicy": [
+      "Nenhuma política nacional de tratamento inclui {name} ainda.",
+      "Nenhuma política nacional de tratamento inclui {name} até o momento.",
+    ],
+    "mapText.partLists": ["{part}: inclui {name}.", "{part}: listas {name}."],
+    "mapText.partNotLists": ["{part}: não inclui {name}.", "{part}: não lista {name}."],
   },
 };
 
@@ -163,8 +226,8 @@ for (const locale of LOCALES) {
     });
 
     it("the map's static-markup text is today's page's", () => {
-      // the page as frozen at 2f3d72c (built from launch-development-test b0f8675), from git
-      const page = execFileSync("git", ["show", `2f3d72c:${locale}/index.html`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+      // the page as frozen at 565cec0 (built from launch-development-test b0f8675), from git
+      const page = execFileSync("git", ["show", `565cec0:${locale}/index.html`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
       expect(readMapMarkup(page)).toStrictEqual(MAP_MARKUP[locale]);
       // the reader picks the fields it names: in English they are the old table's
       if (locale === "en") {

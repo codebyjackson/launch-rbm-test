@@ -371,5 +371,6 @@ Two requests for that page, both on your side:
 `docs/react-port-notes.md` records every decision behind the port, with the
 tests that prove the components show what the earlier static pages showed.
 Those pages left this branch on 28 Oct 2026; the tests read them from git
-(commit `2f3d72c`, `main` after PR #34: the pages built on 3 Nov 2026 from
-launch-development-test `e3c7832`; `7c1bf11` until then).
+(commit `565cec0`, `main` after PR #37: the last build of those pages, 5 Nov
+2026, from launch-development-test `a9af77b`, with the professional
+translators' French and Portuguese; tag `static-pages-final`).

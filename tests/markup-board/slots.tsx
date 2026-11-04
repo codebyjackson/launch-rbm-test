@@ -9,7 +9,7 @@ import type { ProductDetail } from "@/lib/dataset";
 import type { Citation } from "@/lib/format";
 import { El, parse, type Node } from "../golden-board/html";
 
-// the icon set the page used, assets/journey-icons/icons-solid.js at 2f3d72c;
+// the icon set the page used, assets/journey-icons/icons-solid.js at 565cec0;
 // stage 2 has no glyph (the WHO emblem stands in)
 const ICON_IDS = [
   "01-rnd-clinical", "02-regulatory-approval", "", "04-who-prequalification",
