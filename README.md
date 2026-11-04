@@ -9,6 +9,12 @@ interface text comes as one JSON file per language for your `i18n.ts`.
 Languages: English (`en`), French (`fr`), Portuguese (`pt`, Brazilian: words,
 country names, dates and numbers).
 
+> **Where the hand-over is.** RBM receives the dashboard as the `unitaid`
+> module in [rbm-data-initiative/rbm-module-unitaid](https://github.com/rbm-data-initiative/rbm-module-unitaid)
+> (release `v1.1.1`, 5 Nov 2026). This repository is LAUNCH's working copy of
+> the same components, with their tests. The static RBM test pages that
+> `main` held until 5 Nov 2026 are kept at the tag `static-pages-final`.
+
 ## Requirements
 
 | | Version | Notes |
